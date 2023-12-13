@@ -1,0 +1,130 @@
+
+KNIFE {
+name : "Makeshift Knife";
+description : "A makeshift knife to aid in many situations.";
+id : "knife";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "cant consume.";
+useTxt : "You stab yourself.";
+effects : [0,0,4,35];
+}
+
+BANDAGE {
+name : "Sterile Bandage";
+description : "Clean bandage that can be used to heal.";
+id : "bandage";
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+amount : 1;
+consumeTxt : "You eat a bandage.";
+useTxt : "You wrap a bandage around your wound.";
+effects : [0,0,1,5];
+}
+
+CANTEEN {
+name : "Canteen";
+description : "A makeshift canteen that can hold liquid.";
+id : "container";
+stackable : false;
+holdsLiquid : true;
+consumable : false;
+amount : 1;
+consumeTxt : "You drink from the canteen.";
+useTxt : "You pour the canteen on yourself.";
+effects : [2,5,2,3];
+}
+
+GRASS {
+name : "Grass";
+description : "Grass from off the ground.";
+id : "grass";
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+amount : 1;
+consumeTxt : "You eat the grass.";
+useTxt : "You wrap grass around your wound.";
+effects : [3,1,1,2];
+}
+
+ROCK {
+name : "Rock";
+description : "Rock from the ground.";
+id : "rock";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "nothing.";
+useTxt : "nothing.";
+effects : [0,0,0,0];
+}
+
+SCRAP {
+name : "Scrap Metal";
+description : "Scrap metal found all over the place from before the fall.";
+id : "scrap";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "Metal.";
+useTxt : "You cut yourself with a piece of the metal.";
+effects : [0,0,4,2];
+}
+
+STICK {
+name : "Stick";
+description : "Just a stick.";
+id : "stick";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "Stick.";
+useTxt : "Stick.";
+effects : [0,0,0,0];
+}
+
+ROPE {
+name : "Rope";
+description : "A rope made from grass for lots of situations.";
+id : "rope";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "Eated Rope";
+useTxt : "No Use.";
+effects : [0,0,0,0];
+}
+
+BITS {
+name : "Scrap Bits";
+description : "Smaller broken pieces of metal that are used as currency.";
+id : "bits";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "no eating";
+useTxt : "No Use.";
+effects : [0,0,0,0];
+}
+
+BAD_PISTOL {
+name : "Janky Pistol";
+description : "Old rusty pistol, somehow still shoots.";
+id : "pistol";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "no eating";
+useTxt : "You shoot yourself.";
+effects : [0,0,4,80];
+}

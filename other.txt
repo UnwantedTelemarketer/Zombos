@@ -1,0 +1,121 @@
+
+class Tanks : public App
+{
+private:
+	std::shared_ptr<GameObject> cookie;
+	double mouseX, mouseY;
+	std::shared_ptr<Texture> mTex;
+	std::shared_ptr<antibox::Mesh> mMesh;
+	std::shared_ptr<antibox::Shader> mShader;
+
+public:
+	WindowProperties GetWindowProperties() {
+		WindowProperties props;
+		props.cc = { 0.2f,0.2f,0.2f,1.f };
+		props.w = 800;
+		props.h = 600;
+		return props;
+	}
+
+
+	void Init() override 
+	{
+
+		glm::vec2 size{ 0.5f,0.5f };
+		glm::vec2 pos{ 0.f,0.f };
+		
+		mTex = std::make_shared<Texture>("nothing");
+
+		cookie = Factory::CreateSprite(pos);
+	}
+
+	void Update() override 
+	{
+		if (Input::KeyHeldDown(KEY_W)) 
+		{
+			cookie->Move({ 0.0f, -0.0025f });
+		}
+		if (Input::KeyHeldDown(KEY_S))
+		{
+			cookie->Move({ 0.0f, 0.0025f });
+		}
+		if (Input::KeyHeldDown(KEY_A))
+		{
+			cookie->Move({ -0.0025f, 0.0f });
+		}
+		if (Input::KeyHeldDown(KEY_D))
+		{
+			cookie->Move({ 0.0025f, 0.0f });
+		}
+		cookie->Update();
+	}
+
+	void Render() override 
+	{
+		cookie->Render();
+	}
+
+	void ImguiRender() override
+	{
+		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+		if (ImGui::Begin("Game View"))
+		{
+			PRINTSCREEN;
+		}
+		ImGui::End();
+	}
+
+	void Shutdown() override {
+
+	}
+};
+
+class DND : public App{
+
+	int dice;
+	int dice_amount;
+	bool disadvantage;
+	int dice_dis;
+	
+
+	WindowProperties GetWindowProperties() {
+		WindowProperties props;
+
+		props.imguiProps = { true, true, false, UNIFONT };
+		props.w = 800;
+		props.h = 600;
+		props.title = "D&D Character Interaction";
+		return props;
+	}
+
+	void Init() override
+	{
+		dice_amount = 20;
+	}
+	void Update() override
+	{
+
+	}
+	void ImguiRender() override
+	{
+		ImGui::Begin("Roll Dice"); {
+			if (ImGui::RadioButton("Two Dice", disadvantage))
+			{
+				disadvantage = !disadvantage;
+			}
+			ImGui::SliderInt(CHAR_ARRAY(dice_amount), &dice_amount, 0, 60);
+			if (ImGui::Button(("Roll D" + std::to_string(dice_amount)).c_str()))
+			{
+				dice = Math::RandInt(dice_amount);
+				dice_dis = Math::RandInt(dice_amount);
+			}
+			ImGui::Text(std::to_string(dice).c_str());
+			if (disadvantage) {
+				ImGui::Text(CHAR_ARRAY(dice_dis));
+			}
+		
+		ImGui::End(); }
+
+		ImGui::Begin("");
+	}
+};

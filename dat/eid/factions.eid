@@ -1,0 +1,5 @@
+FACTIONS{
+human = [zombie];
+zombie = [human, wildlife];
+wildlife = [];
+};
