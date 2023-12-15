@@ -190,6 +190,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dat\Chunk.h" />
     <ClInclude Include="dat\cosmetic.h" />
     <ClInclude Include="dat\crafting.h" />
     <ClInclude Include="dat\entities.h" />

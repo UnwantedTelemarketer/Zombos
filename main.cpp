@@ -686,6 +686,15 @@ public:
 			}
 
 			ItemReader::SaveDataToFile("dat/eid/save.eid", "STATS", dat, true);
+
+			LAZY_LOG("Now saving...");
+
+
+			for (auto& chunk : game.mainMap.world.chunks) {
+				chunk.second->SaveChunk();
+			}
+
+			LAZY_LOG("Save complete.");
 		}
 	}
 };

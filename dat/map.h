@@ -8,69 +8,15 @@
 #include <algorithm>
 #include <cmath>
 #include <thread>
+#include "Chunk.h"
 
 #define MAP_UP 1
 #define MAP_DOWN 2
 #define MAP_LEFT 3
 #define MAP_RIGHT 4
-#define CHUNK_WIDTH 30
-#define CHUNK_HEIGHT 30
 #define MAP_HEIGHT 500
 #define MAP_WIDTH 500
 
-struct Chunk {
-	bool beenBuilt = false;
-	Vector2_I globalChunkCoord;
-	Tile localCoords[CHUNK_WIDTH][CHUNK_HEIGHT];
-	std::vector<Entity*> entities;
-
-	Tile* GetTileAtCoords(int x, int y) {
-		return GetTileAtCoords({ x, y });
-	}
-	Tile* GetTileAtCoords(Vector2_I pos) {
-		if (pos.x >= CHUNK_WIDTH) { pos.x = CHUNK_WIDTH - 1; }
-		if (pos.x < 0) { pos.x = 0; }
-		if (pos.y >= CHUNK_HEIGHT) { pos.y = CHUNK_HEIGHT - 1; }
-		if (pos.y < 0) { pos.y = 0; }
-
-		return &localCoords[pos.x][pos.y];
-	}
-
-	void SaveChunk() {
-		FILE* file;
-		fopen_s(&file, ("dat/map/Chunk" + std::to_string(globalChunkCoord.x) + std::to_string(globalChunkCoord.y)).c_str(), "w");
-
-		SaveData dat;
-		for (size_t i = 0; i < CHUNK_WIDTH; i++)
-		{
-			for (size_t j = 0; j < CHUNK_HEIGHT; j++)
-			{
-				dat = localCoords[i][j].GetDataToSave();
-
-				fprintf(file, ItemReader::ReturnDataToSave(("tile" + std::to_string(i) + std::to_string(j)), dat).c_str());
-			}
-		}
-		fclose(file);
-	}
-
-	void ReadChunk(FILE* file) {
-
-		OpenedData dat;
-		std::string pathname = "dat/map/Chunk" + std::to_string(globalChunkCoord.x) + std::to_string(globalChunkCoord.y);
-		for (size_t i = 0; i < CHUNK_WIDTH; i++)
-		{
-			for (size_t j = 0; j < CHUNK_HEIGHT; j++)
-			{
-				ItemReader::GetDataFromFile(pathname, "tile" + std::to_string(i) + std::to_string(j), &dat);
-				localCoords[i][j].LoadData(dat);
-			}
-		}
-	}
-};
-struct T_Chunk //we dont need the current chunk copy to have an entity list
-{
-	int localCoords[CHUNK_WIDTH][CHUNK_HEIGHT];
-};
 
 struct World
 {
@@ -94,7 +40,8 @@ public:
 	
 	
 	void CreateMap(int seed, int b_seed);
-	void UpdateMemoryZone(Vector2_I coords);
+	void UpdateMemoryZone(Vector2_I coords, bool ignoreSave);
+	void ReadChunk(Vector2_I curChunk, std::string path);
 	void SpawnChunkEntities(std::shared_ptr<Chunk> chunk);
 	std::shared_ptr<Chunk> CurrentChunk();
 	Tile* TileAtPos(Vector2_I coords);
@@ -125,7 +72,9 @@ public:
 
 void Map::CreateMap(int l_seed, int b_seed)
 {
+	bool newGame = false;
 	if (l_seed == -1) {
+		newGame = true;
 		landSeed = Math::RandInt(1, 2147483647);
 	}
 	else {
@@ -141,7 +90,7 @@ void Map::CreateMap(int l_seed, int b_seed)
 	mapNoise = new PerlinNoise(landSeed);
 	biomeNoise = new PerlinNoise(biomeSeed);
 
-	UpdateMemoryZone(c_glCoords);
+	UpdateMemoryZone(c_glCoords, newGame);
 }
 
 static void T_SaveChunks(std::shared_ptr<Chunk> chunk) {
@@ -149,7 +98,7 @@ static void T_SaveChunks(std::shared_ptr<Chunk> chunk) {
 }
 
 //Change which chunks are in memory at one time
-void Map::UpdateMemoryZone(Vector2_I coords) {
+void Map::UpdateMemoryZone(Vector2_I coords, bool ignoreSave = false) {
 
 	//add new chunks in our area around player
 	for (int y = -1; y <= 1; y++)
@@ -161,12 +110,17 @@ void Map::UpdateMemoryZone(Vector2_I coords) {
 
 			//Check if theres a saved chunk. iF so, load it
 			if (world.chunks[curChunk].get() == nullptr) {
-				MakeNewChunk(curChunk);
+				if (fileExists(filename.c_str()) && !ignoreSave) {
+					ReadChunk(curChunk, filename);
+				}
+				else {
+					MakeNewChunk(curChunk);
+				}
 			}
 		}
 	}
 
-	std::vector<Vector2_I> chunksToDelete;
+	/*std::vector<Vector2_I> chunksToDelete;
 	//find ones too far away
 	for (const auto& pair : world.chunks) {
 		if (pair.first.x > c_glCoords.x + 1 || pair.first.x < c_glCoords.x - 1 ||
@@ -185,7 +139,7 @@ void Map::UpdateMemoryZone(Vector2_I coords) {
 		}
 
 		for (auto& th : threads) {
-			th.join();
+			th.detach();
 		}
 	}
 
@@ -193,12 +147,19 @@ void Map::UpdateMemoryZone(Vector2_I coords) {
 	for (auto& vec : chunksToDelete) {
 		//world.chunks[vec]->SaveChunk();
 		world.chunks.erase(vec);
-	}
+	} 
 	
 	time2 = glfwGetTime();
 
-	Console::Log((time2 - time1) * 1000, text::green, __LINE__);
+	Console::Log((time2 - time1) * 1000, text::white, __LINE__);*/
 
+}
+
+void Map::ReadChunk(Vector2_I curChunk, std::string path) {
+	std::shared_ptr<Chunk> tempChunk = std::make_shared<Chunk>();
+	tempChunk->globalChunkCoord = curChunk;
+	tempChunk->LoadChunk(curChunk);
+	world.chunks[curChunk] = tempChunk;
 }
 
 

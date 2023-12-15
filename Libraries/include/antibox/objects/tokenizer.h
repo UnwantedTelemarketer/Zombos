@@ -5,6 +5,11 @@
 #include <map>
 #define LAZY_LOG(thing) Console::Log(thing, text::white, -1);
 
+static bool fileExists(const char* filePath) {
+	struct stat buffer;
+	return (stat(filePath, &buffer) == 0);
+}
+
 bool to_bool(std::string str) {
 	try {
 		if (str == "true") { return true; }
@@ -200,10 +205,14 @@ public:
 static class ItemReader{
 public:
 
-	static void GetDataFromFile(std::string filepath, std::string section, OpenedData* data) {
-		
-		std::ifstream file("dat/eid/" + filepath);
-		
+	static void GetDataFromFile(std::string filepath, std::string section, OpenedData* data, bool defaultPath = true) {
+
+		std::string new_filepath;
+		if (defaultPath) { new_filepath = "dat/eid/" + filepath; }
+		else { new_filepath = filepath; }
+
+		std::ifstream file(new_filepath);
+
 		std::string contents;
 		std::string line; //read from file
 		bool shouldWrite = false;
@@ -251,7 +260,7 @@ public:
 		}
 		for (int i = 0; i < data.vec2.size(); i++)
 		{
-			file.append(data.vec2.keys[i] + " : {" + std::to_string(data.vec2.values[i].x) + "," + std::to_string(data.vec2.values[i].y) + "}; \n");
+			file.append(data.vec2.keys[i] + " : [" + std::to_string(data.vec2.values[i].x) + "," + std::to_string(data.vec2.values[i].y) + "]; \n");
 		}
 		if (data.items.size() > 0) {
 			file.append("items : [");
@@ -270,7 +279,7 @@ public:
 		std::string dat = ReturnDataToSave(sectionName, data);
 
 		std::ofstream myfile;
-		myfile.open(filename, std::ios::app);
+		myfile.open(filename);
 		myfile << dat;
 		myfile.close();
 

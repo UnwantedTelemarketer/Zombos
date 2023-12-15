@@ -118,6 +118,56 @@ struct Player {
 		coveredIn = liquid;
 	}
 };
+struct Tile;
+
+struct Saved_Tile {
+	int id = -1;
+	Liquid liquid = nothing;
+	int burningFor = 0;
+	int ticksPassed = 0;
+	int ticksNeeded = 1;
+	bool hasItem = false;
+	std::string itemName = "NULL";
+	int x, y = 0;
+
+	void Serialize(std::ofstream& stream) {
+		//stream.write(reinterpret_cast<const char*>(this), sizeof(this));
+		stream.write(reinterpret_cast<const char*>(&id), sizeof(id));
+		stream.write(reinterpret_cast<const char*>(&liquid), sizeof(liquid));
+
+		stream.write(reinterpret_cast<const char*>(&burningFor), sizeof(burningFor));
+		stream.write(reinterpret_cast<const char*>(&ticksPassed), sizeof(ticksPassed));
+		stream.write(reinterpret_cast<const char*>(&ticksNeeded), sizeof(ticksNeeded));
+		stream.write(reinterpret_cast<const char*>(&hasItem), sizeof(hasItem));
+		stream.write(reinterpret_cast<const char*>(&x), sizeof(x));
+		stream.write(reinterpret_cast<const char*>(&y), sizeof(y));
+
+		size_t size = itemName.size();
+		stream.write(reinterpret_cast<const char*>(&size), sizeof(size));
+		stream.write(itemName.data(), size);
+
+	}
+	void Deserialize(std::ifstream& stream) {
+		//stream.read(reinterpret_cast<char*>(this), sizeof(this));
+			// Read non-trivial members separately
+		stream.read(reinterpret_cast<char*>(&id), sizeof(id));
+		stream.read(reinterpret_cast<char*>(&liquid), sizeof(liquid));
+
+		// Read other members
+		stream.read(reinterpret_cast<char*>(&burningFor), sizeof(burningFor));
+		stream.read(reinterpret_cast<char*>(&ticksPassed), sizeof(ticksPassed));
+		stream.read(reinterpret_cast<char*>(&ticksNeeded), sizeof(ticksNeeded));
+		stream.read(reinterpret_cast<char*>(&hasItem), sizeof(hasItem));
+		stream.read(reinterpret_cast<char*>(&x), sizeof(x));
+		stream.read(reinterpret_cast<char*>(&y), sizeof(y));
+
+		size_t size;
+		stream.read(reinterpret_cast<char*>(&size), sizeof(size));
+
+		// Read the string data
+		stream.read(&itemName[0], size);
+	}
+};
 
 struct Tile {
 	int id = -1;
@@ -138,94 +188,33 @@ struct Tile {
 	bool visited = false;
 	vec2_i coords;
 
-	SaveData GetDataToSave() {
-		SaveData dat;
-		dat.ints.append("id", id);
-		dat.ints.append("liquid", liquid);
-		dat.ints.append("collectedReplacement", collectedReplacement);
-		dat.ints.append("burningFor", burningFor);
-		dat.ints.append("timedReplacement", timedReplacement);
-		dat.ints.append("ticksPassed", ticksPassed);
-		dat.ints.append("ticksNeeded", ticksNeeded);
-		dat.ints.append("collectible", collectible);
-		dat.ints.append("changesOverTime", changesOverTime);
-		dat.ints.append("hasItem", hasItem);
-		dat.ints.append("visited", visited);
-		dat.floats.append("brightness", brightness);
-		dat.vec2.append("coords", coords);
-		dat.strings.append("itemName", itemName);
-
-		return dat;
+	void LoadTile(Saved_Tile tile) {
+		id = tile.id;
+		liquid = tile.liquid;
+		burningFor = tile.burningFor;
+		ticksPassed = tile.ticksPassed;
+		ticksNeeded = tile.ticksNeeded;
+		hasItem = tile.hasItem;
+		itemName = tile.itemName;
+		coords = { tile.x, tile.y };
 	}
-
-	void LoadData(OpenedData dat) {
-		id = dat.getInt("id");
-		liquid = (Liquid)dat.getInt("liquid");
-		collectedReplacement = dat.getInt("collectedReplacement");
-		burningFor = dat.getInt("burningFor");
-		timedReplacement = dat.getInt("timedReplacement");
-		ticksPassed = dat.getInt("ticksPassed");
-		ticksNeeded = dat.getInt("ticksNeeded");
-		collectible = dat.getInt("collectible");
-		changesOverTime = dat.getInt("changesOverTime");
-		hasItem = dat.getInt("hasItem");
-		visited = dat.getInt("visited");
-		brightness = dat.getFloat("brightness");
-		coords.x = stoi(dat.getArray("coords")[0]);
-		coords.y = stoi(dat.getArray("coords")[1]);
-		itemName = dat.getString("itemName");
-	}
-
-	void Serialize(std::ofstream& stream) {
-		//stream.write(reinterpret_cast<const char*>(this), sizeof(this));
-		stream.write(reinterpret_cast<const char*>(&id), sizeof(id));
-		stream.write(reinterpret_cast<const char*>(&liquid), sizeof(liquid));
-		stream.write(reinterpret_cast<const char*>(&entity), sizeof(entity));
-		stream.write(reinterpret_cast<const char*>(&collectible), sizeof(collectible));
-		stream.write(reinterpret_cast<const char*>(&collectedReplacement), sizeof(collectedReplacement));
-
-		stream.write(reinterpret_cast<const char*>(&burningFor), sizeof(burningFor));
-		stream.write(reinterpret_cast<const char*>(&walkable), sizeof(walkable));
-		stream.write(reinterpret_cast<const char*>(&changesOverTime), sizeof(changesOverTime));
-		stream.write(reinterpret_cast<const char*>(&timedReplacement), sizeof(timedReplacement));
-		stream.write(reinterpret_cast<const char*>(&ticksPassed), sizeof(ticksPassed));
-		stream.write(reinterpret_cast<const char*>(&ticksNeeded), sizeof(ticksNeeded));
-		stream.write(reinterpret_cast<const char*>(&hasItem), sizeof(hasItem));
-		stream.write(reinterpret_cast<const char*>(&visited), sizeof(visited));
-		stream.write(reinterpret_cast<const char*>(&coords.x), sizeof(coords.x));
-		stream.write(reinterpret_cast<const char*>(&coords.y), sizeof(coords.y));
-	}
-
-	void Deserialize(std::istream& stream) {
-		//stream.read(reinterpret_cast<char*>(this), sizeof(this));
-		// Read non-trivial members separately
-		stream.read(reinterpret_cast<char*>(&id), sizeof(id));
-		stream.read(reinterpret_cast<char*>(&liquid), sizeof(liquid));
-		stream.read(reinterpret_cast<char*>(&collectible), sizeof(collectible));
-		stream.read(reinterpret_cast<char*>(&collectedReplacement), sizeof(collectedReplacement));
-
-
-		// Read other members
-		stream.read(reinterpret_cast<char*>(&burningFor), sizeof(burningFor));
-		stream.read(reinterpret_cast<char*>(&walkable), sizeof(walkable));
-		stream.read(reinterpret_cast<char*>(&changesOverTime), sizeof(changesOverTime));
-		stream.read(reinterpret_cast<char*>(&timedReplacement), sizeof(timedReplacement));
-		stream.read(reinterpret_cast<char*>(&ticksPassed), sizeof(ticksPassed));
-		stream.read(reinterpret_cast<char*>(&ticksNeeded), sizeof(ticksNeeded));
-		stream.read(reinterpret_cast<char*>(&hasItem), sizeof(hasItem));
-		stream.read(reinterpret_cast<char*>(&visited), sizeof(visited));
-		stream.read(reinterpret_cast<char*>(&coords.x), sizeof(coords.x));
-		stream.read(reinterpret_cast<char*>(&coords.y), sizeof(coords.y));
-	}
-	//outputFile.write(reinterpret_cast<const char*>(health), sizeof(obj.health));
 
 	bool CanUpdate() {
 		return ticksPassed >= ticksNeeded && changesOverTime;
 	}
 };
 
-
-
+static void CreateSavedTile(Saved_Tile* sTile, Tile tile) {
+	sTile->id = tile.id;
+	sTile->liquid = tile.liquid;
+	sTile->burningFor = tile.burningFor;
+	sTile->ticksPassed = tile.ticksPassed;
+	sTile->ticksNeeded = tile.ticksNeeded;
+	sTile->hasItem = tile.hasItem;
+	sTile->itemName = tile.itemName;
+	sTile->x = tile.coords.x;
+	sTile->y = tile.coords.y;
+}
 
 
 struct Recipe {
