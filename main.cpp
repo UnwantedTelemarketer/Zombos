@@ -6,7 +6,7 @@
 #define UNIFONT "c:\\Users\\Thomas Andrew\\AppData\\Local\\Microsoft\\Windows\\Fonts\\Unifont.ttf"
 #define DOSFONT "dat\\fonts\\symbolicv2.ttf"
 #define CASCADIA "c:\\Windows\\Fonts\\CascadiaCode.ttf"
-
+#define DEV_TOOLS
 using namespace antibox;
 
 enum GameState {playing, menu};
@@ -253,10 +253,10 @@ public:
 
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
-		Entity* ent = game.NearEnt();
-		if (ent != nullptr && ent->canTalk) {
-			DisplayEntity(ent);
-		}
+		//Entity* ent = game.NearEnt();
+		//if (ent != nullptr && ent->canTalk) {
+		//	DisplayEntity(ent);
+		//}
 
 		//------Map-------
 		ImGui::Begin("Map");
@@ -616,47 +616,13 @@ public:
 
 #ifdef DEV_TOOLS
 		ImGui::Begin("Brightness Map");
-		for (int i = 0; i < CHUNK_WIDTH; i++) {
-			for (int j = 0; j < CHUNK_HEIGHT; j++) {
-				std::string c = std::to_string((int)ceil(map.CurrentChunk()->localCoords[i][j].brightness * 10));
-				if (c != "10") { c = "0" + c; }
-				switch (stoi(c)) {
-				case 1:
-					ImGui::TextColored({ 1, 0, 0, 1 }, c.c_str());
-					break;
-				case 2:
-					ImGui::TextColored({ 0.9, 0.1, 0, 1 }, c.c_str());
-					break;
-				case 3:
-					ImGui::TextColored({ 0.8, 0.2, 0, 1 }, c.c_str());
-					break;
-				case 4:
-					ImGui::TextColored({ 0.7, 0.3, 0, 1 }, c.c_str());
-					break;
-				case 5:
-					ImGui::TextColored({ 0.6, 0.4, 0, 1 }, c.c_str());
-					break;
-				case 6:
-					ImGui::TextColored({ 0.5, 0.5, 0, 1 }, c.c_str());
-					break;
-				case 7:
-					ImGui::TextColored({ 0.4, 0.6, 0, 1 }, c.c_str());
-					break;
-				case 8:
-					ImGui::TextColored({ 0.3, 0.7, 0, 1 }, c.c_str());
-					break;
-				case 9:
-					ImGui::TextColored({ 0.2, 0.8, 0, 1 }, c.c_str());
-					break;
-				case 10:
-					ImGui::TextColored({ 0.35, 0.35, 0.35, 1 }, c.c_str());
-					break;
-				}
-
-				ImGui::SameLine();
-			}
-			ImGui::Text("");
+		int counter = 0;
+		for (const auto& pair : game.mainMap.world.chunks) {
+			ImGui::Text(("(" + std::to_string(pair.first.x)).c_str()); ImGui::SameLine();
+			ImGui::Text((std::to_string(pair.first.y) + ")").c_str()); if(counter != 2 && counter != 5) ImGui::SameLine();
+			counter++;
 		}
+
 		ImGui::End();
 #endif
 
@@ -876,18 +842,30 @@ class Sprites : public App {
 	}
 };
 
+struct Something {
+	Vector2_I coords;
+	int health;
+	std::string name;
+};
+
 antibox::App* CreateApp() {
-	std::cout << "Which game would you like to play? \n";
-	std::cout << "1) Zombies\n2) Falling sand\n3) Rat 1\n";
-	std::string response;
-	std::cin >> response;
-	if (response == "1") {
-		return new Caves();
-	}
-	else if (response == "2") {
-		return new Falling_Sand();
-	}
-	else if (response == "3") {
-		return new Sprites();
-	}
+
+
+	std::ifstream inputFile("output.bin", std::ios::binary | std::ios::in);
+	Something newS;
+	inputFile.read(reinterpret_cast<char*>(&newS), sizeof(newS));
+	inputFile.close();
+
+	Console::Log(newS.coords, ERROR, __LINE__);
+	Console::Log(newS.health, ERROR, __LINE__);
+	Console::Log(newS.name, ERROR, __LINE__);
+	
+	return new Caves();
 }
+
+
+/*Something s;
+
+std::ofstream outputFile("output.bin", std::ios::binary | std::ios::out);
+outputFile.write(reinterpret_cast<const char*>(&s), sizeof(s));
+outputFile.close();*/

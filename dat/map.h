@@ -14,10 +14,11 @@
 #define MAP_RIGHT 4
 #define CHUNK_WIDTH 30
 #define CHUNK_HEIGHT 30
-#define MAP_HEIGHT 10
-#define MAP_WIDTH 10
+#define MAP_HEIGHT 500
+#define MAP_WIDTH 500
 
 struct Chunk {
+	bool beenBuilt = false;
 	Vector2_I globalChunkCoord;
 	Tile localCoords[CHUNK_WIDTH][CHUNK_HEIGHT];
 	std::vector<Entity*> entities;
@@ -41,7 +42,7 @@ struct T_Chunk //we dont need the current chunk copy to have an entity list
 
 struct World
 {
-	Chunk chunks[MAP_WIDTH][MAP_HEIGHT];
+	std::map<Vector2_I, std::shared_ptr<Chunk>> chunks;
 };
 
 
@@ -49,7 +50,7 @@ struct World
 class Map {
 public:
 	bool chunkUpdateFlag = false;
-	Vector2_I c_glCoords{ 5, 5 };
+	Vector2_I c_glCoords{ 250, 250 };
 	T_Chunk effectLayer; //is the original chunk with visual effects on it (lines, fire, liquid)
 	World world; //keeps the original generated map so that tiles walked over wont be erased
 	World underground; //map but underground, different map entirely
@@ -62,25 +63,27 @@ public:
 	
 	
 	void CreateMap(int seed, int b_seed);
-	void SpawnChunkEntities(Chunk* chunk);
-	Chunk* CurrentChunk();
+	void UpdateMemoryZone(Vector2_I coords);
+	void SpawnChunkEntities(std::shared_ptr<Chunk> chunk);
+	std::shared_ptr<Chunk> CurrentChunk();
 	Tile* TileAtPos(Vector2_I coords);
+	void MakeNewChunk(Vector2_I coords);
 	void AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog);
 	void MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLog);
 	void CheckBounds(Player* p);
-	void CheckBounds(Entity* p, Chunk* chunk);
+	void CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk);
 	void CreateStarterChunk(Player p);
-	void BuildChunk(Chunk* chunk);
-	void PlaceBuilding(Chunk* chunk);
-	void GenerateTomb(Chunk* chunk);
+	void BuildChunk(std::shared_ptr<Chunk> chunk);
+	void PlaceBuilding(std::shared_ptr<Chunk> chunk);
+	void GenerateTomb(std::shared_ptr<Chunk> chunk);
 	std::vector<Vector2_I> GetLine(Vector2_I startTile, Vector2_I endTile, int limit);
 	void DrawLine(std::vector<Vector2_I> list);
 	void ClearLine();
-	void ClearEntities(std::vector<Vector2_I> positions, Chunk* chunk);
-	void ClearChunkOfEnts(Chunk* chunk);
-	void PlaceEntities(Chunk* chunk);
+	void ClearEntities(std::vector<Vector2_I> positions, std::shared_ptr<Chunk> chunk);
+	void ClearChunkOfEnts(std::shared_ptr<Chunk> chunk);
+	void PlaceEntities(std::shared_ptr<Chunk> chunk);
 	void UpdateTiles(vec2_i coords);
-	void FixEntityIndex(Chunk* chunk);
+	void FixEntityIndex(std::shared_ptr<Chunk> chunk);
 	void floodFillUtil(int x, int y, float prevBrightness, float newBrightness, int max);
 	void floodFill(Vector2_I centerTile);
 	void ResetLightValues();
@@ -107,24 +110,50 @@ void Map::CreateMap(int l_seed, int b_seed)
 	mapNoise = new PerlinNoise(landSeed);
 	biomeNoise = new PerlinNoise(biomeSeed);
 
-	for (int x = 0; x < MAP_WIDTH; x++)
+	UpdateMemoryZone(c_glCoords);
+}
+
+//Change which chunks are in memory at one time
+void Map::UpdateMemoryZone(Vector2_I coords) {
+	std::vector<Vector2_I> chunksToDelete;
+	//find ones too far away
+	for (const auto& pair : world.chunks) {
+		if (pair.first.x > c_glCoords.x + 1 || pair.first.x < c_glCoords.x - 1 ||
+			pair.first.y > c_glCoords.y + 1 || pair.first.y < c_glCoords.y - 1) {
+			chunksToDelete.push_back(pair.first);
+		}
+	}
+	//remove them
+	for (auto& vec : chunksToDelete) {
+		world.chunks.erase(vec);
+	}
+
+	//add new chunks in our area around player
+	for (int y = -1; y <= 1; y++)
 	{
-		for (int y = 0; y < MAP_HEIGHT; y++)
+		for (int x = -1; x <= 1; x++)
 		{
-			world.chunks[x][y].globalChunkCoord.x = x;
-			world.chunks[x][y].globalChunkCoord.y = y;
-
-			GenerateTomb(&underground.chunks[x][y]);
-
-			BuildChunk(&world.chunks[x][y]);
-			SpawnChunkEntities(&world.chunks[x][y]);
+			vec2_i curChunk = { c_glCoords.x + x, c_glCoords.y + y };
+			if (world.chunks[curChunk] == nullptr) {
+				MakeNewChunk(curChunk);
+			}
 		}
 	}
 }
 
-void Map::SpawnChunkEntities(Chunk* chunk)
+void Map::MakeNewChunk(Vector2_I coords) {
+	std::shared_ptr<Chunk> tempChunk = std::make_shared<Chunk>();
+	tempChunk->globalChunkCoord = c_glCoords;
+
+	BuildChunk(tempChunk);
+	SpawnChunkEntities(tempChunk);
+	world.chunks[tempChunk->globalChunkCoord] = tempChunk;
+}
+
+void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 {
-	for (int i = 0; i < 3; i++)
+	Console::Log(chunk.get(), ERROR, __LINE__);
+	for (int i = 0; i < 0; i++)
 	{
 		Entity* zomb;
 		int num = Math::RandInt(1, 10);
@@ -146,13 +175,13 @@ void Map::SpawnChunkEntities(Chunk* chunk)
 	}
 }
 
-Chunk* Map::CurrentChunk() {
+std::shared_ptr<Chunk> Map::CurrentChunk() {
 	if (!isUnderground) {
-		return &world.chunks[c_glCoords.x][c_glCoords.y];
+		return world.chunks[c_glCoords];
 	}
-	else {
-		return &underground.chunks[c_glCoords.x][c_glCoords.y];
-	}
+	//else {
+		//return &underground.chunks[c_glCoords.x][c_glCoords.y];
+	//}
 }
 
 //std::vector<Tile> GetTileInRadius(vec2_i center) {
@@ -242,36 +271,32 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 void Map::CheckBounds(Player* p) {
 	bool changed = false;
 	if (p->coords.x > CHUNK_WIDTH - 1) {
-		c_glCoords.x++;
 		ClearChunkOfEnts(CurrentChunk());
-		if (c_glCoords.x >= CHUNK_WIDTH - 1) { c_glCoords.x = CHUNK_WIDTH - 1; goto offscreen; }
+		c_glCoords.x++;
 		changed = true;
 		p->coords.x = 0;
 	}
 	else if (p->coords.x < 0) {
-		c_glCoords.x--;
 		ClearChunkOfEnts(CurrentChunk());
-		if (c_glCoords.x < 0) { c_glCoords.x = 0; goto offscreen; }
+		c_glCoords.x--;
 		changed = true;
 		p->coords.x = CHUNK_WIDTH - 1;
 	}
 	else if (p->coords.y > CHUNK_HEIGHT - 1) {
-		c_glCoords.y++;
 		ClearChunkOfEnts(CurrentChunk());
-		if (c_glCoords.y >= CHUNK_WIDTH - 1)
-		{
-			c_glCoords.y = CHUNK_WIDTH - 1;
-			goto offscreen;
-		}
+		c_glCoords.y++;
 		changed = true;
 		p->coords.y = 0;
 	}
 	else if (p->coords.y < 0) {
-		c_glCoords.y--;
 		ClearChunkOfEnts(CurrentChunk());
-		if (c_glCoords.y < 0) { c_glCoords.y = 0; goto offscreen; }
+		c_glCoords.y--;
 		changed = true;
 		p->coords.y = CHUNK_HEIGHT - 1;
+	}
+
+	if (changed) {
+		UpdateMemoryZone(c_glCoords);
 	}
 
 	//if the player would go offscreen, reset them
@@ -285,48 +310,48 @@ offscreen:
 
 
 //check if entity moves to next chunk
-void Map::CheckBounds(Entity* p, Chunk* chunk) {
+void Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 	bool changed = false;
 	int oldIndex = p->index;
 	if (p->coords.x > CHUNK_WIDTH - 1) { //check if they left the chunk
 		if (c_glCoords.x + 1 >= CHUNK_WIDTH) { p->coords.x = CHUNK_WIDTH - 1; return; } //dont let them leave world bounds
 		changed = true;
 		p->coords.x = 0; //move them to the other side of the screen
-		world.chunks[chunk->globalChunkCoord.x + 1]
-			[chunk->globalChunkCoord.y].entities.push_back(p); //put them in the vector of the next chunk over
+		world.chunks[{chunk->globalChunkCoord.x + 1,
+			chunk->globalChunkCoord.y}]->entities.push_back(p); //put them in the vector of the next chunk over
 
-		p->index = world.chunks[chunk->globalChunkCoord.x + 1]
-			[chunk->globalChunkCoord.y].entities.size() - 1; //change their index in the list
+		p->index = world.chunks[{chunk->globalChunkCoord.x + 1,
+			chunk->globalChunkCoord.y}]->entities.size() - 1; //change their index in the list
 	}
 	else if (p->coords.x < 0) {
 		if (c_glCoords.x - 1 < 0) { p->coords.x = 0; return; }
 		changed = true;
 		p->coords.x = CHUNK_WIDTH - 1;
-		world.chunks[chunk->globalChunkCoord.x - 1]
-			[chunk->globalChunkCoord.y].entities.push_back(p);
+		world.chunks[{chunk->globalChunkCoord.x - 1,
+			chunk->globalChunkCoord.y}]->entities.push_back(p);
 
-		p->index = world.chunks[chunk->globalChunkCoord.x - 1]
-			[chunk->globalChunkCoord.y].entities.size() - 1;
+		p->index = world.chunks[{chunk->globalChunkCoord.x - 1,
+			chunk->globalChunkCoord.y}]->entities.size() - 1;
 	}
 	else if (p->coords.y > CHUNK_HEIGHT - 1) {
 		if (chunk->globalChunkCoord.y + 1 >= CHUNK_HEIGHT) { p->coords.y = CHUNK_HEIGHT - 1; return; }
 		changed = true;
 		p->coords.y = 0;
-		world.chunks[chunk->globalChunkCoord.x]
-			[chunk->globalChunkCoord.y + 1].entities.push_back(p);
+		world.chunks[{chunk->globalChunkCoord.x,
+			chunk->globalChunkCoord.y + 1}]->entities.push_back(p);
 
-		p->index = world.chunks[chunk->globalChunkCoord.x]
-			[chunk->globalChunkCoord.y + 1].entities.size() - 1;
+		p->index = world.chunks[{chunk->globalChunkCoord.x,
+			chunk->globalChunkCoord.y + 1}]->entities.size() - 1;
 	}
 	else if (p->coords.y < 0) {
 		if (chunk->globalChunkCoord.y - 1 < 0) { p->coords.y = 0; return; }
 		changed = true;
 		p->coords.y = CHUNK_HEIGHT - 1;
-		world.chunks[chunk->globalChunkCoord.x]
-			[chunk->globalChunkCoord.y - 1].entities.push_back(p);
+		world.chunks[{chunk->globalChunkCoord.x,
+			chunk->globalChunkCoord.y - 1}]->entities.push_back(p);
 
-		p->index = world.chunks[chunk->globalChunkCoord.x]
-			[chunk->globalChunkCoord.y - 1].entities.size() - 1;
+		p->index = world.chunks[{chunk->globalChunkCoord.x,
+			chunk->globalChunkCoord.y - 1}]->entities.size() - 1;
 	}
 	if (changed) {
 		chunk->entities.erase(chunk->entities.begin() + oldIndex);
@@ -338,7 +363,8 @@ void Map::CreateStarterChunk(Player p) {
 	//SetShownChunk();
 }
 
-void Map::BuildChunk(Chunk* chunk) {
+void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
+	
 	float current = 0.f, currentBiome = 0.f;
 	for (int i = 0; i < CHUNK_WIDTH; i++) {
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
@@ -387,10 +413,11 @@ void Map::BuildChunk(Chunk* chunk) {
 	}
 
 	if (Math::RandInt(1,5) == 4) { PlaceBuilding(chunk); }
+	chunk->beenBuilt = true;
 }
 
 
-void Map::PlaceBuilding(Chunk* chunk) {
+void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
 	Vector2_I cornerstone = { Math::RandInt(6, CHUNK_WIDTH - 6), Math::RandInt(6, CHUNK_HEIGHT - 6) };
 	Vector2_I corner = cornerstone;
 
@@ -411,7 +438,7 @@ void Map::PlaceBuilding(Chunk* chunk) {
 	}
 }
 
-void Map::GenerateTomb(Chunk* chunk) {
+void Map::GenerateTomb(std::shared_ptr<Chunk> chunk) {
 
 	for (int i = 0; i < CHUNK_WIDTH; i++) {
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
@@ -489,7 +516,7 @@ void Map::ClearLine()
 	line.clear();
 }
 
-void Map::ClearEntities(std::vector<Vector2_I> positions, Chunk* chunk)
+void Map::ClearEntities(std::vector<Vector2_I> positions, std::shared_ptr<Chunk> chunk)
 {
 	//go to the player and all entities and replace the original tile
 	for (int i = 0; i < positions.size(); i++)
@@ -498,7 +525,7 @@ void Map::ClearEntities(std::vector<Vector2_I> positions, Chunk* chunk)
 	}
 }
 
-void Map::ClearChunkOfEnts(Chunk* chunk)
+void Map::ClearChunkOfEnts(std::shared_ptr<Chunk> chunk)
 {
 	//go to the player and all entities and replace the original tile
 	for (int x = 0; x < CHUNK_WIDTH; x++)
@@ -511,7 +538,7 @@ void Map::ClearChunkOfEnts(Chunk* chunk)
 	PlaceEntities(chunk);
 }
 
-void Map::PlaceEntities(Chunk* chunk)
+void Map::PlaceEntities(std::shared_ptr<Chunk> chunk)
 {
 	//place the player and all entities on top of the tiles
 	for (int i = 0; i < chunk->entities.size(); i++)
@@ -525,7 +552,7 @@ void Map::PlaceEntities(Chunk* chunk)
 
 void Map::UpdateTiles(vec2_i coords) {
 	std::vector<Vector2_I> tilesToBurn;
-	Chunk* chunk = &world.chunks[coords.x][coords.y];
+	std::shared_ptr<Chunk> chunk = world.chunks[{coords.x, coords.y}];
 
 	for (int x = 0; x < CHUNK_WIDTH; x++) {
 		for (int y = 0; y < CHUNK_HEIGHT; y++) {
@@ -587,7 +614,7 @@ void Map::UpdateTiles(vec2_i coords) {
 }
 
 //Reset the indices of the entities
-void Map::FixEntityIndex(Chunk* chunk) {
+void Map::FixEntityIndex(std::shared_ptr<Chunk> chunk) {
 	for (int i = 0; i < chunk->entities.size(); i++)
 	{
 		chunk->entities[i]->index = i;
@@ -647,7 +674,7 @@ void Map::ResetLightValues() {
 
 Map::~Map()
 {
-	for (int x = 0; x < MAP_WIDTH; x++)
+	/*for (int x = 0; x < MAP_WIDTH; x++)
 	{
 		for (int y = 0; y < MAP_HEIGHT; y++)
 		{
@@ -656,7 +683,7 @@ Map::~Map()
 				delete(&world.chunks[x][y].entities[i]);
 			}
 		}
-	}
+	}*/
 	delete(mapNoise);
 	delete(biomeNoise);
 }

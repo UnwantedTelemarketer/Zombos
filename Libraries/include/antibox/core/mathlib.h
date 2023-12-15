@@ -1,5 +1,6 @@
 #pragma once
 #include <random>
+#include <tuple>
 
 #define maybe (rand() % 10 + 1) >= 5
 
@@ -24,14 +25,27 @@ struct Vector2_I
 {
 	int x, y;
 
-	bool operator==(Vector2_I vec2) {
-		if (vec2.x == x && vec2.y == y) { return true; }
-		return false;
+	//Serialization
+	/*friend std::ostream& operator<<(std::ostream& stream, const Vector2_I& vec2) {
+		stream << vec2.x << ' ' << vec2.y;
+		return stream;
+	}
+
+	friend std::istream& operator<<(std::istream& stream, Vector2_I& vec2) {
+		stream >> vec2.x >> vec2.y;
+		return stream;
+	}*/
+
+	bool operator<(const Vector2_I& rhs) const {
+		return std::tie(x, y) < std::tie(rhs.x, rhs.y);
+	}
+
+	bool operator==(const Vector2_I& rhs) const {
+		return std::tie(x, y) == std::tie(rhs.x, rhs.y);
 	}
 
 	bool operator!=(Vector2_I vec2) {
-		if (vec2.x == x && vec2.y == y) { return false; }
-		return true;
+		return (vec2.x == x && vec2.y == y);
 	}
 	void operator+=(Vector2_I vec2) {
 		x += vec2.x;
@@ -40,6 +54,14 @@ struct Vector2_I
 	Vector2_I operator+(Vector2_I vec2) {
 		return { x + vec2.x, y + vec2.y };
 	}
+	bool operator<(Vector2_I vec2) {
+		return (x < vec2.x&& y < vec2.y);
+	}
+
+	void operator=(Vector2_I vec2) {
+		x = vec2.x;
+		y = vec2.y;
+	}
 };
 
 struct Vector2
@@ -47,13 +69,11 @@ struct Vector2
 	float x, y;
 
 	bool operator==(Vector2 vec2) {
-		if (vec2.x == x && vec2.y == y) { return true; }
-		return false;
+		return (vec2.x == x && vec2.y == y);
 	}
 
 	bool operator!=(Vector2 vec2) {
-		if (vec2.x == x && vec2.y == y) { return false; }
-		return true;
+		return (vec2.x == x && vec2.y == y);
 	}
 };
 

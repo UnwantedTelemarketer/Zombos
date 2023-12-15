@@ -15,7 +15,6 @@ void Console::Log(const char* message, textColor type = "\033[0;37m", int lineNu
 	std::cout << "[ Line " << lineNum << " ]: " << type << message << "\033[0m\n" << std::endl;
 }
 
-
 void Console::Log(uint32_t message, textColor type = "\033[0;37m", int lineNum = -1)
 {
 	std::cout << "[ Line " << lineNum << " ]: " << type << std::to_string(message) << "\033[0m\n" << std::endl;

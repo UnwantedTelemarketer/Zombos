@@ -256,7 +256,7 @@ bool GameManager::PlayerNearby(Vector2_I coords) {
 }
 
 
-Entity* GameManager::NearEnt() {
+/*Entity* GameManager::NearEnt() {
 	if (mPlayer.coords.x + 1 < CHUNK_WIDTH && mainMap.TileAtPos(vec2_i{ mPlayer.coords.x + 1, mPlayer.coords.y })->entity != nullptr) {
 		return mainMap.TileAtPos(vec2_i{ mPlayer.coords.x + 1, mPlayer.coords.y })->entity;
 	}
@@ -270,7 +270,7 @@ Entity* GameManager::NearEnt() {
 		return mainMap.TileAtPos(vec2_i{ mPlayer.coords.x, mPlayer.coords.y - 1 })->entity;
 	}
 	return nullptr;
-}
+}*/
 
 void GameManager::SpawnEntity(Entity* ent) {
 	ent->health = Math::RandNum(100);
@@ -391,12 +391,12 @@ void GameManager::UpdateTick() {
 }
 
 void GameManager::RedrawEntities(Vector2_I chunkCoords) {
-	Chunk* usedChunk = &mainMap.world.chunks[chunkCoords.x][chunkCoords.y];
+	std::shared_ptr<Chunk> usedChunk = mainMap.world.chunks[{chunkCoords.x, chunkCoords.y}];
 	mainMap.ClearChunkOfEnts(usedChunk);
 }
 
 void GameManager::UpdateEntities(Vector2_I chunkCoords) {
-	Chunk* usedChunk = &mainMap.world.chunks[chunkCoords.x][chunkCoords.y];
+	std::shared_ptr<Chunk> usedChunk = mainMap.world.chunks[{chunkCoords.x, chunkCoords.y}];
 
 	mainMap.ClearLine();
 	mainMap.ClearEntities(oldLocations, usedChunk);
