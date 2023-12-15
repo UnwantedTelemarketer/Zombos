@@ -58,10 +58,10 @@ struct Vector2_I
 		return (x < vec2.x&& y < vec2.y);
 	}
 
-	void operator=(Vector2_I vec2) {
+	/*void operator=(Vector2_I vec2) {
 		x = vec2.x;
 		y = vec2.y;
-	}
+	}*/
 };
 
 struct Vector2

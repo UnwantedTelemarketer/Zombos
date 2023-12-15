@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "antibox/objects/tokenizer.h"
+#include <iostream>
+#include <fstream>
 
 enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid };
 enum Liquid { nothing, water, blood, fire };
@@ -43,6 +45,7 @@ struct Item {
 	}
 
 	void CreateFromData(OpenedData item) {
+		
 		name = item.getString("name");
 		section = item.section_name;
 		description = item.getString("description");
@@ -135,6 +138,86 @@ struct Tile {
 	bool visited = false;
 	vec2_i coords;
 
+	SaveData GetDataToSave() {
+		SaveData dat;
+		dat.ints.append("id", id);
+		dat.ints.append("liquid", liquid);
+		dat.ints.append("collectedReplacement", collectedReplacement);
+		dat.ints.append("burningFor", burningFor);
+		dat.ints.append("timedReplacement", timedReplacement);
+		dat.ints.append("ticksPassed", ticksPassed);
+		dat.ints.append("ticksNeeded", ticksNeeded);
+		dat.ints.append("collectible", collectible);
+		dat.ints.append("changesOverTime", changesOverTime);
+		dat.ints.append("hasItem", hasItem);
+		dat.ints.append("visited", visited);
+		dat.floats.append("brightness", brightness);
+		dat.vec2.append("coords", coords);
+		dat.strings.append("itemName", itemName);
+
+		return dat;
+	}
+
+	void LoadData(OpenedData dat) {
+		id = dat.getInt("id");
+		liquid = (Liquid)dat.getInt("liquid");
+		collectedReplacement = dat.getInt("collectedReplacement");
+		burningFor = dat.getInt("burningFor");
+		timedReplacement = dat.getInt("timedReplacement");
+		ticksPassed = dat.getInt("ticksPassed");
+		ticksNeeded = dat.getInt("ticksNeeded");
+		collectible = dat.getInt("collectible");
+		changesOverTime = dat.getInt("changesOverTime");
+		hasItem = dat.getInt("hasItem");
+		visited = dat.getInt("visited");
+		brightness = dat.getFloat("brightness");
+		coords.x = stoi(dat.getArray("coords")[0]);
+		coords.y = stoi(dat.getArray("coords")[1]);
+		itemName = dat.getString("itemName");
+	}
+
+	void Serialize(std::ofstream& stream) {
+		//stream.write(reinterpret_cast<const char*>(this), sizeof(this));
+		stream.write(reinterpret_cast<const char*>(&id), sizeof(id));
+		stream.write(reinterpret_cast<const char*>(&liquid), sizeof(liquid));
+		stream.write(reinterpret_cast<const char*>(&entity), sizeof(entity));
+		stream.write(reinterpret_cast<const char*>(&collectible), sizeof(collectible));
+		stream.write(reinterpret_cast<const char*>(&collectedReplacement), sizeof(collectedReplacement));
+
+		stream.write(reinterpret_cast<const char*>(&burningFor), sizeof(burningFor));
+		stream.write(reinterpret_cast<const char*>(&walkable), sizeof(walkable));
+		stream.write(reinterpret_cast<const char*>(&changesOverTime), sizeof(changesOverTime));
+		stream.write(reinterpret_cast<const char*>(&timedReplacement), sizeof(timedReplacement));
+		stream.write(reinterpret_cast<const char*>(&ticksPassed), sizeof(ticksPassed));
+		stream.write(reinterpret_cast<const char*>(&ticksNeeded), sizeof(ticksNeeded));
+		stream.write(reinterpret_cast<const char*>(&hasItem), sizeof(hasItem));
+		stream.write(reinterpret_cast<const char*>(&visited), sizeof(visited));
+		stream.write(reinterpret_cast<const char*>(&coords.x), sizeof(coords.x));
+		stream.write(reinterpret_cast<const char*>(&coords.y), sizeof(coords.y));
+	}
+
+	void Deserialize(std::istream& stream) {
+		//stream.read(reinterpret_cast<char*>(this), sizeof(this));
+		// Read non-trivial members separately
+		stream.read(reinterpret_cast<char*>(&id), sizeof(id));
+		stream.read(reinterpret_cast<char*>(&liquid), sizeof(liquid));
+		stream.read(reinterpret_cast<char*>(&collectible), sizeof(collectible));
+		stream.read(reinterpret_cast<char*>(&collectedReplacement), sizeof(collectedReplacement));
+
+
+		// Read other members
+		stream.read(reinterpret_cast<char*>(&burningFor), sizeof(burningFor));
+		stream.read(reinterpret_cast<char*>(&walkable), sizeof(walkable));
+		stream.read(reinterpret_cast<char*>(&changesOverTime), sizeof(changesOverTime));
+		stream.read(reinterpret_cast<char*>(&timedReplacement), sizeof(timedReplacement));
+		stream.read(reinterpret_cast<char*>(&ticksPassed), sizeof(ticksPassed));
+		stream.read(reinterpret_cast<char*>(&ticksNeeded), sizeof(ticksNeeded));
+		stream.read(reinterpret_cast<char*>(&hasItem), sizeof(hasItem));
+		stream.read(reinterpret_cast<char*>(&visited), sizeof(visited));
+		stream.read(reinterpret_cast<char*>(&coords.x), sizeof(coords.x));
+		stream.read(reinterpret_cast<char*>(&coords.y), sizeof(coords.y));
+	}
+	//outputFile.write(reinterpret_cast<const char*>(health), sizeof(obj.health));
 
 	bool CanUpdate() {
 		return ticksPassed >= ticksNeeded && changesOverTime;

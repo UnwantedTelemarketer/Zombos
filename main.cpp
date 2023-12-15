@@ -3,6 +3,8 @@
 #include "antibox/objects/tokenizer.h"
 
 
+#include <chrono>
+
 #define UNIFONT "c:\\Users\\Thomas Andrew\\AppData\\Local\\Microsoft\\Windows\\Fonts\\Unifont.ttf"
 #define DOSFONT "dat\\fonts\\symbolicv2.ttf"
 #define CASCADIA "c:\\Windows\\Fonts\\CascadiaCode.ttf"
@@ -55,6 +57,7 @@ public:
 		openClose = "Close Stats";
 		navInv = false;
 		showDialogue = true;
+
 	}
 
 	void Update() {
@@ -207,6 +210,7 @@ public:
 		if (ImGui::Button("New Game"))
 		{
 			game.Setup(10, 10, 0.5f);
+
 			createChar = true;
 		}
 
@@ -681,7 +685,7 @@ public:
 				dat.items.append(pInv.items[i].section, pInv.items[i].count);
 			}
 
-			ItemReader::SaveDataToFile("dat/eid/save.eid", "STATS", dat);
+			ItemReader::SaveDataToFile("dat/eid/save.eid", "STATS", dat, true);
 		}
 	}
 };
@@ -842,30 +846,8 @@ class Sprites : public App {
 	}
 };
 
-struct Something {
-	Vector2_I coords;
-	int health;
-	std::string name;
-};
+
 
 antibox::App* CreateApp() {
-
-
-	std::ifstream inputFile("output.bin", std::ios::binary | std::ios::in);
-	Something newS;
-	inputFile.read(reinterpret_cast<char*>(&newS), sizeof(newS));
-	inputFile.close();
-
-	Console::Log(newS.coords, ERROR, __LINE__);
-	Console::Log(newS.health, ERROR, __LINE__);
-	Console::Log(newS.name, ERROR, __LINE__);
-	
 	return new Caves();
 }
-
-
-/*Something s;
-
-std::ofstream outputFile("output.bin", std::ios::binary | std::ios::out);
-outputFile.write(reinterpret_cast<const char*>(&s), sizeof(s));
-outputFile.close();*/

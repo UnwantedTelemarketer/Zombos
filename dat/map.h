@@ -7,6 +7,7 @@
 #include "inventory.h"
 #include <algorithm>
 #include <cmath>
+#include <thread>
 
 #define MAP_UP 1
 #define MAP_DOWN 2
@@ -34,6 +35,37 @@ struct Chunk {
 
 		return &localCoords[pos.x][pos.y];
 	}
+
+	void SaveChunk() {
+		FILE* file;
+		fopen_s(&file, ("dat/map/Chunk" + std::to_string(globalChunkCoord.x) + std::to_string(globalChunkCoord.y)).c_str(), "w");
+
+		SaveData dat;
+		for (size_t i = 0; i < CHUNK_WIDTH; i++)
+		{
+			for (size_t j = 0; j < CHUNK_HEIGHT; j++)
+			{
+				dat = localCoords[i][j].GetDataToSave();
+
+				fprintf(file, ItemReader::ReturnDataToSave(("tile" + std::to_string(i) + std::to_string(j)), dat).c_str());
+			}
+		}
+		fclose(file);
+	}
+
+	void ReadChunk(FILE* file) {
+
+		OpenedData dat;
+		std::string pathname = "dat/map/Chunk" + std::to_string(globalChunkCoord.x) + std::to_string(globalChunkCoord.y);
+		for (size_t i = 0; i < CHUNK_WIDTH; i++)
+		{
+			for (size_t j = 0; j < CHUNK_HEIGHT; j++)
+			{
+				ItemReader::GetDataFromFile(pathname, "tile" + std::to_string(i) + std::to_string(j), &dat);
+				localCoords[i][j].LoadData(dat);
+			}
+		}
+	}
 };
 struct T_Chunk //we dont need the current chunk copy to have an entity list
 {
@@ -44,7 +76,6 @@ struct World
 {
 	std::map<Vector2_I, std::shared_ptr<Chunk>> chunks;
 };
-
 
 
 class Map {
@@ -113,8 +144,28 @@ void Map::CreateMap(int l_seed, int b_seed)
 	UpdateMemoryZone(c_glCoords);
 }
 
+static void T_SaveChunks(std::shared_ptr<Chunk> chunk) {
+	chunk->SaveChunk();
+}
+
 //Change which chunks are in memory at one time
 void Map::UpdateMemoryZone(Vector2_I coords) {
+
+	//add new chunks in our area around player
+	for (int y = -1; y <= 1; y++)
+	{
+		for (int x = -1; x <= 1; x++)
+		{
+			vec2_i curChunk = { c_glCoords.x + x, c_glCoords.y + y };
+			std::string filename = "dat/map/Chunk" + std::to_string(curChunk.x) + std::to_string(curChunk.y);
+
+			//Check if theres a saved chunk. iF so, load it
+			if (world.chunks[curChunk].get() == nullptr) {
+				MakeNewChunk(curChunk);
+			}
+		}
+	}
+
 	std::vector<Vector2_I> chunksToDelete;
 	//find ones too far away
 	for (const auto& pair : world.chunks) {
@@ -123,27 +174,37 @@ void Map::UpdateMemoryZone(Vector2_I coords) {
 			chunksToDelete.push_back(pair.first);
 		}
 	}
-	//remove them
-	for (auto& vec : chunksToDelete) {
-		world.chunks.erase(vec);
-	}
+	double time1, time2;
+	time1 = glfwGetTime();
 
-	//add new chunks in our area around player
-	for (int y = -1; y <= 1; y++)
-	{
-		for (int x = -1; x <= 1; x++)
-		{
-			vec2_i curChunk = { c_glCoords.x + x, c_glCoords.y + y };
-			if (world.chunks[curChunk] == nullptr) {
-				MakeNewChunk(curChunk);
-			}
+	if (chunksToDelete.size() > 0) {
+		//Save all three chunks to file across 3 threads
+		std::vector<std::thread> threads;
+		for (int i = 0; i < chunksToDelete.size(); ++i) {
+			threads.push_back(std::thread(T_SaveChunks, world.chunks[chunksToDelete[i]]));
+		}
+
+		for (auto& th : threads) {
+			th.join();
 		}
 	}
+
+	//remove them
+	for (auto& vec : chunksToDelete) {
+		//world.chunks[vec]->SaveChunk();
+		world.chunks.erase(vec);
+	}
+	
+	time2 = glfwGetTime();
+
+	Console::Log((time2 - time1) * 1000, text::green, __LINE__);
+
 }
+
 
 void Map::MakeNewChunk(Vector2_I coords) {
 	std::shared_ptr<Chunk> tempChunk = std::make_shared<Chunk>();
-	tempChunk->globalChunkCoord = c_glCoords;
+	tempChunk->globalChunkCoord = coords;
 
 	BuildChunk(tempChunk);
 	SpawnChunkEntities(tempChunk);
@@ -152,7 +213,6 @@ void Map::MakeNewChunk(Vector2_I coords) {
 
 void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 {
-	Console::Log(chunk.get(), ERROR, __LINE__);
 	for (int i = 0; i < 0; i++)
 	{
 		Entity* zomb;

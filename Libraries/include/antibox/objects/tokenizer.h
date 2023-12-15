@@ -111,11 +111,13 @@ struct SaveData {
 	match<float> floats;
 	match<std::string> strings;
 	match<int> items;
+	match<Vector2_I> vec2;
 };
 
 
 static class Tokenizer {
 public:
+
 	static std::vector<std::string> getTokens(std::string input)
 	{
 		std::vector<std::string> tokens;
@@ -191,7 +193,7 @@ public:
 			current_section += file[i];
 
 		}
-		return NULL;
+		return "err_none";
 	}
 };
 
@@ -204,23 +206,36 @@ public:
 		
 		std::string contents;
 		std::string line; //read from file
+		bool shouldWrite = false;
 
+		//write only the section we want to a string
 		while (std::getline(file, line)) {
-			contents += line;
-		} //put file data into std::string
+			//when we find the section, start writing
+			if (line == section + " {") { shouldWrite = true; continue; }
+			else if(!shouldWrite) { continue; }
 
-		std::string properSection = Tokenizer::getSection(contents, section);
+			//when we find the closing bracket, stop reading the file
+			if (line == "}" && shouldWrite) { shouldWrite = false; break; }
+
+			//write if we should
+			if (shouldWrite) { contents += line; }
+		} 
+
+		//std::string properSection = Tokenizer::getSection(contents, section);
 
 		data->section_name = section;
-		std::vector<std::string> temp_tokens = Tokenizer::getTokens(properSection);//split it up / tokenize it
+		std::vector<std::string> temp_tokens = Tokenizer::getTokens(contents);//split it up / tokenize it
+
+
 		for (int i = 0; i < temp_tokens.size() - 1; i++)
 		{
 			data->tokens[temp_tokens[i]] = temp_tokens[i + 1];
 			i++;
 		}
-		 
+		
 	}
-	static void SaveDataToFile(std::string filename, std::string sectionName, SaveData data) {
+
+	static std::string ReturnDataToSave(std::string sectionName, SaveData data) {
 		std::string file = sectionName + " {\n";
 		for (int i = 0; i < data.ints.size(); i++)
 		{
@@ -234,6 +249,10 @@ public:
 		{
 			file.append(data.floats.keys[i] + " : " + std::to_string(data.floats.values[i]) + ";\n");
 		}
+		for (int i = 0; i < data.vec2.size(); i++)
+		{
+			file.append(data.vec2.keys[i] + " : {" + std::to_string(data.vec2.values[i].x) + "," + std::to_string(data.vec2.values[i].y) + "}; \n");
+		}
 		if (data.items.size() > 0) {
 			file.append("items : [");
 			for (int i = 0; i < data.items.size(); i++)
@@ -242,14 +261,19 @@ public:
 			}
 			file.append("];\n");
 		}
-		file.append("}");
+		file.append("}\n");
 
+		return file;
+	}
+
+	static void SaveDataToFile(std::string filename, std::string sectionName, SaveData data, bool logSuccess) {
+		std::string dat = ReturnDataToSave(sectionName, data);
 
 		std::ofstream myfile;
-		myfile.open(filename);
-		myfile << file;
+		myfile.open(filename, std::ios::app);
+		myfile << dat;
 		myfile.close();
 
-		Console::Log("Wrote to file " + filename, text::green, __LINE__);
+		if(logSuccess) Console::Log("Wrote to file " + filename, text::green, __LINE__);
 	}
 };

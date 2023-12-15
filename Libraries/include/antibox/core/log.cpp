@@ -4,7 +4,7 @@
 
 void Console::Log(std::string message, textColor type = "\033[0;37m", int lineNum = -1)
 { 
-	std::cout << "[ Line " << lineNum << " ]: " << type << message << "\033[0m\n" << std::endl; 
+	std::cout << "[ Line " << lineNum << " ]: " << type << message << "\033[0m\n" << std::endl;
 }
 /*void Console::Log(unsigned char* message, textColor type = "\033[0;37m", int lineNum = -1)
 {

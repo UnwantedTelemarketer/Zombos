@@ -86,7 +86,6 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	{
 		npcMessages.push_back(data.getString(std::to_string(i)));
 	}
-	Console::Log(npcMessages, text::blue, __LINE__);
 }
 
 void GameManager::AddRecipes() {
