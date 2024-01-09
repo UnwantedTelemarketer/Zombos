@@ -60,12 +60,12 @@ struct Chunk {
 		std::string filePath = ("dat/map/Chunk" + std::to_string(globalChunkCoord.x) + std::to_string(globalChunkCoord.y));
 		std::ofstream outFile(filePath, std::ios::binary);
 
-		Saved_Chunk sChunk;
+		Saved_Chunk *sChunk = new Saved_Chunk();
 		for (size_t i = 0; i < CHUNK_WIDTH; i++)
 		{
 			for (size_t j = 0; j < CHUNK_HEIGHT; j++)
 			{
-				CreateSavedTile(&sChunk.tiles[i][j], localCoords[i][j]);
+				CreateSavedTile(&sChunk->tiles[i][j], localCoords[i][j]);
 			}
 		}
 
@@ -73,9 +73,10 @@ struct Chunk {
 		{
 			for (size_t j = 0; j < CHUNK_HEIGHT; j++)
 			{
-				sChunk.tiles[i][j].Serialize(outFile);
+				sChunk->tiles[i][j].Serialize(outFile);
 			}
 		}
+		delete sChunk;
 		outFile.close();
 	}
 };

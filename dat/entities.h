@@ -131,7 +131,6 @@ struct Saved_Tile {
 	int x, y = 0;
 
 	void Serialize(std::ofstream& stream) {
-		//stream.write(reinterpret_cast<const char*>(this), sizeof(this));
 		stream.write(reinterpret_cast<const char*>(&id), sizeof(id));
 		stream.write(reinterpret_cast<const char*>(&liquid), sizeof(liquid));
 
@@ -148,8 +147,7 @@ struct Saved_Tile {
 
 	}
 	void Deserialize(std::ifstream& stream) {
-		//stream.read(reinterpret_cast<char*>(this), sizeof(this));
-			// Read non-trivial members separately
+		// Read non-trivial members separately
 		stream.read(reinterpret_cast<char*>(&id), sizeof(id));
 		stream.read(reinterpret_cast<char*>(&liquid), sizeof(liquid));
 
@@ -161,10 +159,11 @@ struct Saved_Tile {
 		stream.read(reinterpret_cast<char*>(&x), sizeof(x));
 		stream.read(reinterpret_cast<char*>(&y), sizeof(y));
 
-		size_t size;
+		size_t size = 0;
 		stream.read(reinterpret_cast<char*>(&size), sizeof(size));
 
 		// Read the string data
+		itemName.resize(size);
 		stream.read(&itemName[0], size);
 	}
 };

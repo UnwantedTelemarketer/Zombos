@@ -8,7 +8,6 @@
 #define UNIFONT "c:\\Users\\Thomas Andrew\\AppData\\Local\\Microsoft\\Windows\\Fonts\\Unifont.ttf"
 #define DOSFONT "dat\\fonts\\symbolicv2.ttf"
 #define CASCADIA "c:\\Windows\\Fonts\\CascadiaCode.ttf"
-#define DEV_TOOLS
 using namespace antibox;
 
 enum GameState {playing, menu};
