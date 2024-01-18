@@ -4,7 +4,6 @@
 #define CHUNK_HEIGHT 30
 
 struct Saved_Chunk {
-	int global_x, global_y;
 	Saved_Tile tiles[CHUNK_WIDTH][CHUNK_HEIGHT];
 };
 
@@ -29,7 +28,7 @@ struct Chunk {
 	void LoadChunk(Vector2_I coords) {
 
 		Saved_Chunk sChunk;
-		std::string filePath = ("dat/map/Chunk" + std::to_string(coords.x) + std::to_string(coords.y));
+		std::string filePath = ("dat/map/" + std::to_string(coords.x) + std::to_string(coords.y) + ".chunk");
 
 		std::ifstream inFile(filePath, std::ios::binary);
 		if (inFile.is_open()) {
@@ -44,7 +43,8 @@ struct Chunk {
 
 			inFile.close();
 		}
-		globalChunkCoord = { sChunk.global_x, sChunk.global_y };
+
+		globalChunkCoord = coords;
 
 		//once deserialized, read the data into the tiles
 		for (size_t i = 0; i < CHUNK_WIDTH; i++)
@@ -57,7 +57,7 @@ struct Chunk {
 	}
 
 	void SaveChunk() {
-		std::string filePath = ("dat/map/Chunk" + std::to_string(globalChunkCoord.x) + std::to_string(globalChunkCoord.y));
+		std::string filePath = ("dat/map/" + std::to_string(globalChunkCoord.x) + std::to_string(globalChunkCoord.y) + ".chunk");
 		std::ofstream outFile(filePath, std::ios::binary);
 
 		Saved_Chunk *sChunk = new Saved_Chunk();

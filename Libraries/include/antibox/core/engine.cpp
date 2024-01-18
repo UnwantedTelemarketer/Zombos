@@ -23,7 +23,10 @@ namespace antibox
 		mAudio = new AudioEngine();
 	}
 
-	
+	void Engine::SetAppList(std::vector<App*> apps) {
+		mAppList = apps;
+	}
+
 
 	void Engine::Initialize() { //Do all the initialization
 		srand((unsigned)time(NULL)); //for rng
@@ -34,20 +37,34 @@ namespace antibox
 		mAudio->init();
 	}
 
+	void Engine::InitializeApp(App* app) {
+		mApp->Init();
+	}
 
-	void Engine::Run(App* app) { //This is what loops forever until the window is closed
-		if (mApp == nullptr) { mApp = app; }//If we dont have an app, set the private app to the one submitted from wherever run is called.
+
+	void Engine::Run() { //This is what loops forever until the window is closed
+		if (mApp == nullptr) { mApp = mAppList[0]; }//If we dont have an app, set the private app to the one submitted from wherever run is called.
 		else { return; } //if there is no app anywhere, just dont run
 		Initialize();
 
-		closeApp = false;
-		while (!closeApp) //This is the window loop from GLFW.
+		closeScene = false;
+		while (!closeScene) //This is the window loop from GLFW.
 		{
-			closeApp = glfwWindowShouldClose(window->glfwin());
+			if (sceneToChangeTo != -1) {
+				ChangeApp(sceneToChangeTo);
+				sceneToChangeTo = -1;
+			}
 			Update(); //Run the Update function
 			Render(); //Run the Render Function
+			closeScene = glfwWindowShouldClose(window->glfwin());
 		}
 		End(); //Once the user closes the window, run End
+	}
+
+	void Engine::ChangeApp(int sceneNum) {
+		mApp->Shutdown();
+		mApp = mAppList[sceneNum];
+		InitializeApp(mApp);
 	}
 
 	void Engine::Update() {
@@ -115,6 +132,10 @@ namespace antibox
 	void Engine::StartSound(const char* path)
 	{
 		mAudio->PlayAudio(path);
+	}
+
+	void Engine::SetVolume(float volume) {
+		mAudio->SetVolume(volume);
 	}
 
 	Engine::~Engine() {

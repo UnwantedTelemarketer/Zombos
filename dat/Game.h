@@ -73,7 +73,6 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	mPlayer.coords.y = y;
 	AddRecipes();
 	mainMap.CreateMap(seed, biome);
-	mainMap.CreateStarterChunk(mPlayer);
 	//Faction, Enemies
 	factionEnemies = {
 		{Human, {Zombie}},

@@ -57,6 +57,7 @@ public:
 		navInv = false;
 		showDialogue = true;
 
+		Engine::Instance().SetVolume(0.1f);
 	}
 
 	void Update() {
@@ -65,6 +66,10 @@ public:
 		if (player.health <= 0) { currentState = menu; player.health = 100; }
 
 		game.UpdateTick();
+
+		if (Input::KeyDown(KEY_SEMICOLON)) {
+			Engine::Instance().SetApp(1);
+		}
 
 		if (Input::KeyDown(KEY_UP)) {
 			if (interacting)
@@ -154,11 +159,13 @@ public:
 		{
 			debugOpen = !debugOpen;
 		}
+
 		else if (Input::KeyDown(KEY_I))
 		{
 			navInv = !navInv;
 			itemMenu = navInv;
 		}
+
 		else if (Input::KeyDown(KEY_E))
 		{
 			if (!navInv) 
@@ -167,10 +174,12 @@ public:
 				interacting = true;
 			}
 		}
+
 		else if (Input::KeyDown(KEY_C))
 		{
 			craftingMenu = !craftingMenu;
 		}
+
 		else if (Input::KeyDown(KEY_A))
 		{
 			player.aiming = !player.aiming;
@@ -181,7 +190,10 @@ public:
 			Engine::Instance().StartSound(soundName);
 		}
 		
-		if (player.aiming) { map.DrawLine(map.GetLine(player.coords, player.crosshair, 25)); }
+		if (player.aiming) { 
+			map.ClearLine();
+			map.DrawLine(map.GetLine(player.coords, player.crosshair, 25)); 
+		}
 ;	}
 
 	void ImguiRender() override
@@ -221,7 +233,8 @@ public:
 			player.health = data.getFloat("health");
 			player.thirst = data.getFloat("thirst");
 			player.hunger = data.getFloat("hunger");
-			map.c_glCoords = { data.getInt("global_x"),data.getInt("global_y") };
+			map.c_glCoords = { data.getInt("global_x"), data.getInt("global_y") };
+			Console::Log(map.c_glCoords, text::red, __LINE__);
 
 			pInv.clothes = { data.getFloat("color_r"), data.getFloat("color_g"), data.getFloat("color_b") };
 
@@ -244,7 +257,7 @@ public:
 
 		ImGui::ColorPicker3("Clothes Color", &clothes.x);
 
-		pInv.clothes = { clothes.x,clothes.y,clothes.z };
+		pInv.clothes = { clothes.x, clothes.y, clothes.z };
 		if (ImGui::Button("Start")) {
 			pInv.AddItemFromFile("items.eid", "BANDAGE");
 			currentState = playing;
@@ -310,14 +323,6 @@ public:
 			ImGui::Text(game.actionLog[i].c_str());
 		}
 		//ImGui::PopFont();
-		ImGui::End();
-
-		//------Combat------
-		ImGui::Begin("Interact");
-		if (ImGui::Button(openClose.c_str())) {
-			statsOpen = !statsOpen;
-			openClose = statsOpen ? "Close Stats" : "Open Stats";
-		}
 		ImGui::End();
 
 		//------Stats------
@@ -679,6 +684,8 @@ public:
 			dat.ints.append("global_x", map.CurrentChunk()->globalChunkCoord.x);
 			dat.ints.append("global_y", map.CurrentChunk()->globalChunkCoord.y);
 
+			Console::Log(map.CurrentChunk()->globalChunkCoord, SUCCESS, __LINE__);
+
 			for (int i = 0; i < pInv.items.size(); i++)
 			{
 				dat.items.append(pInv.items[i].section, pInv.items[i].count);
@@ -823,6 +830,12 @@ class Sprites : public App {
 		main.CreateObject("Player", { 0,0 }, { 0.25,0.25 }, "res/image.png");
 	}
 	void Update() override {
+
+
+		if (Input::KeyDown(KEY_SEMICOLON)) {
+			Engine::Instance().SetApp(0);
+		}
+
 		if (Input::KeyDown(KEY_W)) {
 			main.FindObject("Player")->Move({0.5f, 0.0f});
 		}
@@ -856,6 +869,6 @@ class Sprites : public App {
 
 
 
-antibox::App* CreateApp() {
-	return new Caves();
+std::vector<App*> CreateGame() {
+	return {new Caves};
 }

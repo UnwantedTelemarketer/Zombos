@@ -19,16 +19,15 @@
 //class ClientApp : public antibox::App {};
 //antibox::App* CreateApp() { return new ClientApp(); }
 
-antibox::App* CreateApp();
+std::vector<antibox::App*> CreateGame();
+
 
 int main() {
 	bool menu = true;
 	antibox::Engine& engine = antibox::Engine::Instance();
-	antibox::App* app = CreateApp(); //then run their app
+	engine.SetAppList(CreateGame());
 
-	engine.Run(app);
-
-	delete app;
+	engine.Run();
 
 	return 0;
 }

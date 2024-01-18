@@ -30,14 +30,16 @@ namespace antibox {
 		static Engine& Instance(); 
 
 		//Play sound once at file path
-		void StartSound(const char* path); 
+		void StartSound(const char* path);
+		void SetVolume(float volume);
+
 		~Engine(); //Destructor
 
 		
-		void End(); //Called when window is closed
-		void CloseApp() { closeApp = true; } //close the loop
-
-		void Run(App* app); //The constant loop every frame
+		void End();
+		void Run();//The constant loop every frame
+		//Called when window is closed
+		
 		inline App& GetApp() { return *mApp; } //Returns App
 		Window* GetWindow() { return window; } //Returns Window
 		inline render::RenderManager& GetRenderManager() { return mRenderManager; } //Returns RenderManager
@@ -52,13 +54,20 @@ namespace antibox {
 
 		bool AddScene(Scene* sc);
 		//Scene* GetScene(std::string name);
+		void SetAppList(std::vector<App*> apps);
 
+		void SetApp(int appID) { 
+			if (appID < mAppList.size()) { sceneToChangeTo = appID; }
+			else { Console::Log("Error: Attempting to SetApp at index larger than list.", ERROR, __LINE__); }
+		}
 	private:
 
 		Engine();
 		App* mApp; //Pointer to the current app. There should only ever be one app.
 		AudioEngine* mAudio; //Audio manager
 		static Engine* mInstance; //Local reference to the engine singleton
+		std::vector<App*> mAppList;
+		int sceneToChangeTo = -1;
 
 		render::RenderManager mRenderManager; //RenderManager takes in Render Commands for rendering
 
@@ -68,11 +77,14 @@ namespace antibox {
 		double fps;
 		double ms;
 		unsigned int counter = 0;
-		bool closeApp;
+		bool closeScene;
 
 		void Update(); //Self Explanatory
 		void Render();
 		void Initialize();
+		void ChangeApp(int sceneNum); //close the loop
+
+		void InitializeApp(App* app);
 
 		std::vector<Scene*> mScenes;
 	};

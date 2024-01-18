@@ -9,4 +9,5 @@ private:
 public:
 	ma_result init();
 	void PlayAudio(const char* path);
+	void SetVolume(float volume);
 };

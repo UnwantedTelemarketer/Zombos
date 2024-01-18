@@ -20,3 +20,8 @@ ma_result AudioEngine::init() {
 void AudioEngine::PlayAudio(const char* path) {
     ma_engine_play_sound(&mEngine, path, NULL);
 }
+
+void AudioEngine::SetVolume(float volume)
+{
+    ma_engine_set_volume(&mEngine, volume);
+}

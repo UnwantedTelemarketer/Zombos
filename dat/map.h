@@ -50,7 +50,6 @@ public:
 	void MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLog);
 	void CheckBounds(Player* p);
 	void CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk);
-	void CreateStarterChunk(Player p);
 	void BuildChunk(std::shared_ptr<Chunk> chunk);
 	void PlaceBuilding(std::shared_ptr<Chunk> chunk);
 	void GenerateTomb(std::shared_ptr<Chunk> chunk);
@@ -89,7 +88,6 @@ void Map::CreateMap(int l_seed, int b_seed)
 
 	mapNoise = new PerlinNoise(landSeed);
 	biomeNoise = new PerlinNoise(biomeSeed);
-
 	UpdateMemoryZone(c_glCoords, newGame);
 }
 
@@ -378,10 +376,6 @@ void Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 		chunk->entities.erase(chunk->entities.begin() + oldIndex);
 		FixEntityIndex(chunk);
 	}
-}
-
-void Map::CreateStarterChunk(Player p) {
-	//SetShownChunk();
 }
 
 void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
