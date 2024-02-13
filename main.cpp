@@ -234,7 +234,6 @@ public:
 			player.thirst = data.getFloat("thirst");
 			player.hunger = data.getFloat("hunger");
 			map.c_glCoords = { data.getInt("global_x"), data.getInt("global_y") };
-			Console::Log(map.c_glCoords, text::red, __LINE__);
 
 			pInv.clothes = { data.getFloat("color_r"), data.getFloat("color_g"), data.getFloat("color_b") };
 
