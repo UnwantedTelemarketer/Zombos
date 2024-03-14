@@ -24,6 +24,11 @@ namespace Console {
 	void Log(std::vector<std::string> list, textColor type, int lineNum);
 	void Log(Vector2 vec, textColor type, int lineNum);
 	void Log(Vector2_I vec, textColor type, int lineNum);
+
+	//template <typename T, typename T2>
+	//void Log(std::pair<T, T2> pair, textColor type, int lineNum);
+
+	void Log(std::pair<std::string, std::string> pair, textColor type, int lineNum);
 	//Writes a message and returns the message as a string. ERROR is red, WARNING is yellow, SUCCESS is green, LOG is white.
 	//std::string LogOut(std::string message, int type);
 }

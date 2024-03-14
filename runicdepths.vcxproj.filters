@@ -1639,6 +1639,7 @@
     <None Include="dat\eid\factions.eid" />
     <None Include="dat\eid\dialogue.eid" />
     <None Include="dat\eid\ground_items.eid" />
+    <None Include="dat\eid\tiles.eid" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="other.txt" />

@@ -7,10 +7,10 @@
 
 namespace Math{
 	//Input the max number, and this will return a float between 1 and your max (inclusive).
-	inline float RandNum(int max) { return (rand() % max + 1); } //kinda gross to look at, but its just getting a random seed and returning the float
+	inline float RandNum(int max) { return (rand() % max + 1); } 
 
 	//Input the max number, and this will return an int between min and max (inclusive).
-	inline int RandInt(int min, int max) { return std::max(min, (rand() % max + 1)); } //kinda gross to look at, but its just getting a random seed and returning the float
+	inline int RandInt(int min, int max) { return min + (rand() % max - min); }
 
 	//Returns a random string from a vector of strings.
 	inline std::string RandString(std::vector<std::string> list) { return list[rand() % (list.size()-1) + 1]; } //also bad to look at, but i dont want to make a multiline function in a header

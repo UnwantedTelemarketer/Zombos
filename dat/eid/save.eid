@@ -1,15 +1,15 @@
 STATS {
-x_pos : 4;
-y_pos : 10;
-seed : 13067;
-biomes : 31611;
+x_pos : 15;
+y_pos : 15;
+seed : 13532;
+biomes : 5790;
 global_x : 250;
 global_y : 250;
 color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
 health : 100.000000;
-thirst : 99.025040;
-hunger : 99.349960;
-items : [BANDAGE,1,];
+thirst : 94.750214;
+hunger : 96.499786;
+items : [BANDAGE,1,GRASS,1,];
 }

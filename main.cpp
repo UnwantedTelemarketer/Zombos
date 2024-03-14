@@ -6,7 +6,7 @@
 #include <chrono>
 
 #define UNIFONT "c:\\Users\\Thomas Andrew\\AppData\\Local\\Microsoft\\Windows\\Fonts\\Unifont.ttf"
-#define DOSFONT "dat\\fonts\\symbolicv2.ttf"
+#define DOSFONT "dat\\fonts\\symbolic_conveyor.ttf"
 #define CASCADIA "c:\\Windows\\Fonts\\CascadiaCode.ttf"
 using namespace antibox;
 
@@ -183,6 +183,32 @@ public:
 		else if (Input::KeyDown(KEY_A))
 		{
 			player.aiming = !player.aiming;
+		}
+
+
+		if (Input::KeyDown(KEY_Y)) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_U];
+		}
+		if (Input::KeyDown(KEY_H)) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_D];
+		}
+		if (Input::KeyDown(KEY_G)) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_L];
+		}
+		if (Input::KeyDown(KEY_J)) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_R];
+		}
+		if (Input::KeyDown(KEY_T)) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_UL];
+		}
+		if (Input::KeyDown(KEY_U)) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_UR];
+		}
+		if (Input::KeyDown(KEY_B)) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_DL];
+		}
+		if (Input::KeyDown(KEY_M)) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_DR];
 		}
 
 		if (moved) {
@@ -441,6 +467,22 @@ public:
 			if (ImGui::Button(label)) {
 				map.isUnderground = !map.isUnderground;
 			}
+
+
+			if (ImGui::Button("Drop Selected Item")) {
+				if (itemMenu && !selectedTile->hasItem) {
+					selectedTile->hasItem = true;
+					std::string upperName = pInv.items[currentItemIndex].name;
+
+					for (auto& c : upperName) c = toupper(c);
+
+					selectedTile->itemName = upperName;
+					selectedTile->collectible = true;
+					if (pInv.RemoveItem(pInv.items[currentItemIndex].id)) { currentItemIndex = 0; }
+				}
+
+			}
+
 
 			if (selectedTile->collectible || selectedTile->liquid != nothing || selectedTile->hasItem) {
 				if (ImGui::Button("Collect")) {

@@ -60,6 +60,7 @@ public:
 	void ClearChunkOfEnts(std::shared_ptr<Chunk> chunk);
 	void PlaceEntities(std::shared_ptr<Chunk> chunk);
 	void UpdateTiles(vec2_i coords);
+	void DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y);
 	void FixEntityIndex(std::shared_ptr<Chunk> chunk);
 	void floodFillUtil(int x, int y, float prevBrightness, float newBrightness, int max);
 	void floodFill(Vector2_I centerTile);
@@ -571,28 +572,33 @@ void Map::UpdateTiles(vec2_i coords) {
 
 	for (int x = 0; x < CHUNK_WIDTH; x++) {
 		for (int y = 0; y < CHUNK_HEIGHT; y++) {
+			Tile *curTile = &chunk->localCoords[x][y];
 
-			if (!chunk->localCoords[x][y].visited) { chunk->localCoords[x][y].brightness = 1.f; }
-			chunk->localCoords[x][y].visited = false;
+			DoTechnical(curTile, chunk, x, y);
+
+			//Something something flood fill
+			if (!curTile->visited) { curTile->brightness = 1.f; }
+
+			curTile->visited = false;
 			//If can update over time
-			if (chunk->localCoords[x][y].changesOverTime) {
-				chunk->localCoords[x][y].ticksPassed++;
+			if (curTile->changesOverTime) {
+				curTile->ticksPassed++;
 
 				//update if the tile can update (like grass growing)
-				if (chunk->localCoords[x][y].CanUpdate()) {
-					if (chunk->localCoords[x][y].liquid == nothing) {
-						chunk->localCoords[x][y] = tileByID[chunk->localCoords[x][y].timedReplacement];
+				if (curTile->CanUpdate()) {
+					if (curTile->liquid == nothing) {
+						*curTile = tileByID[curTile->timedReplacement];
 					}
 					else {
-						chunk->localCoords[x][y].ticksPassed -= 1;
+						curTile->ticksPassed -= 1;
 					}
 				}
 			}
 
 			//spread fire to a list so we dont spread more than one tile per update
-			if (chunk->localCoords[x][y].liquid == fire) {
+			if (curTile->liquid == fire) {
 				floodFill({ x, y });
-				chunk->localCoords[x][y].burningFor++;
+				curTile->burningFor++;
 				switch (Math::RandInt(1, 10)) {
 				case 1:
 					tilesToBurn.push_back({ x + 1, y });
@@ -610,12 +616,15 @@ void Map::UpdateTiles(vec2_i coords) {
 					break;
 				}
 			}
+
 			//if its been burned recently, dont let it catch again
-			if (chunk->localCoords[x][y].burningFor >= 5) {
-				chunk->localCoords[x][y].burningFor++;
-				if (chunk->localCoords[x][y].burningFor >= 100) { chunk->localCoords[x][y].burningFor = 0; }
-				chunk->localCoords[x][y].liquid = nothing;
+			if (curTile->burningFor >= 5) {
+				curTile->burningFor++;
+				if (curTile->burningFor >= 100) { curTile->burningFor = 0; }
+				curTile->liquid = nothing;
 			}
+
+			curTile->technical_update = false;
 		}
 	}
 	//set fire to tiles
@@ -625,6 +634,57 @@ void Map::UpdateTiles(vec2_i coords) {
 		else if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].burningFor < 0) { continue; }
 		chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].liquid = fire;
 		floodFill({ tilesToBurn[i].x, tilesToBurn[i].y });
+	}
+
+
+}
+
+//============ Conveyor Belts ============
+void Map::DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y) {
+	//Conveyors pass items to the next spot
+	if (curTile->id >= 100 && curTile->id <= 107 && curTile->hasItem && curTile->technical_update == false) {
+
+		//Get a vector2 of which direction to go to next
+		Vector2_I nextTileCoord = { 0, 0 };
+		if (curTile->technical_dir == up) { nextTileCoord = { -1, 0 }; }
+		else if (curTile->technical_dir == down) { nextTileCoord = { 1, 0 }; }
+		else if (curTile->technical_dir == left) { nextTileCoord = { 0, -1 }; }
+		else if (curTile->technical_dir == right) { nextTileCoord = { 0, 1 }; }
+
+		Tile* nextTile = &chunk->localCoords[x + nextTileCoord.x][y + nextTileCoord.y];
+
+		//move the item
+		curTile->hasItem = false;
+		nextTile->hasItem = true;
+		nextTile->itemName = curTile->itemName;
+		nextTile->technical_update = true;
+		
+		switch (curTile->id) {
+			case 100: //up
+				curTile->technical_dir = up;
+				//if it gets pushed onto an up left turn
+				if (nextTile->id == 104) { nextTile->technical_dir = right; }
+				//if it gets pushed onto an up right turn
+				if (nextTile->id == 105) { nextTile->technical_dir = left; }
+				break;
+			case 101: //down
+				curTile->technical_dir = down;
+				//if it gets pushed onto a down left turn
+				if (nextTile->id == 106) { nextTile->technical_dir = right; }
+				//if it gets pushed onto a down right turn
+				if (nextTile->id == 107) { nextTile->technical_dir = left; }
+				break;
+			case 102: //left
+				curTile->technical_dir = left;
+				if (nextTile->id == 106) { nextTile->technical_dir = up; }
+				if (nextTile->id == 104) { nextTile->technical_dir = down; }
+				break;
+			case 103: //right
+				curTile->technical_dir = right;
+				if (nextTile->id == 107) { nextTile->technical_dir = up; }
+				if (nextTile->id == 105) { nextTile->technical_dir = down; }
+				break;
+		}
 	}
 }
 

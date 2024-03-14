@@ -64,3 +64,13 @@ void Console::Log(Vector2_I vec, textColor type = "\033[0;37m", int lineNum = -1
 	std::cout << "[ Line " << lineNum << " ]: " << type << "Vector2 {" << std::to_string(vec.x) + ", " + std::to_string(vec.y) << "}" << "\033[0m\n" << std::endl;
 }
 
+//template <typename T, typename T2>
+//void Console::Log(std::pair<T, T2>, textColor type, int lineNum)
+//{
+//	std::cout << "[ Line " << lineNum << " ]: " << type << "Key : "<< std::to_string(vec.x) + ", " + std::to_string(vec.y) << "}" << "\033[0m\n" << std::endl;
+//}
+
+void Console::Log(std::pair<std::string, std::string> pair, textColor type, int lineNum)
+{
+	std::cout << "[ Line " << lineNum << " ]: " << type << "\nKey : " << pair.first + "\nValue : " + pair.second << "" << "\033[0m\n" << std::endl;
+}

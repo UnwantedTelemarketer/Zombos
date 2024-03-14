@@ -20,6 +20,7 @@ public:
 	std::vector<std::string> possibleNames = {"John", "Zombie"};
 	std::vector<Vector2_I> oldLocations;
 	std::map<Faction, std::vector<Faction>> factionEnemies;
+	std::map<int, std::string> tile_icons;
 	float worldTime = 6.f;
 	float darkTime = 1.f;
 	bool paused = false;
@@ -85,6 +86,14 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	{
 		npcMessages.push_back(data.getString(std::to_string(i)));
 	}
+
+	OpenedData tileData;
+	ItemReader::GetDataFromFile("tiles.eid", "TILES", &tileData);
+
+	for (auto const& x : tileData.tokens){
+		tile_icons.insert({ stoi(tileData.getArray(x.first)[1]) , tileData.getArray(x.first)[0] });
+	}
+
 }
 
 void GameManager::AddRecipes() {
@@ -467,28 +476,9 @@ std::string GameManager::GetTileChar(Tile tile) {
 		"";
 	}
 	if (tile.hasItem) {
-		return TILE_STICK;
+		return "I";
 	}
-	switch (tile.id) {
-	case ID_NULL:
-		return TILE_NULL;
-	case ID_GRASS:
-		return TILE_GRASS;
-	case ID_DIRT:
-		return TILE_DIRT;
-	case ID_FLOWER:
-		return TILE_FLOWER;
-	case ID_SCRAP:
-		return TILE_SCRAP;
-	case ID_STONE:
-		return TILE_STONE;
-	case ID_SAND:
-		return TILE_SAND;
-	case ID_STICK:
-		return TILE_STICK;
-	default:
-		return TILE_NULL;
-	}
+	return tile_icons[tile.id];
 }
 
 std::string GameManager::GetTileChar(Vector2_I tile) {
@@ -553,19 +543,27 @@ ImVec4 GameManager::GetTileColor(Tile tile, float intensity) {
 	case 0:
 		color = { 0.75, 0.75, 0.75, 1 };
 		break;
-	case ID_DIRT:
+	case 2: //dirt
 		color = { 1, 0.45, 0, 1 };
 		break;
-	case ID_FLOWER:
+	case 3: //flower
 		color = { 0.65, 1, 0.1, 1 };
 		break;
-	case ID_SCRAP:
+	case 5: //scrap
 		color = { 1, 0.5, 0, 1 };
 		break;
-	case ID_STONE:
+	case 100://conveyor belts
+	case 101:
+	case 102:
+	case 103:
+	case 104:
+	case 105:
+	case 106:
+	case 107:
+	case 6: //stone
 		color = { 0.65, 0.65, 0.65, 1 };
 		break;
-	case ID_SAND:
+	case 7: //sand
 		color = { 1, 1, 0.5, 1 };
 		break;
 	default:

@@ -168,8 +168,11 @@ struct Saved_Tile {
 	}
 };
 
+enum direction{up, down, left, right, still};
+
 struct Tile {
 	int id = -1;
+	direction technical_dir = up;
 	Liquid liquid = nothing;
 	Entity* entity = nullptr;
 	bool collectible = false;
@@ -185,6 +188,7 @@ struct Tile {
 	bool hasItem = false;
 	float brightness = 1.f;
 	bool visited = false;
+	bool technical_update = false;
 	vec2_i coords;
 
 	void LoadTile(Saved_Tile tile) {
@@ -300,7 +304,6 @@ private:
 #define ENT_HUMAN "E"
 #define ID_HUMAN 3
 
-#define ICON_FONT
 
 #ifdef REGULAR_FONT
 #define TILE_LIQUID "~"
@@ -371,4 +374,29 @@ private:
 
 #define TILE_STICK "I"
 #define ID_STICK 10
+
+
+#define TILE_CONVEYOR_U "M"
+#define ID_CONVEYOR_U 100
+
+#define TILE_CONVEYOR_D "N"
+#define ID_CONVEYOR_D 101
+
+#define TILE_CONVEYOR_L "T"
+#define ID_CONVEYOR_L 102
+
+#define TILE_CONVEYOR_R "S"
+#define ID_CONVEYOR_R 103
+
+#define TILE_CONVEYOR_UL "O"
+#define ID_CONVEYOR_UL 104
+
+#define TILE_CONVEYOR_UR "P"
+#define ID_CONVEYOR_UR 105
+
+#define TILE_CONVEYOR_DL "Q"
+#define ID_CONVEYOR_DL 106
+
+#define TILE_CONVEYOR_DR "R"
+#define ID_CONVEYOR_DR 107
 #endif

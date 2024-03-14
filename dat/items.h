@@ -11,6 +11,47 @@
 #define ITEM_ROPE "rope"
 #define ITEM_ROCK "rock"
 
+#define ID_NULL -1
+
+#define ID_GRASS 1
+
+#define ID_DIRT 2
+
+#define ID_TREE 999
+
+#define ID_FLOWER 3
+
+#define ID_FIRE 4
+
+#define ID_SCRAP 5
+
+#define ID_STONE 6
+
+#define ID_SAND 7
+
+#define ID_CONTAINER 8
+
+#define ID_CONTAINER_OPEN 9
+
+#define ID_STICK 10
+
+
+#define ID_CONVEYOR_U 100
+
+#define ID_CONVEYOR_D 101
+
+#define ID_CONVEYOR_L 102
+
+#define ID_CONVEYOR_R 103
+
+#define ID_CONVEYOR_UL 104
+
+#define ID_CONVEYOR_UR 105
+
+#define ID_CONVEYOR_DL 106
+
+#define ID_CONVEYOR_DR 107
+
 namespace EID {
 	static Item MakeItem(std::string file, std::string header) {
 		OpenedData data;
@@ -25,6 +66,7 @@ namespace EID {
 Tile Tile_Template =
 {
 	-1, // Starting block
+	still, //technical direction (for conveyors)
 	nothing, //Liquid
 	nullptr, //Entity
 	false, // Collectible
@@ -39,6 +81,7 @@ Tile Tile_Template =
 Tile Tile_Container =
 {
 	ID_CONTAINER, //Starting Block
+	still,
 	nothing,  //Liquid
 	nullptr,  //Entity
 	true,	  //Collectible
@@ -52,6 +95,7 @@ Tile Tile_Container =
 Tile Tile_Container_Open =
 {
 	ID_CONTAINER_OPEN, //Starting Block
+	still,
 	nothing,  //Liquid
 	nullptr,  //Entity
 	false,	  //Collectible
@@ -65,6 +109,7 @@ Tile Tile_Container_Open =
 Tile Tile_Grass =
 {
 	ID_GRASS, //Starting Block
+	still,
 	nothing,  //Liquid
 	nullptr,  //Entity
 	false,	  //Collectible
@@ -79,6 +124,7 @@ Tile Tile_Grass =
 Tile Tile_TallGrass =
 {
 	ID_FLOWER,
+	still,
 	nothing,
 	nullptr,
 	true,
@@ -89,6 +135,7 @@ Tile Tile_TallGrass =
 Tile Tile_Stick =
 {
 	10,
+	still,
 	nothing,
 	nullptr,
 	true,
@@ -99,6 +146,7 @@ Tile Tile_Stick =
 Tile Tile_Dirt =
 {
 	ID_DIRT,
+	still,
 	nothing,
 	nullptr,
 	false,
@@ -113,6 +161,7 @@ Tile Tile_Dirt =
 Tile Tile_Sand =
 {
 	ID_SAND,
+	still,
 	nothing,
 	nullptr,
 	false,
@@ -126,6 +175,7 @@ Tile Tile_Sand =
 Tile Tile_Scrap =
 {
 	ID_SCRAP,
+	still,
 	nothing,
 	nullptr,
 	true,
@@ -137,6 +187,7 @@ Tile Tile_Scrap =
 Tile Tile_Stone =
 {
 	ID_STONE,
+	still,
 	nothing,
 	nullptr,
 	false,
@@ -145,6 +196,11 @@ Tile Tile_Stone =
 	-1,
 	false
 };
+
+
+
+//============================  CONVEYOR BELTS ==============================
+
 
 static std::unordered_map<int, Tile> tileByID = 
 {
@@ -155,5 +211,13 @@ static std::unordered_map<int, Tile> tileByID =
 	{ID_STONE, Tile_Stone},
 	{ID_SAND, Tile_Sand},
 	{ID_CONTAINER, Tile_Container},
+	{ID_CONVEYOR_U, {ID_CONVEYOR_U, up}},
+	{ID_CONVEYOR_D, {ID_CONVEYOR_D, down}},
+	{ID_CONVEYOR_L, {ID_CONVEYOR_L, left}},
+	{ID_CONVEYOR_R, {ID_CONVEYOR_R, right}},
+	{ID_CONVEYOR_UL, {ID_CONVEYOR_UL}},
+	{ID_CONVEYOR_UR, {ID_CONVEYOR_UR}},
+	{ID_CONVEYOR_DL, {ID_CONVEYOR_DL}},
+	{ID_CONVEYOR_DR, {ID_CONVEYOR_DR}},
 	{10, Tile_Stone}
 };

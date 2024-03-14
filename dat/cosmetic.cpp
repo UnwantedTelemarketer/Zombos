@@ -14,6 +14,7 @@ ImVec4 Cosmetic::FireColor() {
 		return { 1, 1, 0, 1 };
 		break;
 	case 4:
+	default:
 		return { 1, 0.35, 0, 1 };
 		break;
 	}
