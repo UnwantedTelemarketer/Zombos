@@ -3,14 +3,14 @@
 #include "../graphics/sprite.h"
 #include <memory>
 
-namespace antibox 
+namespace antibox
 {
 	class GameObject {
 	public:
 		GameObject(std::string name, glm::vec2 pos, glm::vec2 size, std::string texture_path)
 			:mName(name),
-			 mPos(pos),
-			 mSize(size)
+			mPos(pos),
+			mSize(size)
 		{
 			CreateSprite(pos, size, texture_path);
 		}
@@ -18,7 +18,10 @@ namespace antibox
 		void SetPos(const glm::vec2& pos) { mPos = pos; }
 		void SetSize(glm::vec2 size) { mSize = size; }
 		void SetColor(const glm::vec4 color) {  }
-		void Move(const glm::vec2& distance) { mPos += distance; }
+		void Move(const glm::vec2 distance) {
+			mSprite->UpdateSprite(distance, { 1.f, 1.f });
+			mPos += distance;
+		}
 
 		const glm::vec2& GetPos() const { return mPos; }
 		const glm::vec2& GetSize() const { return mSize; }

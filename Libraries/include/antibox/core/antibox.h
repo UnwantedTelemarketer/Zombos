@@ -59,6 +59,7 @@ namespace Input {
 		}
 		return false;
 	}
+
 	//Returns true if the mouse button is pressed once, false if not.
 	bool MouseButtonDown(int mouseButton) {
 		int state = glfwGetMouseButton(antibox::Engine::Instance().GetWindow()->glfwin(), mouseButton); //glfw getting mouse down
