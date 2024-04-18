@@ -921,9 +921,11 @@ class Sprites : public App {
 		}
 		if (Input::KeyHeldDown(KEY_A)) {
 			main.FindObject("Player")->Move({ -0.0125f, 0.f });
+			main.FindObject("Player")->SetSize({ -0.25, 0.25 });
 		}
 		if (Input::KeyHeldDown(KEY_D)) {
 			main.FindObject("Player")->Move({ 0.0125f, 0.f });
+			main.FindObject("Player")->SetSize({ 0.25, 0.25 });
 		}
 
 	}
