@@ -185,32 +185,6 @@ public:
 			player.aiming = !player.aiming;
 		}
 
-
-		if (Input::KeyDown(KEY_Y)) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_U];
-		}
-		if (Input::KeyDown(KEY_H)) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_D];
-		}
-		if (Input::KeyDown(KEY_G)) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_L];
-		}
-		if (Input::KeyDown(KEY_J)) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_R];
-		}
-		if (Input::KeyDown(KEY_T)) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_UL];
-		}
-		if (Input::KeyDown(KEY_U)) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_UR];
-		}
-		if (Input::KeyDown(KEY_B)) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_DL];
-		}
-		if (Input::KeyDown(KEY_M)) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_DR];
-		}
-
 		if (moved) {
 			const char* soundName = walk_sounds[Math::RandInt(0, 4)].c_str();
 			Engine::Instance().StartSound(soundName);
@@ -339,6 +313,8 @@ public:
 		}
 		if (fancyGraphics) ImGui::PopFont();
 		ImGui::End();
+
+		TechScreen();
 
 		//------Action Log----
 		ImGui::Begin("Action Log");
@@ -678,6 +654,54 @@ public:
 		//ImGui::PopFont();
 	}
 
+	void TechScreen() {
+		ImGui::Begin("Technology");
+
+		ImGui::Text("---Place Conveyor Belt---");
+
+		if (fancyGraphics) ImGui::PushFont(Engine::Instance().getFont());
+
+		//TOP ROW
+		if (ImGui::Button("O")) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_UL];
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("S")) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_R];
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("P")) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_UR];
+		}
+
+		//MIDDLE ROW
+		if (ImGui::Button("M")) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_U];
+		}
+		ImGui::SameLine();
+		if (ImGui::Button(" ")) { }
+		ImGui::SameLine();
+		if (ImGui::Button("N")) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_D];
+		}
+
+		//BOTTOM ROW
+		if (ImGui::Button("Q")) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_DL];
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("T")) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_L];
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("R")) {
+			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_DR];
+		}
+
+		if (fancyGraphics) ImGui::PopFont();
+		ImGui::End();
+	}
+
 	void DisplayEntity(Entity* ent) 
 	{
 		if (showDialogue) {
@@ -830,7 +854,7 @@ class Falling_Sand : public App {
 		ImGui::PushFont(Engine::Instance().getFont());
 		ImGui::Begin("Game View");
 			for (int i = 0; i < map.size(); i++)
-			{
+			{ 
 				for (int j = 0; j < map[i].size(); j++)
 				{
 					if (Vector2_I{ i, j } == cursor_pos) {
