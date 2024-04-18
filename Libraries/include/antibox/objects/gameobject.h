@@ -19,7 +19,6 @@ namespace antibox
 		void SetSize(glm::vec2 size) { mSize = size; }
 		void SetColor(const glm::vec4 color) {  }
 		void Move(const glm::vec2 distance) {
-			mSprite->UpdateSprite(distance, { 1.f, 1.f });
 			mPos += distance;
 		}
 

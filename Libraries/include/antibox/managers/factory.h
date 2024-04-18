@@ -30,6 +30,21 @@ namespace Factory
 			#version 410 core
 			layout (location = 0) in vec3 position;
 			layout (location = 1) in vec2 texcoords;
+			out vec2 uvs;
+			uniform vec2 offset = vec2(0.5);
+			uniform mat4 model = mat4(1.0);
+
+			void main() {
+				uvs = texcoords;
+				vec4 transformedPosition = model * vec4(position + vec3(offset, 0.0), 1.0);
+				gl_Position = transformedPosition;
+			}
+		)";
+
+	/*
+	#version 410 core
+			layout (location = 0) in vec3 position;
+			layout (location = 1) in vec2 texcoords;
 			out vec3 vpos;
 			out vec2 uvs;
 			uniform vec2 offset = vec2(0.5);
@@ -40,8 +55,7 @@ namespace Factory
 				uvs = texcoords;
 				vpos = position + vec3(offset, 0);
 				gl_Position = vec4(position, 1.0);
-			}
-		)";
+			}*/
 
 	static const char* DefaultFrag = R"(
 			#version 410 core

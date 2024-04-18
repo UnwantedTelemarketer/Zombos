@@ -885,35 +885,49 @@ class Sprites : public App {
 		props.title = "Sprites";
 		props.cc = { 0.2f, 0.2f, 0.2f, 1.f };
 		props.framebuffer_display = true;
+		props.vsync = 1;
 		return props;
 	}
 
-	Scene main = { "Level 1" };
+	float p_vel = 0.f;
+	bool grounded = false;
+
+	Scene main = { "TEST" };
+	Scene level1 = { "Level 1" };
 
 	void Init() override {
 		Engine::Instance().AddScene(&main);
-		main.CreateObject("Player", { 0,0 }, { 0.25,0.25 }, "res/image.png");
+		Engine::Instance().AddScene(&level1);
+		main.CreateObject("Player", { -0.7,-1 }, { 0.25,0.25 }, "res/image.png");
+		main.CreateObject("Box", { 0.7,0.75 }, { 0.25,0.25 }, "res/box.png");
 	}
+
 	void Update() override {
 
-
-		if (Input::KeyDown(KEY_SEMICOLON)) {
-			Engine::Instance().SetApp(0);
+		if (main.FindObject("Player")->GetPos().y < 0.725) {
+			p_vel += 0.001f;
+			main.FindObject("Player")->Move({ 0.f, p_vel });
+			grounded = false;
+		}
+		else {
+			main.FindObject("Player")->SetPos({ main.FindObject("Player")->GetPos().x, 0.725f });
+			p_vel = 0;
+			grounded = true;
 		}
 
-		if (Input::KeyDown(KEY_W)) {
-			main.FindObject("Player")->Move({0.5f, 0.0f});
+		if (Input::KeyDown(KEY_W) && grounded) {
+			p_vel = -0.025f;
+			main.FindObject("Player")->Move({ 0.f, p_vel });
 		}
-		if (Input::KeyDown(KEY_S)) {
+		if (Input::KeyHeldDown(KEY_A)) {
+			main.FindObject("Player")->Move({ -0.0125f, 0.f });
+		}
+		if (Input::KeyHeldDown(KEY_D)) {
+			main.FindObject("Player")->Move({ 0.0125f, 0.f });
+		}
 
-		}
-		if (Input::KeyDown(KEY_A)) {
-
-		}
-		if (Input::KeyDown(KEY_D)) {
-
-		}
 	}
+
 	void Render() override {
 
 	}
@@ -935,5 +949,5 @@ class Sprites : public App {
 
 
 std::vector<App*> CreateGame() {
-	return {new Caves, new Sprites};
+	return {new Sprites};
 }
