@@ -173,6 +173,7 @@
     <ClCompile Include="Libraries\include\antibox\graphics\mesh.cpp" />
     <ClCompile Include="Libraries\include\antibox\graphics\texture.cpp" />
     <ClCompile Include="Libraries\include\antibox\graphics\sprite.cpp" />
+    <ClCompile Include="Libraries\include\antibox\graphics\vertex.cpp" />
     <ClCompile Include="Libraries\include\antibox\managers\rendermanager.cpp" />
     <ClCompile Include="Libraries\include\antibox\objects\gameobject.cpp" />
     <ClCompile Include="Libraries\include\antibox\objects\scene.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="dat\items.h" />
     <ClInclude Include="dat\map.h" />
     <ClInclude Include="Libraries\include\antibox\core\audio.h" />
+    <ClInclude Include="Libraries\include\antibox\graphics\vertex.h" />
     <ClInclude Include="Libraries\include\antibox\objects\tokenizer.h" />
     <ClInclude Include="Libraries\include\antibox\core\app.h" />
     <ClInclude Include="Libraries\include\antibox\core\engine.h" />
