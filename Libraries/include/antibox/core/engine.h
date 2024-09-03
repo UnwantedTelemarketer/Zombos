@@ -25,9 +25,10 @@ namespace antibox {
 		bool mouseDownFlag; //Flag used to see if a mouse button is held down, used in the antibox.h input section
 		bool keyDownFlag; //Flag used to see if a key is held down
 		int keyDownCode; //Variable holding the last pressed key
+		int currentSceneID;
 
 		//Singleton for engine
-		static Engine& Instance(); 
+		static Engine& Instance();
 
 		//Play sound once at file path
 		void StartSound(const char* path);
@@ -35,17 +36,17 @@ namespace antibox {
 
 		~Engine(); //Destructor
 
-		
+
 		void End();
 		void Run();//The constant loop every frame
 		//Called when window is closed
-		
+
 		inline App& GetApp() { return *mApp; } //Returns App
 		Window* GetWindow() { return window; } //Returns Window
 		inline render::RenderManager& GetRenderManager() { return mRenderManager; } //Returns RenderManager
 		//Returns the framerate.
-		double getFPS() { return fps; } 
-		
+		double getFPS() { return fps; }
+
 		//Returns the milliseconds between frames.
 		double deltaTime() { return ms; }
 
@@ -53,11 +54,12 @@ namespace antibox {
 		ImFont* getFont() { return window->imwin().mainFont; }
 
 		bool AddScene(Scene* sc);
+		inline void ChangeScene(int index) { currentSceneID = index; }
 		//Scene* GetScene(std::string name);
 		void SetAppList(std::vector<App*> apps);
 
-		void SetApp(int appID) { 
-			if (appID < mAppList.size()) { sceneToChangeTo = appID; }
+		void SetApp(int appID) {
+			if (appID < mAppList.size()) { appToChangeTo = appID; }
 			else { Console::Log("Error: Attempting to SetApp at index larger than list.", ERROR, __LINE__); }
 		}
 	private:
@@ -67,13 +69,13 @@ namespace antibox {
 		AudioEngine* mAudio; //Audio manager
 		static Engine* mInstance; //Local reference to the engine singleton
 		std::vector<App*> mAppList;
-		int sceneToChangeTo = -1;
+		int appToChangeTo = -1;
 
 		render::RenderManager mRenderManager; //RenderManager takes in Render Commands for rendering
 
 		double prevtime = 0.0; //delta time stuff
-		double crntTime = 0.0; 
-		double timeDiff; 
+		double crntTime = 0.0;
+		double timeDiff;
 		double fps;
 		double ms;
 		unsigned int counter = 0;

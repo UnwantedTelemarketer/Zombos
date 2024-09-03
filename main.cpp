@@ -10,13 +10,13 @@
 #define CASCADIA "c:\\Windows\\Fonts\\CascadiaCode.ttf"
 using namespace antibox;
 
-enum GameState {playing, menu};
+enum GameState { playing, menu };
 
 class Caves : public App {
 private:
-	WindowProperties GetWindowProperties() { 
+	WindowProperties GetWindowProperties() {
 		WindowProperties props;
-		
+
 		props.imguiProps = { true, true, false, DOSFONT };
 		props.w = 1280;
 		props.h = 720;
@@ -45,7 +45,7 @@ public:
 	Map& map = game.mainMap;
 
 	//Sounds
-	std::vector<std::string> walk_sounds = { "", "dat/sounds/walk_1.wav" , "dat/sounds/walk_2.wav" , "dat/sounds/walk_3.wav" , "dat/sounds/walk_4.wav" };
+	std::vector<std::string> walk_sounds = { "dat/sounds/walk_1.wav" , "dat/sounds/walk_2.wav" , "dat/sounds/walk_3.wav" , "dat/sounds/walk_4.wav" };
 
 	void Init() override {
 		fancyGraphics = true;
@@ -66,10 +66,6 @@ public:
 		if (player.health <= 0) { currentState = menu; player.health = 100; }
 
 		game.UpdateTick();
-
-		if (Input::KeyDown(KEY_SEMICOLON)) {
-			Engine::Instance().SetApp(1);
-		}
 
 		if (Input::KeyDown(KEY_UP)) {
 			if (interacting)
@@ -97,7 +93,7 @@ public:
 		else if (Input::KeyDown(KEY_DOWN)) {
 			if (interacting)
 			{
-				Tile &selTile = *map.TileAtPos(Vector2_I{ player.coords.x + 1, player.coords.y });
+				Tile& selTile = *map.TileAtPos(Vector2_I{ player.coords.x + 1, player.coords.y });
 				selectedTile = { &selTile };
 				if (selTile.entity != nullptr) {
 
@@ -108,7 +104,7 @@ public:
 			else if (navInv)
 			{
 				currentItemIndex++;
-				if(currentItemIndex > pInv.items.size() - 1) currentItemIndex = pInv.items.size() - 1;
+				if (currentItemIndex > pInv.items.size() - 1) currentItemIndex = pInv.items.size() - 1;
 				return;
 			}
 			else if (player.aiming) {
@@ -122,7 +118,7 @@ public:
 			}
 		}
 		else if (Input::KeyDown(KEY_LEFT)) {
-			if (interacting) 
+			if (interacting)
 			{
 				selectedTile = { map.TileAtPos(Vector2_I{ player.coords.x, player.coords.y - 1}) };
 				interacting = false;
@@ -168,7 +164,7 @@ public:
 
 		else if (Input::KeyDown(KEY_E))
 		{
-			if (!navInv) 
+			if (!navInv)
 			{
 				Math::PushBackLog(&game.actionLog, "Which direction will you interact with?");
 				interacting = true;
@@ -189,12 +185,13 @@ public:
 			const char* soundName = walk_sounds[Math::RandInt(0, 4)].c_str();
 			Engine::Instance().StartSound(soundName);
 		}
-		
-		if (player.aiming) { 
+
+		if (player.aiming) {
 			map.ClearLine();
-			map.DrawLine(map.GetLine(player.coords, player.crosshair, 25)); 
+			map.DrawLine(map.GetLine(player.coords, player.crosshair, 25));
 		}
-;	}
+		;
+	}
 
 	void ImguiRender() override
 	{
@@ -215,8 +212,8 @@ public:
 
 	void MenuScene() {
 		ImGui::Begin("Menu");
-		if(createChar){ Create_Character(); }
-		
+		if (createChar) { Create_Character(); }
+
 
 		if (ImGui::Button("New Game"))
 		{
@@ -239,7 +236,7 @@ public:
 
 			for (int i = 0; i < data.getArray("items").size() - 1; i++) //loop through all items
 			{
-				for (int s = 0; s < stoi(data.getArray("items")[i+1]); s++)
+				for (int s = 0; s < stoi(data.getArray("items")[i + 1]); s++)
 				{
 					pInv.AddItemFromFile("items.eid", data.getArray("items")[i]); //give it a certain amount of items
 				}
@@ -275,7 +272,7 @@ public:
 
 		//------Map-------
 		ImGui::Begin("Map");
-		if(fancyGraphics) ImGui::PushFont(Engine::Instance().getFont());
+		if (fancyGraphics) ImGui::PushFont(Engine::Instance().getFont());
 		for (int i = 0; i < CHUNK_WIDTH; i++) {
 			for (int j = 0; j < CHUNK_HEIGHT; j++) {
 				float intensity = map.CurrentChunk()->localCoords[i][j].brightness;
@@ -644,7 +641,7 @@ public:
 		int counter = 0;
 		for (const auto& pair : game.mainMap.world.chunks) {
 			ImGui::Text(("(" + std::to_string(pair.first.x)).c_str()); ImGui::SameLine();
-			ImGui::Text((std::to_string(pair.first.y) + ")").c_str()); if(counter != 2 && counter != 5) ImGui::SameLine();
+			ImGui::Text((std::to_string(pair.first.y) + ")").c_str()); if (counter != 2 && counter != 5) ImGui::SameLine();
 			counter++;
 		}
 
@@ -679,7 +676,7 @@ public:
 			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_U];
 		}
 		ImGui::SameLine();
-		if (ImGui::Button(" ")) { }
+		if (ImGui::Button(" ")) {}
 		ImGui::SameLine();
 		if (ImGui::Button("N")) {
 			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_D];
@@ -702,7 +699,7 @@ public:
 		ImGui::End();
 	}
 
-	void DisplayEntity(Entity* ent) 
+	void DisplayEntity(Entity* ent)
 	{
 		if (showDialogue) {
 			ImGui::Begin("Dialogue");
@@ -733,8 +730,9 @@ public:
 
 
 
-	void Shutdown() override{
+	void Shutdown() override {
 		if (currentState == playing) {
+			float curTime = glfwGetTime();
 			SaveData dat;
 			dat.floats.append("color_r", pInv.clothes.x);
 			dat.floats.append("color_g", pInv.clothes.y);
@@ -765,14 +763,16 @@ public:
 				chunk.second->SaveChunk();
 			}
 
-			LAZY_LOG("Save complete.");
+			float endTime = glfwGetTime() - curTime;
+
+			Console::Log("Save complete in " + std::to_string(endTime * 1000) + "ms.", text::green, __LINE__);
 		}
 	}
 };
 
 class Falling_Sand : public App {
 
-	Vector2_I cursor_pos = {10,10};
+	Vector2_I cursor_pos = { 10,10 };
 
 	WindowProperties GetWindowProperties() {
 		WindowProperties props;
@@ -853,22 +853,22 @@ class Falling_Sand : public App {
 
 		ImGui::PushFont(Engine::Instance().getFont());
 		ImGui::Begin("Game View");
-			for (int i = 0; i < map.size(); i++)
-			{ 
-				for (int j = 0; j < map[i].size(); j++)
-				{
-					if (Vector2_I{ i, j } == cursor_pos) {
-						ImGui::Text("X"); ImGui::SameLine();
-					}
-					else if (map[i][j] == 0) {
-						ImGui::TextColored({ 0.2f, 0.2f, 0.2f, 1.0f }, "J"); ImGui::SameLine();
-					}
-					else {
-						ImGui::TextColored({ 1.0f, 1.0f, 0.f, 1.0f }, "J"); ImGui::SameLine();
-					}
+		for (int i = 0; i < map.size(); i++)
+		{
+			for (int j = 0; j < map[i].size(); j++)
+			{
+				if (Vector2_I{ i, j } == cursor_pos) {
+					ImGui::Text("X"); ImGui::SameLine();
 				}
-				ImGui::NewLine();
+				else if (map[i][j] == 0) {
+					ImGui::TextColored({ 0.2f, 0.2f, 0.2f, 1.0f }, "J"); ImGui::SameLine();
+				}
+				else {
+					ImGui::TextColored({ 1.0f, 1.0f, 0.f, 1.0f }, "J"); ImGui::SameLine();
+				}
 			}
+			ImGui::NewLine();
+		}
 		ImGui::End();
 		ImGui::PopFont();
 	}
@@ -891,41 +891,44 @@ class Sprites : public App {
 
 	float p_vel = 0.f;
 	bool grounded = false;
+	int sceneid = 1;
 
 	Scene main = { "TEST" };
-	Scene level1 = { "Level 1" };
+	std::shared_ptr<GameObject> player;
 
 	void Init() override {
 		Engine::Instance().AddScene(&main);
-		Engine::Instance().AddScene(&level1);
 		main.CreateObject("Player", { -0.7,-1 }, { 0.25,0.25 }, "res/image.png");
 		main.CreateObject("Box", { 0.7,0.75 }, { 0.25,0.25 }, "res/box.png");
+		player = main.FindObject("Player");
 	}
+
+
 
 	void Update() override {
 
-		if (main.FindObject("Player")->GetPos().y < 0.725) {
-			p_vel += 0.001f;
-			main.FindObject("Player")->Move({ 0.f, p_vel });
+		if (player->GetPos().y < 0.725) {
+			p_vel += 0.002f;
+			player->Move({ 0.f, p_vel });
 			grounded = false;
 		}
 		else {
-			main.FindObject("Player")->SetPos({ main.FindObject("Player")->GetPos().x, 0.725f });
+			player->SetPos({ player->GetPos().x, 0.725f });
 			p_vel = 0;
 			grounded = true;
 		}
 
 		if (Input::KeyDown(KEY_W) && grounded) {
-			p_vel = -0.025f;
-			main.FindObject("Player")->Move({ 0.f, p_vel });
+			p_vel = -0.035f;
+			player->Move({ 0.f, p_vel });
 		}
 		if (Input::KeyHeldDown(KEY_A)) {
-			main.FindObject("Player")->Move({ -0.0125f, 0.f });
-			main.FindObject("Player")->SetSize({ -0.25, 0.25 });
+			player->Move({ -0.025f, 0.f });
+			player->SetSize({ -0.25, 0.25 });
 		}
 		if (Input::KeyHeldDown(KEY_D)) {
-			main.FindObject("Player")->Move({ 0.0125f, 0.f });
-			main.FindObject("Player")->SetSize({ 0.25, 0.25 });
+			player->Move({ 0.025f, 0.f });
+			player->SetSize({ 0.25, 0.25 });
 		}
 
 	}
@@ -951,5 +954,5 @@ class Sprites : public App {
 
 
 std::vector<App*> CreateGame() {
-	return {new Falling_Sand};
+	return { new Caves };
 }

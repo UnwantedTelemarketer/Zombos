@@ -5,22 +5,39 @@
 
 #define maybe (rand() % 10 + 1) >= 5
 
-namespace Math{
+namespace Math {
 	//Input the max number, and this will return a float between 1 and your max (inclusive).
-	inline float RandNum(int max) { return (rand() % max + 1); } 
+	inline float RandNum(int max) { return (rand() % max + 1); }
 
 	//Input the max number, and this will return an int between min and max (inclusive).
 	inline int RandInt(int min, int max) { return min + (rand() % max - min); }
 
 	//Returns a random string from a vector of strings.
-	inline std::string RandString(std::vector<std::string> list) { return list[rand() % (list.size()-1) + 1]; } //also bad to look at, but i dont want to make a multiline function in a header
+	inline std::string RandString(std::vector<std::string> list) { return list[rand() % (list.size() - 1) + 1]; } //also bad to look at, but i dont want to make a multiline function in a header
 
 	//Limits the size of a vector of strings to 15, if anything goes over that amount, the oldest element is deleted and the new one is added.
-	inline void PushBackLog(std::vector<std::string>* log, std::string message, int max = 15){
+	inline void PushBackLog(std::vector<std::string>* log, std::string message, int max = 15) {
 		if (log->size() <= max) { log->push_back(message); }
 		else { log->erase(log->begin()); log->push_back(message); }
 	}
 }
+
+struct Vector2_B {
+	uint32_t coords = 0;
+
+	int getX() { return coords & 0xffff; }
+
+	int getY() { return (coords >> 16) & 0xffff; }
+
+	void setX(uint16_t x) { coords = coords & 0xffff0000 | x; }
+
+	void setY(uint16_t y) {
+		coords &= 0xffff;
+		coords |= (y & 0xffff) << 16;
+	}
+
+	void setCoords(int x, int y) { coords = (x & 0xffff) | ((y & 0xffff) << 16); }
+};
 
 struct Vector2_I
 {

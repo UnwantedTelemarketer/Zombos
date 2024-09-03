@@ -4,7 +4,7 @@
 
 namespace antibox
 {
-	Engine& Engine::Instance() 
+	Engine& Engine::Instance()
 	{
 		if (!mInstance) {
 			mInstance = new Engine(); //If we haven't set the engine instance yet, set it.
@@ -50,9 +50,9 @@ namespace antibox
 		closeScene = false;
 		while (!closeScene) //This is the window loop from GLFW.
 		{
-			if (sceneToChangeTo != -1) {
-				ChangeApp(sceneToChangeTo);
-				sceneToChangeTo = -1;
+			if (appToChangeTo != -1) {
+				ChangeApp(appToChangeTo);
+				appToChangeTo = -1;
 			}
 			Update(); //Run the Update function
 			Render(); //Run the Render Function
@@ -61,9 +61,9 @@ namespace antibox
 		End(); //Once the user closes the window, run End
 	}
 
-	void Engine::ChangeApp(int sceneNum) {
+	void Engine::ChangeApp(int appNum) {
 		mApp->Shutdown();
-		mApp = mAppList[sceneNum];
+		mApp = mAppList[appNum];
 		InitializeApp(mApp);
 	}
 
@@ -72,7 +72,8 @@ namespace antibox
 
 		crntTime = glfwGetTime();
 		timeDiff = crntTime - prevtime;
-		counter++; 
+		counter++;
+
 		if (timeDiff >= 1.0 / 60.0) {
 			fps = (1.0 / timeDiff) * counter;
 			ms = (timeDiff / counter) * 1000;
@@ -83,25 +84,27 @@ namespace antibox
 		mApp->Update(); //users update function
 
 		//Update all scenes added to the game
-		for (int i = 0; i < mScenes.size(); i++)
+		/*for (int i = 0; i < mScenes.size(); i++)
 		{
 			mScenes[i]->UpdateObjs();
+		}*/
+		if (mScenes.size() != 0) {
+			mScenes[currentSceneID]->UpdateObjs();
 		}
 	}
 
 	void Engine::Render() {
 		glfwPollEvents(); //Take in mouse and keyboard inputs
-		
+
 		mApp->Render(); //Users render function.
-		/*for (int i = 0; i < sprites.size(); i++) //Render each sprite added to screen
-		{
-			sprites[i]->RenderSprite();
-		}*/
 
 		//Render all scenes added to the game
-		for (int i = 0; i < mScenes.size(); i++)
+		/*for (int i = 0; i < mScenes.size(); i++)
 		{
 			mScenes[i]->RenderObjs();
+		}*/
+		if (mScenes.size() != 0) {
+			mScenes[currentSceneID]->RenderObjs();
 		}
 
 		window->EndRender(); //Window end render.
