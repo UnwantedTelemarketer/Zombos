@@ -10,6 +10,7 @@
 #define ITEM_MONEY "bits"
 #define ITEM_ROPE "rope"
 #define ITEM_ROCK "rock"
+#define ITEM_CAMPFIRE "campfire"
 
 #define ID_NULL -1
 

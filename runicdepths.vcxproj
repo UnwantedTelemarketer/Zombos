@@ -569,6 +569,7 @@
     <None Include="dat\eid\factions.eid" />
     <None Include="dat\eid\ground_items.eid" />
     <None Include="dat\eid\items.eid" />
+    <None Include="dat\eid\item_data.eid" />
     <None Include="dat\eid\tiles.eid" />
     <None Include="Libraries\include\antibox\core\default.frag" />
     <None Include="Libraries\include\antibox\core\default.vert" />

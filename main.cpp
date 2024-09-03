@@ -17,7 +17,7 @@ private:
 	WindowProperties GetWindowProperties() {
 		WindowProperties props;
 
-		props.imguiProps = { true, true, false, DOSFONT };
+		props.imguiProps = { true, true, false, {DOSFONT, CASCADIA}, {"main", "unifont"} };
 		props.w = 1280;
 		props.h = 720;
 		props.vsync = 0;
@@ -272,7 +272,8 @@ public:
 
 		//------Map-------
 		ImGui::Begin("Map");
-		if (fancyGraphics) ImGui::PushFont(Engine::Instance().getFont());
+		if (fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
+		else { ImGui::PushFont(Engine::Instance().getFont("unifont")); }
 		for (int i = 0; i < CHUNK_WIDTH; i++) {
 			for (int j = 0; j < CHUNK_HEIGHT; j++) {
 				float intensity = map.CurrentChunk()->localCoords[i][j].brightness;
@@ -308,7 +309,7 @@ public:
 			}
 			ImGui::Text("");
 		}
-		if (fancyGraphics) ImGui::PopFont();
+		ImGui::PopFont();
 		ImGui::End();
 
 		TechScreen();
@@ -392,6 +393,10 @@ public:
 				pInv.GetItems(&ids, { ITEM_GRASS }, 3);
 				crafted = ITEM_ROPE;
 			}
+			if (ImGui::Button("Craft Campfire (2 X Stick, 2 X Scrap)")) {
+				pInv.GetItems(&ids, { ITEM_STICK, ITEM_SCRAP }, 2);
+				crafted = ITEM_CAMPFIRE;
+			}
 			if (ImGui::Button("Craft 3 Scrap Bits (1 X Scrap)")) {
 				pInv.GetItems(&ids, { ITEM_SCRAP }, 1);
 				crafted = ITEM_MONEY;
@@ -426,9 +431,10 @@ public:
 		{
 			ImGui::Begin("Selected Block");
 
-			ImGui::PushFont(Engine::Instance().getFont());
+			ImGui::PushFont(Engine::Instance().getFont("main"));
 			ImGui::TextColored(game.GetTileColor(*selectedTile, 1.f), game.GetTileChar(*selectedTile).c_str());
 			ImGui::PopFont();
+			if (selectedTile->hasItem) { ImGui::Text(("Item on tile: " + selectedTile->itemName).c_str()); }
 
 			const char* label = "";
 			if (map.isUnderground) {
@@ -453,6 +459,9 @@ public:
 					selectedTile->collectible = true;
 					if (pInv.RemoveItem(pInv.items[currentItemIndex].id)) { currentItemIndex = 0; }
 				}
+				else {
+					Math::PushBackLog(&game.actionLog, "There is already an item on that space.");
+				}
 
 			}
 
@@ -471,6 +480,7 @@ public:
 			}
 			if (ImGui::Button("Burn")) {
 				selectedTile->liquid = fire;
+
 				map.floodFill(selectedTile->coords);
 			}
 
@@ -656,7 +666,7 @@ public:
 
 		ImGui::Text("---Place Conveyor Belt---");
 
-		if (fancyGraphics) ImGui::PushFont(Engine::Instance().getFont());
+		if (fancyGraphics) ImGui::PushFont(Engine::Instance().getFont("main"));
 
 		//TOP ROW
 		if (ImGui::Button("O")) {
@@ -776,7 +786,7 @@ class Falling_Sand : public App {
 
 	WindowProperties GetWindowProperties() {
 		WindowProperties props;
-		props.imguiProps = { true, true, false, DOSFONT };
+		//props.imguiProps = { true, true, false, DOSFONT };
 		props.w = 800;
 		props.h = 600;
 		props.title = "Sand";
@@ -851,7 +861,7 @@ class Falling_Sand : public App {
 
 	void ImguiRender() override {
 
-		ImGui::PushFont(Engine::Instance().getFont());
+		//ImGui::PushFont(Engine::Instance().getFont());
 		ImGui::Begin("Game View");
 		for (int i = 0; i < map.size(); i++)
 		{

@@ -90,6 +90,33 @@ useTxt : "Stick.";
 effects : [0,0,0,0];
 }
 
+CAMPFIRE {
+name : "Campfire";
+description : "Pile of sticks and rocks.";
+id : "campfire";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "Stick.";
+useTxt : "Stick.";
+effects : [0,0,0,0];
+}
+
+CHEST {
+name : "Box";
+description : "Box used for holding things.";
+id : "box";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "Stick.";
+useTxt : "Stick.";
+effects : [0,0,0,0];
+}
+
+
 ROPE {
 name : "Rope";
 description : "A rope made from grass for lots of situations.";
@@ -127,4 +154,32 @@ amount : 1;
 consumeTxt : "no eating";
 useTxt : "You shoot yourself.";
 effects : [0,0,4,80];
+}
+
+MEAT {
+name : "Meat";
+description : "Uncooked meat. Not very satiating.";
+id : "meat";
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+cookable : true;
+cooks_into : "COOKED_MEAT"
+amount : 1;
+consumeTxt : "You eat the uncooked meat. You feel a bit sick.";
+useTxt : "Does Nothig.";
+effects : [3,5,0,0];
+}
+
+COOKED_MEAT {
+name : "Cooked Meat";
+description : "Cooked meat. Very satiating.";
+id : "cookedmeat";
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+amount : 1;
+consumeTxt : "You eat the meat. You feel much less hungry.";
+useTxt : "Does Nothig.";
+effects : [3,25,0,0];
 }

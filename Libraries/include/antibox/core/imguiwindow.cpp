@@ -31,11 +31,17 @@ namespace antibox
 		builder.AddRanges(io.Fonts->GetGlyphRangesCyrillic());// Add one of the default ranges
 		builder.AddRanges(io.Fonts->GetGlyphRangesDefault());// Add one of the default ranges
 		builder.BuildRanges(&ranges);
+			
 
-		mainFont = io.Fonts->AddFontFromFileTTF(props.fontPath, props.fontSize, NULL, ranges.Data);
+		for (size_t i = 0; i < props.fontPaths.size(); i++)
+		{
+			ImFont* newFont = io.Fonts->AddFontFromFileTTF(props.fontPaths[i].c_str(), props.fontSize, NULL, ranges.Data);
+			IM_ASSERT(newFont != NULL);
+			fonts.insert({ props.fontNames[i], newFont});
+		}
+
 		io.Fonts->Build();
 
-		IM_ASSERT(mainFont != NULL);
 		ImGui::StyleColorsDark();
 
 		ImGui_ImplGlfw_InitForOpenGL(Engine::Instance().GetWindow()->glfwin(), true);

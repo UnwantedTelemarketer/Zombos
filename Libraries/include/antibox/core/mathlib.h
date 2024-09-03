@@ -9,7 +9,7 @@ namespace Math {
 	//Input the max number, and this will return a float between 1 and your max (inclusive).
 	inline float RandNum(int max) { return (rand() % max + 1); }
 
-	//Input the max number, and this will return an int between min and max (inclusive).
+	//Input the max number, and this will return an int between min and max (exclusive).
 	inline int RandInt(int min, int max) { return min + (rand() % max - min); }
 
 	//Returns a random string from a vector of strings.

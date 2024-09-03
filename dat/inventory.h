@@ -100,7 +100,7 @@ public:
 		}
 		if (tile->collectible)
 		{
-			Item item = GetItemFromFile("materials.eid", tile->itemName);
+			Item item = GetItemFromFile("items.eid", tile->itemName);
 			if (covered) { item.coveredIn = tile->liquid; }
 
 			int id = tile->collectedReplacement;
@@ -110,12 +110,21 @@ public:
 			return true;
 		}
 		if (tile->hasItem) {
-			Item item = GetItemFromFile("materials.eid", tile->itemName);
+			Item item = GetItemFromFile("items.eid", tile->itemName);
 			if (covered) { item.CoverIn(tile->liquid, Math::RandInt(30,60)); }
 
 			tile->hasItem = false;
 			tile->ticksNeeded = Math::RandInt(1, 1000) + 500;
 			AddItem(item);
+			return true;
+		}
+		if (tile->entity != nullptr && tile->entity->health <= 0 && tile->entity->inv.size() > 0) {
+			//TODO: add menu to transfer items. for now just moves everthing over
+			for (int i = 0; i < tile->entity->inv.size(); i++)
+			{
+				AddItem(tile->entity->inv[i]);
+			}
+			tile->entity->inv.clear();
 			return true;
 		}
 		return false;

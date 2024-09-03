@@ -21,6 +21,7 @@ public:
 	std::vector<Vector2_I> oldLocations;
 	std::map<Faction, std::vector<Faction>> factionEnemies;
 	std::map<int, std::string> tile_icons;
+	std::map<std::string, char> item_icons;
 	float worldTime = 6.f;
 	float darkTime = 1.f;
 	bool paused = false;
@@ -94,6 +95,12 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 		tile_icons.insert({ stoi(tileData.getArray(x.first)[1]) , tileData.getArray(x.first)[0] });
 	}
 
+	/*OpenedData itemData;
+	ItemReader::GetDataFromFile("tiles.eid", "TILES", &itemData);
+
+	for (auto const& x : itemData.tokens) {
+		item_icons.insert({ stoi(itemData.getArray(x.first)[1]) , itemData.getArray(x.first)[0] });
+	}*/
 }
 
 void GameManager::AddRecipes() {
@@ -102,6 +109,7 @@ void GameManager::AddRecipes() {
 	Crafter.addRecipe({ {ITEM_STICK, ITEM_GRASS, ITEM_SCRAP}, EID::MakeItem("items.eid", "KNIFE") });
 	Crafter.addRecipe({ {ITEM_SCRAP}, EID::MakeItem("items.eid", "BITS") });
 	Crafter.addRecipe({ {ITEM_GRASS}, EID::MakeItem("items.eid", "ROPE") });
+	Crafter.addRecipe({ {ITEM_STICK, ITEM_STICK, ITEM_SCRAP, ITEM_SCRAP}, EID::MakeItem("items.eid", "CAMPFIRE") });
 }
 
 void GameManager::DoBehaviour(Entity* ent)
@@ -184,7 +192,7 @@ void GameManager::DoBehaviour(Entity* ent)
 		}
 		else {
 			ent->talking = false;
-			ent->message = npcMessages[Math::RandInt(1, 5) - 1];
+			ent->message = npcMessages[Math::RandInt(0, 4)];
 		}
 
 		//run out of liquid
@@ -248,7 +256,7 @@ void GameManager::DoBehaviour(Entity* ent)
 		ent->coveredIn = nothing;
 	}
 
-	mainMap.CurrentChunk()->localCoords[oldCoords.x][oldCoords.y].entity = nullptr;
+	//mainMap.CurrentChunk()->localCoords[oldCoords.x][oldCoords.y].entity = nullptr;
 }
 
 bool GameManager::PlayerNearby(Vector2_I coords) {
@@ -421,7 +429,7 @@ void GameManager::UpdateEntities(Vector2_I chunkCoords) {
 
 		DoBehaviour(usedChunk->entities[i]);
 		mainMap.CheckBounds(usedChunk->entities[i], usedChunk);
-
+		
 	}
 
 	mainMap.PlaceEntities(usedChunk);

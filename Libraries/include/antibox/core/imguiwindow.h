@@ -3,6 +3,9 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include <vector>
+#include <string>
+#include <unordered_map>
 
 namespace antibox 
 {
@@ -11,7 +14,8 @@ namespace antibox
 		bool MoveTitleBarOnly = true;
 		bool DockingEnabled = true;
 		bool IsViewportEnabled = false;
-		const char* fontPath = "c:\\Windows\\Fonts\\Arial.ttf";
+		std::vector<std::string> fontPaths;
+		std::vector<std::string> fontNames;
 		float fontSize = 16.f;
 	};
 
@@ -20,7 +24,7 @@ namespace antibox
 	public:
 		ImguiWindow() {}
 		~ImguiWindow() {}
-		ImFont* mainFont;
+		std::unordered_map<std::string, ImFont*> fonts;
 
 		void Create(const ImguiWindowProperties& props);
 		void Shutdown();

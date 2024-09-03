@@ -1646,6 +1646,7 @@
     <None Include="dat\eid\dialogue.eid" />
     <None Include="dat\eid\ground_items.eid" />
     <None Include="dat\eid\tiles.eid" />
+    <None Include="dat\eid\item_data.eid" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="other.txt" />

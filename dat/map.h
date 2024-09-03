@@ -173,7 +173,7 @@ void Map::MakeNewChunk(Vector2_I coords) {
 
 void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 {
-	for (int i = 0; i < 0; i++)
+	for (int i = 0; i < 3; i++) //CHANGE THIS TO SPAWN ENTITIES
 	{
 		Entity* zomb;
 		int num = Math::RandInt(1, 10);
@@ -189,6 +189,8 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 		}
 		else {
 			zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, Wildlife, 5, 1, false, Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };
+
+			zomb->inv.push_back(EID::MakeItem("items.eid", "MEAT"));
 		}
 		zomb->target = nullptr;
 		chunk->entities.push_back(zomb);
@@ -207,7 +209,6 @@ std::shared_ptr<Chunk> Map::CurrentChunk() {
 //std::vector<Tile> GetTileInRadius(vec2_i center) {
 
 //}
-
 Tile* Map::TileAtPos(Vector2_I coords)
 {
 	return &CurrentChunk()->localCoords[coords.x][coords.y];
@@ -334,14 +335,14 @@ void Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 	bool changed = false;
 	int oldIndex = p->index;
 	if (p->coords.x > CHUNK_WIDTH - 1) { //check if they left the chunk
-		if (c_glCoords.x + 1 >= CHUNK_WIDTH) { p->coords.x = CHUNK_WIDTH - 1; return; } //dont let them leave world bounds
+		//if (c_glCoords.x + 1 >= CHUNK_WIDTH) { p->coords.x = CHUNK_WIDTH - 1; return; } //dont let them leave world bounds
 		changed = true;
 		p->coords.x = 0; //move them to the other side of the screen
 		world.chunks[{chunk->globalChunkCoord.x + 1,
 			chunk->globalChunkCoord.y}]->entities.push_back(p); //put them in the vector of the next chunk over
 
-		p->index = world.chunks[{chunk->globalChunkCoord.x + 1,
-			chunk->globalChunkCoord.y}]->entities.size() - 1; //change their index in the list
+		//p->index = world.chunks[{chunk->globalChunkCoord.x + 1,
+		//	chunk->globalChunkCoord.y}]->entities.size() - 1; //change their index in the list
 	}
 	else if (p->coords.x < 0) {
 		if (c_glCoords.x - 1 < 0) { p->coords.x = 0; return; }
@@ -350,8 +351,8 @@ void Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 		world.chunks[{chunk->globalChunkCoord.x - 1,
 			chunk->globalChunkCoord.y}]->entities.push_back(p);
 
-		p->index = world.chunks[{chunk->globalChunkCoord.x - 1,
-			chunk->globalChunkCoord.y}]->entities.size() - 1;
+		//p->index = world.chunks[{chunk->globalChunkCoord.x - 1,
+		//	chunk->globalChunkCoord.y}]->entities.size() - 1;
 	}
 	else if (p->coords.y > CHUNK_HEIGHT - 1) {
 		if (chunk->globalChunkCoord.y + 1 >= CHUNK_HEIGHT) { p->coords.y = CHUNK_HEIGHT - 1; return; }
@@ -360,8 +361,8 @@ void Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 		world.chunks[{chunk->globalChunkCoord.x,
 			chunk->globalChunkCoord.y + 1}]->entities.push_back(p);
 
-		p->index = world.chunks[{chunk->globalChunkCoord.x,
-			chunk->globalChunkCoord.y + 1}]->entities.size() - 1;
+		//p->index = world.chunks[{chunk->globalChunkCoord.x,
+		//	chunk->globalChunkCoord.y + 1}]->entities.size() - 1;
 	}
 	else if (p->coords.y < 0) {
 		if (chunk->globalChunkCoord.y - 1 < 0) { p->coords.y = 0; return; }
@@ -370,8 +371,8 @@ void Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 		world.chunks[{chunk->globalChunkCoord.x,
 			chunk->globalChunkCoord.y - 1}]->entities.push_back(p);
 
-		p->index = world.chunks[{chunk->globalChunkCoord.x,
-			chunk->globalChunkCoord.y - 1}]->entities.size() - 1;
+		//p->index = world.chunks[{chunk->globalChunkCoord.x,
+		//	chunk->globalChunkCoord.y - 1}]->entities.size() - 1;
 	}
 	if (changed) {
 		chunk->entities.erase(chunk->entities.begin() + oldIndex);
@@ -411,14 +412,19 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 
 				else {
 					chunk->localCoords[i][j] = Tile_Grass;
-					if (Math::RandInt(1, 25) == 25) {
+					if (Math::RandInt(1, 35) == 34) {
 						chunk->localCoords[i][j].hasItem = true;
 						chunk->localCoords[i][j].itemName = "STICK";
 					}
 				}
 			}
 
-			if (Math::RandInt(1, 100) >= 100 && chunk->localCoords[i][j].liquid != water) { chunk->localCoords[i][j] = Tile_Scrap; }
+			if (Math::RandInt(1, 125) >= 124 && chunk->localCoords[i][j].liquid != water) 
+			{ 
+				chunk->localCoords[i][j] = Tile_Grass;
+				chunk->localCoords[i][j].hasItem = true;
+				chunk->localCoords[i][j].itemName = "SCRAP";
+			}
 
 			if (chunk->localCoords[i][j].ticksNeeded == 1) {
 				chunk->localCoords[i][j].ticksNeeded = Math::RandInt(1, 10000);
@@ -597,6 +603,13 @@ void Map::UpdateTiles(vec2_i coords) {
 
 			//spread fire to a list so we dont spread more than one tile per update
 			if (curTile->liquid == fire) {
+
+				//If its a campfire, then let it burn but dont spread
+				if (curTile->hasItem && curTile->itemName == "CAMPFIRE") {
+					floodFill({ x, y });
+					continue;
+				}
+
 				floodFill({ x, y });
 				curTile->burningFor++;
 				switch (Math::RandInt(1, 10)) {
