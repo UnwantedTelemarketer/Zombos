@@ -951,5 +951,5 @@ class Sprites : public App {
 
 
 std::vector<App*> CreateGame() {
-	return {new Sprites};
+	return {new Falling_Sand};
 }

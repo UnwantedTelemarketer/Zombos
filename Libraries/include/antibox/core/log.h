@@ -12,6 +12,7 @@ namespace Console {
 	//Logs a message to the command prompt. ERROR is red, WARNING is yellow, SUCCESS is green, LOG is white.
 	void Log(std::string message, textColor type, int lineNum);
 	//void Log(unsigned char* message, textColor type, int lineNum);
+
 	void Log(const char* message, textColor type, int lineNum);
 
 	void Log(uint32_t message, textColor type, int lineNum);
@@ -29,8 +30,6 @@ namespace Console {
 	//void Log(std::pair<T, T2> pair, textColor type, int lineNum);
 
 	void Log(std::pair<std::string, std::string> pair, textColor type, int lineNum);
-	//Writes a message and returns the message as a string. ERROR is red, WARNING is yellow, SUCCESS is green, LOG is white.
-	//std::string LogOut(std::string message, int type);
 }
 
 #ifndef GEN_CONS_OUT
