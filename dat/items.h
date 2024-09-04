@@ -54,6 +54,7 @@
 #define ID_CONVEYOR_DR 107
 
 namespace EID {
+	//ONLY REQUIRES FILENAME, AUTO NAVIGATES TO THE DAT FOLDER
 	static Item MakeItem(std::string file, std::string header) {
 		OpenedData data;
 		ItemReader::GetDataFromFile(file, header, &data);

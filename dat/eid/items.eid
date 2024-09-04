@@ -94,7 +94,7 @@ CAMPFIRE {
 name : "Campfire";
 description : "Pile of sticks and rocks.";
 id : "campfire";
-stackable : true;
+stackable : false;
 holdsLiquid : false;
 consumable : false;
 amount : 1;

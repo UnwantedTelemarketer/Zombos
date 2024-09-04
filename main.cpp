@@ -1,7 +1,7 @@
 ﻿
 #include "dat/game.h"
 #include "antibox/objects/tokenizer.h"
-
+#include <algorithm>
 
 #include <chrono>
 
@@ -45,8 +45,13 @@ public:
 	float& health = game.mPlayer.health;
 	Map& map = game.mainMap;
 
+	//Crafting Stuff
+	int recipeSelected = 0;
+	std::string recipeSelectedName = "";
+
 	//Sounds
 	std::vector<std::string> walk_sounds = { "dat/sounds/walk_1.wav" , "dat/sounds/walk_2.wav" , "dat/sounds/walk_3.wav" , "dat/sounds/walk_4.wav" };
+	std::map<std::string, const char*> sfxs = { {"craft", "dat/sounds/craft.wav"}, {"fail", "dat/sounds/fail.wav"}};
 
 	void Init() override {
 		fancyGraphics = true;
@@ -212,6 +217,7 @@ public:
 	}
 
 	void MenuScene() {
+		ImGui::ShowDemoWindow();
 		ImGui::Begin("Menu");
 		if (createChar) { Create_Character(); }
 
@@ -400,7 +406,47 @@ public:
 		if (craftingMenu) {
 			ImGui::Begin("Crafting");
 
-			std::string crafted = "none";
+			ImGuiComboFlags flags = 0;
+
+			if (ImGui::BeginListBox("Recipes"))
+			{
+				for (int n = 0; n < game.recipeNames.size(); n++)
+				{
+					const bool is_selected = (recipeSelected == n);
+					if (ImGui::Selectable(game.recipeNames[n].c_str(), is_selected)) {
+						recipeSelectedName = game.recipeNames[n];
+					}
+				}
+				ImGui::EndListBox();
+			}
+			if (recipeSelectedName != "") {
+				std::vector<std::string> components = game.Crafter.getRecipeComponents(recipeSelectedName);
+				ImGui::PushFont(Engine::Instance().getFont("items"));
+				ImGui::Text(("\n" + game.item_icons[recipeSelectedName]).c_str());
+				ImGui::PopFont();
+				ImGui::Text(" - Required Components - ");
+				for (size_t i = 0; i < components.size(); i++)
+				{
+					ImGui::Text(components[i].c_str());
+				}
+				if (ImGui::Button("Craft Item")) {
+					std::string newItem = game.Crafter.AttemptCraft(recipeSelectedName, &pInv.items);
+
+					if (newItem != "none") {
+						currentItemIndex = 0;
+						pInv.Cleanup();
+						pInv.AddItem(EID::MakeItem("items.eid", newItem));
+						Engine::Instance().StartSound(sfxs["craft"]);
+					}
+					else {
+						Engine::Instance().StartSound(sfxs["fail"]);
+					}
+				}
+			}
+
+			//ImGui::Text
+
+			/*std::string crafted = "none";
 			int amount = 1;
 			std::vector<std::string> ids;
 			if (ImGui::Button("Craft Rope (3 X Grass)")) {
@@ -434,8 +480,10 @@ public:
 						pInv.RemoveItem(id);
 					}
 				}
-			}
+			}*/
 			ImGui::End();
+
+
 		}
 
 

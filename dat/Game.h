@@ -22,6 +22,9 @@ public:
 	std::map<Faction, std::vector<Faction>> factionEnemies;
 	std::map<int, std::string> tile_icons;
 	std::map<std::string, std::string> item_icons;
+
+
+	std::vector<std::string> recipeNames;
 	float worldTime = 6.f;
 	float darkTime = 1.f;
 	bool paused = false;
@@ -74,6 +77,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	mPlayer.coords.x = x;
 	mPlayer.coords.y = y;
 	AddRecipes();
+	recipeNames = Crafter.getRecipeNames();
 	mainMap.CreateMap(seed, biome);
 	//Faction, Enemies
 	factionEnemies = {
@@ -107,11 +111,10 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 
 void GameManager::AddRecipes() {
 
-	Crafter.addRecipe({ {ITEM_SCRAP, ITEM_SCRAP, ITEM_SCRAP}, EID::MakeItem("items.eid", "CANTEEN") });
-	Crafter.addRecipe({ {ITEM_STICK, ITEM_GRASS, ITEM_SCRAP}, EID::MakeItem("items.eid", "KNIFE") });
-	Crafter.addRecipe({ {ITEM_SCRAP}, EID::MakeItem("items.eid", "BITS") });
-	Crafter.addRecipe({ {ITEM_GRASS}, EID::MakeItem("items.eid", "ROPE") });
-	Crafter.addRecipe({ {ITEM_STICK, ITEM_STICK, ITEM_SCRAP, ITEM_SCRAP}, EID::MakeItem("items.eid", "CAMPFIRE") });
+	Crafter.addRecipe("CAMPFIRE", { {"STICK", 3}, {"ROCK", 2} });
+	Crafter.addRecipe("CANTEEN", { {"SCRAP", 3} });
+	Crafter.addRecipe("BANDAGE", { {"GRASS", 3}});
+	Console::Log(Crafter.getRecipeNames(), text::blue, __LINE__);
 }
 
 void GameManager::DoBehaviour(Entity* ent)

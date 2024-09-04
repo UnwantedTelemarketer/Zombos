@@ -221,77 +221,65 @@ static void CreateSavedTile(Saved_Tile* sTile, Tile tile) {
 	sTile->y = tile.coords.y;
 }
 
+class Inventory;
 
-struct Recipe {
-	std::vector<std::string> inputs;
-	Item output;
-};
-
-std::string hash(const std::vector<std::string>& items) {
-	std::vector<std::string> sortedIds;
-	for (const auto& item : items) {
-		sortedIds.push_back(item);
-	}
-	std::sort(sortedIds.begin(), sortedIds.end());
-	std::string ss;
-	for (const auto& id : sortedIds) {
-		ss += id + ",";
-	}
-	return ss;
-}
-
-//I dont really understand this very well im gonna be honest, thanks chatgpt
-//Best i can tell is it generates a hash based on item inputs and checks the recipe hash to see if it matches
 class CraftingSystem {
 public:
-	void addRecipe(const Recipe& recipe) {
-
-		// Compute the hash code for the input items
-		std::string key = hash(recipe.inputs);
-		// Add the recipe to the hash table
-		recipes_[key].push_back(recipe);
+	void addRecipe(std::string output, std::map<std::string, int> inputs) {
+		recipes.insert({ output, inputs });
 	}
 
-	Item craft(const std::vector<std::string>& input, std::string expectedOutput) {
-		// Compute the hash code for the input items
-		std::string key = hash(input);
-		// Look up the matching recipes in the hash table
-		auto it = recipes_.find(key);
-		if (it != recipes_.end()) {
-			// Craft the first matching recipe found
-			for (const auto& recipe : it->second) {
-
-				Console::Log(recipe.output.id, ERROR, __LINE__);
-				if (canCraft(recipe.inputs, input) ) {
-					return recipe.output;
+	
+	std::string AttemptCraft(std::string output, std::vector<Item>* inventory) {
+		std::map<std::string, Item*> items;
+		std::map<std::string, int> itemsToRemove;
+		int componentsUsed = 0;
+		for (size_t i = 0; i < inventory->size(); i++)
+		{
+			items.insert({(*inventory)[i].section, &(*inventory)[i]});
+		}
+		for (const auto& component : recipes[output]) {
+			if (items.count(component.first) != 0) {
+				if (items[component.first]->count >= component.second) {
+					componentsUsed++;
+					itemsToRemove.insert({ component.first, component.second });
 				}
 			}
 		}
-		// No matching recipe found
-		return Item();
+
+		if (componentsUsed >= recipes[output].size()) {
+			for (const auto& item : itemsToRemove) {
+				items[item.first]->count -= item.second;
+			}
+			return output;
+		}
+		return "none";
+	}
+
+	std::vector<std::string> getRecipeNames() {
+		std::vector<std::string> recipeNames;
+
+		for (const auto& name : recipes) {
+			recipeNames.push_back(name.first);
+		}
+
+		return recipeNames;
+	}
+
+	std::vector<std::string> getRecipeComponents(std::string key) {
+		std::vector<std::string> recipeComps;
+
+		for (const auto& name : recipes[key]) {
+			recipeComps.push_back(name.first + " x " + std::to_string(name.second));
+		}
+
+		return recipeComps;
 	}
 
 private:
-	bool canCraft(const std::vector<std::string>& required, const std::vector<std::string>& available) {
-		// Check if the available items contain all the required items
-		for (const auto& item : required) {
-			bool found = false;
-			for (const auto& other : available) {
-				if (item == other) {
-					found = true;
-					break;
-				}
-			}
-			if (!found) {
-				return false;
-			}
-		}
-		return true;
-	}
 
-	std::unordered_map<std::string, std::vector<Recipe>> recipes_;
+	std::unordered_map<std::string, std::map<std::string, int>> recipes;
 };
-
 
 
 #define ENT_PLAYER "E"

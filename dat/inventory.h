@@ -5,6 +5,7 @@
 
 class Inventory
 {
+private:
 public:
 	Color clothes;
 	std::vector<Item> items;
@@ -29,13 +30,28 @@ public:
 		}
 	}
 
+	void Cleanup() {
+		std::vector<int> itemsToErase;
+		for (int i = 0; i < items.size(); i++)
+		{
+			if (items[i].count <= 0) {
+				itemsToErase.push_back(i);
+			}
+		}
+
+		for (size_t i = 0; i < itemsToErase.size(); i++)
+		{
+			items.erase(items.begin() + itemsToErase[i] - i);
+		}
+	}
+
 	//Returns true if it was fully removed from the inventory, false if only one is removed
-	bool RemoveItem(std::string itemID) {
+	bool RemoveItem(std::string itemID, int amount = 1) {
 		for (int i = 0; i < items.size(); i++)
 		{
 			if (items[i].id == itemID)
 			{
-				items[i].count--;
+				items[i].count-= amount;
 				if (items[i].count <= 0) {
 					items.erase(items.begin() + i);
 					return true;

@@ -396,6 +396,10 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 			//desert biome
 			if (currentBiome < -0.25f) {
 				chunk->localCoords[i][j] = Tile_Sand;
+				if (Math::RandInt(1, 300) == 255) {
+					chunk->localCoords[i][j].hasItem = true;
+					chunk->localCoords[i][j].itemName = "SCRAP";
+				}
 			}
 
 			//Plains Biome
@@ -423,7 +427,7 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 			{ 
 				chunk->localCoords[i][j] = Tile_Grass;
 				chunk->localCoords[i][j].hasItem = true;
-				chunk->localCoords[i][j].itemName = "SCRAP";
+				chunk->localCoords[i][j].itemName = "ROCK";
 			}
 
 			if (chunk->localCoords[i][j].ticksNeeded == 1) {
