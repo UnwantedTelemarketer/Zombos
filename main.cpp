@@ -8,6 +8,7 @@
 #define UNIFONT "c:\\Users\\Thomas Andrew\\AppData\\Local\\Microsoft\\Windows\\Fonts\\Unifont.ttf"
 #define DOSFONT "dat\\fonts\\symbolic_conveyor.ttf"
 #define CASCADIA "c:\\Windows\\Fonts\\CascadiaCode.ttf"
+#define ITEMFONT "dat\\fonts\\symbolic_items.ttf"
 using namespace antibox;
 
 enum GameState { playing, menu };
@@ -17,7 +18,7 @@ private:
 	WindowProperties GetWindowProperties() {
 		WindowProperties props;
 
-		props.imguiProps = { true, true, false, {DOSFONT, CASCADIA}, {"main", "unifont"} };
+		props.imguiProps = { true, true, false, {DOSFONT, ITEMFONT}, {"main", "items"} };
 		props.w = 1280;
 		props.h = 720;
 		props.vsync = 0;
@@ -273,7 +274,6 @@ public:
 		//------Map-------
 		ImGui::Begin("Map");
 		if (fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
-		else { ImGui::PushFont(Engine::Instance().getFont("unifont")); }
 		for (int i = 0; i < CHUNK_WIDTH; i++) {
 			for (int j = 0; j < CHUNK_HEIGHT; j++) {
 				float intensity = map.CurrentChunk()->localCoords[i][j].brightness;
@@ -300,8 +300,22 @@ public:
 					ImGui::TextColored(ImVec4{ 1,0,1,1 }, "X");
 				}
 				else {
-					ImGui::TextColored(game.GetTileColor(map.CurrentChunk()->localCoords[i][j], intensity),
+					bool item = false;
+					if(map.CurrentChunk()->localCoords[i][j].hasItem) 
+					{ 
+						item = true;
+						ImGui::PopFont();
+						ImGui::PushFont(Engine::Instance().getFont("items"));
+					}
+
+					ImGui::TextColored(
+						game.GetTileColor(map.CurrentChunk()->localCoords[i][j],intensity),
 						game.GetTileChar(map.CurrentChunk()->localCoords[i][j]).c_str());
+
+					if (item) {
+						ImGui::PopFont();
+						ImGui::PushFont(Engine::Instance().getFont("main"));
+					}
 				}
 
 
@@ -309,7 +323,7 @@ public:
 			}
 			ImGui::Text("");
 		}
-		ImGui::PopFont();
+		if (fancyGraphics) ImGui::PopFont();
 		ImGui::End();
 
 		TechScreen();
@@ -499,6 +513,11 @@ public:
 		{
 			ImGui::Begin("Current Item");
 			ImGui::Text(pInv.items[currentItemIndex].name.c_str());
+
+			ImGui::PushFont(Engine::Instance().getFont("items"));
+			ImGui::Text(game.item_icons[pInv.items[currentItemIndex].section].c_str());
+			ImGui::PopFont();
+
 			ImGui::Text(pInv.items[currentItemIndex].description.c_str());
 
 			std::string liquid = pInv.GetLiquidName(currentItemIndex);

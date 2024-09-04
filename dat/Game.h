@@ -21,7 +21,7 @@ public:
 	std::vector<Vector2_I> oldLocations;
 	std::map<Faction, std::vector<Faction>> factionEnemies;
 	std::map<int, std::string> tile_icons;
-	std::map<std::string, char> item_icons;
+	std::map<std::string, std::string> item_icons;
 	float worldTime = 6.f;
 	float darkTime = 1.f;
 	bool paused = false;
@@ -95,12 +95,14 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 		tile_icons.insert({ stoi(tileData.getArray(x.first)[1]) , tileData.getArray(x.first)[0] });
 	}
 
-	/*OpenedData itemData;
-	ItemReader::GetDataFromFile("tiles.eid", "TILES", &itemData);
+	OpenedData itemData;
+	ItemReader::GetDataFromFile("item_data.eid", "ITEMS", &itemData);
 
 	for (auto const& x : itemData.tokens) {
-		item_icons.insert({ stoi(itemData.getArray(x.first)[1]) , itemData.getArray(x.first)[0] });
-	}*/
+		item_icons.insert({ itemData.getArray(x.first)[0] , itemData.getArray(x.first)[1]});
+		Console::Log(itemData.getArray(x.first), text::red, __LINE__);
+	}
+
 }
 
 void GameManager::AddRecipes() {
@@ -484,7 +486,7 @@ std::string GameManager::GetTileChar(Tile tile) {
 		"";
 	}
 	if (tile.hasItem) {
-		return "I";
+		return item_icons[tile.itemName];
 	}
 	return tile_icons[tile.id];
 }
