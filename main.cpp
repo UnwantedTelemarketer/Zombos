@@ -65,6 +65,7 @@ public:
 		showDialogue = true;
 
 		Engine::Instance().SetVolume(0.1f);
+		player.currentWeapon.damage = 5;
 	}
 
 	void Update() {
@@ -292,6 +293,12 @@ public:
 					continue;
 				}
 
+				/*if (game.mainMap.containers.count(Vector2_I{i,j}) != 0) {
+					ImGui::TextColored(ImVec4{0.5, 0.5, 0.5, 1}, "K");
+					ImGui::SameLine();
+					continue;
+				}*/
+
 				if (i < CHUNK_HEIGHT - 1) {
 					Entity* curEnt = map.CurrentChunk()->localCoords[i + 1][j].entity;
 
@@ -321,6 +328,10 @@ public:
 				if (map.effectLayer.localCoords[i][j] == 15)
 				{
 					ImGui::TextColored(ImVec4{ 1,0,1,1 }, "X");
+				}
+				else if (map.effectLayer.localCoords[i][j] == 1)
+				{
+					ImGui::TextColored(ImVec4{ 0.65,0.65,0.65,1 }, "?");
 				}
 				else {
 					bool item = false;
@@ -393,7 +404,15 @@ public:
 				ImGui::TextColored(Cosmetic::FireColor(), "Burning!");
 				break;
 			}
+
+			ImGui::Text("-------------");
+			ImGui::Text("Currently Equipped Weapon :"); ImGui::SameLine();
+			ImGui::Text(player.currentWeapon.name.c_str());
+			ImGui::Text("Damage :"); ImGui::SameLine();
+			ImGui::Text(std::to_string(player.currentWeapon.damage).c_str());
+
 			ImGui::End();
+
 		}
 		//------Inventory------
 		ImGui::Begin("Inventory");
@@ -458,8 +477,6 @@ public:
 					}
 				}
 			}
-
-			//ImGui::Text
 
 			/*std::string crafted = "none";
 			int amount = 1;
@@ -639,6 +656,12 @@ public:
 			if (ImGui::Button("Use"))
 			{
 				useBool = !useBool;
+			}
+			if (pInv.items[currentItemIndex].equippable) {
+				if (ImGui::Button("Equip"))
+				{
+					player.currentWeapon = pInv.items[currentItemIndex];
+				}
 			}
 
 			if (useBool)

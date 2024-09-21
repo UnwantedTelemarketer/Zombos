@@ -38,6 +38,7 @@ public:
 
 	void UpdateEntities(Vector2_I chunkCoords);
 	void UpdateTick();
+	void UpdateEffects();
 
 	void RedrawEntities(Vector2_I chunkCoords);
 
@@ -108,6 +109,8 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 		Console::Log(itemData.getArray(x.first), text::red, __LINE__);
 	}
 
+	mainMap.containers.insert({ {5, 5}, {{5, 5}, {}} });
+
 }
 
 void GameManager::AddRecipes() {
@@ -115,6 +118,8 @@ void GameManager::AddRecipes() {
 	Crafter.addRecipe("CAMPFIRE", { {"STICK", 3}, {"ROCK", 2} });
 	Crafter.addRecipe("CANTEEN", { {"SCRAP", 3} });
 	Crafter.addRecipe("BANDAGE", { {"GRASS", 3}});
+	Crafter.addRecipe("ROPE", { {"GRASS", 2} });
+	Crafter.addRecipe("KNIFE", { {"STICK", 1}, {"ROPE", 1}, {"SCRAP", 1}});
 	Console::Log(Crafter.getRecipeNames(), text::blue, __LINE__);
 }
 
@@ -322,6 +327,29 @@ void GameManager::MovePlayer(int dir) {
 	//if (mainMap.NearNPC(player)) { Math::PushBackLog(&actionLog, "Howdy!"); }
 }
 
+void GameManager::UpdateEffects() {
+	int tempMap[30][30];
+	for (size_t i = 0; i < CHUNK_HEIGHT; i++)
+	{
+		for (size_t j = 0; j < CHUNK_WIDTH; j++)
+		{
+			if (mainMap.effectLayer.localCoords[i][j] == 1) {
+				int newJ = j + Math::RandInt(0, 2);
+				int newI = i - Math::RandInt(0, 2);
+				if ((newI >= CHUNK_WIDTH || newI < 0) || (newJ >= CHUNK_WIDTH || newJ < 0)) { continue; }
+				tempMap[newI][newJ] = 1;
+			}
+		}
+	}
+	for (size_t i = 0; i < CHUNK_HEIGHT; i++)
+	{
+		for (size_t j = 0; j < CHUNK_WIDTH; j++)
+		{
+			mainMap.effectLayer.localCoords[i][j] = tempMap[i][j];
+		}
+	}
+}
+
 void GameManager::UpdateTick() {
 	if (paused) { return; }
 	tickCount += antibox::Engine::Instance().deltaTime();
@@ -332,8 +360,13 @@ void GameManager::UpdateTick() {
 		mainMap.chunkUpdateFlag = false;
 	}
 
+	if (int(tickCount) <= int(tickRate/2) + 10 && int(tickCount) >= int(tickRate / 2) - 10) {
+		UpdateEffects();
+	}
+
 	if (tickCount >= tickRate)
 	{
+		UpdateEffects();
 		tickCount = 0;
 		//hunger and thirst
 		mPlayer.thirst -= 0.075f;

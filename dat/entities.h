@@ -37,6 +37,8 @@ struct Item {
 	Liquid heldLiquid = nothing;
 	int ticksUntilDry = 0;
 	int initialTickTime = 0;
+	bool equippable = false;
+	int damage = 0;
 
 	void CoverIn(Liquid l, int ticks) {
 		coveredIn = l;
@@ -58,11 +60,29 @@ struct Item {
 		count = item.getInt("amount");
 		consumeTxt = item.getString("consumeTxt");
 		useTxt = item.getString("useTxt");
+		equippable = item.getBool("equippable");
+
 
 		std::vector<std::string> effects = item.getArray("effects");
 
+		damage = stoi(effects[3]); 
+
 		use = { {(ConsumeEffect)stoi(effects[0]), (float)stoi(effects[1])},
 				{(ConsumeEffect)stoi(effects[2]), (float)stoi(effects[3])} };
+	}
+};
+
+struct Container {
+	Vector2_I coords;
+	std::vector<Item> items;
+
+	std::vector<std::string> getItemNames() {
+		std::vector<std::string> names;
+		for (size_t i = 0; i < items.size(); i++)
+		{
+			names.push_back(items[i].name);
+		}
+		return names;
 	}
 };
 
@@ -105,6 +125,7 @@ struct Player {
 	Vector2_I coords;
 	Vector2_I crosshair;
 	Liquid coveredIn = nothing;
+	Item currentWeapon = {"Fists"};
 
 	void TakeDamage(ConsumeEffect type, int dmg) {
 		health -= dmg;

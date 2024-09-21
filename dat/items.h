@@ -11,6 +11,8 @@
 #define ITEM_ROPE "rope"
 #define ITEM_ROCK "rock"
 #define ITEM_CAMPFIRE "campfire"
+#define ITEM_WALL_W "wood_wall"
+#define ITEM_WALL_S "stone_wall"
 
 #define ID_NULL -1
 

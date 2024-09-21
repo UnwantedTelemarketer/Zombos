@@ -33,6 +33,7 @@ public:
 	World underground; //map but underground, different map entirely
 	bool isUnderground;
 	std::vector<Vector2_I> line;
+	std::map<Vector2_I, Container> containers;
 
 	int landSeed = 0, biomeSeed = 0;
 	PerlinNoise* mapNoise;
@@ -63,7 +64,7 @@ public:
 	void DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y);
 	void FixEntityIndex(std::shared_ptr<Chunk> chunk);
 	void floodFillUtil(int x, int y, float prevBrightness, float newBrightness, int max);
-	void floodFill(Vector2_I centerTile);
+	void floodFill(Vector2_I centerTile, int distance);
 	void ResetLightValues();
 
 	~Map();
@@ -628,13 +629,14 @@ void Map::UpdateTiles(vec2_i coords) {
 			//spread fire to a list so we dont spread more than one tile per update
 			if (curTile->liquid == fire) {
 
+				if (Math::RandInt(0, 2) == 1) effectLayer.localCoords[x - 1][y] = 1;
 				//If its a campfire, then let it burn but dont spread
 				if (curTile->hasItem && curTile->itemName == "CAMPFIRE") {
-					floodFill({ x, y });
+					floodFill({ x, y }, 5);
 					continue;
 				}
 
-				floodFill({ x, y });
+				floodFill({ x, y }, 5);
 				curTile->burningFor++;
 				switch (Math::RandInt(1, 10)) {
 				case 1:
@@ -670,7 +672,7 @@ void Map::UpdateTiles(vec2_i coords) {
 		if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].burningFor > 5) { continue; }
 		else if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].burningFor < 0) { continue; }
 		chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].liquid = fire;
-		floodFill({ tilesToBurn[i].x, tilesToBurn[i].y });
+		floodFill({ tilesToBurn[i].x, tilesToBurn[i].y }, 5);
 	}
 
 
@@ -765,10 +767,10 @@ void Map::floodFillUtil(int x, int y, float prevBrightness, float newBrightness,
 }
 
 // Flood fill algorithm for 2D array of tiles with brightness value
-void Map::floodFill(Vector2_I centerTile)
+void Map::floodFill(Vector2_I centerTile, int distance = 5)
 {
 	int prevBrightness = 0.1f;
-	floodFillUtil(centerTile.x, centerTile.y, prevBrightness, 0.1f, 5);
+	floodFillUtil(centerTile.x, centerTile.y, prevBrightness, 0.1f, distance);
 }
 
 void Map::ResetLightValues() {
