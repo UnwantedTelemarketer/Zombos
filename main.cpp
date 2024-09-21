@@ -48,7 +48,7 @@ public:
 
 	//Crafting Stuff
 	int recipeSelected = 0;
-	std::string recipeSelectedName = "";
+	std::string recipeSelectedName, itemSelectedName = "";
 
 	//Sounds
 	std::vector<std::string> walk_sounds = { "dat/sounds/walk_1.wav" , "dat/sounds/walk_2.wav" , "dat/sounds/walk_3.wav" , "dat/sounds/walk_4.wav" };
@@ -253,6 +253,8 @@ public:
 			}
 			game.Setup(data.getInt("x_pos"), data.getInt("y_pos"), 0.5f, data.getInt("seed"), data.getInt("biomes"));
 			currentState = playing;
+			game.mainMap.containers[{5, 5}].items.push_back(pInv.GetItemFromFile("items.eid", "KNIFE"));
+			game.mainMap.containers[{5, 5}].items.push_back(pInv.GetItemFromFile("items.eid", "CAMPFIRE"));
 		}
 		ImGui::End();
 	}
@@ -293,11 +295,11 @@ public:
 					continue;
 				}
 
-				/*if (game.mainMap.containers.count(Vector2_I{i,j}) != 0) {
+				if (game.mainMap.containers.count(Vector2_I{i,j}) != 0) {
 					ImGui::TextColored(ImVec4{0.5, 0.5, 0.5, 1}, "K");
 					ImGui::SameLine();
 					continue;
-				}*/
+				}
 
 				if (i < CHUNK_HEIGHT - 1) {
 					Entity* curEnt = map.CurrentChunk()->localCoords[i + 1][j].entity;
@@ -440,8 +442,6 @@ public:
 		if (craftingMenu) {
 			ImGui::Begin("Crafting");
 
-			ImGuiComboFlags flags = 0;
-
 			if (ImGui::BeginListBox("Recipes"))
 			{
 				for (int n = 0; n < game.recipeNames.size(); n++)
@@ -477,45 +477,7 @@ public:
 					}
 				}
 			}
-
-			/*std::string crafted = "none";
-			int amount = 1;
-			std::vector<std::string> ids;
-			if (ImGui::Button("Craft Rope (3 X Grass)")) {
-				pInv.GetItems(&ids, { ITEM_GRASS }, 3);
-				crafted = ITEM_ROPE;
-			}
-			if (ImGui::Button("Craft Campfire (2 X Stick, 2 X Scrap)")) {
-				pInv.GetItems(&ids, { ITEM_STICK, ITEM_SCRAP }, 2);
-				crafted = ITEM_CAMPFIRE;
-			}
-			if (ImGui::Button("Craft 3 Scrap Bits (1 X Scrap)")) {
-				pInv.GetItems(&ids, { ITEM_SCRAP }, 1);
-				crafted = ITEM_MONEY;
-				amount = 3;
-			}
-			if (ImGui::Button("Craft Canteen (3 X Scrap)")) {
-				pInv.GetItems(&ids, { ITEM_SCRAP }, 3);
-				crafted = ITEM_CONTAINER;
-			}
-			if (ImGui::Button("Craft Knife (1 X Scrap, 1 X Stick, 1 X Rope)")) {
-				pInv.GetItems(&ids, { ITEM_SCRAP, ITEM_STICK, ITEM_GRASS }, 1);
-				crafted = ITEM_KNIFE;
-			}
-
-			if (crafted != "none") {
-				Console::Log(crafted, WARNING, __LINE__);
-				Item newItem = game.Crafter.craft(ids, crafted);
-				if (newItem.id != "none") {
-					pInv.AddItem(newItem, amount);
-					for (std::string id : ids) {
-						pInv.RemoveItem(id);
-					}
-				}
-			}*/
 			ImGui::End();
-
-
 		}
 
 
@@ -528,6 +490,24 @@ public:
 			ImGui::PushFont(Engine::Instance().getFont("main"));
 			ImGui::TextColored(game.GetTileColor(*selectedTile, 1.f), game.GetTileChar(*selectedTile).c_str());
 			ImGui::PopFont();
+
+			if (game.mainMap.containers.count(selectedTile->coords) != 0) {
+				std::string text = "Open Container" ? containerOpen : "Close Container"
+				if(ImGui::Button("Open Container"))
+				std::vector<std::string> names = game.mainMap.containers[selectedTile->coords].getItemNames();
+				if (ImGui::BeginListBox("Items"))
+				{
+					for (int n = 0; n < names.size(); n++)
+					{
+						const bool is_selected = (recipeSelected == n);
+						if (ImGui::Selectable(names[n].c_str(), is_selected)) {
+							itemSelectedName = names[n];
+						}
+					}
+					ImGui::EndListBox();
+				}
+			}
+
 			if (selectedTile->hasItem) { ImGui::Text(("Item on tile: " + selectedTile->itemName).c_str()); }
 
 			const char* label = "";
@@ -849,6 +829,7 @@ public:
 	void Shutdown() override {
 		if (currentState == playing) {
 			float curTime = glfwGetTime();
+			LAZY_LOG("Now saving...");
 			SaveData dat;
 			dat.floats.append("color_r", pInv.clothes.x);
 			dat.floats.append("color_g", pInv.clothes.y);
@@ -871,9 +852,6 @@ public:
 			}
 
 			ItemReader::SaveDataToFile("dat/eid/save.eid", "STATS", dat, true);
-
-			LAZY_LOG("Now saving...");
-
 
 			for (auto& chunk : game.mainMap.world.chunks) {
 				chunk.second->SaveChunk();

@@ -59,6 +59,7 @@ public:
 	void ClearLine();
 	void ClearEntities(std::vector<Vector2_I> positions, std::shared_ptr<Chunk> chunk);
 	void ClearChunkOfEnts(std::shared_ptr<Chunk> chunk);
+	void ClearEffects();
 	void PlaceEntities(std::shared_ptr<Chunk> chunk);
 	void UpdateTiles(vec2_i coords);
 	void DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y);
@@ -318,6 +319,7 @@ void Map::CheckBounds(Player* p) {
 	}
 
 	if (changed) {
+		ClearEffects();
 		UpdateMemoryZone(c_glCoords);
 	}
 
@@ -496,6 +498,14 @@ void Map::GenerateTomb(std::shared_ptr<Chunk> chunk) {
 				chunk->localCoords[i][j] = Tile_Dirt;
 			}
 			chunk->localCoords[i][j].brightness = 0.5f;
+		}
+	}
+}
+
+void Map::ClearEffects() {
+	for (int i = 0; i < CHUNK_WIDTH; i++) {
+		for (int j = 0; j < CHUNK_HEIGHT; j++) {
+			effectLayer.localCoords[i][j] = 0;
 		}
 	}
 }

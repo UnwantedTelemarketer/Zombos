@@ -7,7 +7,9 @@
 class GameManager {
 private:
 	float tickRate;
+	float effectTickRate;
 	double tickCount;
+	double effectTickCount;
 	bool forwardTime = true;
 	std::vector<std::string> missMessages = { "blank", "You swing at nothing and almost fall over.", "You miss.", "You don't hit anything." };
 	std::vector<std::string> npcMessages;
@@ -31,7 +33,7 @@ public:
 
 	double GetTick() { return (tickRate - tickCount); }
 	float TickRate() { return tickRate; }
-	void SetTick(float secs) { tickRate = secs * 1000; }
+	void SetTick(float secs) { tickRate = secs * 1000; effectTickRate = tickRate / 3; }
 
 	void AddRecipes();
 	void Setup(int x, int y, float tick, int seed, int biome);
@@ -75,7 +77,7 @@ static void T_UpdateChunk(GameManager* gm, Vector2_I coords)
 
 
 void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1) {
-	tickRate = tick * 1000;
+	SetTick(tick);
 	mPlayer.coords.x = x;
 	mPlayer.coords.y = y;
 	AddRecipes();
@@ -328,7 +330,7 @@ void GameManager::MovePlayer(int dir) {
 }
 
 void GameManager::UpdateEffects() {
-	int tempMap[30][30];
+	int tempMap[30][30]{};
 	for (size_t i = 0; i < CHUNK_HEIGHT; i++)
 	{
 		for (size_t j = 0; j < CHUNK_WIDTH; j++)
@@ -353,6 +355,7 @@ void GameManager::UpdateEffects() {
 void GameManager::UpdateTick() {
 	if (paused) { return; }
 	tickCount += antibox::Engine::Instance().deltaTime();
+	effectTickCount += antibox::Engine::Instance().deltaTime();
 
 	if (mainMap.chunkUpdateFlag)
 	{
@@ -360,13 +363,13 @@ void GameManager::UpdateTick() {
 		mainMap.chunkUpdateFlag = false;
 	}
 
-	if (int(tickCount) <= int(tickRate/2) + 10 && int(tickCount) >= int(tickRate / 2) - 10) {
+	if (effectTickCount >= effectTickRate) {
 		UpdateEffects();
+		effectTickCount = 0;
 	}
 
 	if (tickCount >= tickRate)
 	{
-		UpdateEffects();
 		tickCount = 0;
 		//hunger and thirst
 		mPlayer.thirst -= 0.075f;
