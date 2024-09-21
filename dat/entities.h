@@ -192,6 +192,7 @@ struct Tile {
 	bool visited = false;
 	bool technical_update = false;
 	vec2_i coords;
+	bool double_size = false;
 
 	void LoadTile(Saved_Tile tile) {
 		id = tile.id;

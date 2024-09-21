@@ -395,15 +395,25 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 
 			//desert biome
 			if (currentBiome < -0.25f) {
-				chunk->localCoords[i][j] = Tile_Sand;
-				if (Math::RandInt(1, 300) == 255) {
-					chunk->localCoords[i][j].hasItem = true;
-					chunk->localCoords[i][j].itemName = "SCRAP";
+				if (Math::RandInt(0, 35) == 25) {
+					chunk->localCoords[i][j] = Tile_Cactus_Base;
+					chunk->localCoords[i][j].double_size = true;
 				}
+				else 
+				{ 
+					chunk->localCoords[i][j] = Tile_Sand; 
+					if (Math::RandInt(1, 300) == 255) {
+						chunk->localCoords[i][j].hasItem = true;
+						chunk->localCoords[i][j].itemName = "SCRAP";
+					}
+				}
+
+				
 			}
 
 			//Plains Biome
 			else {
+
 				if (currentTile < -0.25f) {
 					chunk->localCoords[i][j] = Tile_Dirt;
 					chunk->localCoords[i][j].liquid = water;
@@ -421,6 +431,16 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 						chunk->localCoords[i][j].itemName = "STICK";
 					}
 				}
+
+			}
+
+			if (currentBiome < -0.15f 
+				&& currentBiome > -0.25f 
+				&& Math::RandInt(0, 4) >= 2 
+				&& chunk->localCoords[i][j].liquid != water
+				&& chunk->localCoords[i][j].id == ID_GRASS) { //add tree instead
+				chunk->localCoords[i][j] = Tile_Tree_Base;
+				chunk->localCoords[i][j].double_size = true;
 			}
 
 			if (Math::RandInt(1, 125) >= 124 && chunk->localCoords[i][j].liquid != water) 

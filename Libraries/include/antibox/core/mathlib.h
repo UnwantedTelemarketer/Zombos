@@ -108,6 +108,19 @@ struct Vector3
 		if (vec3.x == x && vec3.y == y && vec3.z == z) { return false; }
 		return true;
 	}
+
+	void operator+=(Vector3 vec3) {
+		x += vec3.x;
+		y += vec3.y;
+		z += vec3.z;
+	}
+
+	void operator/=(int num) {
+		x /= num;
+		y /= num;
+		z /= num;
+	}
+
 };
 
 struct Vector4
@@ -121,6 +134,19 @@ struct Vector4
 	bool operator!=(Vector4 vec4) {
 		if (vec4.x == x && vec4.y == y && vec4.z == z && vec4.w == w) { return false; }
 		return true;
+	}
+
+	void operator+=(Vector3 vec3) {
+		x += vec3.x;
+		y += vec3.y;
+		z += vec3.z;
+	}
+
+	void operator/=(int num) {
+		x /= num;
+		y /= num;
+		z /= num;
+		w /= num;
 	}
 };
 

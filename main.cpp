@@ -6,9 +6,9 @@
 #include <chrono>
 
 #define UNIFONT "c:\\Users\\Thomas Andrew\\AppData\\Local\\Microsoft\\Windows\\Fonts\\Unifont.ttf"
-#define DOSFONT "dat\\fonts\\symbolic_conveyor.ttf"
+#define DOSFONT "dat\\fonts\\symbolic\\symbolic_cactus.ttf"
 #define CASCADIA "c:\\Windows\\Fonts\\CascadiaCode.ttf"
-#define ITEMFONT "dat\\fonts\\symbolic_items.ttf"
+#define ITEMFONT "dat\\fonts\\symbolic\\symbolic_items.ttf"
 using namespace antibox;
 
 enum GameState { playing, menu };
@@ -44,6 +44,7 @@ public:
 	Player& player = game.mPlayer;
 	float& health = game.mPlayer.health;
 	Map& map = game.mainMap;
+	std::vector<Vector2_I> item_positions;
 
 	//Crafting Stuff
 	int recipeSelected = 0;
@@ -51,7 +52,7 @@ public:
 
 	//Sounds
 	std::vector<std::string> walk_sounds = { "dat/sounds/walk_1.wav" , "dat/sounds/walk_2.wav" , "dat/sounds/walk_3.wav" , "dat/sounds/walk_4.wav" };
-	std::map<std::string, const char*> sfxs = { {"craft", "dat/sounds/craft.wav"}, {"fail", "dat/sounds/fail.wav"}};
+	std::map<std::string, const char*> sfxs = { {"craft", "dat/sounds/craft.wav"}, {"fail", "dat/sounds/fail.wav"}, {"collect", "dat/sounds/collect.wav"} };
 
 	void Init() override {
 		fancyGraphics = true;
@@ -284,6 +285,13 @@ public:
 			for (int j = 0; j < CHUNK_HEIGHT; j++) {
 				float intensity = map.CurrentChunk()->localCoords[i][j].brightness;
 
+				if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
+				{
+					ImGui::TextColored(game.GetPlayerColor(), ENT_PLAYER);
+					ImGui::SameLine();
+					continue;
+				}
+
 				if (i < CHUNK_HEIGHT - 1) {
 					Entity* curEnt = map.CurrentChunk()->localCoords[i + 1][j].entity;
 
@@ -294,14 +302,23 @@ public:
 							continue;
 						}
 					}
+					if (map.CurrentChunk()->localCoords[i + 1][j].id == 11) {
+						ImGui::TextColored(
+							game.GetTileColor(map.CurrentChunk()->localCoords[i + 1][j], intensity)
+							, "G");
+						ImGui::SameLine();
+						continue;
+					}
+					if (map.CurrentChunk()->localCoords[i + 1][j].id == 12) {
+						ImGui::TextColored(
+							game.GetTileColor(map.CurrentChunk()->localCoords[i + 1][j], intensity)
+							, "J");
+						ImGui::SameLine();
+						continue;
+					}
 				}
 
-				if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
-				{
-					ImGui::TextColored(ImVec4{ pInv.clothes.x,pInv.clothes.y, pInv.clothes.z, 1 }, ENT_PLAYER);
-				}
-
-				else if (map.effectLayer.localCoords[i][j] == 15)
+				if (map.effectLayer.localCoords[i][j] == 15)
 				{
 					ImGui::TextColored(ImVec4{ 1,0,1,1 }, "X");
 				}
@@ -323,8 +340,6 @@ public:
 						ImGui::PushFont(Engine::Instance().getFont("main"));
 					}
 				}
-
-
 				ImGui::SameLine();
 			}
 			ImGui::Text("");
@@ -531,6 +546,7 @@ public:
 			if (selectedTile->collectible || selectedTile->liquid != nothing || selectedTile->hasItem) {
 				if (ImGui::Button("Collect")) {
 					if (pInv.AttemptCollect(selectedTile)) {
+						Engine::Instance().StartSound(sfxs["collect"]);
 						Math::PushBackLog(&game.actionLog, "You collect an item off the ground.");
 					}
 					else {
@@ -685,7 +701,7 @@ public:
 			ImGui::Text(("High: " + std::to_string(frame.highest)).c_str());
 			ImGui::Text(("Low: " + std::to_string(frame.lowest)).c_str());
 			ImGui::Text(("Current: " + std::to_string(lastFPS)).c_str());
-			ImGui::PlotLines("Frame Times", frame.frames.c_arr(), frame.frames.length);
+			//ImGui::PlotLines("Frame Times", frame.frames.c_arr(), frame.frames.length);
 			//ms left until next tick
 			ImGui::Text(("Time until next update:"));
 			//Display a bar until next tick
@@ -1027,8 +1043,6 @@ class Sprites : public App {
 
 	}
 };
-
-
 
 std::vector<App*> CreateGame() {
 	return { new Caves };

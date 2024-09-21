@@ -61,6 +61,7 @@ public:
 
 	ImVec4 GetTileColor(Tile tile, float intensity);
 	ImVec4 GetTileColor(Vector2_I tile, float intensity);
+	ImVec4 GetPlayerColor();
 };
 
 
@@ -491,11 +492,40 @@ std::string GameManager::GetTileChar(Tile tile) {
 	if (tile.hasItem) {
 		return item_icons[tile.itemName];
 	}
+	if (tile.liquid == water && tile.id == ID_DIRT) {
+		return "A";
+	}
 	return tile_icons[tile.id];
 }
 
 std::string GameManager::GetTileChar(Vector2_I tile) {
 	return GameManager::GetTileChar(mainMap.CurrentChunk()->localCoords[tile.x][tile.y]);
+}
+
+ImVec4 GameManager::GetPlayerColor() {
+	Vector3 end_color = { pInv.clothes.x, pInv.clothes.y, pInv.clothes.z};
+	int amount_of_colors = 1;
+	if (mainMap.CurrentChunk()->localCoords[mPlayer.coords.x + 1][mPlayer.coords.y].double_size)
+	{
+		end_color += { 0, 0.35, 0 };
+		amount_of_colors++;
+	}
+	switch (mPlayer.coveredIn) {
+	case water:
+		end_color += { 0, 0, 0.8 };
+		amount_of_colors++;
+		break;
+	case blood:
+		end_color += {0.45, 0, 0};
+		amount_of_colors++;
+		break;
+	default:
+		break;
+	}
+
+	end_color /= amount_of_colors;
+
+	return ImVec4{ end_color.x, end_color.y, end_color.z, 1};
 }
 
 ImVec4 GameManager::GetTileColor(Tile tile, float intensity) {
@@ -578,6 +608,9 @@ ImVec4 GameManager::GetTileColor(Tile tile, float intensity) {
 		break;
 	case 7: //sand
 		color = { 1, 1, 0.5, 1 };
+		break;
+	case 11:
+		color = { 0,0.35,0,1 };
 		break;
 	default:
 		color = { 0, 0.65, 0, 1 };

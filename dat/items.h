@@ -18,7 +18,9 @@
 
 #define ID_DIRT 2
 
-#define ID_TREE 999
+#define ID_TREE_BASE 11
+
+#define ID_CACTUS_BASE 12
 
 #define ID_FLOWER 3
 
@@ -196,6 +198,32 @@ Tile Tile_Stone =
 	ID_NULL,
 	"NULL",
 	-1,
+	false
+};
+
+Tile Tile_Tree_Base =
+{
+	ID_TREE_BASE,
+	still,
+	nothing,
+	nullptr,
+	false,
+	ID_NULL,
+	"NULL",
+	0,
+	true
+};
+
+Tile Tile_Cactus_Base =
+{
+	ID_CACTUS_BASE,
+	still,
+	nothing,
+	nullptr,
+	false,
+	ID_NULL,
+	"NULL",
+	0,
 	false
 };
 
