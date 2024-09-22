@@ -203,9 +203,9 @@ std::shared_ptr<Chunk> Map::CurrentChunk() {
 	if (!isUnderground) {
 		return world.chunks[c_glCoords];
 	}
-	//else {
-		//return &underground.chunks[c_glCoords.x][c_glCoords.y];
-	//}
+	else {
+		return underground.chunks[{c_glCoords.x, c_glCoords.y}];
+	}
 }
 
 //std::vector<Tile> GetTileInRadius(vec2_i center) {
@@ -259,7 +259,7 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 		if (CurrentChunk()->localCoords[x][y].entity != nullptr) {
 			Entity* curEnt = CurrentChunk()->localCoords[x][y].entity;
 			if (curEnt->health > 0) {
-				AttackEntity(curEnt, p->damage, actionLog);
+				AttackEntity(curEnt, p->currentWeapon.damage, actionLog);
 			}
 			else {
 				vec2_i newCoords = { x - p->coords.x, y - p->coords.y };
@@ -385,23 +385,33 @@ void Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 
 void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 	
+	bool entrance = false;
 	float current = 0.f, currentBiome = 0.f;
 	for (int i = 0; i < CHUNK_WIDTH; i++) {
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
 
 			int bonusX = chunk->globalChunkCoord.x * CHUNK_WIDTH;
 			int bonusY = chunk->globalChunkCoord.y * CHUNK_HEIGHT;
-			current = mapNoise->noise((i + bonusX) * 0.1, (j + bonusY) * 0.1, 0.0, 1);
-			currentBiome = biomeNoise->noise((i + bonusX) * 0.1, (j + bonusY) * 0.1, 0.0, 0.1);
+			current = mapNoise->noise((i + bonusX) * 0.1, (j + bonusY) * 0.1, 0.0, 0.85);
+			currentBiome = biomeNoise->noise((i + bonusX) * 0.1, (j + bonusY) * 0.1, 0.0, 0.075);
 
 			float currentTile = current;
 
 			//desert biome
 			if (currentBiome < -0.25f) {
+
+				if (Math::RandInt(0, 500) == 25 && !entrance) {
+					chunk->localCoords[i][j] = Tile_Stone;
+					entrance = true;
+					chunk->localCoords[i][j].coords = { i, j };
+					continue;
+				}
+
 				if (Math::RandInt(0, 35) == 25) {
 					chunk->localCoords[i][j] = Tile_Cactus_Base;
 					chunk->localCoords[i][j].double_size = true;
 				}
+
 				else 
 				{ 
 					chunk->localCoords[i][j] = Tile_Sand; 
@@ -414,16 +424,15 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				
 			}
 
-			//Plains Biome
+			//Forest Biome
 			else {
 
-				if (currentTile < -0.25f) {
-					chunk->localCoords[i][j] = Tile_Dirt;
-					chunk->localCoords[i][j].liquid = water;
-					chunk->localCoords[i][j].ticksNeeded = 10;
+				if (currentTile < -0.10f && Math::RandInt(0, 4) >= 2) {
+					chunk->localCoords[i][j] = Tile_Tree_Base;
+					chunk->localCoords[i][j].double_size = true;
 				}
 
-				else if (currentTile < -0.15f) {
+				else if (currentTile < 0.f) {
 					chunk->localCoords[i][j] = Tile_TallGrass;
 				}
 
@@ -437,13 +446,10 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 
 			}
 
-			if (currentBiome < -0.15f 
-				&& currentBiome > -0.25f 
-				&& Math::RandInt(0, 4) >= 2 
-				&& chunk->localCoords[i][j].liquid != water
-				&& chunk->localCoords[i][j].id == ID_GRASS) { //add tree instead
-				chunk->localCoords[i][j] = Tile_Tree_Base;
-				chunk->localCoords[i][j].double_size = true;
+			if (currentBiome < -0.15f && currentBiome > -0.25f ) { //add tree instead
+				chunk->localCoords[i][j] = Tile_Dirt;
+				chunk->localCoords[i][j].liquid = water;
+				chunk->localCoords[i][j].ticksNeeded = 10;
 			}
 
 			if (Math::RandInt(1, 125) >= 124 && chunk->localCoords[i][j].liquid != water) 

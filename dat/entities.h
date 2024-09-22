@@ -80,7 +80,10 @@ struct Container {
 		std::vector<std::string> names;
 		for (size_t i = 0; i < items.size(); i++)
 		{
-			names.push_back(items[i].name);
+			if (items[i].count > 1) { names.push_back(items[i].name + " x " + std::to_string(items[i].count)); }
+			else {
+				names.push_back(items[i].name);
+			}
 		}
 		return names;
 	}

@@ -33,7 +33,7 @@ public:
 
 	double GetTick() { return (tickRate - tickCount); }
 	float TickRate() { return tickRate; }
-	void SetTick(float secs) { tickRate = secs * 1000; effectTickRate = tickRate / 3; }
+	void SetTick(float secs) { tickRate = secs * 1000; effectTickRate = tickRate / 4; }
 
 	void AddRecipes();
 	void Setup(int x, int y, float tick, int seed, int biome);

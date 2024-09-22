@@ -32,7 +32,7 @@ private:
 	vec3 clothes;
 public:
 	//UI stuff
-	bool statsOpen, debugOpen, interacting, itemMenu, navInv, useBool, craftingMenu, showDialogue, createChar, fancyGraphics;
+	bool statsOpen, debugOpen, interacting, itemMenu, navInv, useBool, craftingMenu, showDialogue, createChar, fancyGraphics, containerOpen;
 	Tile* selectedTile = nullptr;
 	int currentItemIndex = 0;
 	std::string openClose;
@@ -61,6 +61,7 @@ public:
 		health = 100.0f;
 		statsOpen = true;
 		openClose = "Close Stats";
+		containerOpen = false;
 		navInv = false;
 		showDialogue = true;
 
@@ -449,6 +450,7 @@ public:
 					const bool is_selected = (recipeSelected == n);
 					if (ImGui::Selectable(game.recipeNames[n].c_str(), is_selected)) {
 						recipeSelectedName = game.recipeNames[n];
+						recipeSelected = n;
 					}
 				}
 				ImGui::EndListBox();
@@ -492,25 +494,38 @@ public:
 			ImGui::PopFont();
 
 			if (game.mainMap.containers.count(selectedTile->coords) != 0) {
-				std::string text = "Open Container" ? containerOpen : "Close Container"
-				if(ImGui::Button("Open Container"))
-				std::vector<std::string> names = game.mainMap.containers[selectedTile->coords].getItemNames();
-				if (ImGui::BeginListBox("Items"))
-				{
-					for (int n = 0; n < names.size(); n++)
+				std::string text = containerOpen ? "Close Container" : "Open Container";
+				if (ImGui::Button(text.c_str())) { containerOpen = !containerOpen; }
+				if (containerOpen) {
+					Container &curCont = game.mainMap.containers[selectedTile->coords];
+					std::vector<std::string> names = curCont.getItemNames();
+					if (ImGui::BeginListBox("Items"))
 					{
-						const bool is_selected = (recipeSelected == n);
-						if (ImGui::Selectable(names[n].c_str(), is_selected)) {
-							itemSelectedName = names[n];
+						for (int n = 0; n < names.size(); n++)
+						{
+							const bool is_selected = (recipeSelected == n);
+							if (ImGui::Selectable(names[n].c_str(), is_selected)) {
+								itemSelectedName = names[n];
+								recipeSelected = n;
+							}
+						}
+						ImGui::EndListBox();
+
+						if (itemSelectedName != "") {
+							if (ImGui::Button(("Collect " + itemSelectedName).c_str())) {
+								pInv.AddItem(curCont.items[recipeSelected]);
+								curCont.items.erase(curCont.items.begin() + recipeSelected);
+								itemSelectedName = "";
+							}
 						}
 					}
-					ImGui::EndListBox();
 				}
+
 			}
 
 			if (selectedTile->hasItem) { ImGui::Text(("Item on tile: " + selectedTile->itemName).c_str()); }
 
-			const char* label = "";
+			/*const char* label = "";
 			if (map.isUnderground) {
 				label = "Go Up";
 			}
@@ -519,22 +534,30 @@ public:
 			}
 			if (ImGui::Button(label)) {
 				map.isUnderground = !map.isUnderground;
-			}
+			}*/
 
 
 			if (ImGui::Button("Drop Selected Item")) {
-				if (itemMenu && !selectedTile->hasItem) {
-					selectedTile->hasItem = true;
-					std::string upperName = pInv.items[currentItemIndex].name;
-
-					for (auto& c : upperName) c = toupper(c);
-
-					selectedTile->itemName = upperName;
-					selectedTile->collectible = true;
-					if (pInv.RemoveItem(pInv.items[currentItemIndex].id)) { currentItemIndex = 0; }
+				//Dropping it into a box
+				if (game.mainMap.containers.count(selectedTile->coords) != 0) {
+					game.mainMap.containers[selectedTile->coords].items.push_back(pInv.items[currentItemIndex]);
+					if (pInv.RemoveItem(pInv.items[currentItemIndex].id, pInv.items[currentItemIndex].count)) { currentItemIndex = 0; }
 				}
+				//Or on the floor
 				else {
-					Math::PushBackLog(&game.actionLog, "There is already an item on that space.");
+					if (itemMenu && !selectedTile->hasItem) {
+						selectedTile->hasItem = true;
+						std::string upperName = pInv.items[currentItemIndex].name;
+
+						for (auto& c : upperName) c = toupper(c);
+
+						selectedTile->itemName = upperName;
+						selectedTile->collectible = true;
+						if (pInv.RemoveItem(pInv.items[currentItemIndex].id)) { currentItemIndex = 0; }
+					}
+					else {
+						Math::PushBackLog(&game.actionLog, "There is already an item on that space.");
+					}
 				}
 
 			}
