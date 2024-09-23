@@ -6,6 +6,7 @@
 class Inventory
 {
 private:
+	std::vector<std::string> itemNames;
 public:
 	Color clothes;
 	std::vector<Item> items;
@@ -18,17 +19,20 @@ public:
 				if (items[i].id == it.id)
 				{
 					items[i].count += it.count * count;
+					if (items[i].count != 0) itemNames[i] = items[i].name + " x " + std::to_string(items[i].count);
 					return;
 				}
 			}
 		}
 
 		items.push_back(it);
+		itemNames.push_back(it.name);
 		for (int i = 0; i < count - 1; i++)
 		{
 			AddItem(it);
 		}
 	}
+
 
 	void Cleanup() {
 		std::vector<int> itemsToErase;
@@ -41,6 +45,7 @@ public:
 
 		for (size_t i = 0; i < itemsToErase.size(); i++)
 		{
+			itemNames.erase(itemNames.begin() + itemsToErase[i] - i);
 			items.erase(items.begin() + itemsToErase[i] - i);
 		}
 	}
@@ -51,9 +56,12 @@ public:
 		{
 			if (items[i].id == itemID)
 			{
-				items[i].count-= amount;
-				if (items[i].count <= 0) {
+				items[i].count -= amount;
+				if (items[i].count > 1) itemNames[i] = items[i].name + " x " + std::to_string(items[i].count);
+				else if (items[i].count == 1) itemNames[i] = items[i].name;
+				else if (items[i].count <= 0) {
 					items.erase(items.begin() + i);
+					itemNames.erase(itemNames.begin() + i);
 					return true;
 				}
 			}
@@ -132,15 +140,6 @@ public:
 			tile->hasItem = false;
 			tile->ticksNeeded = Math::RandInt(1, 1000) + 500;
 			AddItem(item);
-			return true;
-		}
-		if (tile->entity != nullptr && tile->entity->health <= 0 && tile->entity->inv.size() > 0) {
-			//TODO: add menu to transfer items. for now just moves everthing over
-			for (int i = 0; i < tile->entity->inv.size(); i++)
-			{
-				AddItem(tile->entity->inv[i]);
-			}
-			tile->entity->inv.clear();
 			return true;
 		}
 		return false;
@@ -233,6 +232,10 @@ public:
 		Item item;
 		item.CreateFromData(data);
 		return item;
+	}
+
+	std::vector<std::string>* GetItemNames() {
+		return &itemNames;
 	}
 
 	void GetItems(std::vector<std::string>* idList, std::vector<std::string> validIds, int max) {

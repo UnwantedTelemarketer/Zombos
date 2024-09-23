@@ -33,7 +33,9 @@ public:
 	World underground; //map but underground, different map entirely
 	bool isUnderground;
 	std::vector<Vector2_I> line;
-	std::map<Vector2_I, Container> containers;
+
+	//x and y are global coords, z and w are local
+	std::map<Vector4, Container> containers;
 
 	int landSeed = 0, biomeSeed = 0;
 	PerlinNoise* mapNoise;
@@ -60,6 +62,7 @@ public:
 	void ClearEntities(std::vector<Vector2_I> positions, std::shared_ptr<Chunk> chunk);
 	void ClearChunkOfEnts(std::shared_ptr<Chunk> chunk);
 	void ClearEffects();
+	Container* ContainerAtCoord(Vector2_I localCoords);
 	void PlaceEntities(std::shared_ptr<Chunk> chunk);
 	void UpdateTiles(vec2_i coords);
 	void DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y);
@@ -259,11 +262,13 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 		if (CurrentChunk()->localCoords[x][y].entity != nullptr) {
 			Entity* curEnt = CurrentChunk()->localCoords[x][y].entity;
 			if (curEnt->health > 0) {
-				AttackEntity(curEnt, p->currentWeapon.damage, actionLog);
+				AttackEntity(curEnt, p->currentWeapon.mod, actionLog);
 			}
 			else {
 				vec2_i newCoords = { x - p->coords.x, y - p->coords.y };
 				curEnt->coords += newCoords;
+				CurrentChunk()->localCoords[x][y].entity = nullptr;
+				CurrentChunk()->localCoords[curEnt->coords.x][curEnt->coords.y].entity = curEnt;
 				chunkUpdateFlag = true;
 			}
 			return;
@@ -749,6 +754,13 @@ void Map::FixEntityIndex(std::shared_ptr<Chunk> chunk) {
 	{
 		chunk->entities[i]->index = i;
 	}
+}
+
+Container* Map::ContainerAtCoord(Vector2_I localCoords) {
+	if (containers.count({ (float)c_glCoords.x, (float)c_glCoords.y, (float)localCoords.x, (float)localCoords.y }) != 0) {
+		return &containers[{ (float)c_glCoords.x, (float)c_glCoords.y, (float)localCoords.x, (float)localCoords.y }];
+	}
+	return nullptr;
 }
 
 // Recursive helper function for flood fill algorithm

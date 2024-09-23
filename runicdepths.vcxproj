@@ -713,6 +713,9 @@
   <ItemGroup>
     <Text Include="other.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="..\..\..\Users\Thomas Andrew\Downloads\symbolic_chest.ttf" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
 </Project>

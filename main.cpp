@@ -6,7 +6,7 @@
 #include <chrono>
 
 #define UNIFONT "c:\\Users\\Thomas Andrew\\AppData\\Local\\Microsoft\\Windows\\Fonts\\Unifont.ttf"
-#define DOSFONT "dat\\fonts\\symbolic\\symbolic_cactus.ttf"
+#define DOSFONT "dat\\fonts\\symbolic\\symbolic_chest.ttf"
 #define CASCADIA "c:\\Windows\\Fonts\\CascadiaCode.ttf"
 #define ITEMFONT "dat\\fonts\\symbolic\\symbolic_items.ttf"
 using namespace antibox;
@@ -32,7 +32,7 @@ private:
 	vec3 clothes;
 public:
 	//UI stuff
-	bool statsOpen, debugOpen, interacting, itemMenu, navInv, useBool, craftingMenu, showDialogue, createChar, fancyGraphics, containerOpen;
+	bool statsOpen, debugOpen, interacting, itemMenu, navInv, useBool, craftingMenu, showDialogue, createChar, fancyGraphics, containerOpen, helpMenu;
 	Tile* selectedTile = nullptr;
 	int currentItemIndex = 0;
 	std::string openClose;
@@ -47,12 +47,16 @@ public:
 	std::vector<Vector2_I> item_positions;
 
 	//Crafting Stuff
-	int recipeSelected = 0;
-	std::string recipeSelectedName, itemSelectedName = "";
+	int recipeSelected, itemSelected = 0;
+	std::string recipeSelectedName, itemSelectedName, invSelectedName = "";
 
 	//Sounds
 	std::vector<std::string> walk_sounds = { "dat/sounds/walk_1.wav" , "dat/sounds/walk_2.wav" , "dat/sounds/walk_3.wav" , "dat/sounds/walk_4.wav" };
-	std::map<std::string, const char*> sfxs = { {"craft", "dat/sounds/craft.wav"}, {"fail", "dat/sounds/fail.wav"}, {"collect", "dat/sounds/collect.wav"} };
+	std::map<std::string, const char*> sfxs = { 
+		{"craft", "dat/sounds/craft.wav"}, 
+		{"fail", "dat/sounds/fail.wav"}, 
+		{"collect", "dat/sounds/collect.wav"} 
+	};
 
 	void Init() override {
 		fancyGraphics = true;
@@ -66,7 +70,7 @@ public:
 		showDialogue = true;
 
 		Engine::Instance().SetVolume(0.1f);
-		player.currentWeapon.damage = 5;
+		player.currentWeapon.mod = 5;
 	}
 
 	void Update() {
@@ -76,7 +80,7 @@ public:
 
 		game.UpdateTick();
 
-		if (Input::KeyDown(KEY_UP)) {
+		if (Input::KeyDown(KEY_UP) || Input::KeyDown(KEY_W)) {
 			if (interacting)
 			{
 				selectedTile = { map.TileAtPos(Vector2_I{ player.coords.x - 1, player.coords.y }) };
@@ -99,7 +103,7 @@ public:
 				game.MovePlayer(MAP_UP);
 			}
 		}
-		else if (Input::KeyDown(KEY_DOWN)) {
+		else if (Input::KeyDown(KEY_DOWN) || Input::KeyDown(KEY_S)) {
 			if (interacting)
 			{
 				Tile& selTile = *map.TileAtPos(Vector2_I{ player.coords.x + 1, player.coords.y });
@@ -126,7 +130,7 @@ public:
 				game.MovePlayer(MAP_DOWN);
 			}
 		}
-		else if (Input::KeyDown(KEY_LEFT)) {
+		else if (Input::KeyDown(KEY_LEFT) || Input::KeyDown(KEY_A)) {
 			if (interacting)
 			{
 				selectedTile = { map.TileAtPos(Vector2_I{ player.coords.x, player.coords.y - 1}) };
@@ -143,7 +147,7 @@ public:
 				game.MovePlayer(MAP_LEFT);
 			}
 		}
-		else if (Input::KeyDown(KEY_RIGHT)) {
+		else if (Input::KeyDown(KEY_RIGHT) || Input::KeyDown(KEY_D)) {
 			if (interacting)
 			{
 				selectedTile = { map.TileAtPos(Vector2_I{ player.coords.x, player.coords.y + 1}) };
@@ -184,10 +188,14 @@ public:
 		{
 			craftingMenu = !craftingMenu;
 		}
+		//else if (Input::KeyDown(KEY_A))
+		//{
+		//	player.aiming = !player.aiming;
+		//}
 
-		else if (Input::KeyDown(KEY_A))
+		else if (Input::KeyDown(KEY_H))
 		{
-			player.aiming = !player.aiming;
+			helpMenu = !helpMenu;
 		}
 
 		if (moved) {
@@ -282,7 +290,7 @@ public:
 		//	DisplayEntity(ent);
 		//}
 
-		//------Map-------
+		//------Map rendering-------
 		ImGui::Begin("Map");
 		if (fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
 		for (int i = 0; i < CHUNK_WIDTH; i++) {
@@ -296,8 +304,8 @@ public:
 					continue;
 				}
 
-				if (game.mainMap.containers.count(Vector2_I{i,j}) != 0) {
-					ImGui::TextColored(ImVec4{0.5, 0.5, 0.5, 1}, "K");
+				if (game.mainMap.containers.count({ (float)game.mainMap.c_glCoords.x, (float)game.mainMap.c_glCoords.y, (float)i, (float)j}) != 0) {
+					ImGui::TextColored(ImVec4{0.5, 0.34, 0, 1}, "U");
 					ImGui::SameLine();
 					continue;
 				}
@@ -407,193 +415,36 @@ public:
 				ImGui::TextColored(Cosmetic::FireColor(), "Burning!");
 				break;
 			}
+			if(player.coveredIn != nothing) ImGui::ProgressBar((float)player.ticksCovered / (float)player.liquidLast, ImVec2(0.0f, 0.0f));
 
 			ImGui::Text("-------------");
 			ImGui::Text("Currently Equipped Weapon :"); ImGui::SameLine();
 			ImGui::Text(player.currentWeapon.name.c_str());
 			ImGui::Text("Damage :"); ImGui::SameLine();
-			ImGui::Text(std::to_string(player.currentWeapon.damage).c_str());
+			ImGui::Text(std::to_string(player.currentWeapon.mod).c_str());
 
 			ImGui::End();
 
 		}
 		//------Inventory------
 		ImGui::Begin("Inventory");
-		for (int i = 0; i < pInv.items.size(); i++)
+		if (ImGui::BeginListBox("Inventory"))
 		{
-			if (pInv.items[i].count <= 0) { continue; }
-			if (i == currentItemIndex && navInv) {
-				ImGui::Text("> "); ImGui::SameLine();
-			}
-			int itemLiquid = (int)pInv.items[i].coveredIn;
-
-			ImGui::TextColored(Cosmetic::CoveredColor(itemLiquid), Cosmetic::CoveredName(itemLiquid));
-			ImGui::SameLine();
-
-			ImGui::Text(pInv.items[i].name.c_str());
-			if (pInv.items[i].count > 1)
+			for (int n = 0; n < pInv.items.size(); n++)
 			{
-				ImGui::SameLine(); ImGui::Text("x");
-				ImGui::SameLine(); ImGui::Text(CHAR_ARRAY(pInv.items[i].count));
+				const bool is_selected = (currentItemIndex == n);
+				if (ImGui::Selectable((*pInv.GetItemNames())[n].c_str(), is_selected)) {
+					invSelectedName = (*pInv.GetItemNames())[n];
+					currentItemIndex = n;
+				}
 			}
+			ImGui::EndListBox();
 		}
 		ImGui::End();
 
-		//------Crafting-------
-		if (craftingMenu) {
-			ImGui::Begin("Crafting");
 
-			if (ImGui::BeginListBox("Recipes"))
-			{
-				for (int n = 0; n < game.recipeNames.size(); n++)
-				{
-					const bool is_selected = (recipeSelected == n);
-					if (ImGui::Selectable(game.recipeNames[n].c_str(), is_selected)) {
-						recipeSelectedName = game.recipeNames[n];
-						recipeSelected = n;
-					}
-				}
-				ImGui::EndListBox();
-			}
-			if (recipeSelectedName != "") {
-				std::vector<std::string> components = game.Crafter.getRecipeComponents(recipeSelectedName);
-				ImGui::PushFont(Engine::Instance().getFont("items"));
-				ImGui::Text(("\n" + game.item_icons[recipeSelectedName]).c_str());
-				ImGui::PopFont();
-				ImGui::Text(" - Required Components - ");
-				for (size_t i = 0; i < components.size(); i++)
-				{
-					ImGui::Text(components[i].c_str());
-				}
-				if (ImGui::Button("Craft Item")) {
-					std::string newItem = game.Crafter.AttemptCraft(recipeSelectedName, &pInv.items);
-
-					if (newItem != "none") {
-						currentItemIndex = 0;
-						pInv.Cleanup();
-						pInv.AddItem(EID::MakeItem("items.eid", newItem));
-						Engine::Instance().StartSound(sfxs["craft"]);
-					}
-					else {
-						Engine::Instance().StartSound(sfxs["fail"]);
-					}
-				}
-			}
-			ImGui::End();
-		}
-
-
-
-		//------Interaction------
-		if (selectedTile != nullptr)
-		{
-			ImGui::Begin("Selected Block");
-
-			ImGui::PushFont(Engine::Instance().getFont("main"));
-			ImGui::TextColored(game.GetTileColor(*selectedTile, 1.f), game.GetTileChar(*selectedTile).c_str());
-			ImGui::PopFont();
-
-			if (game.mainMap.containers.count(selectedTile->coords) != 0) {
-				std::string text = containerOpen ? "Close Container" : "Open Container";
-				if (ImGui::Button(text.c_str())) { containerOpen = !containerOpen; }
-				if (containerOpen) {
-					Container &curCont = game.mainMap.containers[selectedTile->coords];
-					std::vector<std::string> names = curCont.getItemNames();
-					if (ImGui::BeginListBox("Items"))
-					{
-						for (int n = 0; n < names.size(); n++)
-						{
-							const bool is_selected = (recipeSelected == n);
-							if (ImGui::Selectable(names[n].c_str(), is_selected)) {
-								itemSelectedName = names[n];
-								recipeSelected = n;
-							}
-						}
-						ImGui::EndListBox();
-
-						if (itemSelectedName != "") {
-							if (ImGui::Button(("Collect " + itemSelectedName).c_str())) {
-								pInv.AddItem(curCont.items[recipeSelected]);
-								curCont.items.erase(curCont.items.begin() + recipeSelected);
-								itemSelectedName = "";
-							}
-						}
-					}
-				}
-
-			}
-
-			if (selectedTile->hasItem) { ImGui::Text(("Item on tile: " + selectedTile->itemName).c_str()); }
-
-			/*const char* label = "";
-			if (map.isUnderground) {
-				label = "Go Up";
-			}
-			else {
-				label = "Go Down";
-			}
-			if (ImGui::Button(label)) {
-				map.isUnderground = !map.isUnderground;
-			}*/
-
-
-			if (ImGui::Button("Drop Selected Item")) {
-				//Dropping it into a box
-				if (game.mainMap.containers.count(selectedTile->coords) != 0) {
-					game.mainMap.containers[selectedTile->coords].items.push_back(pInv.items[currentItemIndex]);
-					if (pInv.RemoveItem(pInv.items[currentItemIndex].id, pInv.items[currentItemIndex].count)) { currentItemIndex = 0; }
-				}
-				//Or on the floor
-				else {
-					if (itemMenu && !selectedTile->hasItem) {
-						selectedTile->hasItem = true;
-						std::string upperName = pInv.items[currentItemIndex].name;
-
-						for (auto& c : upperName) c = toupper(c);
-
-						selectedTile->itemName = upperName;
-						selectedTile->collectible = true;
-						if (pInv.RemoveItem(pInv.items[currentItemIndex].id)) { currentItemIndex = 0; }
-					}
-					else {
-						Math::PushBackLog(&game.actionLog, "There is already an item on that space.");
-					}
-				}
-
-			}
-
-
-			if (selectedTile->collectible || selectedTile->liquid != nothing || selectedTile->hasItem) {
-				if (ImGui::Button("Collect")) {
-					if (pInv.AttemptCollect(selectedTile)) {
-						Engine::Instance().StartSound(sfxs["collect"]);
-						Math::PushBackLog(&game.actionLog, "You collect an item off the ground.");
-					}
-					else {
-						Math::PushBackLog(&game.actionLog, "You can't collect that.");
-					}
-					selectedTile = nullptr;
-				}
-
-			}
-			if (ImGui::Button("Burn")) {
-				selectedTile->liquid = fire;
-
-				map.floodFill(selectedTile->coords);
-			}
-
-			int _ = 0;
-			if (pInv.TryGetItem(ITEM_ROCK, false, &_)) {
-				if (ImGui::Button("Place Wall")) {
-					*selectedTile = tileByID[ID_STONE];
-					pInv.RemoveItem(ITEM_ROCK);
-				}
-			}
-
-			ImGui::End();
-		}
 		//------item------
-		if (itemMenu)
+		if (invSelectedName != "")
 		{
 			ImGui::Begin("Current Item");
 			ImGui::Text(pInv.items[currentItemIndex].name.c_str());
@@ -660,7 +511,7 @@ public:
 			{
 				useBool = !useBool;
 			}
-			if (pInv.items[currentItemIndex].equippable) {
+			if (pInv.items[currentItemIndex].eType != notEquip) {
 				if (ImGui::Button("Equip"))
 				{
 					player.currentWeapon = pInv.items[currentItemIndex];
@@ -702,6 +553,205 @@ public:
 						Math::PushBackLog(&game.actionLog, "You can't use " + pInv.items[currentItemIndex].name + ".");
 					}
 					useBool = !useBool;
+				}
+			}
+
+			ImGui::End();
+		}
+
+		//------Crafting-------
+		if (craftingMenu) {
+			ImGui::Begin("Crafting");
+
+			if (ImGui::BeginListBox("Recipes"))
+			{
+				for (int n = 0; n < game.recipeNames.size(); n++)
+				{
+					const bool is_selected = (recipeSelected == n);
+					if (ImGui::Selectable(game.recipeNames[n].c_str(), is_selected)) {
+						recipeSelectedName = game.recipeNames[n];
+						recipeSelected = n;
+					}
+				}
+				ImGui::EndListBox();
+			}
+			if (recipeSelectedName != "") {
+				std::vector<std::string> components = game.Crafter.getRecipeComponents(recipeSelectedName);
+				ImGui::PushFont(Engine::Instance().getFont("items"));
+				ImGui::Text(("\n" + game.item_icons[recipeSelectedName]).c_str());
+				ImGui::PopFont();
+				ImGui::Text(" - Required Components - ");
+				for (size_t i = 0; i < components.size(); i++)
+				{
+					ImGui::Text(components[i].c_str());
+				}
+				if (ImGui::Button("Craft Item")) {
+					std::string newItem = game.Crafter.AttemptCraft(recipeSelectedName, &pInv.items);
+
+					if (newItem != "none") {
+						currentItemIndex = 0;
+						pInv.Cleanup();
+						pInv.AddItem(EID::MakeItem("items.eid", newItem));
+						Engine::Instance().StartSound(sfxs["craft"]);
+					}
+					else {
+						Engine::Instance().StartSound(sfxs["fail"]);
+					}
+				}
+			}
+			ImGui::End();
+		}
+
+		// Help Menu
+
+		if (helpMenu) {
+			ImGui::Begin("Help Menu");
+			ImGui::Text("WASD or Arrow keys to move");
+			ImGui::Text("E to begin selecting a block then any of the directional keys to select a block");
+			ImGui::Text("P to open/close the Debug menu");
+			ImGui::Text("H to open/close the Help menu");
+			ImGui::Text("C to open/close the Crafting menu");
+			ImGui::End();
+		}
+
+		//------Interaction------
+		if (selectedTile != nullptr)
+		{
+			ImGui::Begin("Selected Block");
+
+			Container* curCont = game.mainMap.ContainerAtCoord(selectedTile->coords);
+
+			ImGui::PushFont(Engine::Instance().getFont("main"));
+			if (curCont != nullptr) {
+				ImGui::TextColored(ImVec4{ 0.5, 0.34, 0, 1 }, "U");
+			}
+			else {
+				ImGui::TextColored(game.GetTileColor(*selectedTile, 1.f), game.GetTileChar(*selectedTile).c_str());
+			}
+			ImGui::PopFont();
+
+
+			if (curCont != nullptr) {
+				std::string text = containerOpen ? "Close Container" : "Open Container";
+				if (ImGui::Button(text.c_str())) { containerOpen = !containerOpen; }
+				if (containerOpen) {
+					std::vector<std::string> names = curCont->getItemNames();
+					if (ImGui::BeginListBox("Items"))
+					{
+						for (int n = 0; n < names.size(); n++)
+						{
+							const bool is_selected = (recipeSelected == n);
+							if (ImGui::Selectable(names[n].c_str(), is_selected)) {
+								itemSelectedName = names[n];
+								recipeSelected = n;
+							}
+						}
+						ImGui::EndListBox();
+
+						if (itemSelectedName != "") {
+							if (ImGui::Button(("Collect " + itemSelectedName).c_str())) {
+								pInv.AddItem(curCont->items[recipeSelected]);
+								curCont->items.erase(curCont->items.begin() + recipeSelected);
+								itemSelectedName = "";
+							}
+						}
+					}
+				}
+			}
+
+			if (selectedTile->entity != nullptr && selectedTile->entity->health <= 0) {
+				std::string text = containerOpen ? "Close Container" : "Open Container";
+				if (ImGui::Button(text.c_str())) { containerOpen = !containerOpen; }
+				if (containerOpen) {
+					std::vector<std::string> names = selectedTile->entity->getItemNames();
+					if (ImGui::BeginListBox("Items"))
+					{
+						for (int n = 0; n < names.size(); n++)
+						{
+							const bool is_selected = (recipeSelected == n);
+							if (ImGui::Selectable(names[n].c_str(), is_selected)) {
+								itemSelectedName = names[n];
+								itemSelected = n;
+							}
+						}
+						ImGui::EndListBox();
+
+						if (itemSelectedName != "") {
+							if (ImGui::Button(("Collect " + itemSelectedName).c_str())) {
+								pInv.AddItem(selectedTile->entity->inv[recipeSelected]);
+								selectedTile->entity->inv.erase(selectedTile->entity->inv.begin() + recipeSelected);
+								itemSelectedName = "";
+							}
+						}
+					}
+				}
+			}
+
+			if (selectedTile->hasItem) { ImGui::Text(("Item on tile: " + selectedTile->itemName).c_str()); }
+
+			/*const char* label = "";
+			if (map.isUnderground) {
+				label = "Go Up";
+			}
+			else {
+				label = "Go Down";
+			}
+			if (ImGui::Button(label)) {
+				map.isUnderground = !map.isUnderground;
+			}*/
+
+
+			if (ImGui::Button("Drop Selected Item")) {
+				//Dropping it into a box
+				Container* curCont = game.mainMap.ContainerAtCoord(selectedTile->coords);
+				if (curCont != nullptr) {
+					curCont->items.push_back(pInv.items[currentItemIndex]);
+					if (pInv.RemoveItem(pInv.items[currentItemIndex].id, pInv.items[currentItemIndex].count)) { currentItemIndex = 0; }
+				}
+				//Or on the floor
+				else {
+					if (invSelectedName != "" && !selectedTile->hasItem) {
+						selectedTile->hasItem = true;
+						std::string upperName = pInv.items[currentItemIndex].name;
+
+						for (auto& c : upperName) c = toupper(c);
+
+						selectedTile->itemName = upperName;
+						selectedTile->collectible = true;
+						if (pInv.RemoveItem(pInv.items[currentItemIndex].id)) { currentItemIndex = 0; }
+					}
+					else {
+						Math::PushBackLog(&game.actionLog, "There is already an item on that space.");
+					}
+				}
+
+			}
+
+
+			if (selectedTile->collectible || selectedTile->liquid != nothing || selectedTile->hasItem) {
+				if (ImGui::Button("Collect")) {
+					if (pInv.AttemptCollect(selectedTile)) {
+						Engine::Instance().StartSound(sfxs["collect"]);
+						Math::PushBackLog(&game.actionLog, "You collect an item off the ground.");
+					}
+					else {
+						Math::PushBackLog(&game.actionLog, "You can't collect that.");
+					}
+					selectedTile = nullptr;
+				}
+
+			}
+			if (ImGui::Button("Burn")) {
+				selectedTile->liquid = fire;
+
+				map.floodFill(selectedTile->coords);
+			}
+
+			int _ = 0;
+			if (pInv.TryGetItem(ITEM_ROCK, false, &_)) {
+				if (ImGui::Button("Place Wall")) {
+					*selectedTile = tileByID[ID_STONE];
+					pInv.RemoveItem(ITEM_ROCK);
 				}
 			}
 

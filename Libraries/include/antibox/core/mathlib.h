@@ -148,6 +148,17 @@ struct Vector4
 		z /= num;
 		w /= num;
 	}
+
+	//for maps
+	bool operator<(const Vector4& other) const {
+		if (x < other.x) return true;
+		if (x > other.x) return false;
+		if (y < other.y) return true;
+		if (y > other.y) return false;
+		if (z < other.z) return true;
+		if (z > other.z) return false;
+		return w < other.w;
+	}
 };
 
 struct Vector26

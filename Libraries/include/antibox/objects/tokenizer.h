@@ -84,7 +84,6 @@ struct OpenedData {
 		}
 	}
 
-
 	//Returns a boolean using the key (key : value)
 	bool getBool(std::string key)
 	{

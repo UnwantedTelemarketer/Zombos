@@ -8,6 +8,7 @@ enum Liquid { nothing, water, blood, fire };
 enum Action { use, consume, combine };
 enum Behaviour { Wander, Protective, Stationary, Aggressive };
 enum Faction { Human, Zombie, Wildlife };
+enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4};
 
 //What the effect is and how much it does.
 struct EffectAmount {
@@ -37,8 +38,8 @@ struct Item {
 	Liquid heldLiquid = nothing;
 	int ticksUntilDry = 0;
 	int initialTickTime = 0;
-	bool equippable = false;
-	int damage = 0;
+	equipType eType = notEquip;
+	int mod = 0;
 
 	void CoverIn(Liquid l, int ticks) {
 		coveredIn = l;
@@ -60,12 +61,12 @@ struct Item {
 		count = item.getInt("amount");
 		consumeTxt = item.getString("consumeTxt");
 		useTxt = item.getString("useTxt");
-		equippable = item.getBool("equippable");
+		eType = (equipType)item.getInt("equipType");
 
 
 		std::vector<std::string> effects = item.getArray("effects");
 
-		damage = stoi(effects[3]); 
+		if(eType != none) mod = stoi(effects[4]);
 
 		use = { {(ConsumeEffect)stoi(effects[0]), (float)stoi(effects[1])},
 				{(ConsumeEffect)stoi(effects[2]), (float)stoi(effects[3])} };
@@ -73,7 +74,8 @@ struct Item {
 };
 
 struct Container {
-	Vector2_I coords;
+	Vector2_I localCoords;
+	Vector2_I globalCoords;
 	std::vector<Item> items;
 
 	std::vector<std::string> getItemNames() {
@@ -114,6 +116,15 @@ struct Entity {
 	std::vector<Item> inv;
 
 	bool targeting() { return target != nullptr || targetingPlayer; }
+
+	std::vector<std::string> getItemNames() {
+		std::vector<std::string> names;
+		for (size_t i = 0; i < inv.size(); i++)
+		{
+			names.push_back(inv[i].name);
+		}
+		return names;
+	}
 };
 
 struct Player {

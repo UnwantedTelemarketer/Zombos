@@ -1651,4 +1651,7 @@
   <ItemGroup>
     <Text Include="other.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Font Include="..\..\..\Users\Thomas Andrew\Downloads\symbolic_chest.ttf" />
+  </ItemGroup>
 </Project>

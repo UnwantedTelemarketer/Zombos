@@ -111,7 +111,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 		Console::Log(itemData.getArray(x.first), text::red, __LINE__);
 	}
 
-	mainMap.containers.insert({ {5, 5}, {{5, 5}, {}} });
+	mainMap.containers.insert({ {250, 250, 5, 5}, {{250, 250},{5, 5}, {}} });
 
 }
 
