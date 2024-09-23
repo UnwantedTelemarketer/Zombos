@@ -109,7 +109,6 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 
 	for (auto const& x : itemData.tokens) {
 		item_icons.insert({ itemData.getArray(x.first)[0] , itemData.getArray(x.first)[1]});
-		Console::Log(itemData.getArray(x.first), text::red, __LINE__);
 	}
 
 	mainMap.containers.insert({ {250, 250, 5, 5}, {{250, 250},{5, 5}, {}} });
@@ -123,7 +122,6 @@ void GameManager::AddRecipes() {
 	Crafter.addRecipe("BANDAGE", { {"GRASS", 3}});
 	Crafter.addRecipe("ROPE", { {"GRASS", 2} });
 	Crafter.addRecipe("KNIFE", { {"STICK", 1}, {"ROPE", 1}, {"SCRAP", 1}});
-	Console::Log(Crafter.getRecipeNames(), text::blue, __LINE__);
 }
 
 void GameManager::DoBehaviour(Entity* ent)

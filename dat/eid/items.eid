@@ -212,3 +212,17 @@ useTxt : "Does Nothig.";
 effects : [3,25,0,0];
 equipType : 0;
 }
+
+MACHETE {
+name : "Machete";
+description : "Sharp and deadly.";
+id : "machete";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "You eat the meat. You feel much less hungry.";
+useTxt : "Does Nothig.";
+effects : [0,0,0,0, 25];
+equipType : 1;
+}

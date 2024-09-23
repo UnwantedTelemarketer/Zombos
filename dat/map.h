@@ -62,6 +62,8 @@ public:
 	void ClearEntities(std::vector<Vector2_I> positions, std::shared_ptr<Chunk> chunk);
 	void ClearChunkOfEnts(std::shared_ptr<Chunk> chunk);
 	void ClearEffects();
+	void CreateContainer(Vector2_I coordsLocal);
+	void CreateContainer(Vector4_I coords);
 	Container* ContainerAtCoord(Vector2_I localCoords);
 	void PlaceEntities(std::shared_ptr<Chunk> chunk);
 	void UpdateTiles(vec2_i coords);
@@ -110,10 +112,10 @@ void Map::UpdateMemoryZone(Vector2_I coords, bool ignoreSave = false) {
 		for (int x = -1; x <= 1; x++)
 		{
 			vec2_i curChunk = { c_glCoords.x + x, c_glCoords.y + y };
-			std::string filename = "dat/map/Chunk" + std::to_string(curChunk.x) + std::to_string(curChunk.y);
+			std::string filename = "dat/map/" + std::to_string(curChunk.x) + std::to_string(curChunk.y) + ".chunk";
 
-			//Check if theres a saved chunk. iF so, load it
-			if (world.chunks[curChunk].get() == nullptr) {
+			//Check if theres a saved chunk. if so, load it
+			if (world.chunks[curChunk] == nullptr) {
 				if (fileExists(filename.c_str()) && !ignoreSave) {
 					ReadChunk(curChunk, filename);
 				}
@@ -124,7 +126,7 @@ void Map::UpdateMemoryZone(Vector2_I coords, bool ignoreSave = false) {
 		}
 	}
 
-	/*std::vector<Vector2_I> chunksToDelete;
+	std::vector<Vector2_I> chunksToDelete;
 	//find ones too far away
 	for (const auto& pair : world.chunks) {
 		if (pair.first.x > c_glCoords.x + 1 || pair.first.x < c_glCoords.x - 1 ||
@@ -132,8 +134,6 @@ void Map::UpdateMemoryZone(Vector2_I coords, bool ignoreSave = false) {
 			chunksToDelete.push_back(pair.first);
 		}
 	}
-	double time1, time2;
-	time1 = glfwGetTime();
 
 	if (chunksToDelete.size() > 0) {
 		//Save all three chunks to file across 3 threads
@@ -151,15 +151,12 @@ void Map::UpdateMemoryZone(Vector2_I coords, bool ignoreSave = false) {
 	for (auto& vec : chunksToDelete) {
 		//world.chunks[vec]->SaveChunk();
 		world.chunks.erase(vec);
-	} 
+	}
 	
-	time2 = glfwGetTime();
-
-	Console::Log((time2 - time1) * 1000, text::white, __LINE__);*/
-
 }
 
 void Map::ReadChunk(Vector2_I curChunk, std::string path) {
+	Console::Log("Reading Chunk from " + path, text::green, __LINE__);
 	std::shared_ptr<Chunk> tempChunk = std::make_shared<Chunk>();
 	tempChunk->globalChunkCoord = curChunk;
 	tempChunk->LoadChunk(curChunk);
@@ -392,6 +389,7 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 	
 	bool entrance = false;
 	float current = 0.f, currentBiome = 0.f;
+	int event = Math::RandInt(0, 15);
 	for (int i = 0; i < CHUNK_WIDTH; i++) {
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
 
@@ -472,7 +470,8 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 		}
 	}
 
-	if (Math::RandInt(1,5) == 4) { PlaceBuilding(chunk); }
+	//if(Math::RandInt(0, 15) == 14) {Place}
+	if (Math::RandInt(1,4) == 2) { PlaceBuilding(chunk); }
 	chunk->beenBuilt = true;
 }
 
@@ -482,19 +481,36 @@ void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
 	Vector2_I corner = cornerstone;
 
 	//pick some corners to draw to
-	std::vector<Vector2_I> coordMod = { 
-		{0,Math::RandInt(2,5)},{Math::RandInt(2,5),0},
-		{0,-Math::RandInt(2,5)},{-Math::RandInt(2,5),0} };
+	int wallLength = Math::RandInt(3, 8);
+
+	int chestCounter = 0;
+	int whenDoesChestSpawn = Math::RandInt(0, wallLength * wallLength - 5);
 
 	//draw the walls
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < wallLength; i++)
 	{
-		std::vector<Vector2_I> wall = GetLine(corner, corner + coordMod[i], 5);
-		for (int j = 0; j < wall.size(); j++)
+		for (int j = 0; j < wallLength; j++)
 		{
-			chunk->localCoords[wall[j].x][wall[j].y] = Tile_Stone;
+			if (i == 0 && j == 1) { continue; }
+			if (i == 0 || i == wallLength - 1 || j == 0 || j == wallLength - 1) {
+				chunk->localCoords[corner.x + i][corner.y + j] = Tile_Stone;
+			}
+			else {
+				if (chestCounter == whenDoesChestSpawn) {
+					CreateContainer({ chunk->globalChunkCoord.x, chunk->globalChunkCoord.y, corner.x + i, corner.y + j });
+
+					OpenedData data;
+					ItemReader::GetDataFromFile("items.eid", "MACHETE", &data);
+					Item item;
+					item.CreateFromData(data);
+
+					containers[{ chunk->globalChunkCoord.x, chunk->globalChunkCoord.y, corner.x + i, corner.y + j }].items.push_back(item);
+					chestCounter++;
+				}
+				chunk->localCoords[corner.x + i][corner.y + j] = Tile_Sand;
+
+			}
 		}
-		corner = corner + coordMod[i];
 	}
 }
 
@@ -754,6 +770,16 @@ void Map::FixEntityIndex(std::shared_ptr<Chunk> chunk) {
 	{
 		chunk->entities[i]->index = i;
 	}
+}
+
+void Map::CreateContainer(Vector2_I coordsLocal) {
+	containers[{ c_glCoords.x, c_glCoords.y, coordsLocal.x, coordsLocal.y }] =
+	{ { c_glCoords.x, c_glCoords.y}, {coordsLocal.x, coordsLocal.y }, {} };
+}
+
+void Map::CreateContainer(Vector4_I coords) {
+	containers[{ coords.x, coords.y, coords.z, coords.w }] =
+	{ { coords.x, coords.y}, {coords.z, coords.w }, {}};
 }
 
 Container* Map::ContainerAtCoord(Vector2_I localCoords) {

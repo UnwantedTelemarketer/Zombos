@@ -232,7 +232,7 @@ public:
 	}
 
 	void MenuScene() {
-		ImGui::ShowDemoWindow();
+		//ImGui::ShowDemoWindow();
 		ImGui::Begin("Menu");
 		if (createChar) { Create_Character(); }
 

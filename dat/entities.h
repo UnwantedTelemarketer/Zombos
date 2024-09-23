@@ -166,6 +166,7 @@ struct Saved_Tile {
 	bool hasItem = false;
 	std::string itemName = "NULL";
 	int x, y = 0;
+	bool walkable = false;
 
 	void Serialize(std::ofstream& stream) {
 		stream.write(reinterpret_cast<const char*>(&id), sizeof(id));
@@ -177,6 +178,7 @@ struct Saved_Tile {
 		stream.write(reinterpret_cast<const char*>(&hasItem), sizeof(hasItem));
 		stream.write(reinterpret_cast<const char*>(&x), sizeof(x));
 		stream.write(reinterpret_cast<const char*>(&y), sizeof(y));
+		stream.write(reinterpret_cast<const char*>(&walkable), sizeof(walkable));
 
 		size_t size = itemName.size();
 		stream.write(reinterpret_cast<const char*>(&size), sizeof(size));
@@ -195,6 +197,7 @@ struct Saved_Tile {
 		stream.read(reinterpret_cast<char*>(&hasItem), sizeof(hasItem));
 		stream.read(reinterpret_cast<char*>(&x), sizeof(x));
 		stream.read(reinterpret_cast<char*>(&y), sizeof(y));
+		stream.read(reinterpret_cast<char*>(&walkable), sizeof(walkable));
 
 		size_t size = 0;
 		stream.read(reinterpret_cast<char*>(&size), sizeof(size));
@@ -238,6 +241,7 @@ struct Tile {
 		hasItem = tile.hasItem;
 		itemName = tile.itemName;
 		coords = { tile.x, tile.y };
+		walkable = tile.walkable;
 	}
 
 	bool CanUpdate() {
@@ -255,6 +259,7 @@ static void CreateSavedTile(Saved_Tile* sTile, Tile tile) {
 	sTile->itemName = tile.itemName;
 	sTile->x = tile.coords.x;
 	sTile->y = tile.coords.y;
+	sTile->walkable = tile.walkable;
 }
 
 class Inventory;
