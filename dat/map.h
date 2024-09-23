@@ -35,7 +35,7 @@ public:
 	std::vector<Vector2_I> line;
 
 	//x and y are global coords, z and w are local
-	std::map<Vector4, Container> containers;
+	std::map<Vector4_I, Container> containers;
 
 	int landSeed = 0, biomeSeed = 0;
 	PerlinNoise* mapNoise;
@@ -757,8 +757,8 @@ void Map::FixEntityIndex(std::shared_ptr<Chunk> chunk) {
 }
 
 Container* Map::ContainerAtCoord(Vector2_I localCoords) {
-	if (containers.count({ (float)c_glCoords.x, (float)c_glCoords.y, (float)localCoords.x, (float)localCoords.y }) != 0) {
-		return &containers[{ (float)c_glCoords.x, (float)c_glCoords.y, (float)localCoords.x, (float)localCoords.y }];
+	if (containers.count({ c_glCoords.x, c_glCoords.y, localCoords.x, localCoords.y }) != 0) {
+		return &containers[{ c_glCoords.x, c_glCoords.y, localCoords.x, localCoords.y }];
 	}
 	return nullptr;
 }

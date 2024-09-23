@@ -25,3 +25,8 @@ void AudioEngine::SetVolume(float volume)
 {
     ma_engine_set_volume(&mEngine, volume);
 }
+
+float AudioEngine::GetVolume()
+{
+    return ma_engine_get_volume(&mEngine);
+}

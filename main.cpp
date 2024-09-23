@@ -30,6 +30,10 @@ private:
 	int counter = 0;
 	GameState currentState;
 	vec3 clothes;
+	std::string printIcon;
+	ImVec4 iconColor;
+	std::vector<std::string> itemIcons;
+	std::vector<ImVec2> itemPositions;
 public:
 	//UI stuff
 	bool statsOpen, debugOpen, interacting, itemMenu, navInv, useBool, craftingMenu, showDialogue, createChar, fancyGraphics, containerOpen, helpMenu;
@@ -232,6 +236,11 @@ public:
 		ImGui::Begin("Menu");
 		if (createChar) { Create_Character(); }
 
+		ImGui::Text(std::to_string(Engine::Instance().GetVolume()).c_str());
+
+		if (ImGui::Button("Lower the volume")) {
+			Engine::Instance().SetVolume(0.5f);
+		}
 
 		if (ImGui::Button("New Game"))
 		{
@@ -293,79 +302,106 @@ public:
 		//------Map rendering-------
 		ImGui::Begin("Map");
 		if (fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
+		//std::string screen;
+
+		bool item = false;
+		ImVec2 playerPos;
 		for (int i = 0; i < CHUNK_WIDTH; i++) {
 			for (int j = 0; j < CHUNK_HEIGHT; j++) {
 				float intensity = map.CurrentChunk()->localCoords[i][j].brightness;
+				Tile& curTile = map.CurrentChunk()->localCoords[i][j];
+				Tile& underTile = map.CurrentChunk()->localCoords[i + 1][j];
 
 				if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
 				{
-					ImGui::TextColored(game.GetPlayerColor(), ENT_PLAYER);
-					ImGui::SameLine();
-					continue;
+					//screen += ENT_PLAYER;
+					//colors.push_back(game.GetPlayerColor());
+					playerPos = ImGui::GetCursorPos();
 				}
 
-				if (game.mainMap.containers.count({ (float)game.mainMap.c_glCoords.x, (float)game.mainMap.c_glCoords.y, (float)i, (float)j}) != 0) {
-					ImGui::TextColored(ImVec4{0.5, 0.34, 0, 1}, "U");
-					ImGui::SameLine();
-					continue;
+				else if (game.mainMap.containers.count({game.mainMap.c_glCoords.x, game.mainMap.c_glCoords.y, i, j}) != 0)
+				{
+					//screen += "U";
+					//colors.push_back(ImVec4{ 0.5, 0.34, 0, 1 });
+					printIcon = "U";
+					iconColor = ImVec4{ 0.5, 0.34, 0, 1 };
+				}
+
+				else if (map.effectLayer.localCoords[i][j] == 1)
+				{
+					//screen += "?";
+					//colors.push_back(ImVec4{ 0.65,0.65,0.65,1 });
+					printIcon = "?";
+					iconColor = ImVec4{ 0.65,0.65,0.65,1 };
+				}
+				else {
+					printIcon = game.GetTileChar(curTile);
+					iconColor = game.GetTileColor(curTile, intensity);
 				}
 
 				if (i < CHUNK_HEIGHT - 1) {
-					Entity* curEnt = map.CurrentChunk()->localCoords[i + 1][j].entity;
+					Entity* curEnt = underTile.entity;
 
 					if (curEnt != nullptr) {
 						if (curEnt->targeting() && curEnt->health > 0) {
-							ImGui::TextColored(ImVec4{ 1,0,0,1 }, "!");
-							ImGui::SameLine();
-							continue;
+							//screen += "!";
+							//colors.push_back(ImVec4{ 1,0,0,1 });
+							printIcon = "!";
+							iconColor = ImVec4{ 1,0,0,1 };
 						}
 					}
-					if (map.CurrentChunk()->localCoords[i + 1][j].id == 11) {
-						ImGui::TextColored(
-							game.GetTileColor(map.CurrentChunk()->localCoords[i + 1][j], intensity)
-							, "G");
-						ImGui::SameLine();
-						continue;
+					if (underTile.id == 11) {
+						//screen += "G";
+						//colors.push_back(game.GetTileColor(underTile, intensity));
+						printIcon = "G";
+						iconColor = game.GetTileColor(underTile, intensity);
 					}
-					if (map.CurrentChunk()->localCoords[i + 1][j].id == 12) {
-						ImGui::TextColored(
-							game.GetTileColor(map.CurrentChunk()->localCoords[i + 1][j], intensity)
-							, "J");
-						ImGui::SameLine();
-						continue;
+					if (underTile.id == 12) {
+						//screen += "J";
+						//colors.push_back(game.GetTileColor(underTile, intensity));
+						printIcon = "J";
+						iconColor = game.GetTileColor(underTile, intensity);
 					}
 				}
 
-				if (map.effectLayer.localCoords[i][j] == 15)
-				{
-					ImGui::TextColored(ImVec4{ 1,0,1,1 }, "X");
+				if (curTile.hasItem)
+				{ 
+					item = true;
+					itemPositions.push_back(ImGui::GetCursorPos());
+					itemIcons.push_back(game.GetItemChar(curTile));
+					ImGui::Text(" ");
+					ImGui::SameLine();
+					continue;
 				}
-				else if (map.effectLayer.localCoords[i][j] == 1)
-				{
-					ImGui::TextColored(ImVec4{ 0.65,0.65,0.65,1 }, "?");
-				}
-				else {
-					bool item = false;
-					if(map.CurrentChunk()->localCoords[i][j].hasItem) 
-					{ 
-						item = true;
-						ImGui::PopFont();
-						ImGui::PushFont(Engine::Instance().getFont("items"));
-					}
 
-					ImGui::TextColored(
-						game.GetTileColor(map.CurrentChunk()->localCoords[i][j],intensity),
-						game.GetTileChar(map.CurrentChunk()->localCoords[i][j]).c_str());
 
-					if (item) {
-						ImGui::PopFont();
-						ImGui::PushFont(Engine::Instance().getFont("main"));
-					}
-				}
+				//screen += game.GetTileChar(curTile);
+				//colors.push_back(game.GetTileColor(curTile, intensity));
+
+				ImGui::TextColored(iconColor, printIcon.c_str());
 				ImGui::SameLine();
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 0.05);
 			}
 			ImGui::Text("");
+			//screen += '~';
+			//colors.push_back({ 0,0,0,1 });
 		}
+
+		ImGui::SetCursorPos(playerPos);
+		ImGui::TextColored(game.GetPlayerColor(), ENT_PLAYER);
+
+		if (item) {
+			ImGui::PopFont();
+			ImGui::PushFont(Engine::Instance().getFont("items"));
+			for (size_t i = 0; i < itemIcons.size(); i++)
+			{
+				ImGui::SetCursorPos(itemPositions[i]);
+				ImGui::TextColored({0.5,0.35,0,1}, itemIcons[i].c_str());
+			}
+			itemIcons.clear();
+			itemPositions.clear();
+		}
+
 		if (fancyGraphics) ImGui::PopFont();
 		ImGui::End();
 
@@ -951,93 +987,26 @@ class Falling_Sand : public App {
 		return props;
 	}
 
-	std::vector<std::vector<int>> map, changed_map;
-	int updates = 0;
 
 
 	void Init() override {
-		for (size_t i = 0; i < 30; i++)
-		{
-			map.push_back({});
-			for (size_t j = 0; j < 30; j++)
-			{
-				map[i].push_back(0);
-			}
-		}
-		changed_map = map;
-		map[15][15] = 1;
-		map[17][15] = 1;
-		map[19][15] = 1;
 	}
 
 	void Update() override {
-		if (Input::KeyDown(KEY_SPACE)) {
-			changed_map[cursor_pos.x][cursor_pos.y] = 1;
-		}
-		if (Input::KeyDown(KEY_UP)) {
-			cursor_pos.x -= 1;
-		}
-		if (Input::KeyDown(KEY_DOWN)) {
-			cursor_pos.x += 1;
-		}
-		if (Input::KeyDown(KEY_LEFT)) {
-			cursor_pos.y -= 1;
-		}
-		if (Input::KeyDown(KEY_RIGHT)) {
-			cursor_pos.y += 1;
-		}
 
-		updates++;
-		if (updates < 30) { return; }
-		updates = 0;
-		for (size_t i = 0; i < map.size(); i++)
-		{
-			for (size_t j = 0; j < map[i].size(); j++)
-			{
-				if (map[i][j] == 1 && i - 1 >= 0 && i + 1 < 30) {
-					if (map[i + 1][j] != 1) {
-						changed_map[i + 1][j] = 1;
-						changed_map[i][j] = 0;
-					}
-					else if (map[i + 1][j + 1] != 1) {
-						changed_map[i + 1][j + 1] = 1;
-						changed_map[i][j] = 0;
-					}
-					else if (map[i + 1][j - 1] != 1) {
-						changed_map[i + 1][j - 1] = 1;
-						changed_map[i][j] = 0;
-					}
-					else {
-						continue;
-					}
-				}
-			}
-		}
-		map = changed_map;
 	}
 
-	void ImguiRender() override {
-
-		//ImGui::PushFont(Engine::Instance().getFont());
+	void ImguiRender() override 
+	{
 		ImGui::Begin("Game View");
-		for (int i = 0; i < map.size(); i++)
+		for (size_t i = 0; i < 10; i++)
 		{
-			for (int j = 0; j < map[i].size(); j++)
-			{
-				if (Vector2_I{ i, j } == cursor_pos) {
-					ImGui::Text("X"); ImGui::SameLine();
-				}
-				else if (map[i][j] == 0) {
-					ImGui::TextColored({ 0.2f, 0.2f, 0.2f, 1.0f }, "J"); ImGui::SameLine();
-				}
-				else {
-					ImGui::TextColored({ 1.0f, 1.0f, 0.f, 1.0f }, "J"); ImGui::SameLine();
-				}
-			}
-			ImGui::NewLine();
+			ImGui::Text("BoB ");
+			ImGui::SameLine();
 		}
+		ImGui::SetCursorPos({ ImGui::GetCursorPosX() / 2, ImGui::GetCursorPosY() });
+		ImGui::Text("Chap");
 		ImGui::End();
-		ImGui::PopFont();
 	}
 	void Shutdown() override {
 

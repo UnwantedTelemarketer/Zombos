@@ -161,6 +161,44 @@ struct Vector4
 	}
 };
 
+struct Vector4_I
+{
+	int x, y, z, w;
+	bool operator==(Vector4_I vec4) {
+		if (vec4.x == x && vec4.y == y && vec4.z == z && vec4.w == w) { return true; }
+		return false;
+	}
+
+	bool operator!=(Vector4_I vec4) {
+		if (vec4.x == x && vec4.y == y && vec4.z == z && vec4.w == w) { return false; }
+		return true;
+	}
+
+	void operator+=(Vector3 vec3) {
+		x += vec3.x;
+		y += vec3.y;
+		z += vec3.z;
+	}
+
+	void operator/=(int num) {
+		x /= num;
+		y /= num;
+		z /= num;
+		w /= num;
+	}
+
+	//for maps
+	bool operator<(const Vector4_I& other) const {
+		if (x < other.x) return true;
+		if (x > other.x) return false;
+		if (y < other.y) return true;
+		if (y > other.y) return false;
+		if (z < other.z) return true;
+		if (z > other.z) return false;
+		return w < other.w;
+	}
+};
+
 struct Vector26
 {
 	float a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;

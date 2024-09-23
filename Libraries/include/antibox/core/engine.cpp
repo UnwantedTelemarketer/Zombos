@@ -141,6 +141,11 @@ namespace antibox
 		mAudio->SetVolume(volume);
 	}
 
+	float Engine::GetVolume()
+	{
+		return mAudio->GetVolume();
+	}
+
 	Engine::~Engine() {
 		delete window;
 	}

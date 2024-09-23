@@ -58,6 +58,7 @@ public:
 	
 	Entity* NearEnt();
 
+	std::string GetItemChar(Tile tile);
 	std::string GetTileChar(Tile tile);
 
 	std::string GetTileChar(Vector2_I tile);
@@ -502,6 +503,9 @@ void GameManager::SetTile(Vector2_I tile, int newTile) {
 	mainMap.CurrentChunk()->localCoords[tile.x][tile.y].id = newTile;
 }
 
+std::string GameManager::GetItemChar(Tile tile) {
+	return item_icons[tile.itemName];
+}
 std::string GameManager::GetTileChar(Tile tile) {
 
 	if (tile.entity != nullptr)
@@ -525,9 +529,9 @@ std::string GameManager::GetTileChar(Tile tile) {
 		}*/
 		"";
 	}
-	if (tile.hasItem) {
-		return item_icons[tile.itemName];
-	}
+	//if (tile.hasItem) {
+		//return item_icons[tile.itemName];
+	//}
 	if (tile.liquid == water && tile.id == ID_DIRT) {
 		return "A";
 	}
@@ -612,10 +616,10 @@ ImVec4 GameManager::GetTileColor(Tile tile, float intensity) {
 		goto dimming;
 	}
 
-	if (tile.hasItem) {
-		color = { 0.65, 0.45, 0.35, 1 };
-		goto dimming;
-	}
+	//if (tile.hasItem) {
+		//color = { 0.65, 0.45, 0.35, 1 };
+		//goto dimming;
+	//}
 
 	//regular tile color
 	switch (tile.id) {

@@ -33,6 +33,7 @@ namespace antibox {
 		//Play sound once at file path
 		void StartSound(const char* path);
 		void SetVolume(float volume);
+		float GetVolume();
 
 		~Engine(); //Destructor
 
