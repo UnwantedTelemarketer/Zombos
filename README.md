@@ -1,6 +1,6 @@
 # Antibox
 C++ Game Framework
 
-Most of everything that's actually engine related is in Libraries\include\antibox
+Engine related things are in Libraries\include\antibox
 
-The main file currently is multiple projects with the framework that I'm testing stuff with
+The surface level stuff is the zombo game.
