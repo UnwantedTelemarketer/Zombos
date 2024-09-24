@@ -226,3 +226,17 @@ useTxt : "Does Nothig.";
 effects : [0,0,0,0, 25];
 equipType : 1;
 }
+
+OLD_CLOTH {
+name : "Tattered Clothes";
+description : "Torn and ripped.";
+id : "old_clothes";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : ".";
+useTxt : ".";
+effects : [0,0,0,0];
+equipType : 0;
+}

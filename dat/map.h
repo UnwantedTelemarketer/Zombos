@@ -175,19 +175,17 @@ void Map::MakeNewChunk(Vector2_I coords) {
 
 void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 {
-	for (int i = 0; i < 3; i++) //CHANGE THIS TO SPAWN ENTITIES
+	for (int i = 0; i < Math::RandInt(0,4); i++) //CHANGE THIS TO SPAWN ENTITIES
 	{
 		Entity* zomb;
 		int num = Math::RandInt(1, 10);
 		if (num >= 9) {
 			zomb = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human, 10, 10, true, Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT), true };
-			if (Math::RandInt(1, 5) == 4) { 
-				Item it = EID::MakeItem("items.eid", "BAD_PISTOL"); 
-				zomb->inv.push_back(it);
-			}
 		}
 		else if (num >= 5) {
 			zomb = new Entity{ 15, "Zombie", ID_ZOMBIE, Aggressive, true, Zombie, 6, 8, false, Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };
+
+			zomb->inv.push_back(EID::MakeItem("items.eid", "OLD_CLOTH"));
 		}
 		else {
 			zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, Wildlife, 5, 1, false, Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };

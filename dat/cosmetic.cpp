@@ -3,7 +3,7 @@
 #include "antibox/core/mathlib.h"
 
 ImVec4 Cosmetic::FireColor() {
-	switch (Math::RandInt(1, 4)) {
+	switch (Math::RandInt(1, 5)) {
 	case 1:
 		return { 1, 0.65, 0, 1 };
 		break;
@@ -16,6 +16,23 @@ ImVec4 Cosmetic::FireColor() {
 	case 4:
 	default:
 		return { 1, 0.35, 0, 1 };
+		break;
+	}
+}
+ImVec4 Cosmetic::SmokeColor() {
+	switch (Math::RandInt(1, 4)) {
+	case 1:
+		return { 0.5, 0.5, 0.5, 1 };
+		break;
+	case 2:
+		return { 0.55, 0.55, 0.55, 1 };
+		break;
+	case 3:
+		return { 0.6, 0.6, 0.6, 1 };
+		break;
+	case 4:
+	default:
+		return { 0.35, 0.35, 0.35, 1 };
 		break;
 	}
 }

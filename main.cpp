@@ -8,7 +8,7 @@
 #define UNIFONT "c:\\Users\\Thomas Andrew\\AppData\\Local\\Microsoft\\Windows\\Fonts\\Unifont.ttf"
 #define DOSFONT "dat\\fonts\\symbolic\\symbolic_chest.ttf"
 #define CASCADIA "c:\\Windows\\Fonts\\CascadiaCode.ttf"
-#define ITEMFONT "dat\\fonts\\symbolic\\symbolic_items.ttf"
+#define ITEMFONT "dat\\fonts\\symbolic\\symbolic_item.ttf"
 using namespace antibox;
 
 enum GameState { playing, menu };
@@ -18,7 +18,7 @@ private:
 	WindowProperties GetWindowProperties() {
 		WindowProperties props;
 
-		props.imguiProps = { true, true, false, {DOSFONT, ITEMFONT}, {"main", "items"} };
+		props.imguiProps = { true, true, false, {DOSFONT, ITEMFONT}, {"main", "items"}, 16.f };
 		props.w = 1280;
 		props.h = 720;
 		props.vsync = 0;
@@ -91,12 +91,6 @@ public:
 				interacting = false;
 				return;
 			}
-			else if (navInv)
-			{
-				currentItemIndex--;
-				currentItemIndex = currentItemIndex < 0 ? 0 : currentItemIndex;
-				return;
-			}
 			else if (player.aiming) {
 				player.crosshair.x -= 1;
 				return;
@@ -116,12 +110,6 @@ public:
 
 				}
 				interacting = false;
-				return;
-			}
-			else if (navInv)
-			{
-				currentItemIndex++;
-				if (currentItemIndex > pInv.items.size() - 1) currentItemIndex = pInv.items.size() - 1;
 				return;
 			}
 			else if (player.aiming) {
@@ -171,12 +159,6 @@ public:
 		else if (Input::KeyDown(KEY_P))
 		{
 			debugOpen = !debugOpen;
-		}
-
-		else if (Input::KeyDown(KEY_I))
-		{
-			navInv = !navInv;
-			itemMenu = navInv;
 		}
 
 		else if (Input::KeyDown(KEY_E))
@@ -233,6 +215,12 @@ public:
 
 	void MenuScene() {
 		//ImGui::ShowDemoWindow();
+		ImGui::Begin("title");
+		ImGui::SetFontSize(48.f);
+		ImGui::Text("Los Zombos");
+		ImGui::SetFontSize(16.f);
+		ImGui::End();
+
 		ImGui::Begin("Menu");
 		if (createChar) { Create_Character(); }
 
@@ -332,7 +320,7 @@ public:
 					//screen += "?";
 					//colors.push_back(ImVec4{ 0.65,0.65,0.65,1 });
 					printIcon = "?";
-					iconColor = ImVec4{ 0.65,0.65,0.65,1 };
+					iconColor = Cosmetic::SmokeColor();
 				}
 				else {
 					printIcon = game.GetTileChar(curTile);
@@ -483,10 +471,12 @@ public:
 		if (invSelectedName != "")
 		{
 			ImGui::Begin("Current Item");
-			ImGui::Text(pInv.items[currentItemIndex].name.c_str());
+			ImGui::Text((pInv.items[currentItemIndex].name + "\n\n").c_str());
 
 			ImGui::PushFont(Engine::Instance().getFont("items"));
+			ImGui::SetFontSize(32.f);
 			ImGui::Text(game.item_icons[pInv.items[currentItemIndex].section].c_str());
+			ImGui::SetFontSize(16.f);
 			ImGui::PopFont();
 
 			ImGui::Text(pInv.items[currentItemIndex].description.c_str());
@@ -614,7 +604,9 @@ public:
 			if (recipeSelectedName != "") {
 				std::vector<std::string> components = game.Crafter.getRecipeComponents(recipeSelectedName);
 				ImGui::PushFont(Engine::Instance().getFont("items"));
+				ImGui::SetFontSize(32.f);
 				ImGui::Text(("\n" + game.item_icons[recipeSelectedName]).c_str());
+				ImGui::SetFontSize(16.f);
 				ImGui::PopFont();
 				ImGui::Text(" - Required Components - ");
 				for (size_t i = 0; i < components.size(); i++)
@@ -760,7 +752,6 @@ public:
 						Math::PushBackLog(&game.actionLog, "There is already an item on that space.");
 					}
 				}
-
 			}
 
 
@@ -952,6 +943,7 @@ public:
 			dat.ints.append("biomes", map.biomeSeed);
 			dat.ints.append("global_x", map.CurrentChunk()->globalChunkCoord.x);
 			dat.ints.append("global_y", map.CurrentChunk()->globalChunkCoord.y);
+			dat.floats.append("time", game.worldTime);
 
 			Console::Log(map.CurrentChunk()->globalChunkCoord, SUCCESS, __LINE__);
 

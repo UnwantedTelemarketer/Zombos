@@ -7851,6 +7851,12 @@ float ImGui::GetFontSize()
     return GImGui->FontSize;
 }
 
+
+void ImGui::SetFontSize(float size)
+{
+    GImGui->FontSize = size;
+}
+
 ImVec2 ImGui::GetFontTexUvWhitePixel()
 {
     return GImGui->DrawListSharedData.TexUvWhitePixel;
