@@ -118,8 +118,24 @@ limited_array<T> - creates a vector of type T. Has the following:
 ____________________________________SAMPLE PROJ____________________________________
 #include "antibox/core/antibox.h"
 
+using namespace antibox;
+
 //To create a new project, you'll need to create your own class that derives from antibox::App
 class _NAME_ : public App {   
+
+//To edit window properties, use the method GetWindowProperties():
+	WindowProperties GetWindowProperties(){
+		WindowProperties props;
+		ImGuiWindowProperties imgui; //Optional if you want ImGui
+
+		props.w = 1280; //this is width
+		props.h = 720; //this is height
+		props.title = "Title"; //This is title
+
+		props.imgui.DockingEnabled = true; //If you want to be able to dock your ImGui Windows
+
+		return props; //return because its a method that returns a WindowProperties object
+	}
 
 	//A project required four methods:
 
@@ -140,16 +156,4 @@ antibox::App* CreateApp() {
 }
 
 
-//To edit window properties, use the method GetWindowProperties():
-	WindowProperties GetWindowProperties(){
-		WindowProperties props;
-		ImGuiWindowProperties imgui; //Optional if you want ImGui
 
-		props.w = 1280; //this is width
-		props.h = 720; //this is height
-		props.title = "Title"; //This is title
-
-		props.imgui.DockingEnabled = true; //If you want to be able to dock your ImGui Windows
-
-		return props; //return because its a method that returns a WindowProperties object
-	}

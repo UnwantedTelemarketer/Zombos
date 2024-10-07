@@ -31,6 +31,7 @@ namespace antibox {
 		Window(const unsigned int width, const unsigned int height, const char* windowName);
 
 		bool init(const WindowProperties& props);
+		void UpdateCC(glm::vec4 props);
 		void BeginRender();
 		void EndRender();
 		void GetEvents();
@@ -39,6 +40,7 @@ namespace antibox {
 		inline GLFWwindow* glfwin() { return Window::win; }
 		inline ImguiWindow imwin() { return Window::mImguiWindow; }
 		inline Framebuffer* GetFramebuffer() { return mFramebuffer.get(); }
+		inline void UseFramebuffer(bool tf) { showFramebuffer = tf; }
 
 	private:
 		bool showFramebuffer;

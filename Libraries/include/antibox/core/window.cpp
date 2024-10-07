@@ -29,12 +29,15 @@ namespace antibox {
 	void Window::BeginRender() { //This should send the framebuffer that is currently in use to the front
 		auto& rm = Engine::Instance().GetRenderManager();
 		rm.Clear();
-		rm.Submit(std::move(std::make_unique<antibox::render::PushFramebuffer>(mFramebuffer)));
+		if (showFramebuffer)
+		{
+			rm.Submit(std::move(std::make_unique<antibox::render::PushFramebuffer>(mFramebuffer)));
+		}
 	}
 
 	void Window::EndRender() { //This pops the framebuffer currently in use, flushes all remaining rendercommands and then runs ImGuiRender and swaps buffers
 		auto& rm = Engine::Instance().GetRenderManager();
-		rm.Submit(std::move(std::make_unique<antibox::render::PopFramebuffer>()));
+		if (showFramebuffer) { rm.Submit(std::move(std::make_unique<antibox::render::PopFramebuffer>())); }
 		rm.Flush();
 
 		mImguiWindow.BeginRender();
@@ -81,6 +84,12 @@ namespace antibox {
 		showFramebuffer = props.framebuffer_display;
 		
 		//glEnable(GL_STENCIL_TEST);
+	}
+
+	void Window::UpdateCC(glm::vec4 props)
+	{
+		Engine::Instance().GetRenderManager().SetClearColor(props);
+		mFramebuffer->SetClearColor(props); // props.cc
 	}
 	
 	glm::ivec2 Window::GetSize() {

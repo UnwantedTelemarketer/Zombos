@@ -9,8 +9,8 @@ namespace antibox
 	Sprite::Sprite(const glm::vec2 pos, const glm::vec2 size, std::string texture_path)
 	{
 
-		auto mesh = std::make_shared<antibox::Mesh>(&Factory::Vertices[0], 4, 3, &Factory::texcoords[0], &Factory::Elements[0], 6);
-		auto shader = std::make_shared<antibox::Shader>(Factory::DefaultVert, Factory::DefaultFrag);
+		auto mesh = std::make_shared<antibox::Mesh>(&Factory::Vertices2D[0], 4, 3, &Factory::texcoords[0], &Factory::Elements2D[0], 6);
+		auto shader = std::make_shared<antibox::Shader>(Factory::Default2DVert, Factory::DefaultFrag2D);
 		auto texture = std::make_shared<antibox::Texture>(texture_path);
 		mTexture = texture;
 		mMesh = mesh;

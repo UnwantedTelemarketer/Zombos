@@ -4,7 +4,7 @@
 
 namespace Factory
 {
-	static float Vertices[]
+	static float Vertices2D[]
 	{
 		 0.5f,  0.5f, 0.f,
 		 0.5f, -0.5f, 0.f,
@@ -12,10 +12,29 @@ namespace Factory
 		-0.5f,  0.5f, 0.f
 	};
 
-	static uint32_t Elements[]
+	static uint32_t Elements2D[]
 	{
 		0, 3, 1,
 		1, 3, 2
+	};
+
+	static float Vertices3D[]
+	{
+		-0.5f, 0.0f,  0.5f,
+		-0.5f, 0.0f, -0.5f,
+		 0.5f, 0.0f, -0.5f,
+		 0.5f, 0.0f,  0.5f,
+		 0.0f, 0.8f,  0.0f,
+	};
+
+	static uint32_t Elements3D[]
+	{
+		0, 1, 2,
+		0, 2, 3,
+		0, 1, 4,
+		1, 2, 4,
+		2, 3, 4,
+		3, 0, 4
 	};
 
 	static float texcoords[]
@@ -26,13 +45,14 @@ namespace Factory
 		0.f, 1.f,
 	};
 
-	static const char* DefaultVert = R"(
+	static const char* Default2DVert = R"(
 			#version 410 core
 			layout (location = 0) in vec3 position;
 			layout (location = 1) in vec2 texcoords;
 			out vec2 uvs;
 			uniform vec2 offset = vec2(0.5);
 			uniform mat4 model = mat4(1.0);
+
 
 			void main() {
 				uvs = texcoords;
@@ -41,34 +61,48 @@ namespace Factory
 			}
 		)";
 
-	/*
-	#version 410 core
+	static const char* Default3DVert = R"(
+			#version 410 core
 			layout (location = 0) in vec3 position;
 			layout (location = 1) in vec2 texcoords;
-			out vec3 vpos;
 			out vec2 uvs;
 			uniform vec2 offset = vec2(0.5);
-			uniform mat4 model = mat4(1.0);
 
-			void main()
-			{
+			uniform mat4 model;
+			uniform mat4 view;
+			uniform mat4 proj;
+
+			void main() {
 				uvs = texcoords;
-				vpos = position + vec3(offset, 0);
-				gl_Position = vec4(position, 1.0);
-			}*/
+				vec4 transformedPosition = proj * view * model * vec4(position, 1.0);
+				gl_Position = transformedPosition;
+			}
+		)";
 
-	static const char* DefaultFrag = R"(
+	static const char* DefaultFrag2D = R"(
 			#version 410 core
 			out vec4 outColor;
 			in vec3 vpos;
 			in vec2 uvs;
 
 			uniform vec3 color = vec3(0.0);
-			uniform float blue = 0.5f;
 			uniform sampler2D tex;
 			void main()
 			{
-				//outColor = vec4(color, 1.0);
+				outColor = texture(tex, vec2(uvs.x, 1.0-uvs.y));
+			}
+		)";
+
+	static const char* DefaultFrag3D = R"(
+			#version 410 core
+			out vec4 outColor;
+			in vec3 vpos;
+			in vec2 uvs;
+
+			uniform vec3 color = vec3(0.0);
+			uniform sampler2D tex;
+			void main()
+			{
 				outColor = texture(tex, uvs);
 			}
 		)";

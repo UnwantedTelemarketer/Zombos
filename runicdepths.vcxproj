@@ -157,6 +157,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Apps\raycast_main.cpp" />
     <ClCompile Include="dat\cosmetic.cpp" />
     <ClCompile Include="dat\crafting.cpp" />
     <ClCompile Include="dat\entities.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="Libraries\include\antibox\core\imguiwindow.cpp" />
     <ClCompile Include="Libraries\include\antibox\core\log.cpp" />
     <ClCompile Include="Libraries\include\antibox\core\window.cpp" />
+    <ClCompile Include="Libraries\include\antibox\graphics\3d\camera.cpp" />
     <ClCompile Include="Libraries\include\antibox\graphics\framebuffer.cpp" />
     <ClCompile Include="Libraries\include\antibox\graphics\helpers.cpp" />
     <ClCompile Include="Libraries\include\antibox\graphics\rendercommands.cpp" />
@@ -176,6 +178,7 @@
     <ClCompile Include="Libraries\include\antibox\graphics\vertex.cpp" />
     <ClCompile Include="Libraries\include\antibox\managers\rendermanager.cpp" />
     <ClCompile Include="Libraries\include\antibox\objects\gameobject.cpp" />
+    <ClCompile Include="Libraries\include\antibox\objects\3d\model.cpp" />
     <ClCompile Include="Libraries\include\antibox\objects\scene.cpp" />
     <ClCompile Include="Libraries\include\antibox\tools\noise.cpp" />
     <ClCompile Include="Libraries\include\glad\glad.c" />
@@ -200,7 +203,9 @@
     <ClInclude Include="dat\items.h" />
     <ClInclude Include="dat\map.h" />
     <ClInclude Include="Libraries\include\antibox\core\audio.h" />
+    <ClInclude Include="Libraries\include\antibox\graphics\3d\camera.h" />
     <ClInclude Include="Libraries\include\antibox\graphics\vertex.h" />
+    <ClInclude Include="Libraries\include\antibox\objects\3d\model.h" />
     <ClInclude Include="Libraries\include\antibox\objects\tokenizer.h" />
     <ClInclude Include="Libraries\include\antibox\core\app.h" />
     <ClInclude Include="Libraries\include\antibox\core\engine.h" />

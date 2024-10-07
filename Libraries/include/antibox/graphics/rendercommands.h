@@ -32,6 +32,23 @@ namespace antibox
 		}; 
 
 
+		class RenderMeshTextured3D : public RenderCommand
+		{
+		public:
+			RenderMeshTextured3D(std::weak_ptr<Mesh> mesh, std::weak_ptr<Texture> texture, std::weak_ptr<Shader> shader)
+				: mMesh(mesh)
+				, mShader(shader)
+				, mTexture(texture)
+			{}
+
+			virtual void Execute();
+		private:
+			std::weak_ptr<Mesh> mMesh;
+			std::weak_ptr<Texture> mTexture;
+			std::weak_ptr<Shader> mShader;
+		};
+
+
 
 		class RenderMeshTextured : public RenderCommand
 		{
