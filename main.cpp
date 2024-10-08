@@ -3,11 +3,6 @@
 
 using namespace antibox;
 
-//-------------------
-//ADD VISUAL EDITOR IN ENGINE
-//allow use of a function like "loadVisualEditor()"
-//-------------------
-
 class Raycaster : public App {
 	WindowProperties GetWindowProperties() {
 		WindowProperties props;
@@ -26,23 +21,44 @@ class Raycaster : public App {
 	float rotator = 0.f;
 	float angle = 0.f;
 	bool fbFlip, wireframe = false;
-	
+	float lighting = 1.f;
+	float color[3] = {1,1,1};
 
 	void Init() override {
-		Engine::Instance().AddScene(&main);
+		Editor::AddScene(&main);
 		main.CreateObject("Player", { -0.7,-1 }, { 0.25,0.25 }, "res/image.png");
 		main.CreateObject("Box", { 0.7,0.75 }, { 0.25,0.25 }, "res/box.png");
 		player = main.FindObject("Player");
 		pyramid = new Model({1.f,1.f,1.f}, { 1.f,1.f,1.f }, "res/brick.jpg");
-		Engine::Instance().GetRenderManager().SetWireframeMode(false);
+		Rendering::SetWireframeMode(wireframe);
 	}
 
 	void Update() override {
-		rotator += Engine::Instance().deltaTime();
-		if (rotator >= 1.f) {
-			angle += 0.5f;
+		rotator += Utilities::deltaTime();
+		pyramid->UpdateIntensity(lighting);
+		pyramid->UpdateColor({ color[0], color[1], color[2] });
+		pyramid->UpdateModel();
+		if (Input::KeyDown(KEY_C)) {
+			Engine::Instance().movingCam = !Engine::Instance().movingCam;
 		}
-		pyramid->UpdateModel({ 0.f,-0.5f,-2.f }, angle, { 1.f,-1.f,1.f });
+		if (Input::KeyHeldDown(KEY_W)) {
+			Engine::Instance().mainCamera->MoveCamera(0);
+		}
+		if (Input::KeyHeldDown(KEY_A)) {
+			Engine::Instance().mainCamera->MoveCamera(1);
+		}
+		if (Input::KeyHeldDown(KEY_S)) {
+			Engine::Instance().mainCamera->MoveCamera(2);
+		}
+		if (Input::KeyHeldDown(KEY_D)) {
+			Engine::Instance().mainCamera->MoveCamera(3);
+		}
+		if (Input::KeyHeldDown(KEY_SPACE)) {
+			Engine::Instance().mainCamera->MoveCamera(4);
+		}
+		if (Input::KeyHeldDown(KEY_LEFT_CONTROL)) {
+			Engine::Instance().mainCamera->MoveCamera(5);
+		}
 	}
 
 	void Render() override {
@@ -53,12 +69,14 @@ class Raycaster : public App {
 		ImGui::Begin("Settings");
 			if (ImGui::Button("Toggle Framebuffer")) {
 				fbFlip = !fbFlip;
-				Engine::Instance().GetWindow()->UseFramebuffer(fbFlip);
+				Rendering::SetFramebufferMode(fbFlip);
 			}
 			if (ImGui::Button("Toggle Wireframe")) {
 				wireframe = !wireframe;
-				Engine::Instance().GetRenderManager().SetWireframeMode(wireframe);
+				Rendering::SetWireframeMode(wireframe);
 			}
+			ImGui::ColorPicker3("Light Color", color);
+			ImGui::SliderFloat("Intensity", &lighting, 0.0f, 1.0f);
 		ImGui::End();
 	}
 

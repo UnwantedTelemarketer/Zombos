@@ -2,13 +2,16 @@
 #include <vector>
 #define antibox_console
 
-class Vector2;
-class Vector2_I;
 
 typedef const char textColor[8];
 
 
 namespace Console {
+
+	//class Vector2;
+	//class Vector2_I;
+
+
 	//Logs a message to the command prompt. ERROR is red, WARNING is yellow, SUCCESS is green, LOG is white.
 	void Log(std::string message, textColor type, int lineNum);
 	//void Log(unsigned char* message, textColor type, int lineNum);
@@ -23,8 +26,8 @@ namespace Console {
 	void Log(void* pointer, textColor type, int lineNum);
 
 	void Log(std::vector<std::string> list, textColor type, int lineNum);
-	void Log(Vector2 vec, textColor type, int lineNum);
-	void Log(Vector2_I vec, textColor type, int lineNum);
+	//void Log(Vector2 vec, textColor type, int lineNum);
+	//void Log(Vector2_I vec, textColor type, int lineNum);
 
 	//template <typename T, typename T2>
 	//void Log(std::pair<T, T2> pair, textColor type, int lineNum);

@@ -21,6 +21,7 @@ namespace antibox
 		window_h = 600;
 		window = new Window(window_w, window_h, "name");
 		mAudio = new AudioEngine();
+		mainCamera = new Camera(window_w, window_h, glm::vec3(0.f, 0.f, 2.f));
 	}
 
 	void Engine::SetAppList(std::vector<App*> apps) {
@@ -67,6 +68,54 @@ namespace antibox
 		InitializeApp(mApp);
 	}
 
+	void Engine::RotateCam() {
+		if (movingCam)
+		{
+			// Hides mouse cursor
+			glfwSetInputMode(window->glfwin(), GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+			// Prevents camera from jumping on the first click
+			if (firstClick)
+			{
+				glfwSetCursorPos(window->glfwin(), (window_w / 2), (window_h / 2));
+				firstClick = false;
+			}
+
+			// Stores the coordinates of the cursor
+			double mouseX;
+			double mouseY;
+			// Fetches the coordinates of the cursor
+			glfwGetCursorPos(window->glfwin(), &mouseX, &mouseY);
+
+			// Normalizes and shifts the coordinates of the cursor such that they begin in the middle of the screen
+			// and then "transforms" them into degrees 
+			float rotX = mainCamera->sensitivity * (float)(mouseY - (window_h / 2)) / window_h;
+			float rotY = mainCamera->sensitivity * (float)(mouseX - (window_w / 2)) / window_w;
+
+			// Calculates upcoming vertical change in the Orientation
+			glm::vec3 newOrientation = glm::rotate(mainCamera->orientation, glm::radians(-rotX), glm::normalize(glm::cross(mainCamera->orientation, mainCamera->up)));
+
+			// Decides whether or not the next vertical Orientation is legal or not
+			if (abs(glm::angle(newOrientation, mainCamera->up) - glm::radians(90.0f)) <= glm::radians(85.0f))
+			{
+				mainCamera->orientation = newOrientation;
+			}
+
+			// Rotates the Orientation left and right
+			mainCamera->orientation = glm::rotate(mainCamera->orientation, glm::radians(-rotY), mainCamera->up);
+
+			// Sets mouse cursor to the middle of the screen so that it doesn't end up roaming around
+			glfwSetCursorPos(window->glfwin(), (window_w / 2), (window_h / 2));
+		}
+		else
+		{
+			// Unhides cursor since camera is not looking around anymore
+			glfwSetInputMode(window->glfwin(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			// Makes sure the next time the camera looks around it doesn't jump
+			firstClick = true;
+		}
+	}
+
 	void Engine::Update() {
 		window->BeginRender(); //Start the rendering from window
 
@@ -80,6 +129,8 @@ namespace antibox
 			prevtime = crntTime;
 			counter = 0;
 		} //report the framerate and ms between frames
+
+		if(movingCam) RotateCam();
 
 		mApp->Update(); //users update function
 
@@ -148,5 +199,6 @@ namespace antibox
 
 	Engine::~Engine() {
 		delete window;
+		delete mainCamera;
 	}
 }

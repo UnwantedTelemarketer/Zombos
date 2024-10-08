@@ -20,8 +20,10 @@ namespace antibox {
 		bool alreadyMade = false;
 
 	public:
-		void UpdateModel(const glm::vec3 pos, float rot, const glm::vec3 size);
+		void UpdateModel();
 		void RenderModel();
+		void UpdateIntensity(float intense){ mShader->SetUniformFloat("intensity", intense); }
+		void UpdateColor(glm::vec3 color) { mShader->SetUniformFloat4("color", color[0], color[1], color[2], 1); }
 
 		//void ChangeColor();
 

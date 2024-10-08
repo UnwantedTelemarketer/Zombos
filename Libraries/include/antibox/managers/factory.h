@@ -68,13 +68,11 @@ namespace Factory
 			out vec2 uvs;
 			uniform vec2 offset = vec2(0.5);
 
-			uniform mat4 model;
-			uniform mat4 view;
-			uniform mat4 proj;
+			uniform mat4 camMatrix;
 
 			void main() {
 				uvs = texcoords;
-				vec4 transformedPosition = proj * view * model * vec4(position, 1.0);
+				vec4 transformedPosition = camMatrix * vec4(position, 1.0);
 				gl_Position = transformedPosition;
 			}
 		)";
@@ -87,6 +85,7 @@ namespace Factory
 
 			uniform vec3 color = vec3(0.0);
 			uniform sampler2D tex;
+
 			void main()
 			{
 				outColor = texture(tex, vec2(uvs.x, 1.0-uvs.y));
@@ -99,11 +98,13 @@ namespace Factory
 			in vec3 vpos;
 			in vec2 uvs;
 
-			uniform vec3 color = vec3(0.0);
 			uniform sampler2D tex;
+
+			uniform vec4 color;
+			uniform float intensity;
 			void main()
 			{
-				outColor = texture(tex, uvs);
+				outColor = texture(tex, uvs) * (color * intensity);
 			}
 		)";
 }

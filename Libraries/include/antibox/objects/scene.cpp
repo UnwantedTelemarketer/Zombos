@@ -18,6 +18,14 @@ namespace antibox {
 		sceneName = name;
 		sceneID = 1;
 	}
+	std::vector<std::string> Scene::GetObjNames() {
+		std::vector<std::string> names;
+		for (auto& objpair : Hierarchy)
+		{
+			names.push_back(objpair.first);
+		}
+		return names;
+	}
 
 	Scene::~Scene() {
 

@@ -1,3 +1,50 @@
+To use the visual editor, include antibox.h and use the following:
+
+std::vector<App*> CreateGame() {
+	return { new VisualEditor };
+}
+
+Below is documentation for the typed engine
+
+____________________________________SAMPLE PROJ____________________________________
+#include "antibox/core/antibox.h"
+
+using namespace antibox;
+
+//To create a new project, you'll need to create your own class that derives from antibox::App
+class _NAME_ : public App {   
+
+//To edit window properties, use the method GetWindowProperties():
+	WindowProperties GetWindowProperties(){
+		WindowProperties props;
+		ImGuiWindowProperties imgui; //Optional if you want ImGui
+
+		props.w = 1280; //this is width
+		props.h = 720; //this is height
+		props.title = "Title"; //This is title
+
+		props.imgui.DockingEnabled = true; //If you want to be able to dock your ImGui Windows
+
+		return props; //return because its a method that returns a WindowProperties object
+	}
+
+	//A project required four methods:
+
+	void Init() override{} //This will be called before the first frame.
+	void Update() override {} //This is called before each frame is rendered.
+	void Render() override {} //This is the calls to render each frame.
+	void Shutdown() override {} //This is called when the user closes the window.
+
+	//And one optional one:
+
+	void ImguiRender() override {} //This is called to render ImGui.
+
+};
+
+//To run your custom window, you need to create a new method called CreateApp and return a new copy of your window
+antibox::App* CreateApp() {
+	return new _NAME_();
+}
 
 ______________________________________OBJECTS______________________________________
 
@@ -43,14 +90,20 @@ Mouse Button name macros are:
 -MOUSE_MIDDLE
 
 
------ENGINE-----
-Engine::Instance() - Returns a reference to the main engine. Engine functions require
-being run from the main instance
+-----AUDIO------
+Play(std::string path_to_soundfile) - Plays a sound file
+Stop(std::string path_to_soundfile) - Does nothing for now
+SetVolume(float newVolume) - Sets the engine's volume
+GetVolume() - Returns the current volume as a float
 
-StartSound(const char* path_to_soundfile) - Plays a sound file
+
+---UTILITIES----
 getFPS() - Returns the current Frames per Second
 deltaTime() - Returns the time between the last frame and this one
 getFont() - Returns the custom IMGUI font set in WindowProperties
+
+
+-----EDITOR-----
 AddScene(Scene* scene) - Adds a scene to the game loop to have objects updated
 
 
@@ -66,11 +119,15 @@ Vector2(x,y) - also "vec2"
 Vector2_I(x,y) - also "vec2_i"
 Vector3(x,y,z) - also "vec3" or "Color"
 Vector4(x,y,z,w) - also "vec4"
+Vector4_I(x,y,z,w) - also "vec4_i"
 Vector26()
 
 maybe - returns either true or false, randomly.
 
 -----CONSOLE-----
+
+Console::Log(type, color, lineNumber) - Logs a message to the console
+
 All console logs will require (T message, textColor color, int lineNum).
 Types supported:
 -string
@@ -115,45 +172,7 @@ limited_array<T> - creates a vector of type T. Has the following:
 	- byte_size() : returns the size of the array in bytes
 
 
-____________________________________SAMPLE PROJ____________________________________
-#include "antibox/core/antibox.h"
 
-using namespace antibox;
-
-//To create a new project, you'll need to create your own class that derives from antibox::App
-class _NAME_ : public App {   
-
-//To edit window properties, use the method GetWindowProperties():
-	WindowProperties GetWindowProperties(){
-		WindowProperties props;
-		ImGuiWindowProperties imgui; //Optional if you want ImGui
-
-		props.w = 1280; //this is width
-		props.h = 720; //this is height
-		props.title = "Title"; //This is title
-
-		props.imgui.DockingEnabled = true; //If you want to be able to dock your ImGui Windows
-
-		return props; //return because its a method that returns a WindowProperties object
-	}
-
-	//A project required four methods:
-
-	void Init() override{} //This will be called before the first frame.
-	void Update() override {} //This is called before each frame is rendered.
-	void Render() override {} //This is the calls to render each frame.
-	void Shutdown() override {} //This is called when the user closes the window.
-
-	//And one optional one:
-
-	void ImguiRender() override {} //This is called to render ImGui.
-
-};
-
-//To run your custom window, you need to create a new method called CreateApp and return a new copy of your window
-antibox::App* CreateApp() {
-	return new _NAME_();
-}
 
 
 

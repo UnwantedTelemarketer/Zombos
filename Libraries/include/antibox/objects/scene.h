@@ -19,6 +19,7 @@ namespace antibox {
 
 		inline int GetSceneID() { return sceneID; }
 		inline std::string GetSceneName() { return sceneName; }
+		std::vector<std::string> GetObjNames();
 
 		//Create new GameObject in this scene
 		void CreateObject(std::string name, glm::vec2 pos, glm::vec2 size, std::string texture_path);

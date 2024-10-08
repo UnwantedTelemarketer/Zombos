@@ -2,6 +2,8 @@
 #include "imgui/imgui.h"
 #include "antibox/core/mathlib.h"
 
+using namespace antibox;
+
 ImVec4 Cosmetic::FireColor() {
 	switch (Math::RandInt(1, 5)) {
 	case 1:

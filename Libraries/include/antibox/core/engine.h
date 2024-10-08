@@ -5,7 +5,8 @@
 #include "antibox/graphics/framebuffer.h"
 #include "antibox/graphics/helpers.h"
 #include "antibox/core/mathlib.h"
-#include <antibox/objects/scene.h>
+#include "antibox/objects/scene.h"
+#include "antibox/graphics/3d/camera.h"
 
 
 //=======================================================
@@ -21,9 +22,11 @@ namespace antibox {
 	public:
 		unsigned int window_w, window_h; //Window height and width
 		Window* window; //Reference to the window
+		Camera* mainCamera;
 
 		bool mouseDownFlag; //Flag used to see if a mouse button is held down, used in the antibox.h input section
 		bool keyDownFlag; //Flag used to see if a key is held down
+		bool firstClick, movingCam;
 		int keyDownCode; //Variable holding the last pressed key
 		int currentSceneID;
 
@@ -86,6 +89,7 @@ namespace antibox {
 		void Render();
 		void Initialize();
 		void ChangeApp(int sceneNum); //close the loop
+		void RotateCam();
 
 		void InitializeApp(App* app);
 

@@ -2,6 +2,8 @@
 #include "string"
 #include "mathlib.h"
 
+using namespace antibox;
+
 void Console::Log(std::string message, textColor type = "\033[0;37m", int lineNum = -1)
 { 
 	std::cout << "[ Line " << lineNum << " ]: " << type << message << "\033[0m\n" << std::endl;
@@ -54,15 +56,15 @@ void Console::Log(std::vector<std::string> list, textColor type = "\033[0;37m", 
 	std::cout << "[ Line " << lineNum << " ]: " << type << message << "\033[0m\n" << std::endl;
 }
 
-void Console::Log(Vector2 vec, textColor type = "\033[0;37m", int lineNum = -1)
+/*void Console::Log(antibox::Vector2 vec, textColor type = "\033[0;37m", int lineNum = -1)
 {
 	std::cout << "[ Line " << lineNum << " ]: " << type << "Vector2 {" << std::to_string(vec.x) + ", " + std::to_string(vec.y) << "}" << "\033[0m\n" << std::endl;
 }
 
-void Console::Log(Vector2_I vec, textColor type = "\033[0;37m", int lineNum = -1)
+void Console::Log(antibox::Vector2_I vec, textColor type = "\033[0;37m", int lineNum = -1)
 {
 	std::cout << "[ Line " << lineNum << " ]: " << type << "Vector2 {" << std::to_string(vec.x) + ", " + std::to_string(vec.y) << "}" << "\033[0m\n" << std::endl;
-}
+}*/
 
 //template <typename T, typename T2>
 //void Console::Log(std::pair<T, T2>, textColor type, int lineNum)
