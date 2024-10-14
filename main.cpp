@@ -16,7 +16,7 @@ class Raycaster : public App {
 	}
 
 	Scene main = { "TEST" };
-	std::shared_ptr<GameObject> player;
+	//std::shared_ptr<GameObject> player;
 	Model* pyramid;
 	float rotator = 0.f;
 	float angle = 0.f;
@@ -26,18 +26,16 @@ class Raycaster : public App {
 
 	void Init() override {
 		Editor::AddScene(&main);
-		main.CreateObject("Player", { -0.7,-1 }, { 0.25,0.25 }, "res/image.png");
-		main.CreateObject("Box", { 0.7,0.75 }, { 0.25,0.25 }, "res/box.png");
-		player = main.FindObject("Player");
+
 		pyramid = new Model({1.f,1.f,1.f}, { 1.f,1.f,1.f }, "res/brick.jpg");
-		Rendering::SetWireframeMode(wireframe);
 	}
 
 	void Update() override {
-		rotator += Utilities::deltaTime();
+
 		pyramid->UpdateIntensity(lighting);
 		pyramid->UpdateColor({ color[0], color[1], color[2] });
 		pyramid->UpdateModel();
+
 		if (Input::KeyDown(KEY_C)) {
 			Engine::Instance().movingCam = !Engine::Instance().movingCam;
 		}

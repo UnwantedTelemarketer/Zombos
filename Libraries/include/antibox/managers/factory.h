@@ -104,7 +104,8 @@ namespace Factory
 			uniform float intensity;
 			void main()
 			{
-				outColor = texture(tex, uvs) * (color * intensity);
+				outColor = (texture(tex, uvs) + (color * intensity)) / 2;
+				outColor[3] = 1.0;
 			}
 		)";
 }
