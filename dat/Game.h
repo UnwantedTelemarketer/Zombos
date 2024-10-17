@@ -3,7 +3,7 @@
 #include "items.h"
 #include <thread>
 
-
+using namespace antibox;
 class GameManager {
 private:
 	float tickRate;

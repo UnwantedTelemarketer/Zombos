@@ -5,6 +5,8 @@
 #include <map>
 #define LAZY_LOG(thing) Console::Log(thing, text::white, -1);
 
+using namespace antibox;
+
 static bool fileExists(const char* filePath) {
 	struct stat buffer;
 	return (stat(filePath, &buffer) == 0);

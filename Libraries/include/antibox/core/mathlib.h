@@ -5,6 +5,8 @@
 
 #define maybe (rand() % 10 + 1) >= 5
 
+
+
 namespace antibox {
 	namespace Math {
 		//Input the max number, and this will return a float between 1 and your max (inclusive).
@@ -21,6 +23,12 @@ namespace antibox {
 			if (log->size() <= max) { log->push_back(message); }
 			else { log->erase(log->begin()); log->push_back(message); }
 		}
+		inline float Lerp(float time, float startVal, float endVal) {
+			return (((endVal - startVal) * time) + startVal);
+		}
+		/*inline Vector3 Lerp(float time, Vector3 startCol, Vector3 endCol) {
+			return { Lerp(time, startCol.x, endCol.x), Lerp(time, startCol.y, endCol.y), Lerp(time, startCol.z, endCol.z) };
+		}*/
 	}
 
 	//Vector2 storing x and y in a single int.

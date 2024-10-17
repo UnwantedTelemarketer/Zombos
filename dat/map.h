@@ -17,6 +17,7 @@
 #define MAP_HEIGHT 500
 #define MAP_WIDTH 500
 
+using namespace antibox;
 
 struct World
 {

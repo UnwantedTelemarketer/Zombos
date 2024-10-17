@@ -111,9 +111,6 @@
     <ClCompile Include="Libraries\include\antibox\graphics\vertex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Apps\raycast_main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Libraries\include\antibox\objects\3d\model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

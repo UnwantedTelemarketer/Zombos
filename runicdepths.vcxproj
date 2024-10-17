@@ -157,7 +157,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Apps\raycast_main.cpp" />
     <ClCompile Include="dat\cosmetic.cpp" />
     <ClCompile Include="dat\crafting.cpp" />
     <ClCompile Include="dat\entities.cpp" />
