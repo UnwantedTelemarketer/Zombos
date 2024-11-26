@@ -293,7 +293,7 @@ public:
 		//}
 
 		//------Map rendering-------
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ Math::Lerp(colChangeTime, 0.f, 1.f),0.0,0.0,1});
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.1,0.0,1});
 		ImGui::Begin("Map");
 		if (fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
 		//std::string screen;
@@ -377,8 +377,6 @@ public:
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 0.05);
 			}
 			ImGui::Text("");
-			//screen += '~';
-			//colors.push_back({ 0,0,0,1 });
 		}
 
 		ImGui::SetCursorPos(playerPos);
@@ -390,6 +388,7 @@ public:
 			for (size_t i = 0; i < itemIcons.size(); i++)
 			{
 				ImGui::SetCursorPos(itemPositions[i]);
+				
 				ImGui::TextColored({ 0.5,0.35,0,1 }, itemIcons[i].c_str());
 			}
 			itemIcons.clear();
@@ -402,6 +401,12 @@ public:
 		ImGui::PopStyleColor(1);
 
 		TechScreen();
+
+		if (ImGui::Button("Go Down")) {
+			if (game.EnterCave()) {
+				Math::PushBackLog(&game.actionLog, "You enter a dark cave underground.");
+			}
+		}
 
 		//------Action Log----
 		ImGui::Begin("Action Log");

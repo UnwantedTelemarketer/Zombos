@@ -517,11 +517,11 @@ void Map::GenerateTomb(std::shared_ptr<Chunk> chunk) {
 
 	for (int i = 0; i < CHUNK_WIDTH; i++) {
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
-			if (Math::RandInt(1, 10) >= 5) {
-				chunk->localCoords[i][j] = Tile_Sand;
+			if (i <= 1 || i >= CHUNK_WIDTH - 2 || j <= 1 || j >= CHUNK_HEIGHT-2) {
+				chunk->localCoords[i][j] = Tile_Stone;
 			}
 			else {
-				chunk->localCoords[i][j] = Tile_Dirt;
+				chunk->localCoords[i][j] = Tile_Sand;
 			}
 			chunk->localCoords[i][j].brightness = 0.5f;
 		}

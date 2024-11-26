@@ -58,6 +58,8 @@ public:
 	
 	Entity* NearEnt();
 
+	bool EnterCave();
+
 	std::string GetItemChar(Tile tile);
 	std::string GetTileChar(Tile tile);
 
@@ -499,6 +501,21 @@ void GameManager::AttemptAttack(Entity* ent)
 
 void GameManager::SetTile(Vector2_I tile, int newTile) {
 	mainMap.CurrentChunk()->localCoords[tile.x][tile.y].id = newTile;
+}
+
+bool GameManager::EnterCave() {
+	if (!mainMap.isUnderground)
+	{
+		if (mainMap.underground.chunks.count({ mainMap.c_glCoords }) == 0) {
+			std::shared_ptr<Chunk> tempChunk = std::make_shared<Chunk>();
+			tempChunk->globalChunkCoord = mainMap.c_glCoords;
+			mainMap.GenerateTomb(tempChunk);
+
+			mainMap.underground.chunks[{mainMap.c_glCoords}] = tempChunk;
+		}
+		mainMap.isUnderground = true;
+	}
+	return false;
 }
 
 std::string GameManager::GetItemChar(Tile tile) {
