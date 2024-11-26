@@ -42,6 +42,7 @@ public:
 	int currentItemIndex = 0;
 	std::string openClose;
 	antibox::framerate frame;
+	std::vector<float> frametimes;
 	float colChangeTime = 0.f;
 
 	//Game Stuff
@@ -389,10 +390,17 @@ public:
 		ImGui::PopStyleColor(1);
 
 		TechScreen();
-
-		if (ImGui::Button("Go Down")) {
-			if (game.EnterCave()) {
-				Math::PushBackLog(&game.actionLog, "You enter a dark cave underground.");
+		
+		if (!game.mainMap.isUnderground) {
+			if (ImGui::Button("Go Down")) {
+				if (game.EnterCave()) {
+					Math::PushBackLog(&game.actionLog, "You enter a dark cave underground.");
+				}
+			}
+		}
+		else {
+			if (ImGui::Button("Go Up")) {
+				game.mainMap.isUnderground = !game.mainMap.isUnderground;
 			}
 		}
 
@@ -718,18 +726,6 @@ if (containerOpen) {
 
 			if (selectedTile->hasItem) { ImGui::Text(("Item on tile: " + selectedTile->itemName).c_str()); }
 
-			/*const char* label = "";
-			if (map.isUnderground) {
-				label = "Go Up";
-			}
-			else {
-				label = "Go Down";
-			}
-			if (ImGui::Button(label)) {
-				map.isUnderground = !map.isUnderground;
-			}*/
-
-
 			if (ImGui::Button("Drop Selected Item")) {
 				//Dropping it into a box
 				Container* curCont = game.mainMap.ContainerAtCoord(selectedTile->coords);
@@ -816,14 +812,20 @@ if (containerOpen) {
 			ImGui::Text(("Current World Time: " + std::to_string(game.worldTime)).c_str());
 			//FPS
 			if (counter == 30) {
-				lastFPS = Utilities::getFPS();
+				float avgFps = 0;
+				for (size_t i = 0; i < frametimes.size(); i++) { avgFps += frametimes[i]; }
+				lastFPS = avgFps / 30;
 				counter = 0;
+				frametimes.clear();
 			}
-			else { counter++; }
+			else { 
+				counter++; 
+				frametimes.push_back(Utilities::getFPS()); 
+			}
 			frame.Update(Utilities::getFPS());
 			ImGui::Text(("High: " + std::to_string(frame.highest)).c_str());
 			ImGui::Text(("Low: " + std::to_string(frame.lowest)).c_str());
-			ImGui::Text(("Current: " + std::to_string(lastFPS)).c_str());
+			ImGui::Text(("Average: " + std::to_string(lastFPS)).c_str());
 			//ImGui::PlotLines("Frame Times", frame.frames.c_arr(), frame.frames.length);
 			//ms left until next tick
 			ImGui::Text(("Time until next update:"));
