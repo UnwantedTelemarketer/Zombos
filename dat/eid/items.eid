@@ -127,9 +127,9 @@ equipType : 0;
 }
 
 CHEST {
-name : "Box";
-description : "Box used for holding things.";
-id : "box";
+name : "Chest";
+description : "Chest used for holding things.";
+id : "chest";
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -231,6 +231,34 @@ OLD_CLOTH {
 name : "Tattered Clothes";
 description : "Torn and ripped.";
 id : "old_clothes";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : ".";
+useTxt : ".";
+effects : [0,0,0,0];
+equipType : 0;
+}
+
+WOOD_PLANK {
+name : "Wooden Plank";
+description : "A plank of wood made from sticks tied together with rope.";
+id : "wood_plank";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : ".";
+useTxt : ".";
+effects : [0,0,0,0];
+equipType : 0;
+}
+
+HINGE {
+name : "Metal Hinge";
+description : "Metal hinge made with scrap to be used with crafting.";
+id : "hinge";
 stackable : true;
 holdsLiquid : false;
 consumable : false;

@@ -1,0 +1,69 @@
+GRASS {
+name : "Grass";
+description : "Grass from off the ground.";
+id : "grass";
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+amount : 1;
+consumeTxt : "You eat the grass.";
+useTxt : "You wrap grass around your wound.";
+effects : [3,1,1,2];
+equipType : 0;
+}
+
+ROCK {
+name : "Rock";
+description : "Rock from the ground.";
+id : "rock";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "nothing.";
+useTxt : "nothing.";
+effects : [0,0,0,5,5];
+equipType : 1;
+}
+
+SCRAP {
+name : "Scrap Metal";
+description : "Scrap metal found all over the place from before the fall.";
+id : "scrap";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "Metal.";
+useTxt : "You cut yourself with a piece of the metal.";
+effects : [0,0,4,2,5];
+equipType : 1;
+}
+
+STICK {
+name : "Stick";
+description : "Just a stick.";
+id : "stick";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "Stick.";
+useTxt : "Stick.";
+effects : [0,0,0,2,2];
+equipType : 1;
+}
+
+OLD_CLOTH {
+name : "Tattered Clothes";
+description : "Torn and ripped.";
+id : "old_clothes";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : ".";
+useTxt : ".";
+effects : [0,0,0,0];
+equipType : 0;
+}

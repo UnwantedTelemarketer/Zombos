@@ -1,0 +1,14 @@
+BANDAGE {
+name : "Sterile Bandage";
+description : "Clean bandage that can be used to heal.";
+id : "bandage";
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+amount : 1;
+consumeTxt : "You eat a bandage.";
+useTxt : "You wrap a bandage around your wound.";
+effects : [0,0,1,5];
+equipType : 0;
+}
+

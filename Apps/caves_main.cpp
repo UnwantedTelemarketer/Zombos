@@ -1,4 +1,4 @@
-#include "../dat/game.h"
+#include "dat/game.h"
 #include "antibox/objects/tokenizer.h"
 #include <algorithm>
 
@@ -42,6 +42,7 @@ public:
 	int currentItemIndex = 0;
 	std::string openClose;
 	antibox::framerate frame;
+	float colChangeTime = 0.f;
 
 	//Game Stuff
 	GameManager game;
@@ -74,12 +75,16 @@ public:
 		navInv = false;
 		showDialogue = true;
 
-		Engine::Instance().SetVolume(0.1f);
+		Audio::SetVolume(0.1f);
 		player.currentWeapon.mod = 5;
 	}
 
 	void Update() {
 		bool moved = false;
+		colChangeTime += Utilities::deltaTime() / 1000;
+		if (colChangeTime >= 1.f) {
+			colChangeTime = 0;
+		}
 		if (currentState == menu) { return; }
 		if (player.health <= 0) { currentState = menu; player.health = 100; }
 
@@ -183,7 +188,7 @@ public:
 
 		if (moved) {
 			const char* soundName = walk_sounds[Math::RandInt(0, 4)].c_str();
-			Engine::Instance().StartSound(soundName);
+			Audio::Play(soundName);
 		}
 
 		if (player.aiming) {
@@ -195,6 +200,9 @@ public:
 
 	void ImguiRender() override
 	{
+		ImGui::Begin("Time");
+		ImGui::Text(std::to_string(colChangeTime).c_str());
+		ImGui::End();
 		//GameScene();
 		switch (currentState) {
 		case playing:
@@ -221,10 +229,10 @@ public:
 		ImGui::Begin("Menu");
 		if (createChar) { Create_Character(); }
 
-		ImGui::Text(std::to_string(Engine::Instance().GetVolume()).c_str());
+		ImGui::Text(std::to_string(Audio::GetVolume()).c_str());
 
 		if (ImGui::Button("Lower the volume")) {
-			Engine::Instance().SetVolume(0.5f);
+			Audio::SetVolume(0.5f);
 		}
 
 		if (ImGui::Button("New Game"))
@@ -285,7 +293,7 @@ public:
 		//}
 
 		//------Map rendering-------
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.2,0.0,1 });
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.1,0.0,1 });
 		ImGui::Begin("Map");
 		if (fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
 		//std::string screen;
@@ -369,8 +377,6 @@ public:
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 0.05);
 			}
 			ImGui::Text("");
-			//screen += '~';
-			//colors.push_back({ 0,0,0,1 });
 		}
 
 		ImGui::SetCursorPos(playerPos);
@@ -382,6 +388,7 @@ public:
 			for (size_t i = 0; i < itemIcons.size(); i++)
 			{
 				ImGui::SetCursorPos(itemPositions[i]);
+
 				ImGui::TextColored({ 0.5,0.35,0,1 }, itemIcons[i].c_str());
 			}
 			itemIcons.clear();
@@ -394,6 +401,12 @@ public:
 		ImGui::PopStyleColor(1);
 
 		TechScreen();
+
+		if (ImGui::Button("Go Down")) {
+			if (game.EnterCave()) {
+				Math::PushBackLog(&game.actionLog, "You enter a dark cave underground.");
+			}
+		}
 
 		//------Action Log----
 		ImGui::Begin("Action Log");
@@ -620,10 +633,10 @@ public:
 						currentItemIndex = 0;
 						pInv.Cleanup();
 						pInv.AddItem(EID::MakeItem("items.eid", newItem));
-						Engine::Instance().StartSound(sfxs["craft"]);
+						Audio::Play(sfxs["craft"]);
 					}
 					else {
-						Engine::Instance().StartSound(sfxs["fail"]);
+						Audio::Play(sfxs["fail"]);
 					}
 				}
 			}
@@ -758,7 +771,7 @@ public:
 			if (selectedTile->collectible || selectedTile->liquid != nothing || selectedTile->hasItem) {
 				if (ImGui::Button("Collect")) {
 					if (pInv.AttemptCollect(selectedTile)) {
-						Engine::Instance().StartSound(sfxs["collect"]);
+						Audio::Play(sfxs["collect"]);
 						Math::PushBackLog(&game.actionLog, "You collect an item off the ground.");
 					}
 					else {
@@ -796,11 +809,11 @@ public:
 			ImGui::Text(("Current World Time: " + std::to_string(game.worldTime)).c_str());
 			//FPS
 			if (counter == 30) {
-				lastFPS = Engine::Instance().getFPS();
+				lastFPS = Utilities::getFPS();
 				counter = 0;
 			}
 			else { counter++; }
-			frame.Update(Engine::Instance().getFPS());
+			frame.Update(Utilities::getFPS());
 			ImGui::Text(("High: " + std::to_string(frame.highest)).c_str());
 			ImGui::Text(("Low: " + std::to_string(frame.lowest)).c_str());
 			ImGui::Text(("Current: " + std::to_string(lastFPS)).c_str());
@@ -945,7 +958,7 @@ public:
 			dat.ints.append("global_y", map.CurrentChunk()->globalChunkCoord.y);
 			dat.floats.append("time", game.worldTime);
 
-			Console::Log(map.CurrentChunk()->globalChunkCoord, SUCCESS, __LINE__);
+			//Console::Log(map.CurrentChunk()->globalChunkCoord, SUCCESS, __LINE__);
 
 			for (int i = 0; i < pInv.items.size(); i++)
 			{
@@ -964,3 +977,7 @@ public:
 		}
 	}
 };
+
+std::vector<App*> CreateGame() {
+	return { new Caves };
+}

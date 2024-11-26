@@ -1,0 +1,55 @@
+ROPE {
+name : "Rope";
+description : "A rope made from grass for lots of situations.";
+id : "rope";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "Eated Rope";
+useTxt : "No Use.";
+effects : [0,0,0,0];
+equipType : 0;
+}
+
+BITS {
+name : "Scrap Bits";
+description : "Smaller broken pieces of metal that are used as currency.";
+id : "bits";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "no eating";
+useTxt : "No Use.";
+effects : [0,0,0,0];
+equipType : 0;
+}
+
+WOOD_PLANK {
+name : "Wooden Plank";
+description : "A plank of wood made from sticks tied together with rope.";
+id : "wood_plank";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : ".";
+useTxt : ".";
+effects : [0,0,0,0];
+equipType : 0;
+}
+
+HINGE {
+name : "Metal Hinge";
+description : "Metal hinge made with scrap to be used with crafting.";
+id : "hinge";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : ".";
+useTxt : ".";
+effects : [0,0,0,0];
+equipType : 0;
+}

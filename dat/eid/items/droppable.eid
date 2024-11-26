@@ -1,0 +1,27 @@
+CAMPFIRE {
+name : "Campfire";
+description : "Pile of sticks and rocks.";
+id : "campfire";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "Stick.";
+useTxt : "Stick.";
+effects : [0,0,0,0];
+equipType : 0;
+}
+
+CHEST {
+name : "Box";
+description : "Box used for holding things.";
+id : "box";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "Stick.";
+useTxt : "Stick.";
+effects : [0,0,0,0];
+equipType : 0;
+}

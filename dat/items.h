@@ -1,19 +1,6 @@
 #pragma once
 #include "entities.h"
 
-#define ITEM_CONTAINER "container"
-#define ITEM_BANDAGE "bandage"
-#define ITEM_GRASS "grass"
-#define ITEM_SCRAP "scrap"
-#define ITEM_STICK "stick"
-#define ITEM_KNIFE "knife"
-#define ITEM_MONEY "bits"
-#define ITEM_ROPE "rope"
-#define ITEM_ROCK "rock"
-#define ITEM_CAMPFIRE "campfire"
-#define ITEM_WALL_W "wood_wall"
-#define ITEM_WALL_S "stone_wall"
-
 #define ID_NULL -1
 
 #define ID_GRASS 1
@@ -229,7 +216,50 @@ Tile Tile_Cactus_Base =
 	false
 };
 
+Tile Tile_Stone_Floor =
+{
+	13, // Starting block ID
+	still, //technical direction (for conveyors)
+	nothing, //Liquid
+	nullptr, //Entity
+	false, // Collectible
+	-1, // Block that it becomes after being collected
+	"NULL", //Item name
+	0, // how long its burn lasts
+	true, //walkable
+	false, //changes over time
+	-1 //what it becomes after a time limit
+}; 
 
+Tile Tile_Crystal =
+{
+	14, // Starting block ID
+	still, //technical direction (for conveyors)
+	nothing, //Liquid
+	nullptr, //Entity
+	false, // Collectible
+	-1, // Block that it becomes after being collected
+	"NULL", //Item name
+	0, // how long its burn lasts
+	false, //walkable
+	false, //changes over time
+	-1 //what it becomes after a time limit
+}; 
+
+Tile Tile_Big_Rock =
+{
+	15, // Starting block ID
+	still, //technical direction (for conveyors)
+	nothing, //Liquid
+	nullptr, //Entity
+	false, // Collectible
+	-1, // Block that it becomes after being collected
+	"NULL", //Item name
+	0, // how long its burn lasts
+	false, //walkable
+	false, //changes over time
+	-1 //what it becomes after a time limit
+};
 
 //============================  CONVEYOR BELTS ==============================
 

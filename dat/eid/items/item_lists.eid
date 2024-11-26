@@ -1,0 +1,11 @@
+LISTS{
+
+crafted_materials.eid : 0;
+droppable.eid : 0;
+food.eid : 0;
+materials.eid : 0;
+misc.eid : 0;
+survival_items.eid : 0;
+weapons.eid : 0;
+
+}

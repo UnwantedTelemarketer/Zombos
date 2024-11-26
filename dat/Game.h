@@ -110,11 +110,14 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	ItemReader::GetDataFromFile("item_data.eid", "ITEMS", &itemData);
 
 	for (auto const& x : itemData.tokens) {
-		item_icons.insert({ itemData.getArray(x.first)[0] , itemData.getArray(x.first)[1]});
+		item_icons.insert({ itemData.getArray(x.first)[0] , itemData.getArray(x.first)[1] });
 	}
 
-	mainMap.containers.insert({ {250, 250, 5, 5}, {{250, 250},{5, 5}, {}} });
+	
 
+	mainMap.containers.insert({ {250, 250, 5, 5}, {{250, 250},{5, 5}, {}} });
+	mainMap.isUnderground = false;
+	Math::PushBackLog(&actionLog, "Welcome to Zombos! Press H to open the help menu.");
 }
 
 void GameManager::AddRecipes() {
@@ -123,7 +126,10 @@ void GameManager::AddRecipes() {
 	Crafter.addRecipe("CANTEEN", { {"SCRAP", 3} });
 	Crafter.addRecipe("BANDAGE", { {"GRASS", 3}});
 	Crafter.addRecipe("ROPE", { {"GRASS", 2} });
+	Crafter.addRecipe("HINGE", { {"SCRAP", 3} });
+	Crafter.addRecipe("WOOD_PLANK", { {"STICK", 6}, {"ROPE",2} });
 	Crafter.addRecipe("KNIFE", { {"STICK", 1}, {"ROPE", 1}, {"SCRAP", 1}});
+	Crafter.addRecipe("CHEST", { {"WOOD_PLANK", 3}, {"HINGE", 2} });
 }
 
 void GameManager::DoBehaviour(Entity* ent)
@@ -412,17 +418,22 @@ void GameManager::UpdateTick() {
 		worldTime += 0.1f;
 		if (worldTime > 24.f) { worldTime = 0.f; }
 
-		if (worldTime >= 20.f || worldTime < 6.f) {
-			if (forwardTime) { darkTime = std::min(7.f, darkTime + 0.25f); }
-			else { darkTime = std::max(1.f, darkTime - 0.5f); }
-			if (worldTime >= 4.f && worldTime <= 5.f) { forwardTime = false; }
-		}
-		else if (worldTime == 6.f) {
-			mainMap.ResetLightValues();
+		if (!mainMap.isUnderground) {
+			if (worldTime >= 20.f || worldTime < 6.f) {
+				if (forwardTime) { darkTime = std::min(7.f, darkTime + 0.25f); }
+				else { darkTime = std::max(1.f, darkTime - 0.5f); }
+				if (worldTime >= 4.f && worldTime <= 5.f) { forwardTime = false; }
+			}
+			else if (worldTime == 6.f) {
+				mainMap.ResetLightValues();
+			}
+			else {
+				forwardTime = true;
+				darkTime = 1.f;
+			}
 		}
 		else {
-			forwardTime = true;
-			darkTime = 1.f;
+			darkTime = 4.f;
 		}
 
 		//Update surrounding chunks in separate threads for "super speed" >:)
@@ -449,12 +460,13 @@ void GameManager::UpdateTick() {
 }
 
 void GameManager::RedrawEntities(Vector2_I chunkCoords) {
-	std::shared_ptr<Chunk> usedChunk = mainMap.world.chunks[{chunkCoords.x, chunkCoords.y}];
+	std::shared_ptr<Chunk> usedChunk = mainMap.GetProperChunk(chunkCoords);
 	mainMap.ClearChunkOfEnts(usedChunk);
 }
 
 void GameManager::UpdateEntities(Vector2_I chunkCoords) {
-	std::shared_ptr<Chunk> usedChunk = mainMap.world.chunks[{chunkCoords.x, chunkCoords.y}];
+
+	std::shared_ptr<Chunk> usedChunk = mainMap.GetProperChunk(chunkCoords);
 
 	mainMap.ClearLine();
 	mainMap.ClearEntities(oldLocations, usedChunk);
@@ -514,6 +526,7 @@ bool GameManager::EnterCave() {
 			mainMap.underground.chunks[{mainMap.c_glCoords}] = tempChunk;
 		}
 		mainMap.isUnderground = true;
+		return true;
 	}
 	return false;
 }
@@ -659,13 +672,22 @@ ImVec4 GameManager::GetTileColor(Tile tile, float intensity) {
 	case 106:
 	case 107:
 	case 6: //stone
-		color = { 0.65, 0.65, 0.65, 1 };
+		color = { 0.75, 0.75, 0.75, 1 };
 		break;
 	case 7: //sand
 		color = { 1, 1, 0.5, 1 };
 		break;
 	case 11:
 		color = { 0,0.35,0,1 };
+		break;
+	case 13:
+		color = { 0.23,0.23,0.23,1 };
+		break;
+	case 14: //crystal
+		color = { 0.95,0.5,0.f,1 };
+		break;
+	case 15: //big rock
+		color = { 0.35,0.35,0.35,1 };
 		break;
 	default:
 		color = { 0, 0.65, 0, 1 };
@@ -674,7 +696,7 @@ ImVec4 GameManager::GetTileColor(Tile tile, float intensity) {
 
 dimming:
 	//if its night time
-	if (worldTime >= 20.f || worldTime < 6.f) {
+	if ((worldTime >= 20.f || worldTime < 6.f) || mainMap.isUnderground) {
 		color.x /= (darkTime * intensity);
 		color.y /= (darkTime * intensity);
 		color.z /= (darkTime * intensity);

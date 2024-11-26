@@ -115,6 +115,7 @@ RandString(vector<string> list) - Returns a random string from a vector of strin
 PushBackLog(vector<string>* log, string message, int max)
 - Adds message to log, unless it surpasses max, in which it will drop the first element.
 
+All vectors are floats, except for the _i versions.
 Vector2(x,y) - also "vec2"
 Vector2_I(x,y) - also "vec2_i"
 Vector3(x,y,z) - also "vec3" or "Color"

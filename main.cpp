@@ -5,7 +5,7 @@
 #include <chrono>
 
 #define UNIFONT "c:\\Users\\Thomas Andrew\\AppData\\Local\\Microsoft\\Windows\\Fonts\\Unifont.ttf"
-#define DOSFONT "dat\\fonts\\symbolic\\symbolic_aqua.ttf"
+#define DOSFONT "dat\\fonts\\symbolic\\symbolic_crystal.ttf"
 #define CASCADIA "c:\\Windows\\Fonts\\CascadiaCode.ttf"
 #define ITEMFONT "dat\\fonts\\symbolic\\symbolic_item.ttf"
 
@@ -75,7 +75,6 @@ public:
 		navInv = false;
 		showDialogue = true;
 
-		Audio::SetVolume(0.1f);
 		player.currentWeapon.mod = 5;
 	}
 
@@ -85,6 +84,7 @@ public:
 		if (colChangeTime >= 1.f) {
 			colChangeTime = 0;
 		}
+
 		if (currentState == menu) { return; }
 		if (player.health <= 0) { currentState = menu; player.health = 100; }
 
@@ -200,9 +200,6 @@ public:
 
 	void ImguiRender() override
 	{
-		ImGui::Begin("Time");
-		ImGui::Text(std::to_string(colChangeTime).c_str());
-		ImGui::End();
 		//GameScene();
 		switch (currentState) {
 		case playing:
@@ -219,7 +216,7 @@ public:
 	}
 
 	void MenuScene() {
-		ImGui::ShowDemoWindow();
+		//ImGui::ShowDemoWindow();
 		ImGui::Begin("title");
 		ImGui::SetFontSize(48.f);
 		ImGui::Text("Los Zombos");
@@ -266,6 +263,7 @@ public:
 			currentState = playing;
 			game.mainMap.containers[{5, 5}].items.push_back(pInv.GetItemFromFile("items.eid", "KNIFE"));
 			game.mainMap.containers[{5, 5}].items.push_back(pInv.GetItemFromFile("items.eid", "CAMPFIRE"));
+			game.worldTime = data.getFloat("time");
 		}
 		ImGui::End();
 	}
@@ -293,10 +291,9 @@ public:
 		//}
 
 		//------Map rendering-------
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.1,0.0,1});
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.1,0.0,1 });
 		ImGui::Begin("Map");
 		if (fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
-		//std::string screen;
 
 		bool item = false;
 		ImVec2 playerPos;
@@ -310,15 +307,8 @@ public:
 				{
 					//screen += ENT_PLAYER;
 					//colors.push_back(game.GetPlayerColor());
-					playerPos = ImGui::GetCursorPos();
-				}
-
-				else if (game.mainMap.containers.count({ game.mainMap.c_glCoords.x, game.mainMap.c_glCoords.y, i, j }) != 0)
-				{
-					//screen += "U";
-					//colors.push_back(ImVec4{ 0.5, 0.34, 0, 1 });
-					printIcon = "U";
-					iconColor = ImVec4{ 0.5, 0.34, 0, 1 };
+					printIcon = ENT_PLAYER;
+					iconColor = game.GetPlayerColor();
 				}
 
 				else if (map.effectLayer.localCoords[i][j] == 1)
@@ -379,8 +369,6 @@ public:
 			ImGui::Text("");
 		}
 
-		ImGui::SetCursorPos(playerPos);
-		ImGui::TextColored(game.GetPlayerColor(), ENT_PLAYER);
 
 		if (item) {
 			ImGui::PopFont();
@@ -388,7 +376,7 @@ public:
 			for (size_t i = 0; i < itemIcons.size(); i++)
 			{
 				ImGui::SetCursorPos(itemPositions[i]);
-				
+
 				ImGui::TextColored({ 0.5,0.35,0,1 }, itemIcons[i].c_str());
 			}
 			itemIcons.clear();
@@ -675,29 +663,29 @@ public:
 			if (curCont != nullptr) {
 				std::string text = containerOpen ? "Close Container" : "Open Container";
 				if (ImGui::Button(text.c_str())) { containerOpen = !containerOpen; }
-				if (containerOpen) {
-					std::vector<std::string> names = curCont->getItemNames();
-					if (ImGui::BeginListBox("Items"))
-					{
-						for (int n = 0; n < names.size(); n++)
-						{
-							const bool is_selected = (recipeSelected == n);
-							if (ImGui::Selectable(names[n].c_str(), is_selected)) {
-								itemSelectedName = names[n];
-								recipeSelected = n;
-							}
-						}
-						ImGui::EndListBox();
+if (containerOpen) {
+	std::vector<std::string> names = curCont->getItemNames();
+	if (ImGui::BeginListBox("Items"))
+	{
+		for (int n = 0; n < names.size(); n++)
+		{
+			const bool is_selected = (recipeSelected == n);
+			if (ImGui::Selectable(names[n].c_str(), is_selected)) {
+				itemSelectedName = names[n];
+				recipeSelected = n;
+			}
+		}
+		ImGui::EndListBox();
 
-						if (itemSelectedName != "") {
-							if (ImGui::Button(("Collect " + itemSelectedName).c_str())) {
-								pInv.AddItem(curCont->items[recipeSelected]);
-								curCont->items.erase(curCont->items.begin() + recipeSelected);
-								itemSelectedName = "";
-							}
-						}
-					}
-				}
+		if (itemSelectedName != "") {
+			if (ImGui::Button(("Collect " + itemSelectedName).c_str())) {
+				pInv.AddItem(curCont->items[recipeSelected]);
+				curCont->items.erase(curCont->items.begin() + recipeSelected);
+				itemSelectedName = "";
+			}
+		}
+	}
+}
 			}
 
 			if (selectedTile->entity != nullptr && selectedTile->entity->health <= 0) {
@@ -759,6 +747,9 @@ public:
 
 						selectedTile->itemName = upperName;
 						selectedTile->collectible = true;
+						if (selectedTile->itemName == "CAMPFIRE" || selectedTile->itemName == "CHEST") {
+							game.mainMap.CreateContainer({ selectedTile->coords });
+						}
 						if (pInv.RemoveItem(pInv.items[currentItemIndex].id)) { currentItemIndex = 0; }
 					}
 					else {
@@ -767,31 +758,47 @@ public:
 				}
 			}
 
-
+			//grody ahh pyramid
+			bool canCollect = true;
 			if (selectedTile->collectible || selectedTile->liquid != nothing || selectedTile->hasItem) {
 				if (ImGui::Button("Collect")) {
-					if (pInv.AttemptCollect(selectedTile)) {
-						Audio::Play(sfxs["collect"]);
-						Math::PushBackLog(&game.actionLog, "You collect an item off the ground.");
+					if (game.mainMap.ContainerAtCoord(selectedTile->coords) != nullptr
+						&& game.mainMap.ContainerAtCoord(selectedTile->coords)->items.size() != 0)
+					{
+						Math::PushBackLog(&game.actionLog, "This container still contains items.");
+						canCollect = false;
 					}
 					else {
-						Math::PushBackLog(&game.actionLog, "You can't collect that.");
+						canCollect = true;
+					}
+					if (canCollect) {
+						if (pInv.AttemptCollect(selectedTile))
+						{
+							if (selectedTile->itemName == "CAMPFIRE" || selectedTile->itemName == "CHEST") {
+								game.mainMap.RemoveContainer({ selectedTile->coords });
+							}
+							Audio::Play(sfxs["collect"]);
+							Math::PushBackLog(&game.actionLog, "You collect an item off the ground.");
+						}
+						else {
+							Math::PushBackLog(&game.actionLog, "You can't collect that.");
+						}
 					}
 					selectedTile = nullptr;
 				}
-
 			}
+
 			if (ImGui::Button("Burn")) {
 				selectedTile->liquid = fire;
 
-				map.floodFill(selectedTile->coords);
+				map.floodFill(selectedTile->coords, 5, false);
 			}
 
 			int _ = 0;
-			if (pInv.TryGetItem(ITEM_ROCK, false, &_)) {
+			if (pInv.TryGetItem("rock", false, &_)) {
 				if (ImGui::Button("Place Wall")) {
 					*selectedTile = tileByID[ID_STONE];
-					pInv.RemoveItem(ITEM_ROCK);
+					pInv.RemoveItem("rock");
 				}
 			}
 
@@ -823,7 +830,7 @@ public:
 			//Display a bar until next tick
 			ImGui::ProgressBar(game.GetTick() / game.TickRate(), ImVec2(0.0f, 0.0f));
 			//set tickrate
-			ImGui::InputFloat("New Tickrate", &tickRateVisual, 0.5f, 10);
+			ImGui::InputFloat("New Tickrate", &tickRateVisual, 0.1f, 10);
 			if (ImGui::Button("Change Tickrate")) {
 				game.SetTick(tickRateVisual);
 			}

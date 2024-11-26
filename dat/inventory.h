@@ -7,6 +7,7 @@ class Inventory
 {
 private:
 	std::vector<std::string> itemNames;
+	//std::map<std::string, std::string> itemNamesToFile;
 public:
 	Color clothes;
 	std::vector<Item> items;
@@ -108,7 +109,7 @@ public:
 		bool covered = false;
 		if (tile->liquid != nothing)
 		{
-			if (TryGetItem(ITEM_CONTAINER, false, &itemIndex)) {
+			if (TryGetItem("container", false, &itemIndex)) {
 				Item* item = &items[itemIndex];
 				if (item->liquidAmount < 100.f && item->heldLiquid == tile->liquid || item->heldLiquid == nothing)
 				{

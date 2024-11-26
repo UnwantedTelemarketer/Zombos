@@ -48,6 +48,7 @@ struct match {
 		values.push_back(value);
 	}
 };
+//OpenedData is where data is separated and saved from an EID file being read. Use the different "get" functions to pull relevant data.
 struct OpenedData {
 	std::string section_name;
 	//'Tokens' is the file split into individual words so we can check each keyword for keys and values

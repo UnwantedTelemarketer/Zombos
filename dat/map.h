@@ -64,15 +64,17 @@ public:
 	void ClearChunkOfEnts(std::shared_ptr<Chunk> chunk);
 	void ClearEffects();
 	void CreateContainer(Vector2_I coordsLocal);
+	void RemoveContainer(Vector2_I coordsLocal);
 	void CreateContainer(Vector4_I coords);
 	Container* ContainerAtCoord(Vector2_I localCoords);
 	void PlaceEntities(std::shared_ptr<Chunk> chunk);
 	void UpdateTiles(vec2_i coords);
 	void DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y);
 	void FixEntityIndex(std::shared_ptr<Chunk> chunk);
-	void floodFillUtil(int x, int y, float prevBrightness, float newBrightness, int max);
-	void floodFill(Vector2_I centerTile, int distance);
+	void floodFillUtil(int x, int y, float prevBrightness, float newBrightness, int max, bool twinkle, bool firstTile);
+	void floodFill(Vector2_I centerTile, int distance, bool twinkle);
 	void ResetLightValues();
+	std::shared_ptr<Chunk> GetProperChunk(Vector2_I coords);
 
 	~Map();
 
@@ -176,7 +178,7 @@ void Map::MakeNewChunk(Vector2_I coords) {
 
 void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 {
-	for (int i = 0; i < Math::RandInt(0,4); i++) //CHANGE THIS TO SPAWN ENTITIES
+	for (int i = 0; i < 0;i++)// Math::RandInt(0, 4); i++) //CHANGE THIS TO SPAWN ENTITIES
 	{
 		Entity* zomb;
 		int num = Math::RandInt(1, 10);
@@ -205,6 +207,12 @@ std::shared_ptr<Chunk> Map::CurrentChunk() {
 	else {
 		return underground.chunks[{c_glCoords.x, c_glCoords.y}];
 	}
+}
+
+std::shared_ptr<Chunk> Map::GetProperChunk(Vector2_I coords) {
+	return !isUnderground
+		? world.chunks[{coords.x, coords.y}]
+		: underground.chunks[{coords.x, coords.y}];
 }
 
 //std::vector<Tile> GetTileInRadius(vec2_i center) {
@@ -506,7 +514,7 @@ void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
 					containers[{ chunk->globalChunkCoord.x, chunk->globalChunkCoord.y, corner.x + i, corner.y + j }].items.push_back(item);
 					chestCounter++;
 				}
-				chunk->localCoords[corner.x + i][corner.y + j] = Tile_Sand;
+				chunk->localCoords[corner.x + i][corner.y + j] = Tile_Stone_Floor;
 
 			}
 		}
@@ -520,10 +528,12 @@ void Map::GenerateTomb(std::shared_ptr<Chunk> chunk) {
 			if (i <= 1 || i >= CHUNK_WIDTH - 2 || j <= 1 || j >= CHUNK_HEIGHT-2) {
 				chunk->localCoords[i][j] = Tile_Stone;
 			}
-			else {
-				chunk->localCoords[i][j] = Tile_Sand;
+			else if (Math::RandInt(0, 50) == 25) {
+				chunk->localCoords[i][j] = Tile_Crystal;
 			}
-			chunk->localCoords[i][j].brightness = 0.5f;
+			else {
+				chunk->localCoords[i][j] = Tile_Stone_Floor;
+			}
 		}
 	}
 }
@@ -627,7 +637,7 @@ void Map::PlaceEntities(std::shared_ptr<Chunk> chunk)
 	for (int i = 0; i < chunk->entities.size(); i++)
 	{
 		chunk->localCoords
-			[chunk->entities[i]->coords.x]
+		[chunk->entities[i]->coords.x]
 		[chunk->entities[i]->coords.y].entity = chunk->entities[i];
 	}
 
@@ -635,7 +645,7 @@ void Map::PlaceEntities(std::shared_ptr<Chunk> chunk)
 
 void Map::UpdateTiles(vec2_i coords) {
 	std::vector<Vector2_I> tilesToBurn;
-	std::shared_ptr<Chunk> chunk = world.chunks[{coords.x, coords.y}];
+	std::shared_ptr<Chunk> chunk = GetProperChunk(coords);
 
 	for (int x = 0; x < CHUNK_WIDTH; x++) {
 		for (int y = 0; y < CHUNK_HEIGHT; y++) {
@@ -661,6 +671,8 @@ void Map::UpdateTiles(vec2_i coords) {
 					}
 				}
 			}
+			//Crystals glow
+			if (curTile->id == 14) { floodFill({ x, y }, 3, true); }
 
 			//spread fire to a list so we dont spread more than one tile per update
 			if (curTile->liquid == fire) {
@@ -668,11 +680,11 @@ void Map::UpdateTiles(vec2_i coords) {
 				if (Math::RandInt(0, 2) == 1) effectLayer.localCoords[x - 1][y] = 1;
 				//If its a campfire, then let it burn but dont spread
 				if (curTile->hasItem && curTile->itemName == "CAMPFIRE") {
-					floodFill({ x, y }, 5);
+					floodFill({ x, y }, 7, false);
 					continue;
 				}
 
-				floodFill({ x, y }, 5);
+				floodFill({ x, y }, 5, false);
 				curTile->burningFor++;
 				switch (Math::RandInt(1, 10)) {
 				case 1:
@@ -708,7 +720,7 @@ void Map::UpdateTiles(vec2_i coords) {
 		if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].burningFor > 5) { continue; }
 		else if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].burningFor < 0) { continue; }
 		chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].liquid = fire;
-		floodFill({ tilesToBurn[i].x, tilesToBurn[i].y }, 5);
+		floodFill({ tilesToBurn[i].x, tilesToBurn[i].y }, 5, false);
 	}
 
 
@@ -776,6 +788,10 @@ void Map::CreateContainer(Vector2_I coordsLocal) {
 	{ { c_glCoords.x, c_glCoords.y}, {coordsLocal.x, coordsLocal.y }, {} };
 }
 
+void Map::RemoveContainer(Vector2_I coordsLocal) {
+	containers.erase({ c_glCoords.x, c_glCoords.y, coordsLocal.x, coordsLocal.y });
+}
+
 void Map::CreateContainer(Vector4_I coords) {
 	containers[{ coords.x, coords.y, coords.z, coords.w }] =
 	{ { coords.x, coords.y}, {coords.z, coords.w }, {}};
@@ -789,7 +805,7 @@ Container* Map::ContainerAtCoord(Vector2_I localCoords) {
 }
 
 // Recursive helper function for flood fill algorithm
-void Map::floodFillUtil(int x, int y, float prevBrightness, float newBrightness, int max)
+void Map::floodFillUtil(int x, int y, float prevBrightness, float newBrightness, int max, bool twinkle, bool firstTile)
 {
 	// Check if current tile is within the image boundaries
 	if (x < 0 || x >= CHUNK_WIDTH || y < 0 || y >= CHUNK_HEIGHT) {
@@ -804,26 +820,33 @@ void Map::floodFillUtil(int x, int y, float prevBrightness, float newBrightness,
 	// Calculate new brightness value for the current tile
 	float currentBrightness = std::max(prevBrightness + newBrightness, 0.1f);
 
+	if (!CurrentChunk()->localCoords[x][y].walkable && !firstTile) {
+		CurrentChunk()->localCoords[x][y].brightness = std::min(currentBrightness, 1.f);
+		return;
+	}
+
 	if (max <= 0) {
 		return;
 	}
 
+	float extraFlare = 0;
 	// Update the current tile's brightness and visited flag
-	CurrentChunk()->localCoords[x][y].brightness = std::min(currentBrightness, 1.f);
+	if (twinkle) { extraFlare = -((float)Math::RandInt(3, 5) / 100); }
+	CurrentChunk()->localCoords[x][y].brightness = (std::min(currentBrightness, 1.f) + extraFlare);
 	CurrentChunk()->localCoords[x][y].visited = true;
 
 	// Recursively call floodFillUtil for the four adjacent tiles
-	floodFillUtil(x, y + 1, currentBrightness, newBrightness, max - 1);
-	floodFillUtil(x, y - 1, currentBrightness, newBrightness, max - 1);
-	floodFillUtil(x + 1, y, currentBrightness, newBrightness, max - 1);
-	floodFillUtil(x - 1, y, currentBrightness, newBrightness, max - 1);
+	floodFillUtil(x, y + 1, currentBrightness, newBrightness, max - 1, twinkle, false);
+	floodFillUtil(x, y - 1, currentBrightness, newBrightness, max - 1, twinkle, false);
+	floodFillUtil(x + 1, y, currentBrightness, newBrightness, max - 1, twinkle, false);
+	floodFillUtil(x - 1, y, currentBrightness, newBrightness, max - 1, twinkle, false);
 }
 
 // Flood fill algorithm for 2D array of tiles with brightness value
-void Map::floodFill(Vector2_I centerTile, int distance = 5)
+void Map::floodFill(Vector2_I centerTile, int distance, bool twinkle)
 {
 	int prevBrightness = 0.1f;
-	floodFillUtil(centerTile.x, centerTile.y, prevBrightness, 0.1f, distance);
+	floodFillUtil(centerTile.x, centerTile.y, prevBrightness, 0.1f, distance, twinkle, true);
 }
 
 void Map::ResetLightValues() {

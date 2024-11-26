@@ -1,0 +1,15 @@
+--equipType is 0 for none, 1 for weapon, 2 for hat, 3 for shirt, 4 for pants
+
+ITEM_ZERO {
+name : "Not An Item";
+description : "Keeps the game from crashing if you have no items.";
+id : "zero";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "you glitch out? idk.";
+useTxt : "you cannot use this.";
+effects : [0,0,0,0];
+equipType : 0;
+}
