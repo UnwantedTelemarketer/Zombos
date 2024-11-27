@@ -118,6 +118,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	mainMap.containers.insert({ {250, 250, 5, 5}, {{250, 250},{5, 5}, {}} });
 	mainMap.isUnderground = false;
 	Math::PushBackLog(&actionLog, "Welcome to Zombos! Press H to open the help menu.");
+	Audio::Play("dat/sounds/ambient12.wav");
 }
 
 void GameManager::AddRecipes() {

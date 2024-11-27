@@ -1,3 +1,7 @@
+SECTIONS {
+	sections : [MEAT, COOKED_MEAT]
+}
+
 MEAT {
 name : "Meat";
 description : "Uncooked meat. Not very satiating.";

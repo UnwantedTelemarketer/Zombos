@@ -1,3 +1,6 @@
+SECTIONS {
+	sections : [BAD_PISTOL, MACHETE, KNIFE]
+} 
 
 BAD_PISTOL {
 name : "Janky Pistol";

@@ -1,3 +1,7 @@
+SECTIONS {
+	sections : [ROPE, BITS, WOOD_PLANK, HINGE];
+}
+
 ROPE {
 name : "Rope";
 description : "A rope made from grass for lots of situations.";

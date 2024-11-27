@@ -1,3 +1,7 @@
+SECTIONS {
+	sections : [CAMPFIRE, CHEST]
+}
+
 CAMPFIRE {
 name : "Campfire";
 description : "Pile of sticks and rocks.";

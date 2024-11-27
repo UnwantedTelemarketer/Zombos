@@ -77,6 +77,7 @@ public:
 		showDialogue = true;
 
 		player.currentWeapon.mod = 5;
+		Items::LoadItemsFromFiles();
 	}
 
 	void Update() {

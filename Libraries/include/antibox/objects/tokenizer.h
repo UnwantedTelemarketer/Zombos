@@ -222,7 +222,7 @@ public:
 		//write only the section we want to a string
 		while (std::getline(file, line)) {
 			//when we find the section, start writing
-			if (line == section + " {") { shouldWrite = true; continue; }
+			if (line == section + " {" || section == "_ALL") { shouldWrite = true; continue; }
 			else if(!shouldWrite) { continue; }
 
 			//when we find the closing bracket, stop reading the file

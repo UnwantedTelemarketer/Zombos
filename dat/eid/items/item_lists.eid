@@ -1,5 +1,4 @@
-LISTS{
-
+LISTS {
 crafted_materials.eid : 0;
 droppable.eid : 0;
 food.eid : 0;

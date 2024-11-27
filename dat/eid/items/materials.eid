@@ -1,3 +1,7 @@
+SECTIONS {
+	sections : [GRASS, ROCK, SCRAP, STICK, OLD_CLOTH]
+}
+
 GRASS {
 name : "Grass";
 description : "Grass from off the ground.";

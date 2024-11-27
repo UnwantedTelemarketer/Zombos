@@ -56,6 +56,34 @@ namespace EID {
 	}
 }
 
+namespace Items {
+	static std::map<std::string, Item> list;
+
+	static void LoadItemsFromFiles() {
+		std::vector<std::string> sections;
+		OpenedData data;
+		ItemReader::GetDataFromFile("items/item_lists.eid", "LISTS", &data);
+		for (auto const& x : data.tokens) {
+			Console::Log(x.first, text::blue, __LINE__);
+
+			OpenedData sectionsData;
+			ItemReader::GetDataFromFile("items/" + x.first, "SECTIONS", &sectionsData);
+			Console::Log(sectionsData.getArray("sections"), text::green, __LINE__);
+			for (auto const& itemNames : sectionsData.getArray("sections")) {
+				sections.push_back(itemNames);
+			}
+
+
+			/*OpenedData currentItemFile;
+			ItemReader::GetDataFromFile("items/" + x.first, "_ALL", &data);
+			for (auto const& x : currentItemFile.tokens) {
+				list[]
+			}*/
+		}
+	}
+}
+
+
 Tile Tile_Template =
 {
 	-1, // Starting block

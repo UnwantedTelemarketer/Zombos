@@ -1,3 +1,7 @@
+SECTIONS {
+	sections : [BANDAGE]
+}
+
 BANDAGE {
 name : "Sterile Bandage";
 description : "Clean bandage that can be used to heal.";

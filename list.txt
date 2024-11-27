@@ -1,5 +1,7 @@
- - Add Cave Darkness and Gems
+ DONE - Add Cave Darkness and Gems 
  - Add cave entrances
  - add background color lerping for biomes
  - add smelting and cooking
  - separate items into different files and read them into the game at init
+ - menu screen in game to change settings and go back to menu
+ - add looping audio bus
