@@ -1,5 +1,5 @@
 SECTIONS {
-	sections : [ROPE, BITS, WOOD_PLANK, HINGE];
+sections : [ROPE,BITS,WOOD_PLANK,HINGE];
 }
 
 ROPE {

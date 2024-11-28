@@ -1,5 +1,5 @@
 SECTIONS {
-	sections : [CAMPFIRE, CHEST]
+sections : [CAMPFIRE,CHEST]
 }
 
 CAMPFIRE {

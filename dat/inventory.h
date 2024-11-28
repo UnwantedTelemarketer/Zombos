@@ -228,11 +228,11 @@ public:
 	}
 
 	Item GetItemFromFile(std::string file, std::string header) {
-		OpenedData data;
+		/*OpenedData data;
 		ItemReader::GetDataFromFile("items.eid", header, &data);
 		Item item;
-		item.CreateFromData(data);
-		return item;
+		item.CreateFromData(data);*/
+		return Items::list[header];
 	}
 
 	std::vector<std::string>* GetItemNames() {

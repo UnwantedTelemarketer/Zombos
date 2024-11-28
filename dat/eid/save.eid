@@ -1,16 +1,16 @@
 STATS {
-x_pos : 10;
+x_pos : 8;
 y_pos : 10;
-seed : 9547;
-biomes : 24848;
+seed : 29933;
+biomes : 9654;
 global_x : 250;
 global_y : 250;
 color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
 health : 100.000000;
-thirst : 99.850006;
-hunger : 99.899994;
-time : 6.200000;
-items : [BANDAGE,1,];
+thirst : 97.375107;
+hunger : 98.249893;
+time : 9.500004;
+items : [BANDAGE,1,ROCK,1,STICK,1,];
 }

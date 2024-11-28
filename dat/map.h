@@ -188,12 +188,12 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 		else if (num >= 5) {
 			zomb = new Entity{ 15, "Zombie", ID_ZOMBIE, Aggressive, true, Zombie, 6, 8, false, Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };
 
-			zomb->inv.push_back(EID::MakeItem("items.eid", "OLD_CLOTH"));
+			zomb->inv.push_back(Items::GetItem("OLD_CLOTH"));
 		}
 		else {
 			zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, Wildlife, 5, 1, false, Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };
 
-			zomb->inv.push_back(EID::MakeItem("items.eid", "MEAT"));
+			zomb->inv.push_back(Items::GetItem("MEAT"));
 		}
 		zomb->target = nullptr;
 		chunk->entities.push_back(zomb);

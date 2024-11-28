@@ -1,6 +1,7 @@
 ﻿#include "dat/game.h"
 #include "antibox/objects/tokenizer.h"
 #include <algorithm>
+#include <thread>
 
 #include <chrono>
 
@@ -66,6 +67,9 @@ public:
 	};
 
 	void Init() override {
+		Console::Log("Loading Items from files...", text::white, __LINE__);
+		std::thread itemLoading{ Items::LoadItemsFromFiles };
+
 		fancyGraphics = true;
 		frame.frames.length = 360;
 		currentState = menu;
@@ -77,7 +81,9 @@ public:
 		showDialogue = true;
 
 		player.currentWeapon.mod = 5;
-		Items::LoadItemsFromFiles();
+
+		itemLoading.join();
+		Console::Log("Done!", text::green, __LINE__);
 	}
 
 	void Update() {
@@ -629,7 +635,7 @@ public:
 					if (newItem != "none") {
 						currentItemIndex = 0;
 						pInv.Cleanup();
-						pInv.AddItem(EID::MakeItem("items.eid", newItem));
+						pInv.AddItem(Items::GetItem(newItem));
 						Audio::Play(sfxs["craft"]);
 					}
 					else {
@@ -672,19 +678,19 @@ public:
 			if (curCont != nullptr) {
 				std::string text = containerOpen ? "Close Container" : "Open Container";
 				if (ImGui::Button(text.c_str())) { containerOpen = !containerOpen; }
-if (containerOpen) {
-	std::vector<std::string> names = curCont->getItemNames();
-	if (ImGui::BeginListBox("Items"))
-	{
-		for (int n = 0; n < names.size(); n++)
-		{
-			const bool is_selected = (recipeSelected == n);
-			if (ImGui::Selectable(names[n].c_str(), is_selected)) {
-				itemSelectedName = names[n];
-				recipeSelected = n;
-			}
-		}
-		ImGui::EndListBox();
+		if (containerOpen) {
+			std::vector<std::string> names = curCont->getItemNames();
+			if (ImGui::BeginListBox("Items"))
+			{
+				for (int n = 0; n < names.size(); n++)
+				{
+					const bool is_selected = (recipeSelected == n);
+					if (ImGui::Selectable(names[n].c_str(), is_selected)) {
+						itemSelectedName = names[n];
+						recipeSelected = n;
+					}
+				}
+				ImGui::EndListBox();
 
 		if (itemSelectedName != "") {
 			if (ImGui::Button(("Collect " + itemSelectedName).c_str())) {

@@ -1,5 +1,5 @@
 SECTIONS {
-	sections : [BAD_PISTOL, MACHETE, KNIFE]
+sections : [BAD_PISTOL,MACHETE,KNIFE]
 } 
 
 BAD_PISTOL {

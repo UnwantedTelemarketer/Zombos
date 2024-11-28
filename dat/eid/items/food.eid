@@ -1,5 +1,5 @@
 SECTIONS {
-	sections : [MEAT, COOKED_MEAT]
+sections : [MEAT,COOKED_MEAT]
 }
 
 MEAT {
