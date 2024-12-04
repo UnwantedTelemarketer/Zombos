@@ -1,3 +1,5 @@
+#ifndef GAME_H
+#define GAME_H
 #include "map.h"
 #include "cosmetic.h"
 #include "items.h"
@@ -710,3 +712,39 @@ dimming:
 ImVec4 GameManager::GetTileColor(Vector2_I tile, float intensity) {
 	return GameManager::GetTileColor(mainMap.CurrentChunk()->localCoords[tile.x][tile.y], intensity);
 }
+
+class Commands {
+public:
+	void RunCommand(std::string input, Inventory* inv, Player* p);
+};
+
+void Commands::RunCommand(std::string input, Inventory* inv, Player* p) {
+	std::vector<std::string> tokens = Tokenizer::getTokens(input);
+	for (int i = 0; i < tokens.size(); i++) {
+		if (tokens[i] == "give") {
+			if (tokens.size() < 3) { return; }
+			if (Items::list.count(tokens[i + 1]) == 0) { 
+				LAZY_LOG("Item \"" + tokens[i+1] + "\" cannot be found.")
+					return; 
+			}
+			inv->AddItemFromFile(tokens[i + 1], stoi(tokens[i + 2]));
+		}
+		else if (tokens[i] == "set")
+		{
+			if (tokens.size() < 3) { return; }
+			if (tokens[i + 1] == "health") {
+				p->health = stoi(tokens[i + 2]);
+			}
+			else if (tokens[i + 1] == "thirst") {
+				p->thirst = stoi(tokens[i + 2]);
+			}
+			else if (tokens[i + 1] == "hunger") {
+				p->hunger = stoi(tokens[i + 2]);
+			}
+		}
+		//else if()
+	}
+
+}
+
+#endif

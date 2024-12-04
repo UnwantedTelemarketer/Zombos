@@ -1,7 +1,15 @@
  DONE - Add Cave Darkness and Gems 
+ DONE - settings menu (volume, save file stuff, debug menu)
+ DONE - separate items into different files and read them into the game at init
+ DONE - add console
+ DONE - add flashlight
+ - set up tiles with eid so they can be read from files
+ - control remapping
  - Add cave entrances
  - add background color lerping for biomes
  - add smelting and cooking
- - separate items into different files and read them into the game at init
- - menu screen in game to change settings and go back to menu
  - add looping audio bus
+ - fix game loading old chunks after making new save
+ - put item sprites in item data eid files
+ - dictionary the crafting where the key is an ingredient and the value is a list of recipes with that
+ - add support for reading in custom crafting recipes from eid files for custom items

@@ -5,6 +5,7 @@
 
 #include "items.h"
 #include "inventory.h"
+#include "antibox/objects/tokenizer.h"
 #include <algorithm>
 #include <cmath>
 #include <thread>
@@ -178,7 +179,7 @@ void Map::MakeNewChunk(Vector2_I coords) {
 
 void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 {
-	for (int i = 0; i < 0;i++)// Math::RandInt(0, 4); i++) //CHANGE THIS TO SPAWN ENTITIES
+	for (int i = 0; i < Math::RandInt(0, 4); i++) //CHANGE THIS TO SPAWN ENTITIES
 	{
 		Entity* zomb;
 		int num = Math::RandInt(1, 10);
@@ -647,8 +648,8 @@ void Map::UpdateTiles(vec2_i coords) {
 	std::vector<Vector2_I> tilesToBurn;
 	std::shared_ptr<Chunk> chunk = GetProperChunk(coords);
 
-	for (int x = 0; x < CHUNK_WIDTH; x++) {
-		for (int y = 0; y < CHUNK_HEIGHT; y++) {
+	for (int x = 0; x < CHUNK_HEIGHT; x++) {
+		for (int y = 0; y < CHUNK_WIDTH; y++) {
 			Tile *curTile = &chunk->localCoords[x][y];
 
 			DoTechnical(curTile, chunk, x, y);
@@ -710,7 +711,7 @@ void Map::UpdateTiles(vec2_i coords) {
 				if (curTile->burningFor >= 100) { curTile->burningFor = 0; }
 				curTile->liquid = nothing;
 			}
-
+			//logic for upwards facing flashlight pyramid
 			curTile->technical_update = false;
 		}
 	}
@@ -733,10 +734,10 @@ void Map::DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y)
 
 		//Get a vector2 of which direction to go to next
 		Vector2_I nextTileCoord = { 0, 0 };
-		if (curTile->technical_dir == up) { nextTileCoord = { -1, 0 }; }
-		else if (curTile->technical_dir == down) { nextTileCoord = { 1, 0 }; }
-		else if (curTile->technical_dir == left) { nextTileCoord = { 0, -1 }; }
-		else if (curTile->technical_dir == right) { nextTileCoord = { 0, 1 }; }
+		if (curTile->technical_dir == direction::up) { nextTileCoord = { -1, 0 }; }
+		else if (curTile->technical_dir == direction::down) { nextTileCoord = { 1, 0 }; }
+		else if (curTile->technical_dir == direction::left) { nextTileCoord = { 0, -1 }; }
+		else if (curTile->technical_dir == direction::right) { nextTileCoord = { 0, 1 }; }
 
 		Tile* nextTile = &chunk->localCoords[x + nextTileCoord.x][y + nextTileCoord.y];
 
@@ -748,28 +749,28 @@ void Map::DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y)
 		
 		switch (curTile->id) {
 			case 100: //up
-				curTile->technical_dir = up;
+				curTile->technical_dir = direction::up;
 				//if it gets pushed onto an up left turn
-				if (nextTile->id == 104) { nextTile->technical_dir = right; }
+				if (nextTile->id == 104) { nextTile->technical_dir = direction::right; }
 				//if it gets pushed onto an up right turn
-				if (nextTile->id == 105) { nextTile->technical_dir = left; }
+				if (nextTile->id == 105) { nextTile->technical_dir = direction::left; }
 				break;
 			case 101: //down
-				curTile->technical_dir = down;
+				curTile->technical_dir = direction::down;
 				//if it gets pushed onto a down left turn
-				if (nextTile->id == 106) { nextTile->technical_dir = right; }
+				if (nextTile->id == 106) { nextTile->technical_dir = direction::right; }
 				//if it gets pushed onto a down right turn
-				if (nextTile->id == 107) { nextTile->technical_dir = left; }
+				if (nextTile->id == 107) { nextTile->technical_dir = direction::left; }
 				break;
 			case 102: //left
-				curTile->technical_dir = left;
-				if (nextTile->id == 106) { nextTile->technical_dir = up; }
-				if (nextTile->id == 104) { nextTile->technical_dir = down; }
+				curTile->technical_dir = direction::left;
+				if (nextTile->id == 106) { nextTile->technical_dir = direction::up; }
+				if (nextTile->id == 104) { nextTile->technical_dir = direction::down; }
 				break;
 			case 103: //right
-				curTile->technical_dir = right;
-				if (nextTile->id == 107) { nextTile->technical_dir = up; }
-				if (nextTile->id == 105) { nextTile->technical_dir = down; }
+				curTile->technical_dir = direction::right;
+				if (nextTile->id == 107) { nextTile->technical_dir = direction::up; }
+				if (nextTile->id == 105) { nextTile->technical_dir = direction::down; }
 				break;
 		}
 	}

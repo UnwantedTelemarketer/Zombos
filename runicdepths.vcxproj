@@ -201,6 +201,7 @@
     <ClInclude Include="dat\inventory.h" />
     <ClInclude Include="dat\items.h" />
     <ClInclude Include="dat\map.h" />
+    <ClInclude Include="dat\uiscreen.h" />
     <ClInclude Include="Libraries\include\antibox\core\audio.h" />
     <ClInclude Include="Libraries\include\antibox\graphics\3d\camera.h" />
     <ClInclude Include="Libraries\include\antibox\graphics\vertex.h" />

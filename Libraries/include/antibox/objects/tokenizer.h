@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TOKENIZER_H
+#define TOKENIZER_H
 #include <vector>
 #include <fstream>
 #include <string>
@@ -288,3 +289,5 @@ public:
 		if(logSuccess) Console::Log("Wrote to file " + filename, text::green, __LINE__);
 	}
 };
+
+#endif

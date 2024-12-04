@@ -1,0 +1,20 @@
+//Section required to list out all items in the file
+SECTIONS {
+sections : [GLOB]
+}
+
+//equipType is 0 for none, 1 for weapon, 2 for hat, 3 for shirt, 4 for pants
+//the data of a custom item is self explanatory (i hope)
+GLOB {
+name : "Glob of Goo"; 
+description : "EWWWW!!!.";
+id : "zero";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "you glitch out? idk.";
+useTxt : "you cannot use this.";
+effects : [0,0,0,0];
+equipType : 0;
+}

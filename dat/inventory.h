@@ -220,11 +220,14 @@ public:
 		}
 		return false;
 	}
+	
 
 
-
-	void AddItemFromFile(std::string file, std::string header) {
-		AddItem(GetItemFromFile(file, header));
+	void AddItemFromFile(std::string header, int amount = 1) {
+		for (size_t i = 0; i < amount; i++)
+		{
+			AddItem(GetItemFromFile("file", header));
+		}
 	}
 
 	Item GetItemFromFile(std::string file, std::string header) {

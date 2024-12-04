@@ -17,9 +17,9 @@ equipType : 0;
 }
 
 CHEST {
-name : "Box";
+name : "Chest";
 description : "Box used for holding things.";
-id : "box";
+id : "chest";
 stackable : false;
 holdsLiquid : false;
 consumable : false;

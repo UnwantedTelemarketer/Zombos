@@ -77,6 +77,7 @@ struct Container {
 	Vector2_I localCoords;
 	Vector2_I globalCoords;
 	std::vector<Item> items;
+	int sizeLimit = 999;
 
 	std::vector<std::string> getItemNames() {
 		std::vector<std::string> names;
@@ -88,6 +89,14 @@ struct Container {
 			}
 		}
 		return names;
+	}
+
+	bool AddItem(Item item) {
+
+		if (items.size() >= sizeLimit) { return false; }
+
+		items.push_back(item);
+		return true;
 	}
 };
 
@@ -212,7 +221,7 @@ enum direction{up, down, left, right, still};
 
 struct Tile {
 	int id = -1;
-	direction technical_dir = up;
+	direction technical_dir = direction::up;
 	Liquid liquid = nothing;
 	Entity* entity = nullptr;
 	bool collectible = false;

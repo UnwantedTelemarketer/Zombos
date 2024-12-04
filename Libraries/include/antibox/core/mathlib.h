@@ -6,9 +6,11 @@
 #define maybe (rand() % 10 + 1) >= 5
 
 
-
 namespace antibox {
+
+	enum Direction { up, down, left, right, forward, backwards };
 	namespace Math {
+
 		//Input the max number, and this will return a float between 1 and your max (inclusive).
 		inline float RandNum(int max) { return (rand() % max + 1); }
 
@@ -30,6 +32,7 @@ namespace antibox {
 			return { Lerp(time, startCol.x, endCol.x), Lerp(time, startCol.y, endCol.y), Lerp(time, startCol.z, endCol.z) };
 		}*/
 	}
+
 
 	//Vector2 storing x and y in a single int.
 	struct Vector2_B {

@@ -1,5 +1,5 @@
 ﻿#include "dat/game.h"
-#include "antibox/objects/tokenizer.h"
+#include "dat/uiscreen.h"
 #include <algorithm>
 #include <thread>
 
@@ -13,6 +13,7 @@
 using namespace antibox;
 
 enum GameState { playing, menu };
+static char console_commands[128] = "";
 
 class Caves : public App {
 
@@ -38,18 +39,22 @@ private:
 	std::vector<ImVec2> itemPositions;
 public:
 	//UI stuff
-	bool statsOpen, debugOpen, interacting, itemMenu, navInv, useBool, craftingMenu, showDialogue, createChar, fancyGraphics, containerOpen, helpMenu;
+	GameUI gameScreen;
 	Tile* selectedTile = nullptr;
 	int currentItemIndex = 0;
 	std::string openClose;
 	antibox::framerate frame;
 	std::vector<float> frametimes;
 	float colChangeTime = 0.f;
+	float volume = 1.f;
+	bool interacting, flashlightActive;
 
 	//Game Stuff
+	Commands cmd;
 	GameManager game;
 	Inventory& pInv = game.pInv;
 	Player& player = game.mPlayer;
+	direction playerDir = direction::down;
 	float& health = game.mPlayer.health;
 	Map& map = game.mainMap;
 	std::vector<Vector2_I> item_positions;
@@ -63,22 +68,24 @@ public:
 	std::map<std::string, const char*> sfxs = {
 		{"craft", "dat/sounds/craft.wav"},
 		{"fail", "dat/sounds/fail.wav"},
-		{"collect", "dat/sounds/collect.wav"}
+		{"collect", "dat/sounds/collect.wav"},
+		{"ui_select", "dat/sounds/ui_confirm.wav"}
 	};
 
 	void Init() override {
 		Console::Log("Loading Items from files...", text::white, __LINE__);
 		std::thread itemLoading{ Items::LoadItemsFromFiles };
 
-		fancyGraphics = true;
+		gameScreen.fancyGraphics = true;
 		frame.frames.length = 360;
 		currentState = menu;
 		health = 100.0f;
-		statsOpen = true;
+		gameScreen.statsOpen = true;
 		openClose = "Close Stats";
-		containerOpen = false;
-		navInv = false;
-		showDialogue = true;
+		gameScreen.containerOpen = false;
+		gameScreen.navInv = false;
+		gameScreen.showDialogue = true;
+		gameScreen.console_showing = false;
 
 		player.currentWeapon.mod = 5;
 
@@ -92,9 +99,23 @@ public:
 		if (colChangeTime >= 1.f) {
 			colChangeTime = 0;
 		}
-
+		//the rest of the update is game logic so we stop here in the menu
 		if (currentState == menu) { return; }
+
+		//-=================================================================
+
 		if (player.health <= 0) { currentState = menu; player.health = 100; }
+
+		if (Input::KeyDown(KEY_ENTER)) {
+			Console::Log(console_commands, text::green, __LINE__);
+			cmd.RunCommand(console_commands, &pInv, &player);
+			console_commands[0] = '\0';
+		}
+
+		gameScreen.FlipScreens();
+
+		if (gameScreen.console_showing) { return; }
+
 
 		game.UpdateTick();
 
@@ -113,6 +134,7 @@ public:
 				moved = true;
 				selectedTile = nullptr;
 				game.MovePlayer(MAP_UP);
+				playerDir = direction::up;
 			}
 		}
 		else if (Input::KeyDown(KEY_DOWN) || Input::KeyDown(KEY_S)) {
@@ -134,6 +156,7 @@ public:
 				moved = true;
 				selectedTile = nullptr;
 				game.MovePlayer(MAP_DOWN);
+				playerDir = direction::down;
 			}
 		}
 		else if (Input::KeyDown(KEY_LEFT) || Input::KeyDown(KEY_A)) {
@@ -151,6 +174,7 @@ public:
 				moved = true;
 				selectedTile = nullptr;
 				game.MovePlayer(MAP_LEFT);
+				playerDir = direction::left;
 			}
 		}
 		else if (Input::KeyDown(KEY_RIGHT) || Input::KeyDown(KEY_D)) {
@@ -168,31 +192,25 @@ public:
 				moved = true;
 				selectedTile = nullptr;
 				game.MovePlayer(MAP_RIGHT);
+				playerDir = direction::right;
 			}
 		}
-		else if (Input::KeyDown(KEY_P))
-		{
-			debugOpen = !debugOpen;
-		}
+
+		
 
 		else if (Input::KeyDown(KEY_E))
 		{
-			if (!navInv)
+			if (!gameScreen.navInv)
 			{
 				Math::PushBackLog(&game.actionLog, "Which direction will you interact with?");
 				interacting = true;
 			}
 		}
 
-		else if (Input::KeyDown(KEY_C))
-		{
-			craftingMenu = !craftingMenu;
+		else if (Input::KeyDown(KEY_F)) {
+			flashlightActive = !flashlightActive;
 		}
 
-		else if (Input::KeyDown(KEY_H))
-		{
-			helpMenu = !helpMenu;
-		}
 
 		if (moved) {
 			const char* soundName = walk_sounds[Math::RandInt(0, 4)].c_str();
@@ -202,13 +220,23 @@ public:
 		if (player.aiming) {
 			map.ClearLine();
 			map.DrawLine(map.GetLine(player.coords, player.crosshair, 25));
-		}
-		;
+		};
 	}
 
 	void ImguiRender() override
 	{
 		//GameScene();
+		if (gameScreen.settingsOpen) {
+			ImGui::Begin("Settings");
+
+			ImGui::SliderFloat("Volume Level", &volume, 0.f, 1.f);
+			if (ImGui::Button("Set Volume")) {
+				Audio::SetVolume(volume);
+				Audio::Play(sfxs["ui_select"]);
+			}
+
+			ImGui::End();
+		}
 		switch (currentState) {
 		case playing:
 			GameScene();
@@ -224,6 +252,7 @@ public:
 	}
 
 	void MenuScene() {
+
 		//ImGui::ShowDemoWindow();
 		ImGui::Begin("title");
 		ImGui::SetFontSize(48.f);
@@ -232,19 +261,20 @@ public:
 		ImGui::End();
 
 		ImGui::Begin("Menu");
-		if (createChar) { Create_Character(); }
+		if (gameScreen.createChar) { Create_Character(); }
 
-		ImGui::Text(std::to_string(Audio::GetVolume()).c_str());
 
-		if (ImGui::Button("Lower the volume")) {
-			Audio::SetVolume(0.5f);
+		ImGui::SliderFloat("Volume Level", &volume, 0.f, 1.f);
+		if (ImGui::Button("Set Volume")) {
+			Audio::SetVolume(volume); 
+			Audio::Play(sfxs["ui_select"]);
 		}
 
 		if (ImGui::Button("New Game"))
 		{
 			game.Setup(10, 10, 0.5f);
 
-			createChar = true;
+			gameScreen.createChar = true;
 		}
 
 		if (ImGui::Button("Continue Game"))
@@ -263,7 +293,7 @@ public:
 			{
 				for (int s = 0; s < stoi(data.getArray("items")[i + 1]); s++)
 				{
-					pInv.AddItemFromFile("items.eid", data.getArray("items")[i]); //give it a certain amount of items
+					pInv.AddItemFromFile(data.getArray("items")[i]); //give it a certain amount of items
 				}
 				i++;
 			}
@@ -283,7 +313,7 @@ public:
 
 		pInv.clothes = { clothes.x, clothes.y, clothes.z };
 		if (ImGui::Button("Start")) {
-			pInv.AddItemFromFile("items.eid", "BANDAGE");
+			pInv.AddItemFromFile("BANDAGE");
 			currentState = playing;
 		}
 		ImGui::End();
@@ -297,19 +327,57 @@ public:
 		//if (ent != nullptr && ent->canTalk) {
 		//	DisplayEntity(ent);
 		//}
-
+		if (gameScreen.console_showing) {
+			ImGui::Begin("Console");
+			ImGui::InputTextWithHint("console", "enter commands", console_commands, IM_ARRAYSIZE(console_commands));
+			ImGui::End();
+		}
 		//------Map rendering-------
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.1,0.0,1 });
 		ImGui::Begin("Map");
-		if (fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
+		if (gameScreen.fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
 
 		bool item = false;
 		ImVec2 playerPos;
-		for (int i = 0; i < CHUNK_WIDTH; i++) {
-			for (int j = 0; j < CHUNK_HEIGHT; j++) {
+		for (int i = 0; i < CHUNK_HEIGHT; i++) {
+			for (int j = 0; j < CHUNK_WIDTH; j++) {
+
+				
 				float intensity = map.CurrentChunk()->localCoords[i][j].brightness;
 				Tile& curTile = map.CurrentChunk()->localCoords[i][j];
 				Tile& underTile = map.CurrentChunk()->localCoords[i + 1][j];
+
+				//Flashlight pyramid logic, idk weird math stuff. pack it away please
+				{//===================================================================
+					if ((i <= player.coords.x && i >= player.coords.x - 6)
+						&& (j >= player.coords.y - ((player.coords.x) - i)
+						&& j <= player.coords.y + ((player.coords.x) - i))
+						&& flashlightActive
+						&& playerDir == direction::up) {
+						intensity = 0.25f;
+					}
+					else if ((i >= player.coords.x && i <= player.coords.x + 6)
+						&& (j >= player.coords.y - ((i - player.coords.x))
+						&& j <= player.coords.y + (i - (player.coords.x)))
+						&& flashlightActive
+						&& playerDir == direction::down) {
+						intensity = 0.25f;
+					}
+					else if ((j <= player.coords.y && j >= player.coords.y - 6)
+						&& (i >= player.coords.x - ((player.coords.y) - j)
+						&& i <= player.coords.x + ((player.coords.y) - j))
+						&& flashlightActive
+						&& playerDir == direction::left) {
+						intensity = 0.25f;
+					}
+					else if ((j >= player.coords.y && j <= player.coords.y + 6)
+						&& (i >= player.coords.x - ((j - player.coords.y))
+						&& i <= player.coords.x + (j - (player.coords.y)))
+						&& flashlightActive
+						&& playerDir == direction::right) {
+						intensity = 0.25f;
+					}
+				}//===================================================================
 
 				if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
 				{
@@ -326,6 +394,7 @@ public:
 					printIcon = "?";
 					iconColor = Cosmetic::SmokeColor();
 				}
+
 				else {
 					printIcon = game.GetTileChar(curTile);
 					iconColor = game.GetTileColor(curTile, intensity);
@@ -391,7 +460,7 @@ public:
 			itemPositions.clear();
 		}
 
-		if (fancyGraphics) ImGui::PopFont();
+		if (gameScreen.fancyGraphics) ImGui::PopFont();
 
 		ImGui::End();
 		ImGui::PopStyleColor(1);
@@ -422,7 +491,7 @@ public:
 		ImGui::End();
 
 		//------Stats------
-		if (statsOpen) {
+		if (gameScreen.statsOpen) {
 			ImGui::Begin("Stats");
 			ImGui::TextColored(ImVec4{ 0.85, 0.15, 0.15, 1 }, "Health");
 			ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4{ 0.85,0,0,1 });
@@ -551,7 +620,7 @@ public:
 
 			if (ImGui::Button("Use"))
 			{
-				useBool = !useBool;
+				gameScreen.useBool = !gameScreen.useBool;
 			}
 			if (pInv.items[currentItemIndex].eType != notEquip) {
 				if (ImGui::Button("Equip"))
@@ -560,7 +629,7 @@ public:
 				}
 			}
 
-			if (useBool)
+			if (gameScreen.useBool)
 			{
 				ImGui::Text("On what?");
 				if (ImGui::Button("Consume"))
@@ -581,7 +650,7 @@ public:
 					{
 						Math::PushBackLog(&game.actionLog, "You can't consume " + pInv.items[currentItemIndex].name + ".");
 					}
-					useBool = !useBool;
+					gameScreen.useBool = !gameScreen.useBool;
 				}
 				if (ImGui::Button("Body (Self)"))
 				{
@@ -594,7 +663,7 @@ public:
 					{
 						Math::PushBackLog(&game.actionLog, "You can't use " + pInv.items[currentItemIndex].name + ".");
 					}
-					useBool = !useBool;
+					gameScreen.useBool = !gameScreen.useBool;
 				}
 			}
 
@@ -602,7 +671,7 @@ public:
 		}
 
 		//------Crafting-------
-		if (craftingMenu) {
+		if (gameScreen.craftingMenu) {
 			ImGui::Begin("Crafting");
 
 			if (ImGui::BeginListBox("Recipes"))
@@ -648,7 +717,7 @@ public:
 
 		// Help Menu
 
-		if (helpMenu) {
+		if (gameScreen.helpMenu) {
 			ImGui::Begin("Help Menu");
 			ImGui::Text("WASD or Arrow keys to move");
 			ImGui::Text("E to begin selecting a block then any of the directional keys to select a block");
@@ -676,9 +745,9 @@ public:
 
 
 			if (curCont != nullptr) {
-				std::string text = containerOpen ? "Close Container" : "Open Container";
-				if (ImGui::Button(text.c_str())) { containerOpen = !containerOpen; }
-		if (containerOpen) {
+				std::string text = gameScreen.containerOpen ? "Close Container" : "Open Container";
+				if (ImGui::Button(text.c_str())) { gameScreen.containerOpen = !gameScreen.containerOpen; }
+		if (gameScreen.containerOpen) {
 			std::vector<std::string> names = curCont->getItemNames();
 			if (ImGui::BeginListBox("Items"))
 			{
@@ -704,9 +773,9 @@ public:
 			}
 
 			if (selectedTile->entity != nullptr && selectedTile->entity->health <= 0) {
-				std::string text = containerOpen ? "Close Container" : "Open Container";
-				if (ImGui::Button(text.c_str())) { containerOpen = !containerOpen; }
-				if (containerOpen) {
+				std::string text = gameScreen.containerOpen ? "Close Container" : "Open Container";
+				if (ImGui::Button(text.c_str())) { gameScreen.containerOpen = !gameScreen.containerOpen; }
+				if (gameScreen.containerOpen) {
 					std::vector<std::string> names = selectedTile->entity->getItemNames();
 					if (ImGui::BeginListBox("Items"))
 					{
@@ -737,8 +806,10 @@ public:
 				//Dropping it into a box
 				Container* curCont = game.mainMap.ContainerAtCoord(selectedTile->coords);
 				if (curCont != nullptr) {
-					curCont->items.push_back(pInv.items[currentItemIndex]);
-					if (pInv.RemoveItem(pInv.items[currentItemIndex].id, pInv.items[currentItemIndex].count)) { currentItemIndex = 0; }
+					//add the item into the box only if theres enough space, and remove it from the inventory
+					if (curCont->AddItem(pInv.items[currentItemIndex])) {
+						if (pInv.RemoveItem(pInv.items[currentItemIndex].id, pInv.items[currentItemIndex].count)) { currentItemIndex = 0; }
+					}
 				}
 				//Or on the floor
 				else {
@@ -809,12 +880,8 @@ public:
 		}
 
 		//------DEBUG------
-		if (debugOpen) {
+		if (gameScreen.debugOpen) {
 			ImGui::Begin("Debug Window");
-
-			if (ImGui::Button("Toggle Graphics")) {
-				fancyGraphics = !fancyGraphics;
-			}
 
 			ImGui::Text(("Current World Time: " + std::to_string(game.worldTime)).c_str());
 			//FPS
@@ -881,7 +948,7 @@ public:
 
 		ImGui::Text("---Place Conveyor Belt---");
 
-		if (fancyGraphics) ImGui::PushFont(Engine::Instance().getFont("main"));
+		if (gameScreen.fancyGraphics) ImGui::PushFont(Engine::Instance().getFont("main"));
 
 		//TOP ROW
 		if (ImGui::Button("O")) {
@@ -920,13 +987,13 @@ public:
 			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_DR];
 		}
 
-		if (fancyGraphics) ImGui::PopFont();
+		if (gameScreen.fancyGraphics) ImGui::PopFont();
 		ImGui::End();
 	}
 
 	void DisplayEntity(Entity* ent)
 	{
-		if (showDialogue) {
+		if (gameScreen.showDialogue) {
 			ImGui::Begin("Dialogue");
 			ImGui::Text(ent->message.c_str());
 
@@ -937,7 +1004,7 @@ public:
 					ImGui::Text(ent->inv[i].name.c_str());
 					ImGui::Text(ent->inv[i].description.c_str());
 					if (ImGui::Button("3", { 20, 20 })) {
-						pInv.AddItemFromFile("items.eid", "BAD_PISTOL");
+						pInv.AddItemFromFile("BAD_PISTOL");
 					}
 					ImGui::Text("--------------------");
 				}
@@ -949,7 +1016,7 @@ public:
 		}
 
 		if (Input::KeyDown(KEY_D)) {
-			showDialogue = !showDialogue;
+			gameScreen.showDialogue = !gameScreen.showDialogue;
 		}
 	}
 
