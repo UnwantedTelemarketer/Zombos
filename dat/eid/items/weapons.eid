@@ -29,6 +29,7 @@ consumeTxt : "You eat the meat. You feel much less hungry.";
 useTxt : "Does Nothig.";
 effects : [0,0,0,0, 25];
 equipType : 1;
+sprite : "E";
 }
 
 KNIFE {
@@ -43,4 +44,5 @@ consumeTxt : "cant consume.";
 useTxt : "You stab yourself.";
 effects : [0,0,4,35,35];
 equipType : 1;
+sprite : "E";
 }

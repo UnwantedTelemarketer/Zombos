@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [BANDAGE]
+sections : [BANDAGE,LIGHTER,CANTEEN]
 }
 
 BANDAGE {
@@ -14,5 +14,37 @@ consumeTxt : "You eat a bandage.";
 useTxt : "You wrap a bandage around your wound.";
 effects : [0,0,1,5];
 equipType : 0;
+sprite : "J";
 }
+
+LIGHTER {
+name : "Lighter";
+description : "A lighter that can start fires.";
+id : "lighter";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "cant consume.";
+useTxt : "You light yourself on fire.";
+effects : [0,0,4,35];
+equipType : 0;
+sprite : "E";
+}
+
+CANTEEN {
+name : "Canteen";
+description : "Holds liquid.";
+id : "canteen";
+stackable : false;
+holdsLiquid : true;
+consumable : false;
+amount : 1;
+consumeTxt : "You take a sip from your canteen.";
+useTxt : "You pour liquid on yourself.";
+effects : [2,10,2,25];
+equipType : 0;
+sprite : "E";
+}
+
 

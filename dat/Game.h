@@ -108,15 +108,6 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 		tile_icons.insert({ stoi(tileData.getArray(x.first)[1]) , tileData.getArray(x.first)[0] });
 	}
 
-	OpenedData itemData;
-	ItemReader::GetDataFromFile("item_data.eid", "ITEMS", &itemData);
-
-	for (auto const& x : itemData.tokens) {
-		item_icons.insert({ itemData.getArray(x.first)[0] , itemData.getArray(x.first)[1] });
-	}
-
-	
-
 	mainMap.containers.insert({ {250, 250, 5, 5}, {{250, 250},{5, 5}, {}} });
 	mainMap.isUnderground = false;
 	Math::PushBackLog(&actionLog, "Welcome to Zombos! Press H to open the help menu.");
@@ -535,6 +526,9 @@ bool GameManager::EnterCave() {
 }
 
 std::string GameManager::GetItemChar(Tile tile) {
+	if (!tile.hasItem || item_icons.count(tile.itemName) == 0) {
+		return "!";
+	}
 	return item_icons[tile.itemName];
 }
 std::string GameManager::GetTileChar(Tile tile) {

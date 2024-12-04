@@ -109,7 +109,7 @@ public:
 		bool covered = false;
 		if (tile->liquid != nothing)
 		{
-			if (TryGetItem("container", false, &itemIndex)) {
+			if (TryGetItem("canteen", false, &itemIndex)) {
 				Item* item = &items[itemIndex];
 				if (item->liquidAmount < 100.f && item->heldLiquid == tile->liquid || item->heldLiquid == nothing)
 				{

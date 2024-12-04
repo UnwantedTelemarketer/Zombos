@@ -74,7 +74,7 @@ public:
 
 	void Init() override {
 		Console::Log("Loading Items from files...", text::white, __LINE__);
-		std::thread itemLoading{ Items::LoadItemsFromFiles };
+		std::thread itemLoading = Items::LoadItemsFromFiles(&game.item_icons);
 
 		gameScreen.fancyGraphics = true;
 		frame.frames.length = 360;
@@ -343,39 +343,39 @@ public:
 			for (int j = 0; j < CHUNK_WIDTH; j++) {
 
 				
-				float intensity = map.CurrentChunk()->localCoords[i][j].brightness;
+				float intensity = std::max(1.f,map.CurrentChunk()->localCoords[i][j].brightness);
 				Tile& curTile = map.CurrentChunk()->localCoords[i][j];
 				Tile& underTile = map.CurrentChunk()->localCoords[i + 1][j];
 
 				//Flashlight pyramid logic, idk weird math stuff. pack it away please
 				{//===================================================================
-					if ((i <= player.coords.x && i >= player.coords.x - 6)
+					if ((i <= player.coords.x && i >= player.coords.x - 8)
 						&& (j >= player.coords.y - ((player.coords.x) - i)
 						&& j <= player.coords.y + ((player.coords.x) - i))
 						&& flashlightActive
 						&& playerDir == direction::up) {
-						intensity = 0.25f;
+						intensity = 0.1f *(player.coords.x - i);
 					}
-					else if ((i >= player.coords.x && i <= player.coords.x + 6)
+					else if ((i >= player.coords.x && i <= player.coords.x + 8)
 						&& (j >= player.coords.y - ((i - player.coords.x))
 						&& j <= player.coords.y + (i - (player.coords.x)))
 						&& flashlightActive
 						&& playerDir == direction::down) {
-						intensity = 0.25f;
+						intensity = 0.1f *(i - player.coords.x);
 					}
-					else if ((j <= player.coords.y && j >= player.coords.y - 6)
+					else if ((j <= player.coords.y && j >= player.coords.y - 8)
 						&& (i >= player.coords.x - ((player.coords.y) - j)
 						&& i <= player.coords.x + ((player.coords.y) - j))
 						&& flashlightActive
 						&& playerDir == direction::left) {
-						intensity = 0.25f;
+						intensity = 0.1f *(player.coords.y - j);
 					}
-					else if ((j >= player.coords.y && j <= player.coords.y + 6)
+					else if ((j >= player.coords.y && j <= player.coords.y + 8)
 						&& (i >= player.coords.x - ((j - player.coords.y))
 						&& i <= player.coords.x + (j - (player.coords.y)))
 						&& flashlightActive
 						&& playerDir == direction::right) {
-						intensity = 0.25f;
+						intensity = 0.1f *(j - player.coords.y);
 					}
 				}//===================================================================
 
@@ -766,10 +766,10 @@ public:
 				pInv.AddItem(curCont->items[recipeSelected]);
 				curCont->items.erase(curCont->items.begin() + recipeSelected);
 				itemSelectedName = "";
-			}
-		}
-	}
-}
+							}
+						}
+					}
+				}
 			}
 
 			if (selectedTile->entity != nullptr && selectedTile->entity->health <= 0) {

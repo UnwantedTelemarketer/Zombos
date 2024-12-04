@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid };
+enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid = 6};
 enum Liquid { nothing, water, blood, fire };
 enum Action { use, consume, combine };
 enum Behaviour { Wander, Protective, Stationary, Aggressive };
@@ -40,6 +40,7 @@ struct Item {
 	int initialTickTime = 0;
 	equipType eType = notEquip;
 	int mod = 0;
+	std::string sprite;
 
 	void CoverIn(Liquid l, int ticks) {
 		coveredIn = l;
@@ -62,6 +63,7 @@ struct Item {
 		consumeTxt = item.getString("consumeTxt");
 		useTxt = item.getString("useTxt");
 		eType = (equipType)item.getInt("equipType");
+		sprite = item.getString("sprite");
 
 
 		std::vector<std::string> effects = item.getArray("effects");

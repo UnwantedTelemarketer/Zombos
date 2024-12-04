@@ -1,5 +1,7 @@
 #pragma once
 #include "entities.h"
+#include <map>
+#include <thread>
 
 #define ID_NULL -1
 
@@ -63,7 +65,7 @@ namespace Items {
 		return list[itemName];
 	}
 
-	static void LoadItemsFromFiles() {
+	static void LoadItems(std::map<std::string, std::string>* icons) {
 		std::vector<std::string> sections;
 		OpenedData data;
 		ItemReader::GetDataFromFile("items/item_lists.eid", "LISTS", &data);
@@ -72,13 +74,16 @@ namespace Items {
 
 			OpenedData sectionsData;
 			ItemReader::GetDataFromFile("items/" + x.first, "SECTIONS", &sectionsData);
-			//Console::Log(sectionsData.getArray("sections"), text::green, __LINE__);
-			for (auto const& itemName: sectionsData.getArray("sections")) {
+			for (auto const& itemName : sectionsData.getArray("sections")) {
 				list[itemName] = EID::MakeItem("items/" + x.first, itemName);
+				icons->insert({ list[itemName].section , list[itemName].sprite });
 			}
-
-			
 		}
+	}
+
+	static std::thread LoadItemsFromFiles(std::map<std::string, std::string>* icons) {
+		std::thread loadingItems{ LoadItems, icons };
+		return loadingItems;
 	}
 }
 

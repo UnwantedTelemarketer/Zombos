@@ -16,6 +16,7 @@ consumeTxt : "You eat the uncooked meat. You feel a bit sick.";
 useTxt : "Does Nothig.";
 effects : [3,5,0,0];
 equipType : 0;
+sprite : "G";
 }
 
 COOKED_MEAT {
@@ -30,4 +31,5 @@ consumeTxt : "You eat the meat. You feel much less hungry.";
 useTxt : "Does Nothig.";
 effects : [3,25,0,0];
 equipType : 0;
+sprite : "G";
 }

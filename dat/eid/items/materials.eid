@@ -14,6 +14,7 @@ consumeTxt : "You eat the grass.";
 useTxt : "You wrap grass around your wound.";
 effects : [3,1,1,2];
 equipType : 0;
+sprite : "A";
 }
 
 ROCK {
@@ -28,6 +29,7 @@ consumeTxt : "nothing.";
 useTxt : "nothing.";
 effects : [0,0,0,5,5];
 equipType : 1;
+sprite : "C";
 }
 
 SCRAP {
@@ -42,6 +44,7 @@ consumeTxt : "Metal.";
 useTxt : "You cut yourself with a piece of the metal.";
 effects : [0,0,4,2,5];
 equipType : 1;
+sprite : "B";
 }
 
 STICK {
@@ -56,6 +59,7 @@ consumeTxt : "Stick.";
 useTxt : "Stick.";
 effects : [0,0,0,2,2];
 equipType : 1;
+sprite : "A";
 }
 
 OLD_CLOTH {
@@ -70,4 +74,5 @@ consumeTxt : ".";
 useTxt : ".";
 effects : [0,0,0,0];
 equipType : 0;
+sprite : "K"
 }

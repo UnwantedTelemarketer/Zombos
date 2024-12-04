@@ -14,6 +14,7 @@ consumeTxt : "Eated Rope";
 useTxt : "No Use.";
 effects : [0,0,0,0];
 equipType : 0;
+sprite : "L";
 }
 
 BITS {
@@ -28,6 +29,7 @@ consumeTxt : "no eating";
 useTxt : "No Use.";
 effects : [0,0,0,0];
 equipType : 0;
+sprite : "I";
 }
 
 WOOD_PLANK {
@@ -42,6 +44,7 @@ consumeTxt : ".";
 useTxt : ".";
 effects : [0,0,0,0];
 equipType : 0;
+sprite : "M";
 }
 
 HINGE {
@@ -56,4 +59,5 @@ consumeTxt : ".";
 useTxt : ".";
 effects : [0,0,0,0];
 equipType : 0;
+sprite : "N";
 }

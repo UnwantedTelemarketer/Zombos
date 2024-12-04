@@ -14,6 +14,7 @@ consumeTxt : "Stick.";
 useTxt : "Stick.";
 effects : [0,0,0,0];
 equipType : 0;
+sprite : "D";
 }
 
 CHEST {
@@ -28,4 +29,5 @@ consumeTxt : "Stick.";
 useTxt : "Stick.";
 effects : [0,0,0,0];
 equipType : 0;
+sprite : "O";
 }
