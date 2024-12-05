@@ -414,7 +414,7 @@ void GameManager::UpdateTick() {
 
 		if (!mainMap.isUnderground) {
 			if (worldTime >= 20.f || worldTime < 6.f) {
-				if (forwardTime) { darkTime = std::min(7.f, darkTime + 0.25f); }
+				if (forwardTime) { darkTime = std::min(10.f, darkTime + 0.45f); }
 				else { darkTime = std::max(1.f, darkTime - 0.5f); }
 				if (worldTime >= 4.f && worldTime <= 5.f) { forwardTime = false; }
 			}
@@ -694,9 +694,14 @@ ImVec4 GameManager::GetTileColor(Tile tile, float intensity) {
 dimming:
 	//if its night time
 	if ((worldTime >= 20.f || worldTime < 6.f) || mainMap.isUnderground) {
-		color.x /= (darkTime * intensity);
-		color.y /= (darkTime * intensity);
-		color.z /= (darkTime * intensity);
+		if (darkTime >= 10.f && intensity >= 1.f) {
+			color = { 0,0,0,1 };
+		}
+		else {
+			color.x /= (darkTime * intensity);
+			color.y /= (darkTime * intensity);
+			color.z /= (darkTime * intensity);
+		}
 	}
 
 	return color;

@@ -9,6 +9,7 @@
 #define DOSFONT "dat\\fonts\\symbolic\\symbolic_crystal.ttf"
 #define CASCADIA "c:\\Windows\\Fonts\\CascadiaCode.ttf"
 #define ITEMFONT "dat\\fonts\\symbolic\\symbolic_item.ttf"
+#define DEV_TOOLS
 
 using namespace antibox;
 
@@ -333,7 +334,8 @@ public:
 			ImGui::End();
 		}
 		//------Map rendering-------
-		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.1,0.0,1 });
+		if (game.worldTime >= 20.f || game.worldTime < 6.f) { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.0,0.0,1 }); }
+		else{ ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.1,0.0,1 }); }
 		ImGui::Begin("Map");
 		if (gameScreen.fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
 
@@ -343,7 +345,8 @@ public:
 			for (int j = 0; j < CHUNK_WIDTH; j++) {
 
 				
-				float intensity = std::max(1.f,map.CurrentChunk()->localCoords[i][j].brightness);
+				float intensity = map.CurrentChunk()->localCoords[i][j].brightness;
+				if (intensity > 1.f) { intensity = 1.f; }
 				Tile& curTile = map.CurrentChunk()->localCoords[i][j];
 				Tile& underTile = map.CurrentChunk()->localCoords[i + 1][j];
 
@@ -378,7 +381,7 @@ public:
 						intensity = 0.1f *(j - player.coords.y);
 					}
 				}//===================================================================
-
+				
 				if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
 				{
 					//screen += ENT_PLAYER;
@@ -720,10 +723,12 @@ public:
 		if (gameScreen.helpMenu) {
 			ImGui::Begin("Help Menu");
 			ImGui::Text("WASD or Arrow keys to move");
+			ImGui::Text("F to toggle flashlight on and off");
 			ImGui::Text("E to begin selecting a block then any of the directional keys to select a block");
 			ImGui::Text("P to open/close the Debug menu");
 			ImGui::Text("H to open/close the Help menu");
-			ImGui::Text("C to open/close the Crafting menu");
+			ImGui::Text("ESC to open/close the Settings menu");
+			ImGui::Text("` to open/close the console");
 			ImGui::End();
 		}
 
@@ -884,6 +889,7 @@ public:
 			ImGui::Begin("Debug Window");
 
 			ImGui::Text(("Current World Time: " + std::to_string(game.worldTime)).c_str());
+			ImGui::Text(("Dark Time: " + std::to_string(game.darkTime)).c_str());
 			//FPS
 			if (counter == 30) {
 				float avgFps = 0;
@@ -930,13 +936,46 @@ public:
 
 #ifdef DEV_TOOLS
 		ImGui::Begin("Brightness Map");
-		int counter = 0;
-		for (const auto& pair : game.mainMap.world.chunks) {
-			ImGui::Text(("(" + std::to_string(pair.first.x)).c_str()); ImGui::SameLine();
-			ImGui::Text((std::to_string(pair.first.y) + ")").c_str()); if (counter != 2 && counter != 5) ImGui::SameLine();
-			counter++;
+		for (int i = 0; i < CHUNK_WIDTH; i++) {
+			for (int j = 0; j < CHUNK_HEIGHT; j++) {
+				std::string c = std::to_string((int)ceil(map.CurrentChunk()->localCoords[i][j].brightness * 10));
+				if (c != "10") { c = "0" + c; }
+				switch (stoi(c)) {
+				case 1:
+					ImGui::TextColored({ 1, 0, 0, 1 }, c.c_str());
+					break;
+				case 2:
+					ImGui::TextColored({ 0.9, 0.1, 0, 1 }, c.c_str());
+					break;
+				case 3:
+					ImGui::TextColored({ 0.8, 0.2, 0, 1 }, c.c_str());
+					break;
+				case 4:
+					ImGui::TextColored({ 0.7, 0.3, 0, 1 }, c.c_str());
+					break;
+				case 5:
+					ImGui::TextColored({ 0.6, 0.4, 0, 1 }, c.c_str());
+					break;
+				case 6:
+					ImGui::TextColored({ 0.5, 0.5, 0, 1 }, c.c_str());
+					break;
+				case 7:
+					ImGui::TextColored({ 0.4, 0.6, 0, 1 }, c.c_str());
+					break;
+				case 8:
+					ImGui::TextColored({ 0.3, 0.7, 0, 1 }, c.c_str());
+					break;
+				case 9:
+					ImGui::TextColored({ 0.2, 0.8, 0, 1 }, c.c_str());
+					break;
+				case 10:
+					ImGui::TextColored({ 0.35, 0.35, 0.35, 1 }, c.c_str());
+					break;
+				}
+				ImGui::SameLine();
+			}
+			ImGui::Text("");
 		}
-
 		ImGui::End();
 #endif
 
