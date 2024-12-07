@@ -63,6 +63,7 @@ public:
 	bool EnterCave();
 
 	std::string GetItemChar(Tile tile);
+	ImVec4 GetItemColor(Tile tile);
 	std::string GetTileChar(Tile tile);
 
 	std::string GetTileChar(Vector2_I tile);
@@ -107,8 +108,6 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	for (auto const& x : tileData.tokens){
 		tile_icons.insert({ stoi(tileData.getArray(x.first)[1]) , tileData.getArray(x.first)[0] });
 	}
-
-	mainMap.containers.insert({ {250, 250, 5, 5}, {{250, 250},{5, 5}, {}} });
 	mainMap.isUnderground = false;
 	Math::PushBackLog(&actionLog, "Welcome to Zombos! Press H to open the help menu.");
 	Audio::Play("dat/sounds/ambient12.wav");
@@ -163,18 +162,20 @@ void GameManager::DoBehaviour(Entity* ent)
 	{
 	case Aggressive:
 		//check if player is near
-		/*if (path.size() < ent->viewDistance) {
+		if (path.size() < ent->viewDistance) {
 			ent->targetingPlayer = true;
 		}
 		else {
 			ent->targetingPlayer = false;
-		}*/
+		}
 	case Protective:
 		//make sure theyre above health and nearby
 		if (ent->health > 5 && ent->targeting()) {
+			int isEnemies = 0;
 
-			int isEnemies = std::count(factionEnemies[ent->faction].begin(), factionEnemies[ent->faction].end(), ent->target->faction);
-
+			if (!ent->targetingPlayer) {
+				isEnemies = std::find(factionEnemies[ent->faction].begin(), factionEnemies[ent->faction].end(), ent->target->faction) != factionEnemies[ent->faction].end();
+			}
 			//if the player is targeted
 			if (ent->targetingPlayer) {
 				ent->coords = path[1];
@@ -531,6 +532,19 @@ std::string GameManager::GetItemChar(Tile tile) {
 	}
 	return item_icons[tile.itemName];
 }
+
+ImVec4 GameManager::GetItemColor(Tile tile) {
+	if (!tile.hasItem) {
+		return {1, 0,0,1};
+	}
+	if (tile.liquid == fire) { return Cosmetic::FireColor(); }
+	vec4 color = { 0.65,0.35,0.15,1 };
+	color.x /= (darkTime * tile.brightness);
+	color.y /= (darkTime * tile.brightness);
+	color.z /= (darkTime * tile.brightness);
+	return {color.x, color.y, color.z, 1};
+}
+
 std::string GameManager::GetTileChar(Tile tile) {
 
 	if (tile.entity != nullptr)

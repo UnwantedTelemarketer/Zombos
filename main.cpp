@@ -9,7 +9,7 @@
 #define DOSFONT "dat\\fonts\\symbolic\\symbolic_crystal.ttf"
 #define CASCADIA "c:\\Windows\\Fonts\\CascadiaCode.ttf"
 #define ITEMFONT "dat\\fonts\\symbolic\\symbolic_item.ttf"
-#define DEV_TOOLS
+//#define DEV_TOOLS
 
 using namespace antibox;
 
@@ -36,6 +36,7 @@ private:
 	vec3 clothes;
 	std::string printIcon;
 	ImVec4 iconColor;
+	std::vector<Tile> itemTiles;
 	std::vector<std::string> itemIcons;
 	std::vector<ImVec2> itemPositions;
 public:
@@ -300,8 +301,6 @@ public:
 			}
 			game.Setup(data.getInt("x_pos"), data.getInt("y_pos"), 0.5f, data.getInt("seed"), data.getInt("biomes"));
 			currentState = playing;
-			game.mainMap.containers[{5, 5}].items.push_back(pInv.GetItemFromFile("items.eid", "KNIFE"));
-			game.mainMap.containers[{5, 5}].items.push_back(pInv.GetItemFromFile("items.eid", "CAMPFIRE"));
 			game.worldTime = data.getFloat("time");
 		}
 		ImGui::End();
@@ -352,28 +351,28 @@ public:
 
 				//Flashlight pyramid logic, idk weird math stuff. pack it away please
 				{//===================================================================
-					if ((i <= player.coords.x && i >= player.coords.x - 8)
+					if ((i <= player.coords.x && i >= player.coords.x - 10)
 						&& (j >= player.coords.y - ((player.coords.x) - i)
 						&& j <= player.coords.y + ((player.coords.x) - i))
 						&& flashlightActive
 						&& playerDir == direction::up) {
 						intensity = 0.1f *(player.coords.x - i);
 					}
-					else if ((i >= player.coords.x && i <= player.coords.x + 8)
+					else if ((i >= player.coords.x && i <= player.coords.x + 10)
 						&& (j >= player.coords.y - ((i - player.coords.x))
 						&& j <= player.coords.y + (i - (player.coords.x)))
 						&& flashlightActive
 						&& playerDir == direction::down) {
 						intensity = 0.1f *(i - player.coords.x);
 					}
-					else if ((j <= player.coords.y && j >= player.coords.y - 8)
+					else if ((j <= player.coords.y && j >= player.coords.y - 10)
 						&& (i >= player.coords.x - ((player.coords.y) - j)
 						&& i <= player.coords.x + ((player.coords.y) - j))
 						&& flashlightActive
 						&& playerDir == direction::left) {
 						intensity = 0.1f *(player.coords.y - j);
 					}
-					else if ((j >= player.coords.y && j <= player.coords.y + 8)
+					else if ((j >= player.coords.y && j <= player.coords.y + 10)
 						&& (i >= player.coords.x - ((j - player.coords.y))
 						&& i <= player.coords.x + (j - (player.coords.y)))
 						&& flashlightActive
@@ -417,13 +416,13 @@ public:
 					if (underTile.id == 11) {
 						//screen += "G";
 						//colors.push_back(game.GetTileColor(underTile, intensity));
-						printIcon = "G";
+						if(printIcon != ENT_PLAYER) printIcon = "G";
 						iconColor = game.GetTileColor(underTile, intensity);
 					}
 					if (underTile.id == 12) {
 						//screen += "J";
 						//colors.push_back(game.GetTileColor(underTile, intensity));
-						printIcon = "J";
+						if (printIcon != ENT_PLAYER) printIcon = "J";
 						iconColor = game.GetTileColor(underTile, intensity);
 					}
 				}
@@ -432,6 +431,7 @@ public:
 				{
 					item = true;
 					itemPositions.push_back(ImGui::GetCursorPos());
+					itemTiles.push_back(curTile);
 					itemIcons.push_back(game.GetItemChar(curTile));
 					ImGui::Text(" ");
 					ImGui::SameLine();
@@ -457,8 +457,9 @@ public:
 			{
 				ImGui::SetCursorPos(itemPositions[i]);
 
-				ImGui::TextColored({ 0.5,0.35,0,1 }, itemIcons[i].c_str());
+				ImGui::TextColored(game.GetItemColor(itemTiles[i]), itemIcons[i].c_str());
 			}
+			itemTiles.clear();
 			itemIcons.clear();
 			itemPositions.clear();
 		}

@@ -4,6 +4,8 @@
  DONE - add console
  DONE - add flashlight
  DONE - put item sprites in item data eid files
+ - move factions, npcs and other stuff to eid
+ - add cold mechanic (colder at night, too cold take damage)
  - set up tiles with eid so they can be read from files
  - control remapping
  - Add cave entrances

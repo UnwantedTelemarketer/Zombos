@@ -681,7 +681,7 @@ void Map::UpdateTiles(vec2_i coords) {
 				if (Math::RandInt(0, 2) == 1) effectLayer.localCoords[x - 1][y] = 1;
 				//If its a campfire, then let it burn but dont spread
 				if (curTile->hasItem && curTile->itemName == "CAMPFIRE") {
-					floodFill({ x, y }, 7, false);
+					floodFill({ x, y }, 5, false);
 					continue;
 				}
 
