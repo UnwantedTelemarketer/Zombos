@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [BANDAGE,LIGHTER,CANTEEN]
+sections : [BANDAGE,LIGHTER,CANTEEN,GUTS]
 }
 
 BANDAGE {
@@ -43,6 +43,21 @@ amount : 1;
 consumeTxt : "You take a sip from your canteen.";
 useTxt : "You pour liquid on yourself.";
 effects : [2,10,2,25];
+equipType : 0;
+sprite : "E";
+}
+
+GUTS {
+name : "Zombie Guts";
+description : "Gross old zombie guts. Might be useful. Maybe.";
+id : "guts";
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+amount : 1;
+consumeTxt : "You feel awfully sick after eating the guts.";
+useTxt : "You smear the guts on yourself.";
+effects : [4,10,2,25];
 equipType : 0;
 sprite : "E";
 }

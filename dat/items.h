@@ -228,9 +228,9 @@ Tile Tile_Tree_Base =
 	still,
 	nothing,
 	nullptr,
-	false,
-	ID_NULL,
-	"NULL",
+	true,
+	ID_TREE_BASE,
+	"RESIN",
 	0,
 	true
 };

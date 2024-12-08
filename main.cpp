@@ -67,12 +67,13 @@ public:
 	std::string recipeSelectedName, itemSelectedName, invSelectedName = "";
 
 	//Sounds
-	std::vector<std::string> walk_sounds = { "dat/sounds/walk_1.wav" , "dat/sounds/walk_2.wav" , "dat/sounds/walk_3.wav" , "dat/sounds/walk_4.wav" };
 	std::map<std::string, const char*> sfxs = {
 		{"craft", "dat/sounds/craft.wav"},
 		{"fail", "dat/sounds/fail.wav"},
 		{"collect", "dat/sounds/collect.wav"},
-		{"ui_select", "dat/sounds/ui_confirm.wav"}
+		{"ui_select", "dat/sounds/ui_confirm.wav"},
+		{"splash", "dat/sounds/enter_water.wav"},
+		{"click", "dat/sounds/click.wav"}
 	};
 
 	void Init() override {
@@ -212,12 +213,12 @@ public:
 
 		else if (Input::KeyDown(KEY_F)) {
 			flashlightActive = !flashlightActive;
+			Audio::Play(sfxs["click"]);
 		}
 
 
 		if (moved) {
-			const char* soundName = walk_sounds[Math::RandInt(0, 4)].c_str();
-			Audio::Play(soundName);
+			Audio::Play(game.GetWalkSound());
 		}
 
 		if (player.aiming) {

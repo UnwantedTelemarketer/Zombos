@@ -32,35 +32,38 @@ void AudioEngine::PlayAudio(const char* path) {
 
 void AudioEngine::PlayAudioLooping(const char* path) {
     ma_result result;
+    ma_decoder* currentDecoder = isPlaying1 ? &mDecoder2 : &mDecoder;
+    ma_device* currentDevice = isPlaying1 ? &mDevice2 : &mDevice;
 
     // Initialize the decoder with the specified audio file
-    result = ma_decoder_init_file(path, NULL, &mDecoder);
+       result = ma_decoder_init_file(path, NULL, currentDecoder);
     if (result != MA_SUCCESS) {
         std::cout << "Failed to initialize decoder for file: " << path << std::endl;
         return;
     }
+    isPlaying1 = true;
 
     // Enable looping for the decoder
-    ma_data_source_set_looping(&mDecoder, MA_TRUE);
+    ma_data_source_set_looping(currentDecoder, MA_TRUE);
 
     // Configure the playback device
     mDeviceConfig = ma_device_config_init(ma_device_type_playback);
-    mDeviceConfig.playback.format = mDecoder.outputFormat;
-    mDeviceConfig.playback.channels = mDecoder.outputChannels;
-    mDeviceConfig.sampleRate = mDecoder.outputSampleRate;
+    mDeviceConfig.playback.format = currentDecoder->outputFormat;
+    mDeviceConfig.playback.channels = currentDecoder->outputChannels;
+    mDeviceConfig.sampleRate = currentDecoder->outputSampleRate;
     mDeviceConfig.dataCallback = data_callback;
-    mDeviceConfig.pUserData = &mDecoder;
+    mDeviceConfig.pUserData = currentDecoder;
 
     // Initialize the playback device
-    ma_result deviceResult = ma_device_init(NULL, &mDeviceConfig, &mDevice);
+    ma_result deviceResult = ma_device_init(NULL, &mDeviceConfig, currentDevice);
     if (deviceResult != MA_SUCCESS) {
         std::cerr << "Failed to initialize playback device." << std::endl;
-        ma_decoder_uninit(&mDecoder);
+        ma_decoder_uninit(currentDecoder);
         return;
     }
 
     // Start playback
-    ma_device_start(&mDevice);
+    ma_device_start(currentDevice);
 }
 
 void AudioEngine::SetVolume(float volume)

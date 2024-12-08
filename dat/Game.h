@@ -33,6 +33,8 @@ public:
 	vec3 backgroundColor;
 	biome currentBiome, lerpingTo;
 
+	std::vector<std::string> sandWalk, grassWalk, rockWalk;
+
 	vec3 BG_DESERT, BG_WATER, BG_FOREST;
 
 
@@ -71,6 +73,8 @@ public:
 
 	bool EnterCave();
 
+	std::string GetWalkSound();
+
 	std::string GetItemChar(Tile tile);
 	ImVec4 GetItemColor(Tile tile);
 	std::string GetTileChar(Tile tile);
@@ -97,6 +101,10 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	BG_DESERT = { 0.15, 0.15, 0 };
 	BG_WATER = { 0, 0.1, 0.15 };
 	BG_FOREST = { 0, 0.15, 0 };
+	sandWalk = { "dat/sounds/movement/sand1.wav","dat/sounds/movement/sand2.wav", "dat/sounds/movement/sand3.wav" };
+	grassWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };
+	rockWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };
+
 	if(seed == -1) deleteAllFilesInDirectory();
 	SetTick(tick);
 	mPlayer.coords.x = x;
@@ -126,6 +134,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	mainMap.isUnderground = false;
 	Math::PushBackLog(&actionLog, "Welcome to Zombos! Press H to open the help menu.");
 	Audio::PlayLoop("dat/sounds/ambient12.wav");
+	Audio::PlayLoop("dat/sounds/birds.wav");
 }
 
 void GameManager::AddRecipes() {
@@ -137,6 +146,7 @@ void GameManager::AddRecipes() {
 	Crafter.addRecipe("HINGE", { {"SCRAP", 3} });
 	Crafter.addRecipe("WOOD_PLANK", { {"STICK", 6}, {"ROPE",2} });
 	Crafter.addRecipe("KNIFE", { {"STICK", 1}, {"ROPE", 1}, {"SCRAP", 1}});
+	Crafter.addRecipe("LIGHTER", { {"RESIN", 1}, {"ROPE", 1}, {"SCRAP", 1} });
 	Crafter.addRecipe("CHEST", { {"WOOD_PLANK", 3}, {"HINGE", 2} });
 }
 
@@ -145,6 +155,7 @@ void GameManager::DoBehaviour(Entity* ent)
 	std::vector<Vector2_I> path = mainMap.GetLine(ent->coords, mPlayer.coords, 10);
 	std::vector<Vector2_I> entPath;
 	Entity* tempTarget = nullptr;
+	bool moved = false;
 
 	for (int i = 0; i < mainMap.CurrentChunk()->entities.size(); i++) //loop through every entity
 	{
@@ -194,11 +205,13 @@ void GameManager::DoBehaviour(Entity* ent)
 			//if the player is targeted
 			if (ent->targetingPlayer) {
 				ent->coords = path[1];
+				moved = true;
 				break;
 			}
 			//otherwise, if they are enemies go towards them
 			else if (entPath.size() > 2 && isEnemies != 0) {
 				ent->coords = entPath[1];
+				moved = true;
 				break;
 			}
 			//if theyre close enough, attack them
@@ -231,6 +244,7 @@ void GameManager::DoBehaviour(Entity* ent)
 			break;
 		}
 		else {
+			moved = true;
 			//pr do random direction 
 			switch (dir)
 			{
@@ -265,7 +279,7 @@ void GameManager::DoBehaviour(Entity* ent)
 			}
 		}
 	}
-
+	if (moved) { Audio::Play(GetWalkSound()); }
 	if (ent->coords == mPlayer.coords) {
 		ent->coords = oldCoords;
 		return;
@@ -354,6 +368,7 @@ void GameManager::MovePlayer(int dir) {
 	}
 	else if (curVal > -0.25f && curVal < -0.15f) {
 		if (lerpingTo != ocean) {
+			Audio::Play("dat/sounds/movement/enter_water.wav");
 			Utilities::Lerp(&backgroundColor, BG_WATER, 0.5f);
 			currentBiome = lerpingTo = ocean;
 		}
@@ -618,6 +633,21 @@ std::string GameManager::GetTileChar(Tile tile) {
 
 std::string GameManager::GetTileChar(Vector2_I tile) {
 	return GameManager::GetTileChar(mainMap.CurrentChunk()->localCoords[tile.x][tile.y]);
+}
+
+std::string GameManager::GetWalkSound(){
+
+	if(mainMap.isUnderground) return rockWalk[Math::RandInt(0, 3)];
+
+	switch (currentBiome) {
+	case ocean:
+	case desert:
+		return sandWalk[Math::RandInt(0, 3)];
+	case forest:
+		return grassWalk[Math::RandInt(0, 3)];
+	default:
+		return "dat/sounds/bfxr/walk1.wav";
+	}
 }
 
 ImVec4 GameManager::GetPlayerColor() {

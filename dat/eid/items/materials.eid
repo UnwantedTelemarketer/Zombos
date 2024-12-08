@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [GRASS,ROCK,SCRAP,STICK,OLD_CLOTH]
+sections : [GRASS,ROCK,SCRAP,STICK,OLD_CLOTH,RESIN]
 }
 
 GRASS {
@@ -66,6 +66,21 @@ OLD_CLOTH {
 name : "Tattered Clothes";
 description : "Torn and ripped.";
 id : "old_clothes";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : ".";
+useTxt : ".";
+effects : [0,0,0,0];
+equipType : 0;
+sprite : "K"
+}
+
+RESIN {
+name : "Resin";
+description : "Resin from a tree. Good for making lots of things";
+id : "resin";
 stackable : true;
 holdsLiquid : false;
 consumable : false;

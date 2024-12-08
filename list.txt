@@ -15,3 +15,4 @@
  - fix game loading old chunks after making new save
  - dictionary the crafting where the key is an ingredient and the value is a list of recipes with that
  - add support for reading in custom crafting recipes from eid files for custom items
+ - Multiplayer?? (figure it out bozo)

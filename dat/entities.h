@@ -4,7 +4,7 @@
 #include <fstream>
 
 enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid = 6};
-enum Liquid { nothing, water, blood, fire };
+enum Liquid { nothing, water, blood, fire, guts };
 enum Action { use, consume, combine };
 enum Behaviour { Wander, Protective, Stationary, Aggressive };
 enum Faction { Human, Zombie, Wildlife };
