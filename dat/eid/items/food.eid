@@ -17,6 +17,7 @@ useTxt : "Does Nothig.";
 effects : [3,5,0,0];
 equipType : 0;
 sprite : "G";
+spriteColor : [1.0, 0.1, 0.2];
 }
 
 COOKED_MEAT {
@@ -32,4 +33,5 @@ useTxt : "Does Nothig.";
 effects : [3,25,0,0];
 equipType : 0;
 sprite : "G";
+spriteColor : [0.6, 0.1, 0.2];
 }

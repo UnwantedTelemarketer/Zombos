@@ -6,13 +6,25 @@
  DONE - put item sprites in item data eid files
  DONE - add looping audio bus 
  DONE - add background color lerping for biomes
+ DONE - fix game loading old chunks after making new save
+ DONE - move color into the eid files for items
+ DONE - add smelting and cooking
+ DONE - add support for reading in custom crafting recipes from eid files for custom items
  - move factions, npcs and other stuff to eid
  - add cold mechanic (colder at night, too cold take damage)
  - set up tiles with eid so they can be read from files
  - control remapping
  - Add cave entrances
- - add smelting and cooking
- - fix game loading old chunks after making new save
  - dictionary the crafting where the key is an ingredient and the value is a list of recipes with that
- - add support for reading in custom crafting recipes from eid files for custom items
  - Multiplayer?? (figure it out bozo)
+
+ //CONTENT
+
+ DONE - Zombie Guts disguise
+ - Snowy Biome (igloo, snow)
+ - Jungle Biome (flowers, bigger trees, birds, rain)
+ - Swamp Biome (mud, water)
+ - Campsites (campfire, tent, chair)
+ - Weather Events (rain, lightning, blizzard, sandstorm)
+ - Talking with humans
+ - Trading with humans

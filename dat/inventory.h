@@ -178,6 +178,10 @@ public:
 			case pierceDamage:
 				p->TakeDamage(item->use.onBodyUse.effect, amount);
 				break;
+			case coverInLiquid:
+				p->coveredIn = (Liquid)item->use.onBodyUse.amount;
+				p->liquidLast = 30;
+				break;
 			default:
 				return false;
 			}    

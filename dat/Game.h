@@ -9,7 +9,6 @@
 
 using namespace antibox;
 
-enum biome { desert, ocean, forest };
 class GameManager {
 private:
 	float tickRate;
@@ -30,12 +29,13 @@ public:
 	std::map<Faction, std::vector<Faction>> factionEnemies;
 	std::map<int, std::string> tile_icons;
 	std::map<std::string, std::string> item_icons;
+	std::map<std::string, Vector3> item_colors;
 	vec3 backgroundColor;
 	biome currentBiome, lerpingTo;
 
 	std::vector<std::string> sandWalk, grassWalk, rockWalk;
 
-	vec3 BG_DESERT, BG_WATER, BG_FOREST;
+	vec3 BG_DESERT, BG_WATER, BG_FOREST, BG_TAIGA, BG_SWAMP;
 
 
 	std::vector<std::string> recipeNames;
@@ -101,6 +101,8 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	BG_DESERT = { 0.15, 0.15, 0 };
 	BG_WATER = { 0, 0.1, 0.15 };
 	BG_FOREST = { 0, 0.15, 0 };
+	BG_TAIGA = { 0.15, 0.15, 0.2 };
+	BG_SWAMP = { 0.15, 0.1, 0.05 };
 	sandWalk = { "dat/sounds/movement/sand1.wav","dat/sounds/movement/sand2.wav", "dat/sounds/movement/sand3.wav" };
 	grassWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };
 	rockWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };
@@ -138,16 +140,21 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 }
 
 void GameManager::AddRecipes() {
+	std::map<std::string, int> currentRecipe;
+	OpenedData recipes;
+	ItemReader::GetDataFromFile("items/crafting_recipes.eid", "SECTIONS", &recipes);
+	for (auto const& x : recipes.getArray("sections")) {
 
-	Crafter.addRecipe("CAMPFIRE", { {"STICK", 3}, {"ROCK", 2} });
-	Crafter.addRecipe("CANTEEN", { {"SCRAP", 3} });
-	Crafter.addRecipe("BANDAGE", { {"GRASS", 3}});
-	Crafter.addRecipe("ROPE", { {"GRASS", 2} });
-	Crafter.addRecipe("HINGE", { {"SCRAP", 3} });
-	Crafter.addRecipe("WOOD_PLANK", { {"STICK", 6}, {"ROPE",2} });
-	Crafter.addRecipe("KNIFE", { {"STICK", 1}, {"ROPE", 1}, {"SCRAP", 1}});
-	Crafter.addRecipe("LIGHTER", { {"RESIN", 1}, {"ROPE", 1}, {"SCRAP", 1} });
-	Crafter.addRecipe("CHEST", { {"WOOD_PLANK", 3}, {"HINGE", 2} });
+		OpenedData sectionsData;
+		ItemReader::GetDataFromFile("items/crafting_recipes.eid", x, &sectionsData);
+		std::vector<std::string> curArr = sectionsData.getArray("recipe");
+		for (size_t i = 0; i < curArr.size(); i+=2)
+		{
+			currentRecipe[curArr[i]] = stoi(curArr[i + 1]);
+		}
+		Crafter.addRecipe(sectionsData.section_name, currentRecipe);
+		currentRecipe.clear();
+	}
 }
 
 void GameManager::DoBehaviour(Entity* ent)
@@ -188,7 +195,7 @@ void GameManager::DoBehaviour(Entity* ent)
 	{
 	case Aggressive:
 		//check if player is near
-		if (path.size() < ent->viewDistance) {
+		if (path.size() < ent->viewDistance && mPlayer.coveredIn != guts) {
 			ent->targetingPlayer = true;
 		}
 		else {
@@ -204,6 +211,7 @@ void GameManager::DoBehaviour(Entity* ent)
 			}
 			//if the player is targeted
 			if (ent->targetingPlayer) {
+				if (mPlayer.coveredIn == guts) { ent->targetingPlayer = false; }
 				ent->coords = path[1];
 				moved = true;
 				break;
@@ -358,25 +366,30 @@ void GameManager::MovePlayer(int dir) {
 		break;
 	}
 
-	float curVal = mainMap.NoiseAtPos(mPlayer.coords);
+	biome curBiome = mainMap.GetBiome(mPlayer.coords);
 	if(!isDark())
-	if (curVal < -0.25f) { 
+	if (curBiome == desert) { 
 		if (lerpingTo != desert) {
 			Utilities::Lerp(&backgroundColor, BG_DESERT, 0.5f);
 			currentBiome = lerpingTo = desert;
 		}
 	}
-	else if (curVal > -0.25f && curVal < -0.15f) {
-		if (lerpingTo != ocean) {
-			Audio::Play("dat/sounds/movement/enter_water.wav");
-			Utilities::Lerp(&backgroundColor, BG_WATER, 0.5f);
-			currentBiome = lerpingTo = ocean;
+	else if (curBiome == taiga) {
+		if (lerpingTo != taiga) {
+			Utilities::Lerp(&backgroundColor, BG_TAIGA, 0.5f);
+			currentBiome = lerpingTo = taiga;
 		}
 	}
-	else {
+	else if (curBiome == forest){
 		if (lerpingTo != forest) {
 			Utilities::Lerp(&backgroundColor, BG_FOREST, 0.5f);
 			currentBiome = lerpingTo = forest;
+		}
+	}
+	else {
+		if (lerpingTo != swamp) {
+			Utilities::Lerp(&backgroundColor, BG_SWAMP, 0.5f);
+			currentBiome = lerpingTo = swamp;
 		}
 	}
 
@@ -592,7 +605,7 @@ ImVec4 GameManager::GetItemColor(Tile tile) {
 		return {1, 0,0,1};
 	}
 	if (tile.liquid == fire) { return Cosmetic::FireColor(); }
-	vec4 color = { 0.65,0.35,0.15,1 };
+	vec3 color = Items::GetItemColor(tile.itemName);
 	color.x /= (darkTime * tile.brightness);
 	color.y /= (darkTime * tile.brightness);
 	color.z /= (darkTime * tile.brightness);
@@ -768,6 +781,12 @@ ImVec4 GameManager::GetTileColor(Tile tile, float intensity) {
 		break;
 	case 15: //big rock
 		color = { 0.35,0.35,0.35,1 };
+		break;
+	case 16: //snow
+		color = { 0.85,0.85,0.9,1 };
+		break;
+	case 17: //mud
+		color = { 0.35,0.15,0.1,1 };
 		break;
 	default:
 		color = { 0, 0.65, 0, 1 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "antibox/tools/noise.h"
+#include "fastnoiselite/FastNoiseLite.h"
 #include "antibox/core/antibox.h"
 #include "antibox/managers/factory.h"
 
@@ -26,6 +27,7 @@ struct World
 };
 
 
+enum biome { desert, ocean, forest, swamp, taiga, urban, jungle };
 class Map {
 public:
 	bool chunkUpdateFlag = false;
@@ -40,8 +42,8 @@ public:
 	std::map<Vector4_I, Container> containers;
 
 	int landSeed = 0, biomeSeed = 0;
-	PerlinNoise* mapNoise;
-	PerlinNoise* biomeNoise;
+	FastNoiseLite mapNoise, biomeTempNoise, biomeMoistureNoise;
+	
 	
 	
 	void CreateMap(int seed, int b_seed);
@@ -50,7 +52,7 @@ public:
 	void SpawnChunkEntities(std::shared_ptr<Chunk> chunk);
 	std::shared_ptr<Chunk> CurrentChunk();
 	Tile* TileAtPos(Vector2_I coords);
-	float NoiseAtPos(Vector2_I coords);
+	biome GetBiome(Vector2_I coords);
 	void MakeNewChunk(Vector2_I coords);
 	void AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog);
 	void MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLog);
@@ -84,6 +86,7 @@ public:
 
 void Map::CreateMap(int l_seed, int b_seed)
 {
+	
 	if (l_seed == -1) {
 		landSeed = Math::RandInt(1, 2147483647);
 	}
@@ -96,9 +99,16 @@ void Map::CreateMap(int l_seed, int b_seed)
 	else {
 		biomeSeed = b_seed;
 	}
+	mapNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	mapNoise.SetFrequency(0.85f);
+	biomeTempNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	biomeTempNoise.SetFrequency(0.020f);
+	biomeMoistureNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
+	biomeMoistureNoise.SetFrequency(0.020f);
 
-	mapNoise = new PerlinNoise(landSeed);
-	biomeNoise = new PerlinNoise(biomeSeed);
+	mapNoise.SetSeed(landSeed);
+	biomeTempNoise.SetSeed(biomeSeed);
+	biomeMoistureNoise.SetSeed(Math::RandInt(1, 2147483647));
 	UpdateMemoryZone(c_glCoords);
 }
 
@@ -224,12 +234,33 @@ Tile* Map::TileAtPos(Vector2_I coords)
 	return &CurrentChunk()->localCoords[coords.x][coords.y];
 }
 
-float Map::NoiseAtPos(Vector2_I coords) 
+biome Map::GetBiome(Vector2_I coords) 
 {
 	int bonusX = c_glCoords.x * CHUNK_WIDTH;
 	int bonusY = c_glCoords.y * CHUNK_HEIGHT;
-	float noiseVal = biomeNoise->noise((coords.x + bonusX) * 0.1, (coords.y + bonusY) * 0.1, 0.0, 0.075);
-	return noiseVal;
+	float curTemp = biomeTempNoise.GetNoise((coords.x + bonusX) * 0.1, (coords.y + bonusY) * 0.1);
+	float curMois = biomeTempNoise.GetNoise((coords.x + bonusX) * 0.1, (coords.y + bonusY) * 0.1);
+	curTemp = (curTemp + 1) / 2;
+	curMois = (curMois + 1) / 2;
+	biome currentBiome;
+
+	if (curTemp < 0.3) {
+		if (curMois < 0.3) { currentBiome = taiga; }
+		else if (curMois < 0.6) { currentBiome = taiga; }
+		else { currentBiome = taiga; }
+	}
+	else if (curTemp < 0.6) {
+		if (curMois < 0.3) { currentBiome = forest; }
+		else if (curMois < 0.6) { currentBiome = forest; }
+		else { currentBiome = forest; }
+	}
+	else {
+		if (curMois < 0.3) { currentBiome = desert; }
+		else if (curMois < 0.6) { currentBiome = desert; }
+		else { currentBiome = swamp; }
+	}
+	
+	return currentBiome;
 }
 
 void Map::AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog) {
@@ -404,21 +435,43 @@ void Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 	
 	bool entrance = false;
-	float current = 0.f, currentBiome = 0.f;
+	float current = 0.f;
+	biome currentBiome = ocean;
 	int event = Math::RandInt(0, 15);
 	for (int i = 0; i < CHUNK_WIDTH; i++) {
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
 
 			int bonusX = chunk->globalChunkCoord.x * CHUNK_WIDTH;
 			int bonusY = chunk->globalChunkCoord.y * CHUNK_HEIGHT;
-			current = mapNoise->noise((i + bonusX) * 0.1, (j + bonusY) * 0.1, 0.0, 0.85);
-			currentBiome = biomeNoise->noise((i + bonusX) * 0.1, (j + bonusY) * 0.1, 0.0, 0.075);
+			current = mapNoise.GetNoise((i + bonusX) * 0.1, (j + bonusY) * 0.1);
+
+			float curTemp = biomeTempNoise.GetNoise((i + bonusX) * 0.1, (j + bonusY) * 0.1);
+			float curMois = biomeTempNoise.GetNoise((i + bonusX) * 0.1, (j + bonusY) * 0.1);
+			curTemp = (curTemp + 1) / 2;
+			curMois = (curMois + 1) / 2;
+			Console::Log(curTemp, text::blue, __LINE__);
+
+			if (curTemp < 0.3) {
+				if (curMois < 0.3) { currentBiome = taiga; }
+				else if (curMois < 0.6) { currentBiome = taiga; }
+				else { currentBiome = taiga; }
+			}
+			else if (curTemp < 0.6) {
+				if (curMois < 0.3) { currentBiome = forest; }
+				else if (curMois < 0.6) { currentBiome = forest; }
+				else { currentBiome = forest; }
+			}
+			else {
+				if (curMois < 0.3) { currentBiome = desert; }
+				else if (curMois < 0.6) { currentBiome = desert; }
+				else { currentBiome = swamp; }
+			}
 
 			float currentTile = current;
 
 			//desert biome
-			if (currentBiome < -0.25f) {
-
+			switch (currentBiome) {
+			case desert:
 				if (Math::RandInt(0, 500) == 25 && !entrance) {
 					chunk->localCoords[i][j] = Tile_Stone;
 					entrance = true;
@@ -431,27 +484,16 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 					chunk->localCoords[i][j].double_size = true;
 				}
 
-				else 
-				{ 
-					chunk->localCoords[i][j] = Tile_Sand; 
+				else
+				{
+					chunk->localCoords[i][j] = Tile_Sand;
 					if (Math::RandInt(1, 300) == 255) {
 						chunk->localCoords[i][j].hasItem = true;
 						chunk->localCoords[i][j].itemName = "SCRAP";
 					}
 				}
-
-				
-			}
-
-			else if (currentBiome < -0.15f && currentBiome > -0.25f) { //water between desert
-				chunk->localCoords[i][j] = Tile_Dirt;
-				chunk->localCoords[i][j].liquid = water;
-				chunk->localCoords[i][j].ticksNeeded = 10;
-			}
-
-			//Forest Biome
-			else {
-
+				break;
+			case forest:
 				if (currentTile < -0.10f && Math::RandInt(0, 4) >= 2) {
 					chunk->localCoords[i][j] = Tile_Tree_Base;
 					chunk->localCoords[i][j].double_size = true;
@@ -467,10 +509,40 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 						chunk->localCoords[i][j].hasItem = true;
 						chunk->localCoords[i][j].itemName = "STICK";
 					}
+					else if (Math::RandInt(1, 120) == 20) {
+						chunk->localCoords[i][j].hasItem = true;
+						chunk->localCoords[i][j].itemName = "FLAT_MUSHROOM";
+					}
+					else if (Math::RandInt(1, 70) == 20) {
+						chunk->localCoords[i][j].hasItem = true;
+						chunk->localCoords[i][j].itemName = "BASIC_FLOWER";
+					}
+					if (currentTile > 0.75f) {
+						if (Math::RandInt(1, 200) == 20) {
+							chunk->localCoords[i][j].hasItem = true;
+							chunk->localCoords[i][j].itemName = "CAMPFIRE";
+						}
+					}
 				}
+				break;
+			case taiga:
 
+				chunk->localCoords[i][j] = Tile_Snow;/*
+				if (currentTile < -0.10f && Math::RandInt(0, 4) >= 2) {
+					chunk->localCoords[i][j] = Tile_Tree_Base;
+					chunk->localCoords[i][j].double_size = true;
+				}
+				else {
+					chunk->localCoords[i][j] = Tile_Snow;
+				}*/
+				break;
+			case swamp:
+				chunk->localCoords[i][j] = Tile_Mud;
+				if (Math::RandInt(0, 50) == 5) {
+					chunk->localCoords[i][j].itemName = "FLAT_MUSHROOM";
+				}
+				break;
 			}
-
 
 			if (Math::RandInt(1, 125) >= 124 && chunk->localCoords[i][j].liquid != water) 
 			{ 
@@ -500,8 +572,8 @@ void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
 	//pick some corners to draw to
 	int wallLength = Math::RandInt(3, 8);
 
-	int chestCounter = 10;
-	int whenDoesChestSpawn = Math::RandInt(0, wallLength * wallLength - 5);
+	int chestCounter = 0;
+	int whenDoesChestSpawn = 10;
 
 	//draw the walls
 	for (int i = 0; i < wallLength; i++)
@@ -513,18 +585,19 @@ void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
 				chunk->localCoords[corner.x + i][corner.y + j] = Tile_Stone;
 			}
 			else {
+				chunk->localCoords[corner.x + i][corner.y + j] = Tile_Stone_Floor;
 				if (chestCounter == whenDoesChestSpawn) {
 					CreateContainer({ chunk->globalChunkCoord.x, chunk->globalChunkCoord.y, corner.x + i, corner.y + j });
+					chunk->GetTileAtCoords(corner.x + i, corner.y + j)->itemName = "CHEST";
+					chunk->GetTileAtCoords(corner.x + i, corner.y + j)->hasItem = true;
 
-					OpenedData data;
-					ItemReader::GetDataFromFile("items.eid", "MACHETE", &data);
-					Item item;
-					item.CreateFromData(data);
-
-					containers[{ chunk->globalChunkCoord.x, chunk->globalChunkCoord.y, corner.x + i, corner.y + j }].items.push_back(item);
-					chestCounter++;
+					containers[{ 
+						chunk->globalChunkCoord.x,
+						chunk->globalChunkCoord.y,
+							corner.x + i,
+							corner.y + j }].AddItem(Items::GetItem("MACHETE"));
 				}
-				chunk->localCoords[corner.x + i][corner.y + j] = Tile_Stone_Floor;
+				chestCounter++;
 
 			}
 		}
@@ -690,6 +763,19 @@ void Map::UpdateTiles(vec2_i coords) {
 				if (Math::RandInt(0, 2) == 1) effectLayer.localCoords[x - 1][y] = 1;
 				//If its a campfire, then let it burn but dont spread
 				if (curTile->hasItem && curTile->itemName == "CAMPFIRE") {
+					Container* curCont = ContainerAtCoord(curTile->coords);
+					for (size_t i = 0; i < curCont->items.size(); i++)
+					{
+						if (!curCont->items[i].cookable) { continue; }
+						//cook an item, then if its done, add the cooked item
+						curCont->items[i].ticksUntilCooked -= 1;
+						if (curCont->items[i].ticksUntilCooked <= 0) {
+							int amount = curCont->items[i].count;
+							curCont->AddItem(Items::GetItem(curCont->items[i].cooks_into), amount);
+							curCont->items.erase(curCont->items.begin() + i);
+							i--;
+						}
+					}
 					floodFill({ x, y }, 5, false);
 					continue;
 				}
@@ -884,6 +970,4 @@ Map::~Map()
 			}
 		}
 	}*/
-	delete(mapNoise);
-	delete(biomeNoise);
 }

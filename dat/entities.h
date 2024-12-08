@@ -4,7 +4,7 @@
 #include <fstream>
 
 enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid = 6};
-enum Liquid { nothing, water, blood, fire, guts };
+enum Liquid { nothing, water, blood, fire, guts, mud, snow };
 enum Action { use, consume, combine };
 enum Behaviour { Wander, Protective, Stationary, Aggressive };
 enum Faction { Human, Zombie, Wildlife };
@@ -38,9 +38,11 @@ struct Item {
 	Liquid heldLiquid = nothing;
 	int ticksUntilDry = 0;
 	int initialTickTime = 0;
+	int ticksUntilCooked = 16;
 	equipType eType = notEquip;
 	int mod = 0;
 	std::string sprite;
+	Vector3 spriteColor = {1,1,1};
 
 	void CoverIn(Liquid l, int ticks) {
 		coveredIn = l;
@@ -57,14 +59,26 @@ struct Item {
 		stackable = item.getBool("stackable");
 		holdsLiquid = item.getBool("holdsLiquid");
 		consumable = item.getBool("consumable");
-		//cookable = item.getBool("cookable");
-		//cooks_into = item.getString("cooks_into");
 		count = item.getInt("amount");
 		consumeTxt = item.getString("consumeTxt");
 		useTxt = item.getString("useTxt");
 		eType = (equipType)item.getInt("equipType");
 		sprite = item.getString("sprite");
 
+		try {
+			cookable = item.getBool("cookable");
+			cooks_into = item.getString("cooks_into");
+		}//this is fine if it doesnt work, not all items are cookable and shouldnt need to specify
+		catch (std::exception e) { cookable = false; }
+
+		try {
+			spriteColor.x = stof(item.getArray("spriteColor")[0]);
+			spriteColor.y = stof(item.getArray("spriteColor")[1]);
+			spriteColor.z = stof(item.getArray("spriteColor")[2]);
+		}
+		catch (std::exception e) {
+			Console::Log("ERROR: Couldn't find spriteColor parameter for item '" + name + "'.", text::red, __LINE__);
+		}
 
 		std::vector<std::string> effects = item.getArray("effects");
 
@@ -93,11 +107,13 @@ struct Container {
 		return names;
 	}
 
-	bool AddItem(Item item) {
+	bool AddItem(Item item, int amount = 1) {
 
 		if (items.size() >= sizeLimit) { return false; }
-
-		items.push_back(item);
+		
+		Item it = item;
+		it.count = amount;
+		items.push_back(it);
 		return true;
 	}
 };
@@ -151,6 +167,7 @@ struct Player {
 	Vector2_I crosshair;
 	Liquid coveredIn = nothing;
 	Item currentWeapon = {"Fists"};
+	float bodyTemp = 98.5f;
 
 	void TakeDamage(ConsumeEffect type, int dmg) {
 		health -= dmg;

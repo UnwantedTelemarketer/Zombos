@@ -70,10 +70,11 @@ public:
 	std::map<std::string, const char*> sfxs = {
 		{"craft", "dat/sounds/craft.wav"},
 		{"fail", "dat/sounds/fail.wav"},
-		{"collect", "dat/sounds/collect.wav"},
+		{"collect", "dat/sounds/bckp.wav"},
 		{"ui_select", "dat/sounds/ui_confirm.wav"},
 		{"splash", "dat/sounds/enter_water.wav"},
-		{"click", "dat/sounds/click.wav"}
+		{"click", "dat/sounds/click.wav"},
+		{"crunch", "dat/sounds/eat.wav"}
 	};
 
 	void Init() override {
@@ -525,19 +526,13 @@ public:
 			ImGui::ProgressBar(game.mPlayer.hunger / 100, ImVec2(0.0f, 0.0f));
 			ImGui::PopStyleColor(2);
 
-			switch (player.coveredIn) {
-			case water:
-				ImGui::TextColored(ImVec4{ 0, 0.6, 1, 1 }, "Wet!");
-				break;
-			case blood:
-				ImGui::TextColored(ImVec4{ 1, 0.15, 0, 1 }, "Bleeding!");
-				break;
-			case fire:
-				ImGui::TextColored(Cosmetic::FireColor(), "Burning!");
-				break;
+			if (player.coveredIn != nothing) {
+				ImVec4 color = Cosmetic::CoveredColor((int)player.coveredIn);
+				std::string text = "Covered in: ";
+				text += Cosmetic::CoveredName((int)player.coveredIn);
+				ImGui::TextColored(color, text.c_str());
+				ImGui::ProgressBar((float)(player.liquidLast-player.ticksCovered) / player.liquidLast, ImVec2(0.0f, 0.0f));
 			}
-			if (player.coveredIn != nothing) ImGui::ProgressBar((float)player.ticksCovered / (float)player.liquidLast, ImVec2(0.0f, 0.0f));
-
 			ImGui::Text("-------------");
 			ImGui::Text("Currently Equipped Weapon :"); ImGui::SameLine();
 			ImGui::Text(player.currentWeapon.name.c_str());
@@ -549,18 +544,28 @@ public:
 		}
 		//------Inventory------
 		ImGui::Begin("Inventory");
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, {0.15, 0.15, 0.15, 1});
 		if (ImGui::BeginListBox("Inventory"))
 		{
 			for (int n = 0; n < pInv.items.size(); n++)
 			{
 				const bool is_selected = (currentItemIndex == n);
+				if (pInv.items[n].coveredIn != nothing)
+				{
+					ImGui::PushStyleColor(ImGuiCol_Text, Cosmetic::CoveredColor(pInv.items[n].coveredIn));
+				}
 				if (ImGui::Selectable((*pInv.GetItemNames())[n].c_str(), is_selected)) {
 					invSelectedName = (*pInv.GetItemNames())[n];
 					currentItemIndex = n;
 				}
+				if (pInv.items[n].coveredIn != nothing)
+				{
+					ImGui::PopStyleColor(1);
+				}
 			}
 			ImGui::EndListBox();
 		}
+		ImGui::PopStyleColor(1);
 		ImGui::End();
 
 
@@ -613,7 +618,7 @@ public:
 
 			if (pInv.items[currentItemIndex].ticksUntilDry > 0) {
 				Item& tempItem = pInv.items[currentItemIndex];
-				ImGui::Text("Wetness:");
+				ImGui::Text("Time until dry:");
 				ImGui::PushStyleColor(ImGuiCol_PlotHistogram, color);
 				ImGui::PushStyleColor(ImGuiCol_FrameBg, colorBG);
 
@@ -648,6 +653,7 @@ public:
 				{
 					if (pInv.AttemptAction(consume, &pInv.items[currentItemIndex], &player))
 					{
+						Audio::Play(sfxs["crunch"]);
 						//if its consumable, remove one. 
 						if (pInv.items[currentItemIndex].consumable) {
 							//If its the last one, move the cursor so we dont get out of vector range

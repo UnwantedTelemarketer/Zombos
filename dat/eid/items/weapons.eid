@@ -14,6 +14,7 @@ consumeTxt : "no eating";
 useTxt : "You shoot yourself.";
 effects : [0,0,4,80,50];
 equipType : 1;
+spriteColor : [0.5, 0.50, 0.5];
 }
 
 
@@ -30,6 +31,7 @@ useTxt : "Does Nothig.";
 effects : [0,0,0,0, 25];
 equipType : 1;
 sprite : "E";
+spriteColor : [0.5, 0.50, 0.5];
 }
 
 KNIFE {
@@ -45,4 +47,5 @@ useTxt : "You stab yourself.";
 effects : [0,0,4,35,35];
 equipType : 1;
 sprite : "E";
+spriteColor : [0.5, 0.50, 0.5];
 }

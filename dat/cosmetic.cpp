@@ -48,13 +48,19 @@ const char* Cosmetic::CoveredName(int liquid)
 {
 	switch (liquid) {
 	case 1:
-		return "Wet";
+		return "Water";
 		break;
 	case 2:
-		return "Bloody";
+		return "Blood";
 		break;
 	case 3:
-		return "Burning";
+		return "Fire";
+		break;
+	case 4:
+		return "Guts";
+		break;
+	case 5:
+		return "Mud";
 		break;
 	default:
 		return "";
@@ -74,6 +80,9 @@ ImVec4 Cosmetic::CoveredColor(int liquid)
 		break;
 	case 3:
 		return FireColor();
+		break;
+	case 4:
+		return { 0.65, 0.1, 0, 1 }; // dark red (steve lacy reference??)
 		break;
 	default:
 		return { 1, 1, 1, 1 }; //white

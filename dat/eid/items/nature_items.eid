@@ -1,0 +1,55 @@
+//Section required to list out all items in the file
+SECTIONS {
+sections : [FLAT_MUSHROOM,BASIC_FLOWER,SNOW]
+}
+
+//ConsumeEffects none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid = 6
+//equipType is 0 for none, 1 for weapon, 2 for hat, 3 for shirt, 4 for pants
+//the data of a custom item is self explanatory (i hope)
+FLAT_MUSHROOM {
+name : "Flat-top Mushroom"; 
+description : "Probably edible. Best cooked with other things.";
+id : "flat_mushroom";
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+amount : 1;
+consumeTxt : "You eat a flat top mushroom.";
+useTxt : "you cannot use this.";
+effects : [3,7,0,0];
+equipType : 0;
+sprite : "R";
+spriteColor : [0.65, 0.35, 0.0];
+}
+
+BASIC_FLOWER {
+name : "Flower"; 
+description : "Looks pretty.";
+id : "basic_flower";
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+amount : 1;
+consumeTxt : "You eat a flower.";
+useTxt : "you cannot use this.";
+effects : [3,2,0,0];
+equipType : 0;
+sprite : "S";
+spriteColor : [0.65, 0.65, 0.0];
+}
+
+SNOW {
+name : "Snow"; 
+description : "Pile of snow.";
+id : "snow";
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+amount : 1;
+consumeTxt : "You eat snow.";
+useTxt : "you cannot use this.";
+effects : [2,3,0,0];
+equipType : 0;
+sprite : "S";
+spriteColor : [0.85, 0.85, 0.90];
+}

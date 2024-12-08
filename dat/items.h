@@ -60,9 +60,14 @@ namespace EID {
 
 namespace Items {
 	static std::map<std::string, Item> list;
+	static std::map<std::string, Vector3> colors;
 
 	static Item GetItem(std::string itemName) {
 		return list[itemName];
+	}
+
+	static Vector3 GetItemColor (std::string itemName) {
+		return colors[itemName];
 	}
 
 	static void LoadItems(std::map<std::string, std::string>* icons) {
@@ -76,6 +81,7 @@ namespace Items {
 			ItemReader::GetDataFromFile("items/" + x.first, "SECTIONS", &sectionsData);
 			for (auto const& itemName : sectionsData.getArray("sections")) {
 				list[itemName] = EID::MakeItem("items/" + x.first, itemName);
+				colors[itemName] = list[itemName].spriteColor;
 				icons->insert({ list[itemName].section , list[itemName].sprite });
 			}
 		}
@@ -289,6 +295,36 @@ Tile Tile_Big_Rock =
 	"NULL", //Item name
 	0, // how long its burn lasts
 	false, //walkable
+	false, //changes over time
+	-1 //what it becomes after a time limit
+};
+
+Tile Tile_Snow =
+{
+	16, // Starting block ID
+	still, //technical direction (for conveyors)
+	snow, //Liquid
+	nullptr, //Entity
+	true, // Collectible
+	ID_DIRT, // Block that it becomes after being collected
+	"SNOW", //Item name
+	0, // how long its burn lasts
+	true, //walkable
+	false, //changes over time
+	-1 //what it becomes after a time limit
+};
+
+Tile Tile_Mud =
+{
+	17, // Starting block ID
+	still, //technical direction (for conveyors)
+	mud, //Liquid
+	nullptr, //Entity
+	false, // Collectible
+	ID_DIRT, // Block that it becomes after being collected
+	"MUD", //Item name
+	0, // how long its burn lasts
+	true, //walkable
 	false, //changes over time
 	-1 //what it becomes after a time limit
 };

@@ -1,0 +1,44 @@
+SECTIONS {
+sections : [CAMPFIRE,CANTEEN,BANDAGE,ROPE,HINGE,WOOD_PLANK,KNIFE,LIGHTER,CHEST,HAMMER]
+}
+
+CAMPFIRE {
+recipe : [STICK,3,ROCK,2];
+}
+
+CANTEEN {
+recipe : [SCRAP,3];
+}
+
+BANDAGE {
+recipe : [GRASS,3];
+}
+
+ROPE {
+recipe : [GRASS,2];
+}
+
+HINGE {
+recipe : [SCRAP,3];
+}
+
+
+WOOD_PLANK {
+recipe : [STICK,6,ROPE,2];
+}
+
+KNIFE {
+recipe : [STICK,1,ROPE,1,SCRAP,1];
+}
+
+LIGHTER {
+recipe : [RESIN,1,ROPE,1,SCRAP,1];
+}
+
+CHEST {
+recipe : [WOOD_PLANK,3,HINGE,2];
+}
+
+HAMMER {
+recipe : [STICK,2,RESIN,2,ROPE,1,SCRAP,2];
+}

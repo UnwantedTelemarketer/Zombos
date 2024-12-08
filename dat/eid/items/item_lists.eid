@@ -7,5 +7,5 @@ misc.eid : 0;
 survival_items.eid : 0;
 weapons.eid : 0;
 custom_items.eid : 0;
-
+nature_items.eid : 0;
 }
