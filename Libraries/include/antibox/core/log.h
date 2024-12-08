@@ -5,11 +5,12 @@
 
 typedef const char textColor[8];
 
+namespace antibox {
+	struct Vector2;
+	struct Vector2_I;
+}
 
 namespace Console {
-
-	//class Vector2;
-	//class Vector2_I;
 
 
 	//Logs a message to the command prompt. ERROR is red, WARNING is yellow, SUCCESS is green, LOG is white.
@@ -26,8 +27,8 @@ namespace Console {
 	void Log(void* pointer, textColor type, int lineNum);
 
 	void Log(std::vector<std::string> list, textColor type, int lineNum);
-	//void Log(Vector2 vec, textColor type, int lineNum);
-	//void Log(Vector2_I vec, textColor type, int lineNum);
+	void Log(antibox::Vector2 vec, textColor type, int lineNum);
+	void Log(antibox::Vector2_I vec, textColor type, int lineNum);
 
 	//template <typename T, typename T2>
 	//void Log(std::pair<T, T2> pair, textColor type, int lineNum);

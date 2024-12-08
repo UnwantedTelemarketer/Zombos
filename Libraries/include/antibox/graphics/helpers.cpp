@@ -19,5 +19,4 @@ namespace antibox {
 
 			error = glGetError();
 		}
-	}
-}
+	}}

@@ -7,6 +7,7 @@
 #include "antibox/core/mathlib.h"
 #include "antibox/objects/scene.h"
 #include "antibox/graphics/3d/camera.h"
+#include <chrono>
 
 
 //=======================================================
@@ -29,14 +30,16 @@ namespace antibox {
 		bool firstClick, movingCam;
 		int keyDownCode; //Variable holding the last pressed key
 		int currentSceneID;
+		std::vector<lerp_pack> floatsToLerp;
 
 		//Singleton for engine
 		static Engine& Instance();
 
 		//Play sound once at file path
-		void StartSound(const char* path);
+		void StartSound(const char* path, bool loop);
 		void SetVolume(float volume);
 		float GetVolume();
+		void LerpFloat(float* val, float endVal, float time);
 
 		~Engine(); //Destructor
 
@@ -77,9 +80,8 @@ namespace antibox {
 
 		render::RenderManager mRenderManager; //RenderManager takes in Render Commands for rendering
 
-		double prevtime = 0.0; //delta time stuff
-		double crntTime = 0.0;
-		double timeDiff;
+		std::chrono::steady_clock::time_point prevtime; //delta time stuff
+		double timePassed;
 		double fps;
 		double ms;
 		unsigned int counter = 0;

@@ -1244,6 +1244,9 @@
     <ClInclude Include="dat\uiscreen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="dat\filemanager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\include\antibox\core\default.frag" />

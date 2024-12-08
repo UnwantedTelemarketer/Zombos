@@ -34,6 +34,12 @@ namespace antibox {
 	namespace Utilities {
 		float deltaTime() { return antibox::Engine::Instance().deltaTime(); }
 		float getFPS() { return antibox::Engine::Instance().getFPS(); }
+		void Lerp(float* val, float endVal, float time) { antibox::Engine::Instance().LerpFloat(val, endVal, time); }
+		void Lerp(Vector3* val, Vector3 endVal, float time) {
+			antibox::Engine::Instance().LerpFloat(&val->x, endVal.x, time);
+			antibox::Engine::Instance().LerpFloat(&val->y, endVal.y, time);
+			antibox::Engine::Instance().LerpFloat(&val->z, endVal.z, time);
+		}
 	}
 
 	namespace Audio {
@@ -42,7 +48,8 @@ namespace antibox {
 		//Returns the volume as a float.
 		float GetVolume() { return antibox::Engine::Instance().GetVolume(); }
 		//Provide path to audio file.
-		void Play(std::string path) { antibox::Engine::Instance().StartSound(path.c_str()); }
+		void Play(std::string path) { antibox::Engine::Instance().StartSound(path.c_str(), false); }
+		void PlayLoop(std::string path) { antibox::Engine::Instance().StartSound(path.c_str(), true); }
 		//Does nothing right now
 		void Stop(std::string path) { Console::Log("Not implemented :/", text::white, __LINE__); }
 	}

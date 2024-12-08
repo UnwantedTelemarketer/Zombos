@@ -165,6 +165,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -198,6 +199,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Libraries\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -268,6 +270,7 @@
     <ClInclude Include="dat\cosmetic.h" />
     <ClInclude Include="dat\crafting.h" />
     <ClInclude Include="dat\entities.h" />
+    <ClInclude Include="dat\filemanager.h" />
     <ClInclude Include="dat\game.h" />
     <ClInclude Include="dat\inventory.h" />
     <ClInclude Include="dat\items.h" />

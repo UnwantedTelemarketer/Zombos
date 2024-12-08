@@ -111,6 +111,20 @@ namespace antibox {
 		}
 	};
 
+	//Vector2 using doubles for x and y.
+	struct Vector2_D
+	{
+		double x, y;
+
+		bool operator==(Vector2_D vec2) {
+			return (vec2.x == x && vec2.y == y);
+		}
+
+		bool operator!=(Vector2_D vec2) {
+			return (vec2.x == x && vec2.y == y);
+		}
+	};
+
 	//Vector3 using floats for x, y and z.
 	struct Vector3
 	{
@@ -230,4 +244,13 @@ namespace antibox {
 	typedef Vector4 vec4;
 	typedef Vector4_I vec4_i;
 	typedef Vector3 Color;
+
+
+	struct lerp_pack {
+		float* val;
+		float startingTime;
+		float startingVal;
+		//X is the end value, y is the time left
+		Vector2 endVal_Time;
+	};
 }

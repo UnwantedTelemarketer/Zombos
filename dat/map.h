@@ -45,11 +45,12 @@ public:
 	
 	
 	void CreateMap(int seed, int b_seed);
-	void UpdateMemoryZone(Vector2_I coords, bool ignoreSave);
+	void UpdateMemoryZone(Vector2_I coords);
 	void ReadChunk(Vector2_I curChunk, std::string path);
 	void SpawnChunkEntities(std::shared_ptr<Chunk> chunk);
 	std::shared_ptr<Chunk> CurrentChunk();
 	Tile* TileAtPos(Vector2_I coords);
+	float NoiseAtPos(Vector2_I coords);
 	void MakeNewChunk(Vector2_I coords);
 	void AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog);
 	void MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLog);
@@ -83,9 +84,7 @@ public:
 
 void Map::CreateMap(int l_seed, int b_seed)
 {
-	bool newGame = false;
 	if (l_seed == -1) {
-		newGame = true;
 		landSeed = Math::RandInt(1, 2147483647);
 	}
 	else {
@@ -100,7 +99,7 @@ void Map::CreateMap(int l_seed, int b_seed)
 
 	mapNoise = new PerlinNoise(landSeed);
 	biomeNoise = new PerlinNoise(biomeSeed);
-	UpdateMemoryZone(c_glCoords, newGame);
+	UpdateMemoryZone(c_glCoords);
 }
 
 static void T_SaveChunks(std::shared_ptr<Chunk> chunk) {
@@ -108,7 +107,7 @@ static void T_SaveChunks(std::shared_ptr<Chunk> chunk) {
 }
 
 //Change which chunks are in memory at one time
-void Map::UpdateMemoryZone(Vector2_I coords, bool ignoreSave = false) {
+void Map::UpdateMemoryZone(Vector2_I coords) {
 
 	//add new chunks in our area around player
 	for (int y = -1; y <= 1; y++)
@@ -120,7 +119,7 @@ void Map::UpdateMemoryZone(Vector2_I coords, bool ignoreSave = false) {
 
 			//Check if theres a saved chunk. if so, load it
 			if (world.chunks[curChunk] == nullptr) {
-				if (fileExists(filename.c_str()) && !ignoreSave) {
+				if (fileExists(filename.c_str())) {
 					ReadChunk(curChunk, filename);
 				}
 				else {
@@ -222,6 +221,14 @@ std::shared_ptr<Chunk> Map::GetProperChunk(Vector2_I coords) {
 Tile* Map::TileAtPos(Vector2_I coords)
 {
 	return &CurrentChunk()->localCoords[coords.x][coords.y];
+}
+
+float Map::NoiseAtPos(Vector2_I coords) 
+{
+	int bonusX = c_glCoords.x * CHUNK_WIDTH;
+	int bonusY = c_glCoords.y * CHUNK_HEIGHT;
+	float noiseVal = biomeNoise->noise((coords.x + bonusX) * 0.1, (coords.y + bonusY) * 0.1, 0.0, 0.075);
+	return noiseVal;
 }
 
 void Map::AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog) {
@@ -435,6 +442,12 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				
 			}
 
+			else if (currentBiome < -0.15f && currentBiome > -0.25f) { //water between desert
+				chunk->localCoords[i][j] = Tile_Dirt;
+				chunk->localCoords[i][j].liquid = water;
+				chunk->localCoords[i][j].ticksNeeded = 10;
+			}
+
 			//Forest Biome
 			else {
 
@@ -457,11 +470,6 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 
 			}
 
-			if (currentBiome < -0.15f && currentBiome > -0.25f ) { //add tree instead
-				chunk->localCoords[i][j] = Tile_Dirt;
-				chunk->localCoords[i][j].liquid = water;
-				chunk->localCoords[i][j].ticksNeeded = 10;
-			}
 
 			if (Math::RandInt(1, 125) >= 124 && chunk->localCoords[i][j].liquid != water) 
 			{ 
@@ -491,7 +499,7 @@ void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
 	//pick some corners to draw to
 	int wallLength = Math::RandInt(3, 8);
 
-	int chestCounter = 0;
+	int chestCounter = 10;
 	int whenDoesChestSpawn = Math::RandInt(0, wallLength * wallLength - 5);
 
 	//draw the walls
@@ -529,7 +537,7 @@ void Map::GenerateTomb(std::shared_ptr<Chunk> chunk) {
 			if (i <= 1 || i >= CHUNK_WIDTH - 2 || j <= 1 || j >= CHUNK_HEIGHT-2) {
 				chunk->localCoords[i][j] = Tile_Stone;
 			}
-			else if (Math::RandInt(0, 50) == 25) {
+			else if (Math::RandInt(0, 75) == 25) {
 				chunk->localCoords[i][j] = Tile_Crystal;
 			}
 			else {

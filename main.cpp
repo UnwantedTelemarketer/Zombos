@@ -31,6 +31,7 @@ private:
 	}
 
 	float tickRateVisual, lastFPS;
+	float testFloat = 0;
 	int counter = 0;
 	GameState currentState;
 	vec3 clothes;
@@ -262,6 +263,12 @@ public:
 		ImGui::SetFontSize(16.f);
 		ImGui::End();
 
+		ImGui::Begin("flaot");
+		ImGui::SetFontSize(48.f);
+		ImGui::Text(std::to_string(testFloat).c_str());
+		ImGui::SetFontSize(16.f);
+		ImGui::End();
+
 		ImGui::Begin("Menu");
 		if (gameScreen.createChar) { Create_Character(); }
 
@@ -334,7 +341,7 @@ public:
 		}
 		//------Map rendering-------
 		if (game.worldTime >= 20.f || game.worldTime < 6.f) { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.0,0.0,1 }); }
-		else{ ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.1,0.0,1 }); }
+		else{ ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ game.backgroundColor.x,game.backgroundColor.y,game.backgroundColor.z,1 }); }
 		ImGui::Begin("Map");
 		if (gameScreen.fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
 
@@ -892,17 +899,8 @@ public:
 			ImGui::Text(("Current World Time: " + std::to_string(game.worldTime)).c_str());
 			ImGui::Text(("Dark Time: " + std::to_string(game.darkTime)).c_str());
 			//FPS
-			if (counter == 30) {
-				float avgFps = 0;
-				for (size_t i = 0; i < frametimes.size(); i++) { avgFps += frametimes[i]; }
-				lastFPS = avgFps / 30;
-				counter = 0;
-				frametimes.clear();
-			}
-			else { 
-				counter++; 
-				frametimes.push_back(Utilities::getFPS()); 
-			}
+
+			lastFPS = Utilities::getFPS();
 			frame.Update(Utilities::getFPS());
 			ImGui::Text(("High: " + std::to_string(frame.highest)).c_str());
 			ImGui::Text(("Low: " + std::to_string(frame.lowest)).c_str());

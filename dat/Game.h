@@ -4,8 +4,12 @@
 #include "cosmetic.h"
 #include "items.h"
 #include <thread>
+#include "filemanager.h"
+
 
 using namespace antibox;
+
+enum biome { desert, ocean, forest };
 class GameManager {
 private:
 	float tickRate;
@@ -26,6 +30,10 @@ public:
 	std::map<Faction, std::vector<Faction>> factionEnemies;
 	std::map<int, std::string> tile_icons;
 	std::map<std::string, std::string> item_icons;
+	vec3 backgroundColor;
+	biome currentBiome, lerpingTo;
+
+	vec3 BG_DESERT, BG_WATER, BG_FOREST;
 
 
 	std::vector<std::string> recipeNames;
@@ -33,6 +41,7 @@ public:
 	float darkTime = 1.f;
 	bool paused = false;
 
+	bool isDark() { return ((worldTime >= 20.f || worldTime < 6.f) || mainMap.isUnderground); }
 	double GetTick() { return (tickRate - tickCount); }
 	float TickRate() { return tickRate; }
 	void SetTick(float secs) { tickRate = secs * 1000; effectTickRate = tickRate / 4; }
@@ -82,7 +91,13 @@ static void T_UpdateChunk(GameManager* gm, Vector2_I coords)
 }
 
 
+
+
 void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1) {
+	BG_DESERT = { 0.15, 0.15, 0 };
+	BG_WATER = { 0, 0.1, 0.15 };
+	BG_FOREST = { 0, 0.15, 0 };
+	if(seed == -1) deleteAllFilesInDirectory();
 	SetTick(tick);
 	mPlayer.coords.x = x;
 	mPlayer.coords.y = y;
@@ -110,7 +125,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	}
 	mainMap.isUnderground = false;
 	Math::PushBackLog(&actionLog, "Welcome to Zombos! Press H to open the help menu.");
-	Audio::Play("dat/sounds/ambient12.wav");
+	Audio::PlayLoop("dat/sounds/ambient12.wav");
 }
 
 void GameManager::AddRecipes() {
@@ -328,8 +343,32 @@ void GameManager::MovePlayer(int dir) {
 	default:
 		break;
 	}
+
+	float curVal = mainMap.NoiseAtPos(mPlayer.coords);
+	if(!isDark())
+	if (curVal < -0.25f) { 
+		if (lerpingTo != desert) {
+			Utilities::Lerp(&backgroundColor, BG_DESERT, 0.5f);
+			currentBiome = lerpingTo = desert;
+		}
+	}
+	else if (curVal > -0.25f && curVal < -0.15f) {
+		if (lerpingTo != ocean) {
+			Utilities::Lerp(&backgroundColor, BG_WATER, 0.5f);
+			currentBiome = lerpingTo = ocean;
+		}
+	}
+	else {
+		if (lerpingTo != forest) {
+			Utilities::Lerp(&backgroundColor, BG_FOREST, 0.5f);
+			currentBiome = lerpingTo = forest;
+		}
+	}
+
+	//relic of the past
 	//if (mainMap.NearNPC(player)) { Math::PushBackLog(&actionLog, "Howdy!"); }
 }
+
 
 void GameManager::UpdateEffects() {
 	int tempMap[30][30]{};

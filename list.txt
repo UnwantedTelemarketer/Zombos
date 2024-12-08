@@ -4,14 +4,14 @@
  DONE - add console
  DONE - add flashlight
  DONE - put item sprites in item data eid files
+ DONE - add looping audio bus 
+ DONE - add background color lerping for biomes
  - move factions, npcs and other stuff to eid
  - add cold mechanic (colder at night, too cold take damage)
  - set up tiles with eid so they can be read from files
  - control remapping
  - Add cave entrances
- - add background color lerping for biomes
  - add smelting and cooking
- - add looping audio bus
  - fix game loading old chunks after making new save
  - dictionary the crafting where the key is an ingredient and the value is a list of recipes with that
  - add support for reading in custom crafting recipes from eid files for custom items

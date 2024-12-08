@@ -36,12 +36,16 @@ namespace antibox
 		mRenderManager.Init();
 		mApp->Init();
 		mAudio->init();
+		prevtime = std::chrono::high_resolution_clock::now();
 	}
 
 	void Engine::InitializeApp(App* app) {
 		mApp->Init();
 	}
 
+	void Engine::LerpFloat(float* val, float endVal, float time) {
+		floatsToLerp.push_back({ val, time, *val, {endVal, 0} });
+	}
 
 	void Engine::Run() { //This is what loops forever until the window is closed
 		if (mApp == nullptr) { mApp = mAppList[0]; }//If we dont have an app, set the private app to the one submitted from wherever run is called.
@@ -119,16 +123,34 @@ namespace antibox
 	void Engine::Update() {
 		window->BeginRender(); //Start the rendering from window
 
-		crntTime = glfwGetTime();
-		timeDiff = crntTime - prevtime;
+		auto crntTime = std::chrono::high_resolution_clock::now();
+		std::chrono::duration<float> elapsed = crntTime - prevtime;
+		ms = elapsed.count() * 1000.f;
+		prevtime = crntTime;
+		timePassed += ms;
 		counter++;
 
-		if (timeDiff >= 1.0 / 60.0) {
-			fps = (1.0 / timeDiff) * counter;
-			ms = (timeDiff / counter) * 1000;
-			prevtime = crntTime;
+		if (timePassed >= 1000.f) {
+			fps = counter;
+			timePassed = 0;
 			counter = 0;
 		} //report the framerate and ms between frames
+		
+		//Lerp all currently lerping things
+		for (size_t i = 0; i < floatsToLerp.size(); i++)
+		{
+			lerp_pack* pack = &floatsToLerp[i];
+			pack->endVal_Time.y += deltaTime() / 1000.f;
+			float normalizedTime = pack->endVal_Time.y / pack->startingTime;
+			*pack->val = Math::Lerp(normalizedTime, pack->startingVal, pack->endVal_Time.x);
+			if (*pack->val >= pack->endVal_Time.x) 
+			{ 
+				*pack->val = pack->endVal_Time.x;
+				floatsToLerp.erase(floatsToLerp.begin() + i); 
+				i--;
+				if (i >= floatsToLerp.size()) { break; }
+			}
+		}
 
 		if(movingCam) RotateCam();
 
@@ -183,8 +205,9 @@ namespace antibox
 		}
 	}
 
-	void Engine::StartSound(const char* path)
+	void Engine::StartSound(const char* path, bool loop)
 	{
+		if (loop) { mAudio->PlayAudioLooping(path);  return; }
 		mAudio->PlayAudio(path);
 	}
 
