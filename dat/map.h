@@ -102,7 +102,7 @@ void Map::CreateMap(int l_seed, int b_seed)
 	mapNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 	mapNoise.SetFrequency(0.85f);
 	biomeTempNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	biomeTempNoise.SetFrequency(0.020f);
+	biomeTempNoise.SetFrequency(0.075f);
 	biomeMoistureNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 	biomeMoistureNoise.SetFrequency(0.020f);
 
@@ -238,26 +238,20 @@ biome Map::GetBiome(Vector2_I coords)
 {
 	int bonusX = c_glCoords.x * CHUNK_WIDTH;
 	int bonusY = c_glCoords.y * CHUNK_HEIGHT;
-	float curTemp = biomeTempNoise.GetNoise((coords.x + bonusX) * 0.1, (coords.y + bonusY) * 0.1);
-	float curMois = biomeTempNoise.GetNoise((coords.x + bonusX) * 0.1, (coords.y + bonusY) * 0.1);
-	curTemp = (curTemp + 1) / 2;
-	curMois = (curMois + 1) / 2;
+	//float curTemp = biomeTempNoise.GetNoise((coords.x + bonusX) * 0.1, (coords.y + bonusY) * 0.1);
+	//float curMois = biomeTempNoise.GetNoise((coords.x + bonusX) * 0.1, (coords.y + bonusY) * 0.1);
+	//curTemp = (curTemp + 1) / 2;
+	//curMois = (curMois + 1) / 2;
 	biome currentBiome;
-
-	if (curTemp < 0.3) {
-		if (curMois < 0.3) { currentBiome = taiga; }
-		else if (curMois < 0.6) { currentBiome = taiga; }
-		else { currentBiome = taiga; }
+	float noiseVal = biomeTempNoise.GetNoise((coords.x + bonusX) * 0.1, (coords.y + bonusY) * 0.1);
+	if (noiseVal < -0.25f) {
+		currentBiome = desert;
 	}
-	else if (curTemp < 0.6) {
-		if (curMois < 0.3) { currentBiome = forest; }
-		else if (curMois < 0.6) { currentBiome = forest; }
-		else { currentBiome = forest; }
+	else if (noiseVal > -0.25f && noiseVal < -0.15f) {
+		currentBiome = ocean;
 	}
 	else {
-		if (curMois < 0.3) { currentBiome = desert; }
-		else if (curMois < 0.6) { currentBiome = desert; }
-		else { currentBiome = swamp; }
+		currentBiome = forest;
 	}
 	
 	return currentBiome;
@@ -438,14 +432,14 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 	float current = 0.f;
 	biome currentBiome = ocean;
 	int event = Math::RandInt(0, 15);
-	for (int i = 0; i < CHUNK_WIDTH; i++) {
+	/*for (int i = 0; i < CHUNK_WIDTH; i++) {
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
 
 			int bonusX = chunk->globalChunkCoord.x * CHUNK_WIDTH;
 			int bonusY = chunk->globalChunkCoord.y * CHUNK_HEIGHT;
 			current = mapNoise.GetNoise((i + bonusX) * 0.1, (j + bonusY) * 0.1);
 
-			float curTemp = biomeTempNoise.GetNoise((i + bonusX) * 0.1, (j + bonusY) * 0.1);
+			/*float curTemp = biomeTempNoise.GetNoise((i + bonusX) * 0.1, (j + bonusY) * 0.1);
 			float curMois = biomeTempNoise.GetNoise((i + bonusX) * 0.1, (j + bonusY) * 0.1);
 			curTemp = (curTemp + 1) / 2;
 			curMois = (curMois + 1) / 2;
@@ -534,7 +528,7 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				}
 				else {
 					chunk->localCoords[i][j] = Tile_Snow;
-				}*/
+				}
 				break;
 			case swamp:
 				chunk->localCoords[i][j] = Tile_Mud;
@@ -557,8 +551,87 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 
 			chunk->localCoords[i][j].coords = { i, j };
 		}
-	}
+	}*/
+for (int i = 0; i < CHUNK_WIDTH; i++) {
+	for (int j = 0; j < CHUNK_HEIGHT; j++) {
 
+		int bonusX = chunk->globalChunkCoord.x * CHUNK_WIDTH;
+		int bonusY = chunk->globalChunkCoord.y * CHUNK_HEIGHT;
+		current = mapNoise.GetNoise((i + bonusX) * 0.1, (j + bonusY) * 0.1);
+		float biomeNoiseCurrent = biomeTempNoise.GetNoise((i + bonusX) * 0.1, (j + bonusY) * 0.1);
+
+		float currentTile = current;
+
+		//desert biome
+		if (biomeNoiseCurrent < -0.25f) {
+
+			if (Math::RandInt(0, 500) == 25 && !entrance) {
+				chunk->localCoords[i][j] = Tile_Stone;
+				entrance = true;
+				chunk->localCoords[i][j].coords = { i, j };
+				continue;
+			}
+
+			if (Math::RandInt(0, 35) == 25) {
+				chunk->localCoords[i][j] = Tile_Cactus_Base;
+				chunk->localCoords[i][j].double_size = true;
+			}
+
+			else
+			{
+				chunk->localCoords[i][j] = Tile_Sand;
+				if (Math::RandInt(1, 300) == 255) {
+					chunk->localCoords[i][j].hasItem = true;
+					chunk->localCoords[i][j].itemName = "SCRAP";
+				}
+			}
+
+
+		}
+
+		else if (biomeNoiseCurrent < -0.15f && biomeNoiseCurrent > -0.25f) { //water between desert
+			chunk->localCoords[i][j] = Tile_Dirt;
+			chunk->localCoords[i][j].liquid = water;
+			chunk->localCoords[i][j].ticksNeeded = 10;
+		}
+
+		//Forest Biome
+		else {
+
+			if (currentTile < -0.10f && Math::RandInt(0, 4) >= 2) {
+				chunk->localCoords[i][j] = Tile_Tree_Base;
+				chunk->localCoords[i][j].double_size = true;
+			}
+
+			else if (currentTile < 0.f) {
+				chunk->localCoords[i][j] = Tile_TallGrass;
+			}
+
+			else {
+				chunk->localCoords[i][j] = Tile_Grass;
+				if (Math::RandInt(1, 35) == 34) {
+					chunk->localCoords[i][j].hasItem = true;
+					chunk->localCoords[i][j].itemName = "STICK";
+				}
+			}
+
+		}
+
+
+		if (Math::RandInt(1, 125) >= 124 && chunk->localCoords[i][j].liquid != water)
+		{
+			chunk->localCoords[i][j] = Tile_Grass;
+			chunk->localCoords[i][j].hasItem = true;
+			chunk->localCoords[i][j].itemName = "ROCK";
+		}
+
+		if (chunk->localCoords[i][j].ticksNeeded == 1) {
+			chunk->localCoords[i][j].ticksNeeded = Math::RandInt(1, 10000);
+		}
+
+		chunk->localCoords[i][j].coords = { i, j };
+	}
+}	
 	//if(Math::RandInt(0, 15) == 14) {Place}
 	if (Math::RandInt(1,4) == 2) { PlaceBuilding(chunk); }
 	chunk->beenBuilt = true;

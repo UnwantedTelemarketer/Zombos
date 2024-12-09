@@ -31,7 +31,6 @@ private:
 	}
 
 	float tickRateVisual, lastFPS;
-	float testFloat = 0;
 	int counter = 0;
 	GameState currentState;
 	vec3 clothes;
@@ -91,6 +90,7 @@ public:
 		gameScreen.navInv = false;
 		gameScreen.showDialogue = true;
 		gameScreen.console_showing = false;
+		gameScreen.helpMenu = true;
 
 		player.currentWeapon.mod = 5;
 
@@ -262,12 +262,6 @@ public:
 		ImGui::Begin("title");
 		ImGui::SetFontSize(48.f);
 		ImGui::Text("Los Zombos");
-		ImGui::SetFontSize(16.f);
-		ImGui::End();
-
-		ImGui::Begin("flaot");
-		ImGui::SetFontSize(48.f);
-		ImGui::Text(std::to_string(testFloat).c_str());
 		ImGui::SetFontSize(16.f);
 		ImGui::End();
 
@@ -739,11 +733,14 @@ public:
 			ImGui::Begin("Help Menu");
 			ImGui::Text("WASD or Arrow keys to move");
 			ImGui::Text("F to toggle flashlight on and off");
+			ImGui::Text("C to open the crafting menu");
 			ImGui::Text("E to begin selecting a block then any of the directional keys to select a block");
 			ImGui::Text("P to open/close the Debug menu");
 			ImGui::Text("H to open/close the Help menu");
 			ImGui::Text("ESC to open/close the Settings menu");
 			ImGui::Text("` to open/close the console");
+			ImGui::Text("\nTo place an item in a container, click \n'Drop Selected Item' while interacting with the container.");
+			ImGui::Text("\nTo attack an entity, just walk into it.");
 			ImGui::End();
 		}
 

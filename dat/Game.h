@@ -386,6 +386,13 @@ void GameManager::MovePlayer(int dir) {
 			currentBiome = lerpingTo = forest;
 		}
 	}
+	else if (curBiome == ocean) {
+		if (lerpingTo != ocean) {
+			Audio::Play("dat/sounds/movement/enter_water.wav");
+			Utilities::Lerp(&backgroundColor, BG_WATER, 0.5f);
+			currentBiome = lerpingTo = ocean;
+		}
+	}
 	else {
 		if (lerpingTo != swamp) {
 			Utilities::Lerp(&backgroundColor, BG_SWAMP, 0.5f);
