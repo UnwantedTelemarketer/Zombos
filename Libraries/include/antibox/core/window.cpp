@@ -44,7 +44,7 @@ namespace antibox {
 		Engine::Instance().GetApp().ImguiRender();
 
 		if (showFramebuffer) {
-			ImGui::Begin("Game");
+			ImGui::Begin("Framebuffer");
 			ImGui::Image((void*)GetFramebuffer()->GetTextureID(), { ImGui::GetWindowSize().x - 40, ImGui::GetWindowSize().y - 40 });
 			ImGui::End();
 		}

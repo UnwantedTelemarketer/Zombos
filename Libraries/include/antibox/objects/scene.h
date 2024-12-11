@@ -10,7 +10,7 @@ namespace antibox {
 		std::unordered_map<std::string, std::shared_ptr<GameObject>> Hierarchy;
 	public:
 
-		Scene(std::string name);
+		Scene(std::string name = "Default");
 		~Scene();
 
 		//Update and render objects

@@ -11,10 +11,15 @@ namespace antibox {
 	}
 
 	std::shared_ptr<GameObject> Scene::FindObject(const std::string name) {
-		return Hierarchy[name];
+		try {
+			return Hierarchy[name];
+		}
+		catch (std::exception e) {
+			return nullptr;
+		}
 	}
 
-	Scene::Scene(std::string name = "Default") {
+	Scene::Scene(std::string name) {
 		sceneName = name;
 		sceneID = 1;
 	}

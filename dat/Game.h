@@ -114,12 +114,14 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	AddRecipes();
 	recipeNames = Crafter.getRecipeNames();
 	mainMap.CreateMap(seed, biome);
+
 	//Faction, Enemies
 	factionEnemies = {
 		{Human, {Zombie}},
 		{Zombie, {Human, Wildlife}},
 		{Wildlife, {}}
 	};
+	
 	OpenedData data;
 	ItemReader::GetDataFromFile("dialogue.eid", "RANDOM", &data);
 	for (size_t i = 1; i < 6; i++)
@@ -376,20 +378,20 @@ void GameManager::MovePlayer(int dir) {
 	}
 	else if (curBiome == taiga) {
 		if (lerpingTo != taiga) {
-			Utilities::Lerp(&backgroundColor, BG_TAIGA, 0.5f);
+			Utilities::Lerp(&backgroundColor, BG_TAIGA, 1.f);
 			currentBiome = lerpingTo = taiga;
 		}
 	}
 	else if (curBiome == forest){
 		if (lerpingTo != forest) {
-			Utilities::Lerp(&backgroundColor, BG_FOREST, 0.5f);
+			Utilities::Lerp(&backgroundColor, BG_FOREST, 1.f);
 			currentBiome = lerpingTo = forest;
 		}
 	}
 	else if (curBiome == ocean) {
 		if (lerpingTo != ocean) {
 			Audio::Play("dat/sounds/movement/enter_water.wav");
-			Utilities::Lerp(&backgroundColor, BG_WATER, 0.5f);
+			Utilities::Lerp(&backgroundColor, BG_WATER, 1.f);
 			currentBiome = lerpingTo = ocean;
 		}
 	}

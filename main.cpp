@@ -5,10 +5,8 @@
 
 #include <chrono>
 
-#define UNIFONT "c:\\Users\\Thomas Andrew\\AppData\\Local\\Microsoft\\Windows\\Fonts\\Unifont.ttf"
-#define DOSFONT "dat\\fonts\\symbolic\\symbolic_crystal.ttf"
-#define CASCADIA "c:\\Windows\\Fonts\\CascadiaCode.ttf"
-#define ITEMFONT "dat\\fonts\\symbolic\\symbolic_item.ttf"
+#define DOSFONT "dat/fonts/symbolic/symbolic_crystal.ttf"
+#define ITEMFONT "dat/fonts/symbolic/symbolic_item.ttf"
 //#define DEV_TOOLS
 
 using namespace antibox;
@@ -27,6 +25,7 @@ private:
 		props.h = 720;
 		props.vsync = 0;
 		props.cc = { 0.5, 0.5, 0.5, 1 };
+		props.framebuffer_display = false;
 		return props;
 	}
 
@@ -76,9 +75,18 @@ public:
 		{"crunch", "dat/sounds/eat.wav"}
 	};
 
+
+	//Sprites
+	Scene main = { "TEST" };
+	std::shared_ptr<GameObject> p;
+
 	void Init() override {
 		Console::Log("Loading Items from files...", text::white, __LINE__);
 		std::thread itemLoading = Items::LoadItemsFromFiles(&game.item_icons);
+
+		Engine::Instance().AddScene(&main);
+		main.CreateObject("Box", { 0,0 }, { 1,1 }, "res/plank.png");
+		p = main.FindObject("Box");
 
 		gameScreen.fancyGraphics = true;
 		frame.frames.length = 360;
@@ -317,6 +325,7 @@ public:
 		pInv.clothes = { clothes.x, clothes.y, clothes.z };
 		if (ImGui::Button("Start")) {
 			pInv.AddItemFromFile("BANDAGE");
+			pInv.AddItemFromFile("LIGHTER");
 			currentState = playing;
 		}
 		ImGui::End();
@@ -348,40 +357,43 @@ public:
 
 				
 				float intensity = map.CurrentChunk()->localCoords[i][j].brightness;
-				if (intensity > 1.f) { intensity = 1.f; }
 				Tile& curTile = map.CurrentChunk()->localCoords[i][j];
 				Tile& underTile = map.CurrentChunk()->localCoords[i + 1][j];
 
 				//Flashlight pyramid logic, idk weird math stuff. pack it away please
 				{//===================================================================
+					float newBrightness = 1.0f;
 					if ((i <= player.coords.x && i >= player.coords.x - 10)
 						&& (j >= player.coords.y - ((player.coords.x) - i)
 						&& j <= player.coords.y + ((player.coords.x) - i))
 						&& flashlightActive
 						&& playerDir == direction::up) {
-						intensity = 0.1f *(player.coords.x - i);
+						newBrightness = 0.1f *(player.coords.x - i);
 					}
 					else if ((i >= player.coords.x && i <= player.coords.x + 10)
 						&& (j >= player.coords.y - ((i - player.coords.x))
 						&& j <= player.coords.y + (i - (player.coords.x)))
 						&& flashlightActive
 						&& playerDir == direction::down) {
-						intensity = 0.1f *(i - player.coords.x);
+						newBrightness = 0.1f *(i - player.coords.x);
 					}
 					else if ((j <= player.coords.y && j >= player.coords.y - 10)
 						&& (i >= player.coords.x - ((player.coords.y) - j)
 						&& i <= player.coords.x + ((player.coords.y) - j))
 						&& flashlightActive
 						&& playerDir == direction::left) {
-						intensity = 0.1f *(player.coords.y - j);
+						newBrightness = 0.1f *(player.coords.y - j);
 					}
 					else if ((j >= player.coords.y && j <= player.coords.y + 10)
 						&& (i >= player.coords.x - ((j - player.coords.y))
 						&& i <= player.coords.x + (j - (player.coords.y)))
 						&& flashlightActive
 						&& playerDir == direction::right) {
-						intensity = 0.1f *(j - player.coords.y);
+						newBrightness = 0.1f * (j - player.coords.y);
 					}
+					intensity = newBrightness < intensity ? newBrightness : intensity;
+					if (intensity < 0.f) intensity = 0.f;
+					if (intensity > 1.f) { intensity = 1.f; }
 				}//===================================================================
 				
 				if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
