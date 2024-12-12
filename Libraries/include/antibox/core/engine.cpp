@@ -220,6 +220,11 @@ namespace antibox
 		mAudio->SetVolume(volume);
 	}
 
+	void Engine::SetVolumeLoop(float volume, std::string name) {
+		mAudio->SetVolumeLoop(volume, name);
+	}
+
+
 	float Engine::GetVolume()
 	{
 		return mAudio->GetVolume();

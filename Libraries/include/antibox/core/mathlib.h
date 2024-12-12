@@ -11,7 +11,7 @@ namespace antibox {
 	enum Direction { up, down, left, right, forward, backwards };
 	namespace Math {
 
-		//Input the max number, and this will return a float between 1 and your max (inclusive).
+		//Input the max number, and this will return an int between 1 and your max (inclusive).
 		inline float RandNum(int max) { return (rand() % max + 1); }
 
 		//Input the max number, and this will return an int between min and max (exclusive).

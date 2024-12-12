@@ -214,7 +214,7 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 			zomb = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human, 10, 10, true, Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT), true };
 		}
 		else if (num >= 5) {
-			zomb = new Entity{ 15, "Zombie", ID_ZOMBIE, Aggressive, true, Zombie, 6, 8, false, Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };
+			zomb = new Entity{ 15, "Zombie", ID_ZOMBIE, Aggressive, true, Zombie, 7, 8, false, Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };
 
 			zomb->inv.push_back(Items::GetItem("OLD_CLOTH"));
 			zomb->inv.push_back(Items::GetItem("GUTS"));
@@ -290,21 +290,21 @@ void Map::AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* act
 	Vector2_I coords = curEnt->coords;
 
 	Math::PushBackLog(actionLog, damageText);
-	CurrentChunk()->localCoords[coords.x][coords.y].liquid = blood;
+	CurrentChunk()->localCoords[coords.x][coords.y].SetLiquid(blood);
 
 	int bleedChance = Math::RandInt(1, 8);
 	switch (bleedChance) {
 	case 1:
-		CurrentChunk()->localCoords[coords.x + 1][coords.y].liquid = blood;
+		CurrentChunk()->localCoords[coords.x + 1][coords.y].SetLiquid(blood);
 		break;
 	case 2:
-		CurrentChunk()->localCoords[coords.x][coords.y + 1].liquid = blood;
+		CurrentChunk()->localCoords[coords.x][coords.y + 1].SetLiquid(blood);
 		break;
 	case 3:
-		CurrentChunk()->localCoords[coords.x - 1][coords.y].liquid = blood;
+		CurrentChunk()->localCoords[coords.x - 1][coords.y].SetLiquid(blood);
 		break;
 	case 4:
-		CurrentChunk()->localCoords[coords.x][coords.y - 1].liquid = blood;
+		CurrentChunk()->localCoords[coords.x][coords.y - 1].SetLiquid(blood);
 		break;
 	default:
 		break;
@@ -338,7 +338,7 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 	Liquid l = CurrentChunk()->GetTileAtCoords(x, y)->liquid; //check if the tile has a liquid
 
 	if (p->coveredIn != nothing && l == nothing && Math::RandInt(1, 5) >= 3) {
-		CurrentChunk()->GetTileAtCoords(p->coords.x, p->coords.y)->liquid = p->coveredIn;
+		CurrentChunk()->GetTileAtCoords(p->coords.x, p->coords.y)->SetLiquid(p->coveredIn);
 	}
 
 	p->coords.x = x; p->coords.y = y;
@@ -584,8 +584,9 @@ for (int i = 0; i < CHUNK_WIDTH; i++) {
 		if (biomeNoiseCurrent < -0.25f) {
 
 			if (Math::RandInt(0, 500) == 25 && !entrance) {
-				chunk->localCoords[i][j] = Tiles::GetTile("TILE_SAND");
+				chunk->localCoords[i][j] = Tiles::GetTile("TILE_STONE");
 				entrance = true;
+				chunk->localCoords[i][j].walkable = true;
 				chunk->localCoords[i][j].coords = { i, j };
 				continue;
 			}
@@ -609,7 +610,7 @@ for (int i = 0; i < CHUNK_WIDTH; i++) {
 
 		else if (biomeNoiseCurrent < -0.15f && biomeNoiseCurrent > -0.25f) { //water between desert
 			chunk->localCoords[i][j] = Tiles::GetTile("TILE_DIRT");
-			chunk->localCoords[i][j].liquid = water;
+			chunk->localCoords[i][j].SetLiquid(water);
 			chunk->localCoords[i][j].ticksNeeded = 10;
 		}
 
@@ -627,6 +628,7 @@ for (int i = 0; i < CHUNK_WIDTH; i++) {
 
 			else {
 				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
+				chunk->localCoords[i][j].tileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
 				if (Math::RandInt(1, 35) == 34) {
 					chunk->localCoords[i][j].hasItem = true;
 					chunk->localCoords[i][j].itemName = "STICK";
@@ -687,9 +689,9 @@ void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
 			else {
 				chunk->localCoords[corner.x + i][corner.y + j] = Tiles::GetTile("TILE_STONE_FLOOR");
 				if (chestCounter == whenDoesChestSpawn) {
-					CreateContainer({ chunk->globalChunkCoord.x, chunk->globalChunkCoord.y, corner.x + i, corner.y + j });
 					chunk->GetTileAtCoords(corner.x + i, corner.y + j)->itemName = "CHEST";
 					chunk->GetTileAtCoords(corner.x + i, corner.y + j)->hasItem = true;
+					CreateContainer({ chunk->globalChunkCoord.x, chunk->globalChunkCoord.y, corner.x + i, corner.y + j });
 
 					containers[{ 
 						chunk->globalChunkCoord.x,
@@ -719,6 +721,11 @@ void Map::GenerateTomb(std::shared_ptr<Chunk> chunk) {
 			}
 		}
 	}
+
+	int entx = Math::RandInt(3, 26);
+	int enty = Math::RandInt(3, 26);
+	Entity* zomb = new Entity{ 35, "Zombie", ID_ZOMBIE, Aggressive, true, Zombie, 10, 8, false, enty, entx };
+	chunk->entities.push_back(zomb);
 }
 
 void Map::ClearEffects() {
@@ -854,6 +861,9 @@ void Map::UpdateTiles(vec2_i coords) {
 					}
 				}
 			}
+			//change grass color
+			//if (curTile->id == 1) { curTile->tileColor = { 0, 0.65f + ((Math::RandNum(2) - 1) / 10), 0}; }
+			
 			//Crystals glow
 			if (curTile->id == 14) { floodFill({ x, y }, 3, true); }
 
@@ -904,12 +914,12 @@ void Map::UpdateTiles(vec2_i coords) {
 			if (curTile->burningFor >= 5) {
 				curTile->burningFor++;
 				if (curTile->burningFor >= 100) { curTile->burningFor = 0; }
-				curTile->liquid = nothing;
+				curTile->SetLiquid(nothing);
 			}
-			if (curTile->liquid != nothing) {
+			if (curTile->liquid != nothing && curTile->id != ID_DIRT) {
 				curTile->liquidTime++;
 				if (curTile->liquidTime >= 100) {
-					curTile->liquid = nothing;
+					curTile->SetLiquid(nothing);
 				}
 			}
 			//logic for upwards facing flashlight pyramid
@@ -921,7 +931,7 @@ void Map::UpdateTiles(vec2_i coords) {
 	{
 		if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].burningFor > 5) { continue; }
 		else if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].burningFor < 0) { continue; }
-		chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].liquid = fire;
+		chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].SetLiquid(fire);
 		floodFill({ tilesToBurn[i].x, tilesToBurn[i].y }, 5, false);
 	}
 

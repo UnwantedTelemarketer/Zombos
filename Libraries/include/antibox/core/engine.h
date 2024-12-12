@@ -39,6 +39,7 @@ namespace antibox {
 		void StartSound(const char* path, std::string name, bool loop);
 		void StopSoundLooping(std::string name);
 		void SetVolume(float volume);
+		void SetVolumeLoop(float volume, std::string name);
 		float GetVolume();
 		void LerpFloat(float* val, float endVal, float time);
 

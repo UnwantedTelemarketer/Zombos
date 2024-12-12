@@ -45,6 +45,8 @@ namespace antibox {
 	namespace Audio {
 		//Between 0f and 1f.
 		void SetVolume(float vol) { antibox::Engine::Instance().SetVolume(vol); }
+		//Between 0f and 1f.
+		void SetVolumeLoop(float vol, std::string name) { antibox::Engine::Instance().SetVolumeLoop(vol, name); }
 		//Returns the volume as a float.
 		float GetVolume() { return antibox::Engine::Instance().GetVolume(); }
 		//Provide path to audio file.

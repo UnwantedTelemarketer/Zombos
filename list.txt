@@ -9,12 +9,16 @@
  DONE - fix game loading old chunks after making new save
  DONE - move color into the eid files for items
  DONE - add smelting and cooking
- DONE - add support for reading in custom crafting recipes from eid files for custom items
+ DONE - add support for reading in custom crafting recipes from eid files for custom items]
+ DONE - set up tiles with eid so they can be read from files
+
+ DONE - make zombies more aggro at night
+ DONE - make day and night longer
+ DONE - lerp dry tiles
+ DONE - Add cave entrances
  - move factions, npcs and other stuff to eid
  - add cold mechanic (colder at night, too cold take damage)
- - set up tiles with eid so they can be read from files
  - control remapping
- - Add cave entrances
  - dictionary the crafting where the key is an ingredient and the value is a list of recipes with that
  - Multiplayer?? (figure it out bozo)
 

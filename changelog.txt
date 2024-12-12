@@ -1,0 +1,48 @@
+--v0.1.3 Changes--
+
+ - Added caves into the desert (aggressive zombie inside)
+
+ - Separated SFXs and Music volume in settings
+
+ - Extended the length of day and night
+
+ - Made Zombies more aggressive at night
+
+ - Made damage flash on screen
+
+ - Minor updates to visuals (grass, rain, drying tiles)
+
+
+--v0.1.2 Changes--
+
+ - Added Weather (Rain and Thunder)
+
+ - Added support for custom tiles
+
+ - Fixed spawning for flowers and mushrooms
+
+
+
+--v0.1.1 Changes--
+
+ - Added Resin, Mushrooms, Flowers, Snow, Mud, Zombie Guts, and Hammer
+
+ - Added Cooking food on Campfires
+
+ - New Sound Effects (hooray!)
+
+ - Zombies are now aggressive towards the player (watch out!)
+
+ - Night is now completely dark
+
+ - Added individual colors to items
+
+ - Background color changes based on biome now
+
+--Known Bugs--
+
+ - All colors might disappear??
+
+ - Game crashes if you click "New Game" within a few seconds of the game starting
+
+ - Occasionally crashes when moving to a new chunk (not sure why yet)

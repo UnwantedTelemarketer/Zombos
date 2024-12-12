@@ -35,7 +35,19 @@ void AudioEngine::StopAudioLooping(std::string name) {
 }
 
 void AudioEngine::PlayAudioLooping(const char* path, std::string name) {
-    if (mDevices.count(name) != 0) { ma_device_start(mDevices[name]); }
+
+    if (mDevices.count(name) != 0) {
+        ma_device_uninit(mDevices[name]); // Uninitialize and clean up the device.
+        delete mDevices[name];           // Free the allocated memory.
+        mDevices.erase(name);            // Remove from the map.
+    }
+
+    if (mDecoders.count(name) != 0) {
+        ma_decoder_uninit(mDecoders[name]); // Uninitialize and clean up the decoder.
+        delete mDecoders[name];             // Free the allocated memory.
+        mDecoders.erase(name);              // Remove from the map.
+    }
+
     ma_result result;
     ma_decoder* currentDecoder = new ma_decoder;
     ma_device* currentDevice = new ma_device;
@@ -76,6 +88,25 @@ void AudioEngine::PlayAudioLooping(const char* path, std::string name) {
 void AudioEngine::SetVolume(float volume)
 {
     ma_engine_set_volume(&mEngine, volume);
+}
+
+void AudioEngine::SetVolumeLoop(float volume, std::string name)
+{
+    // Check if the device exists for the given name
+    if (mDevices.count(name) == 0) {
+        return;
+    }
+
+    // Ensure the volume is within a valid range (0.0f to 1.0f)
+    if (volume < 0.0f || volume > 1.0f) {
+        return;
+    }
+
+    // Set the volume for the specified device
+    ma_result result = ma_device_set_master_volume(mDevices[name], volume);
+    if (result != MA_SUCCESS) {
+        throw std::runtime_error("Failed to set volume for the specified audio track.");
+    }
 }
 
 float AudioEngine::GetVolume()

@@ -115,7 +115,7 @@ public:
 				{
 					item->heldLiquid = tile->liquid;
 					item->liquidAmount += 25.f;
-					tile->liquid = nothing;
+					tile->SetLiquid(nothing);
 					return true;
 				}
 			}

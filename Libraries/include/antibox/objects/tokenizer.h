@@ -4,7 +4,8 @@
 #include <fstream>
 #include <string>
 #include <map>
-#include <boost/algorithm/string.hpp>
+//#include <boost/algorithm/string.hpp>
+
 #define LAZY_LOG(thing) Console::Log(thing, text::white, -1);
 
 using namespace antibox;
@@ -16,7 +17,7 @@ static bool fileExists(const char* filePath) {
 
 bool to_bool(std::string str) {
 	try {
-		boost::algorithm::to_lower(str);
+		//boost::algorithm::to_lower(str);
 		if (str == "true") { return true; }
 		if (str == "false") { return false; }
 		else { throw std::invalid_argument("Error: to_bool requires the string input to be either 'true' or 'false'."); }
@@ -134,17 +135,26 @@ public:
 		std::string current_token;
 
 		bool in_quotes = false;
+		bool in_brackets = false;
 		std::string quote_chars = "\"";
 		char close_bracket = ']';
 
 		for (int i = 0; i < input.length(); i++) {
-			if (in_quotes) { //if we are in quotes
-				if (input[i] == quote_chars[0] || input[i] == close_bracket) { //check for closing quotes
+			if (in_quotes || in_brackets) { //if we are in quotes
+				if (input[i] == quote_chars[0]) { //check for closing quotes
 					in_quotes = false;
 					tokens.push_back(current_token);
 					current_token = "";
 				}
+				else if (input[i] == close_bracket) {
+					in_brackets = false;
+					tokens.push_back(current_token);
+					current_token = "";
+				}
 				else {
+					if (in_brackets && input[i] == ' ') {
+						continue;
+					}
 					current_token += input[i];
 				}
 			}
@@ -156,8 +166,11 @@ public:
 					}
 				}
 				else {
-					if (quote_chars.find(input[i]) != std::string::npos || input[i] == '[') {
+					if (quote_chars.find(input[i]) != std::string::npos) {
 						in_quotes = true;
+					}
+					else if (input[i] == '[') {
+						in_brackets = true;
 					}
 					else {
 						current_token += input[i];

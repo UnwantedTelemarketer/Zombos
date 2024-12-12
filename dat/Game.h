@@ -32,7 +32,8 @@ public:
 	std::map<std::string, std::string> item_icons;
 	std::map<std::string, Vector3> item_colors;
 	std::map<int, Vector3> tile_colors;
-	vec3 backgroundColor;
+	vec3 mainBGcolor;
+	vec3 bgColor;
 	biome currentBiome, lerpingTo;
 
 	std::vector<std::string> sandWalk, grassWalk, rockWalk;
@@ -48,7 +49,7 @@ public:
 	bool isDark() { return ((worldTime >= 20.f || worldTime < 6.f) || mainMap.isUnderground); }
 	double GetTick() { return (tickRate - tickCount); }
 	float TickRate() { return tickRate; }
-	void SetTick(float secs) { tickRate = secs * 1000; effectTickRate = tickRate / 6; }
+	void SetTick(float secs) { tickRate = secs * 1000; effectTickRate = tickRate / 10; }
 
 	void AddRecipes();
 	void Setup(int x, int y, float tick, int seed, int biome);
@@ -168,6 +169,7 @@ void GameManager::DoBehaviour(Entity* ent)
 	std::vector<Vector2_I> entPath;
 	Entity* tempTarget = nullptr;
 	bool moved = false;
+	ent->tempViewDistance = isDark() ? ent->viewDistance * 2 : ent->viewDistance;
 
 	for (int i = 0; i < mainMap.CurrentChunk()->entities.size(); i++) //loop through every entity
 	{
@@ -303,7 +305,7 @@ void GameManager::DoBehaviour(Entity* ent)
 		ent->ticksUntilDry = Math::RandInt(10, 30);
 	}
 	else if(ent->coveredIn != nothing) {
-		tile->liquid = ent->coveredIn;
+		tile->SetLiquid(ent->coveredIn);
 	}
 
 	if (ent->ticksUntilDry > 0) {
@@ -370,37 +372,49 @@ void GameManager::MovePlayer(int dir) {
 	default:
 		break;
 	}
+	if (mainMap.TileAtPos(mPlayer.coords)->id == ID_STONE) {
+		if (EnterCave()) {
+			Audio::StopLoop("ambient_day");
+			Audio::PlayLoop("dat/sounds/wet-pizza-rat.mp3", "ambient_cave");
+			Math::PushBackLog(&actionLog, "You enter a dark cave underground.");
+		}
+	}
 
 	biome curBiome = mainMap.GetBiome(mPlayer.coords);
 	if(!isDark())
 	if (curBiome == desert) { 
 		if (lerpingTo != desert) {
-			Utilities::Lerp(&backgroundColor, BG_DESERT, 0.5f);
+			Utilities::Lerp(&bgColor, BG_DESERT, 0.5f);
+			mainBGcolor = BG_DESERT;
 			currentBiome = lerpingTo = desert;
 		}
 	}
 	else if (curBiome == taiga) {
 		if (lerpingTo != taiga) {
-			Utilities::Lerp(&backgroundColor, BG_TAIGA, 1.f);
+			Utilities::Lerp(&bgColor, BG_TAIGA, 1.f);
+			mainBGcolor = BG_TAIGA;
 			currentBiome = lerpingTo = taiga;
 		}
 	}
 	else if (curBiome == forest){
 		if (lerpingTo != forest) {
-			Utilities::Lerp(&backgroundColor, BG_FOREST, 1.f);
+			Utilities::Lerp(&bgColor, BG_FOREST, 1.f);
+			mainBGcolor = BG_FOREST;
 			currentBiome = lerpingTo = forest;
 		}
 	}
 	else if (curBiome == ocean) {
 		if (lerpingTo != ocean) {
 			Audio::Play("dat/sounds/movement/enter_water.wav");
-			Utilities::Lerp(&backgroundColor, BG_WATER, 1.f);
+			Utilities::Lerp(&bgColor, BG_WATER, 1.f);
+			mainBGcolor = BG_WATER;
 			currentBiome = lerpingTo = ocean;
 		}
 	}
 	else {
 		if (lerpingTo != swamp) {
-			Utilities::Lerp(&backgroundColor, BG_SWAMP, 0.5f);
+			Utilities::Lerp(&bgColor, BG_SWAMP, 0.5f);
+			mainBGcolor = BG_SWAMP;
 			currentBiome = lerpingTo = swamp;
 		}
 	}
@@ -416,10 +430,8 @@ void GameManager::UpdateEffects() {
 	int tempMap[30][30]{};
 
 	if (mainMap.currentWeather == rainy || mainMap.currentWeather == thunder) {
-		if (Math::RandInt(0, 2) == 1) {
-			tempMap[0][Math::RandInt(0, 29)] = 2;
-			tempMap[0][Math::RandInt(0, 29)] = 2;
-		}
+		tempMap[0][Math::RandInt(0, 29)] = 2;
+		tempMap[0][Math::RandInt(0, 29)] = 2;
 	}
 
 	for (int i = 0; i < CHUNK_HEIGHT; i++)
@@ -427,14 +439,19 @@ void GameManager::UpdateEffects() {
 		for (int j = 0; j < CHUNK_WIDTH; j++)
 		{
 			if (mainMap.effectLayer.localCoords[i][j] == 1) {
-				int newJ = j + Math::RandInt(0, 2);
-				int newI = i - Math::RandInt(0, 2);
-				if ((newI >= CHUNK_WIDTH || newI < 0) || (newJ >= CHUNK_WIDTH || newJ < 0)) { continue; }
-				tempMap[newI][newJ] = 1;
+				if (Math::RandInt(0, 3) == 1) {
+					int newJ = j + Math::RandInt(0, 2);
+					int newI = i - Math::RandInt(0, 2);
+					if ((newI >= CHUNK_WIDTH || newI < 0) || (newJ >= CHUNK_WIDTH || newJ < 0)) { continue; }
+					tempMap[newI][newJ] = 1;
+				}
+				else {
+					tempMap[i][j] = 1;
+				}
 			}
 			if (mainMap.effectLayer.localCoords[i][j] == 2) {
 				if (i + 2 >= CHUNK_WIDTH || i < 0) { tempMap[i][j] = 0; }
-				else if (Math::RandInt(0, 30) == 1) { tempMap[i][j] = 0; mainMap.TileAtPos({ i,j })->liquid = water; }
+				else if (Math::RandInt(0, 30) == 1) { tempMap[i][j] = 0; mainMap.TileAtPos({ i,j })->SetLiquid(water); }
 				else { tempMap[(int)std::floor((i + 1) * 1.1)][j] = 2; }
 			}
 		}
@@ -470,7 +487,7 @@ void GameManager::UpdateTick() {
 			switch (mainMap.currentWeather) {
 			case rainy:
 				Math::PushBackLog(&actionLog, "It begins to rain.");
-				Audio::PlayLoop("dat/sounds/rain.wav", "rain");
+				Audio::PlayLoop("dat/sounds/rain.mp3", "rain");
 				break;
 			case clear:
 				Audio::StopLoop("rain");
@@ -509,6 +526,17 @@ void GameManager::UpdateTick() {
 				if (Math::RandInt(1, 7) == 5) {
 					pInv.items[i].CoverIn(mPlayer.coveredIn, Math::RandInt(30, 120));
 				}
+				if (mPlayer.coveredIn == water) {
+					mPlayer.bodyTemp -= 0.025f;
+				}
+			}
+			else if(!isDark()) {
+				mPlayer.bodyTemp += 0.025f;
+				if (mPlayer.bodyTemp > 98.5f) mPlayer.bodyTemp = 98.5f;
+			}
+
+			if (mPlayer.bodyTemp < 95.f) {
+				mPlayer.health -= 1.f;
 			}
 
 			//if the item is soaked, dry it off slowly
@@ -521,7 +549,7 @@ void GameManager::UpdateTick() {
 		}
 
 		//time and brightness
-		worldTime += 0.1f;
+		worldTime += 0.05f;
 		if (worldTime > 24.f) { worldTime = 0.f; }
 
 		if (!mainMap.isUnderground) {
@@ -613,6 +641,8 @@ void GameManager::AttemptAttack(Entity* ent)
 		{
 			Math::PushBackLog(&actionLog, "Zombie bites you for 10 damage!");
 			mPlayer.TakeDamage(pierceDamage, 10);
+			bgColor = { 1,0,0 };
+			Utilities::Lerp(&bgColor, mainBGcolor, 0.5f);
 		}
 	}
 }
@@ -625,6 +655,8 @@ bool GameManager::EnterCave() {
 	if (!mainMap.isUnderground)
 	{
 		if (mainMap.underground.chunks.count({ mainMap.c_glCoords }) == 0) {
+			mainBGcolor = { 0,0,0 };
+			bgColor = mainBGcolor;
 			std::shared_ptr<Chunk> tempChunk = std::make_shared<Chunk>();
 			tempChunk->globalChunkCoord = mainMap.c_glCoords;
 			mainMap.GenerateTomb(tempChunk);
@@ -758,36 +790,20 @@ ImVec4 GameManager::GetTileColor(Tile tile, float intensity) {
 			break;
 		}
 	}
-	//check for liquids
-	switch (tile.liquid) {
-	case water:
-		color = { 0, 0.5, 1, 1 };
-		goto dimming;
-		break;
-	case fire:
+	if (tile.liquid == fire) {
 		color = Cosmetic::FireColor();
 		goto dimming;
-		break;
-	case blood:
-		color = { 1, 0, 0, 1 };
-		goto dimming;
-		break;
-	case nothing:
-		break;
 	}
+
 	//check if its burnt
 	if (tile.burningFor > 0) {
 		color = { 0.45, 0.45, 0.45, 1 };
 		goto dimming;
 	}
 
-	//if (tile.hasItem) {
-		//color = { 0.65, 0.45, 0.35, 1 };
-		//goto dimming;
-	//}
-
+	color = { tile.tileColor.x, tile.tileColor.y, tile.tileColor.z, 1 };
 	//regular tile color
-	switch (tile.id) {
+	/*switch (tile.id) {
 	case 0:
 		color = { 0.75, 0.75, 0.75, 1 };
 		break;
@@ -836,11 +852,11 @@ ImVec4 GameManager::GetTileColor(Tile tile, float intensity) {
 		color = { 0, 0.65, 0, 1 };
 		break;
 	}
-
+	*/
 dimming:
 	//if its night time
 	if ((worldTime >= 20.f || worldTime < 6.f) || mainMap.isUnderground) {
-		if (darkTime >= 10.f && intensity >= 1.f) {
+		if ((darkTime >= 10.f && intensity >= 1.f) || (mainMap.isUnderground && intensity >= 1.f)) {
 			color = { 0,0,0,1 };
 		}
 		else {
@@ -891,7 +907,7 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 					Audio::StopLoop("rain");
 					game->mainMap.currentWeather = clear;
 				}else if (tokens[i + 2] == "rain") {
-					Audio::PlayLoop("dat/sounds/rain.wav", "rain");
+					Audio::PlayLoop("dat/sounds/rain.mp3", "rain");
 					game->mainMap.currentWeather = rainy;
 				}else if (tokens[i + 2] == "thunder") {
 					Audio::StopLoop("rain");

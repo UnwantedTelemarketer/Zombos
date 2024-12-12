@@ -19,5 +19,6 @@ public:
 	void PlayAudioLooping(const char* path, std::string name);
 	void StopAudioLooping(std::string name);
 	void SetVolume(float volume);
+	void SetVolumeLoop(float volume, std::string name);
 	float GetVolume();
 };

@@ -135,6 +135,7 @@ struct Entity {
 	int index; //in entity list
 	Liquid coveredIn = nothing;
 	int ticksUntilDry = 0;
+	int tempViewDistance;
 
 	bool targetingPlayer;
 	bool talking;
@@ -195,6 +196,7 @@ struct Saved_Tile {
 	std::string itemName = "NULL";
 	int x, y = 0;
 	bool walkable = false;
+	float maincolor_x, maincolor_y, maincolor_z;
 
 	void Serialize(std::ofstream& stream) {
 		stream.write(reinterpret_cast<const char*>(&id), sizeof(id));
@@ -206,6 +208,9 @@ struct Saved_Tile {
 		stream.write(reinterpret_cast<const char*>(&hasItem), sizeof(hasItem));
 		stream.write(reinterpret_cast<const char*>(&x), sizeof(x));
 		stream.write(reinterpret_cast<const char*>(&y), sizeof(y));
+		stream.write(reinterpret_cast<const char*>(&maincolor_x), sizeof(maincolor_x));
+		stream.write(reinterpret_cast<const char*>(&maincolor_y), sizeof(maincolor_y));
+		stream.write(reinterpret_cast<const char*>(&maincolor_z), sizeof(maincolor_z));
 		stream.write(reinterpret_cast<const char*>(&walkable), sizeof(walkable));
 
 		size_t size = itemName.size();
@@ -225,6 +230,9 @@ struct Saved_Tile {
 		stream.read(reinterpret_cast<char*>(&hasItem), sizeof(hasItem));
 		stream.read(reinterpret_cast<char*>(&x), sizeof(x));
 		stream.read(reinterpret_cast<char*>(&y), sizeof(y));
+		stream.read(reinterpret_cast<char*>(&maincolor_x), sizeof(maincolor_x));
+		stream.read(reinterpret_cast<char*>(&maincolor_y), sizeof(maincolor_y));
+		stream.read(reinterpret_cast<char*>(&maincolor_z), sizeof(maincolor_z));
 		stream.read(reinterpret_cast<char*>(&walkable), sizeof(walkable));
 
 		size_t size = 0;
@@ -261,10 +269,10 @@ struct Tile {
 	vec2_i coords;
 	bool double_size = false;
 	vec3 tileColor;
+	vec3 mainTileColor;
 
 	void LoadTile(Saved_Tile tile) {
 		id = tile.id;
-		liquid = tile.liquid;
 		burningFor = tile.burningFor;
 		ticksPassed = tile.ticksPassed;
 		ticksNeeded = tile.ticksNeeded;
@@ -272,10 +280,32 @@ struct Tile {
 		itemName = tile.itemName;
 		coords = { tile.x, tile.y };
 		walkable = tile.walkable;
+		mainTileColor = { tile.maincolor_x,tile.maincolor_y,tile.maincolor_z };
+		tileColor = mainTileColor;
+		SetLiquid(tile.liquid);
 	}
 
 	bool CanUpdate() {
 		return ticksPassed >= ticksNeeded && changesOverTime;
+	}
+
+	void SetLiquid(Liquid l) {
+		liquid = l;
+		switch (l) {
+		case water:
+			tileColor = { 0, 0.5, 1 };
+			break;
+		case guts:
+			tileColor = { 0.45, 0, 0 };
+			break;
+		case blood:
+			tileColor = { 1, 0, 0 };
+			break;
+		case nothing:
+			Utilities::Lerp(&tileColor, mainTileColor, 0.5f);
+			break;
+		}
+		 
 	}
 
 	/*
@@ -308,6 +338,8 @@ struct Tile {
 		tileColor.x = stof(data.getArray("color")[0]);
 		tileColor.y = stof(data.getArray("color")[1]);
 		tileColor.z = stof(data.getArray("color")[2]);
+
+		mainTileColor = tileColor;
 	}
 };
 
@@ -322,6 +354,9 @@ static void CreateSavedTile(Saved_Tile* sTile, Tile tile) {
 	sTile->x = tile.coords.x;
 	sTile->y = tile.coords.y;
 	sTile->walkable = tile.walkable;
+	sTile->maincolor_x = tile.mainTileColor.x;
+	sTile->maincolor_y = tile.mainTileColor.y;
+	sTile->maincolor_z = tile.mainTileColor.z;
 }
 
 class Inventory;

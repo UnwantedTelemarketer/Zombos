@@ -21,7 +21,7 @@ private:
 		WindowProperties props;
 
 		props.imguiProps = { true, true, false, {DOSFONT, ITEMFONT}, {"main", "items"}, 16.f };
-		props.w = 1280;
+		props.w = 1340;
 		props.h = 720;
 		props.vsync = 0;
 		props.cc = { 0.5, 0.5, 0.5, 1 };
@@ -47,7 +47,8 @@ public:
 	antibox::framerate frame;
 	std::vector<float> frametimes;
 	float colChangeTime = 0.f;
-	float volume = 1.f;
+	float sfxvolume = 1.f;
+	float musicvolume = 1.f;
 	bool interacting, flashlightActive;
 
 	//Game Stuff
@@ -243,10 +244,13 @@ public:
 		if (gameScreen.settingsOpen) {
 			ImGui::Begin("Settings");
 
-			ImGui::SliderFloat("Volume Level", &volume, 0.f, 1.f);
-			if (ImGui::Button("Set Volume")) {
-				Audio::SetVolume(volume);
-				Audio::Play(sfxs["ui_select"]);
+			if (ImGui::SliderFloat("SFX Volume Level", &sfxvolume, 0.f, 1.f)) {
+				Audio::SetVolume(sfxvolume);
+				Audio::SetVolumeLoop(sfxvolume / 2, "rain");
+			}
+			if (ImGui::SliderFloat("Music Volume Level", &musicvolume, 0.f, 1.f)) {
+				Audio::SetVolumeLoop(musicvolume, "ambient_day");
+				Audio::SetVolumeLoop(musicvolume, "ambient_cave");
 			}
 
 			ImGui::End();
@@ -277,12 +281,6 @@ public:
 		ImGui::Begin("Menu");
 		if (gameScreen.createChar) { Create_Character(); }
 
-
-		ImGui::SliderFloat("Volume Level", &volume, 0.f, 1.f);
-		if (ImGui::Button("Set Volume")) {
-			Audio::SetVolume(volume); 
-			Audio::Play(sfxs["ui_select"]);
-		}
 
 		if (ImGui::Button("New Game"))
 		{
@@ -347,7 +345,7 @@ public:
 		}
 		//------Map rendering-------
 		if (game.worldTime >= 20.f || game.worldTime < 6.f) { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.0,0.0,1 }); }
-		else{ ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ game.backgroundColor.x,game.backgroundColor.y,game.backgroundColor.z,1 }); }
+		else{ ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ game.bgColor.x,game.bgColor.y,game.bgColor.z,1 }); }
 		ImGui::Begin("Map");
 		if (gameScreen.fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
 
@@ -396,7 +394,7 @@ public:
 					if (intensity < 0.f) intensity = 0.f;
 					if (intensity > 1.f) { intensity = 1.f; }
 				}//===================================================================
-				
+				bool effectShowing = false;
 				if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
 				{
 					printIcon = ENT_PLAYER;
@@ -405,11 +403,13 @@ public:
 
 				else if (map.effectLayer.localCoords[i][j] == 1)
 				{
+					effectShowing = true;
 					printIcon = "?";
 					iconColor = Cosmetic::SmokeColor();
 				}
 				else if (map.effectLayer.localCoords[i][j] == 2)
 				{
+					effectShowing = true;
 					printIcon = "a";
 					iconColor = Cosmetic::CoveredColor(water);
 				}
@@ -419,7 +419,7 @@ public:
 					iconColor = game.GetTileColor(curTile, intensity);
 				}
 
-				if (i < CHUNK_HEIGHT - 1) {
+				if (i < CHUNK_HEIGHT - 1 && !effectShowing) {
 					Entity* curEnt = underTile.entity;
 
 					if (curEnt != nullptr) {
@@ -487,16 +487,12 @@ public:
 		ImGui::PopStyleColor(1);
 
 		TechScreen();
-		
-		if (!game.mainMap.isUnderground) {
-			if (ImGui::Button("Go Down")) {
-				if (game.EnterCave()) {
-					Math::PushBackLog(&game.actionLog, "You enter a dark cave underground.");
-				}
-			}
-		}
-		else {
+
+		if(game.mainMap.isUnderground) {
 			if (ImGui::Button("Go Up")) {
+				Audio::StopLoop("ambient_cave");
+				Audio::PlayLoop("dat/sounds/ambient12.wav","ambient_day");
+				Audio::SetVolumeLoop(musicvolume, "ambient_day");
 				game.mainMap.isUnderground = !game.mainMap.isUnderground;
 			}
 		}
@@ -541,6 +537,9 @@ public:
 				ImGui::TextColored(color, text.c_str());
 				ImGui::ProgressBar((float)(player.liquidLast-player.ticksCovered) / player.liquidLast, ImVec2(0.0f, 0.0f));
 			}
+
+			ImGui::Text("Body Temperature :"); ImGui::SameLine();
+			ImGui::Text(std::to_string(round(player.bodyTemp * 10.0f) / 10.0f).c_str());
 			ImGui::Text("-------------");
 			ImGui::Text("Currently Equipped Weapon :"); ImGui::SameLine();
 			ImGui::Text(player.currentWeapon.name.c_str());
