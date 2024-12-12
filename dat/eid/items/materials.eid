@@ -63,7 +63,7 @@ useTxt : "Stick.";
 effects : [0,0,0,2,2];
 equipType : 1;
 sprite : "A";
-spriteColor : [0.75, 0.20, 0.0];
+spriteColor : [0.60, 0.35, 0.0];
 }
 
 OLD_CLOTH {

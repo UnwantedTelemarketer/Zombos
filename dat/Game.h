@@ -30,6 +30,7 @@ public:
 	std::map<int, std::string> tile_icons;
 	std::map<std::string, std::string> item_icons;
 	std::map<std::string, Vector3> item_colors;
+	std::map<int, Vector3> tile_colors;
 	vec3 backgroundColor;
 	biome currentBiome, lerpingTo;
 

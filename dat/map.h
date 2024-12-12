@@ -566,20 +566,20 @@ for (int i = 0; i < CHUNK_WIDTH; i++) {
 		if (biomeNoiseCurrent < -0.25f) {
 
 			if (Math::RandInt(0, 500) == 25 && !entrance) {
-				chunk->localCoords[i][j] = Tile_Stone;
+				chunk->localCoords[i][j] = Tiles::GetTile("TILE_SAND");
 				entrance = true;
 				chunk->localCoords[i][j].coords = { i, j };
 				continue;
 			}
 
 			if (Math::RandInt(0, 35) == 25) {
-				chunk->localCoords[i][j] = Tile_Cactus_Base;
+				chunk->localCoords[i][j] = Tiles::GetTile("TILE_CACTUS_BASE");
 				chunk->localCoords[i][j].double_size = true;
 			}
 
 			else
 			{
-				chunk->localCoords[i][j] = Tile_Sand;
+				chunk->localCoords[i][j] = Tiles::GetTile("TILE_SAND");
 				if (Math::RandInt(1, 300) == 255) {
 					chunk->localCoords[i][j].hasItem = true;
 					chunk->localCoords[i][j].itemName = "SCRAP";
@@ -590,7 +590,7 @@ for (int i = 0; i < CHUNK_WIDTH; i++) {
 		}
 
 		else if (biomeNoiseCurrent < -0.15f && biomeNoiseCurrent > -0.25f) { //water between desert
-			chunk->localCoords[i][j] = Tile_Dirt;
+			chunk->localCoords[i][j] = Tiles::GetTile("TILE_DIRT");
 			chunk->localCoords[i][j].liquid = water;
 			chunk->localCoords[i][j].ticksNeeded = 10;
 		}
@@ -599,20 +599,29 @@ for (int i = 0; i < CHUNK_WIDTH; i++) {
 		else {
 
 			if (currentTile < -0.10f && Math::RandInt(0, 4) >= 2) {
-				chunk->localCoords[i][j] = Tile_Tree_Base;
+				chunk->localCoords[i][j] = Tiles::GetTile("TILE_TREE_BASE");
 				chunk->localCoords[i][j].double_size = true;
 			}
 
 			else if (currentTile < 0.f) {
-				chunk->localCoords[i][j] = Tile_TallGrass;
+				chunk->localCoords[i][j] = Tiles::GetTile("TILE_TALLGRASS");
 			}
 
 			else {
-				chunk->localCoords[i][j] = Tile_Grass;
+				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
 				if (Math::RandInt(1, 35) == 34) {
 					chunk->localCoords[i][j].hasItem = true;
 					chunk->localCoords[i][j].itemName = "STICK";
 				}
+				else if (Math::RandInt(1, 200) == 34) {
+					chunk->localCoords[i][j].hasItem = true;
+					chunk->localCoords[i][j].itemName = "FLAT_MUSHROOM";
+				}
+				else if (Math::RandInt(1, 175) == 34) {
+					chunk->localCoords[i][j].hasItem = true;
+					chunk->localCoords[i][j].itemName = "BASIC_FLOWER";
+				}
+				
 			}
 
 		}
@@ -620,7 +629,7 @@ for (int i = 0; i < CHUNK_WIDTH; i++) {
 
 		if (Math::RandInt(1, 125) >= 124 && chunk->localCoords[i][j].liquid != water)
 		{
-			chunk->localCoords[i][j] = Tile_Grass;
+			chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
 			chunk->localCoords[i][j].hasItem = true;
 			chunk->localCoords[i][j].itemName = "ROCK";
 		}
@@ -655,10 +664,10 @@ void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
 		{
 			if (i == 0 && j == 1) { continue; }
 			if (i == 0 || i == wallLength - 1 || j == 0 || j == wallLength - 1) {
-				chunk->localCoords[corner.x + i][corner.y + j] = Tile_Stone;
+				chunk->localCoords[corner.x + i][corner.y + j] = Tiles::GetTile("TILE_STONE");
 			}
 			else {
-				chunk->localCoords[corner.x + i][corner.y + j] = Tile_Stone_Floor;
+				chunk->localCoords[corner.x + i][corner.y + j] = Tiles::GetTile("TILE_STONE_FLOOR");
 				if (chestCounter == whenDoesChestSpawn) {
 					CreateContainer({ chunk->globalChunkCoord.x, chunk->globalChunkCoord.y, corner.x + i, corner.y + j });
 					chunk->GetTileAtCoords(corner.x + i, corner.y + j)->itemName = "CHEST";
@@ -682,13 +691,13 @@ void Map::GenerateTomb(std::shared_ptr<Chunk> chunk) {
 	for (int i = 0; i < CHUNK_WIDTH; i++) {
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
 			if (i <= 1 || i >= CHUNK_WIDTH - 2 || j <= 1 || j >= CHUNK_HEIGHT-2) {
-				chunk->localCoords[i][j] = Tile_Stone;
+				chunk->localCoords[i][j] = Tiles::GetTile("TILE_STONE");
 			}
 			else if (Math::RandInt(0, 75) == 25) {
-				chunk->localCoords[i][j] = Tile_Crystal;
+				chunk->localCoords[i][j] = Tiles::GetTile("TILE_CRYSTAL");
 			}
 			else {
-				chunk->localCoords[i][j] = Tile_Stone_Floor;
+				chunk->localCoords[i][j] = Tiles::GetTile("TILE_STONE_FLOOR");
 			}
 		}
 	}
@@ -820,7 +829,7 @@ void Map::UpdateTiles(vec2_i coords) {
 				//update if the tile can update (like grass growing)
 				if (curTile->CanUpdate()) {
 					if (curTile->liquid == nothing) {
-						*curTile = tileByID[curTile->timedReplacement];
+						*curTile = Tiles::GetTile(curTile->timedReplacement);
 					}
 					else {
 						curTile->ticksPassed -= 1;

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <boost/algorithm/string.hpp>
 #define LAZY_LOG(thing) Console::Log(thing, text::white, -1);
 
 using namespace antibox;
@@ -15,13 +16,14 @@ static bool fileExists(const char* filePath) {
 
 bool to_bool(std::string str) {
 	try {
+		boost::algorithm::to_lower(str);
 		if (str == "true") { return true; }
 		if (str == "false") { return false; }
 		else { throw std::invalid_argument("Error: to_bool requires the string input to be either 'true' or 'false'."); }
 	}
 	catch (std::invalid_argument& e) {
 #ifdef antibox_console
-		Console::Log(e.what(), ERROR, __LINE__);
+		//Console::Log(e.what(), ERROR, __LINE__);
 #endif
 
 #ifndef antibox_console

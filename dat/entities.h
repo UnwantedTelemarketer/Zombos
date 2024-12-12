@@ -67,7 +67,7 @@ struct Item {
 
 		try {
 			cookable = item.getBool("cookable");
-			cooks_into = item.getString("cooks_into");
+			cooks_into = item.getString("cooksInto");
 		}//this is fine if it doesnt work, not all items are cookable and shouldnt need to specify
 		catch (std::exception e) { cookable = false; }
 
@@ -244,13 +244,13 @@ struct Tile {
 	Liquid liquid = nothing;
 	Entity* entity = nullptr;
 	bool collectible = false;
-	int collectedReplacement = id;
+	std::string collectedReplacement;
 	std::string itemName = "NULL";
 	int burningFor = 0;
 	bool walkable = true;
 
 	bool changesOverTime = false;
-	int timedReplacement = id;
+	std::string timedReplacement;
 	int ticksPassed = 0;
 	int ticksNeeded = 1;
 	bool hasItem = false;
@@ -259,6 +259,7 @@ struct Tile {
 	bool technical_update = false;
 	vec2_i coords;
 	bool double_size = false;
+	vec3 tileColor;
 
 	void LoadTile(Saved_Tile tile) {
 		id = tile.id;
@@ -274,6 +275,38 @@ struct Tile {
 
 	bool CanUpdate() {
 		return ticksPassed >= ticksNeeded && changesOverTime;
+	}
+
+	/*
+	17, // Starting block ID
+	still, //technical direction (for conveyors)
+	mud, //Liquid
+	nullptr, //Entity
+	false, // Collectible
+	ID_DIRT, // Block that it becomes after being collected
+	"MUD", //Item name
+	0, // how long its burn lasts
+	true, //walkable
+	false, //changes over time
+	-1 //what it becomes after a time limit
+	*/
+
+	void CreateFromData(OpenedData data) {
+		id = data.getInt("id");
+		technical_dir = (direction)data.getInt("direction");
+		liquid = (Liquid)data.getInt("liquid");
+		collectible = data.getBool("collectible");
+		collectedReplacement = data.getString("replacement");
+		itemName = data.getString("itemName");
+		hasItem = data.getBool("hasItem");
+		walkable = data.getBool("walkable");
+		changesOverTime = data.getBool("changesOverTime");
+		timedReplacement = data.getString("timedReplacement");
+		double_size = data.getBool("double_size");
+
+		tileColor.x = stof(data.getArray("color")[0]);
+		tileColor.y = stof(data.getArray("color")[1]);
+		tileColor.z = stof(data.getArray("color")[2]);
 	}
 };
 

@@ -5,7 +5,7 @@
 
 #include <chrono>
 
-#define DOSFONT "dat/fonts/symbolic/symbolic_crystal.ttf"
+#define DOSFONT "dat/fonts/symbolic/symbolic_crystal_extended.ttf"
 #define ITEMFONT "dat/fonts/symbolic/symbolic_item.ttf"
 //#define DEV_TOOLS
 
@@ -81,8 +81,8 @@ public:
 	std::shared_ptr<GameObject> p;
 
 	void Init() override {
-		Console::Log("Loading Items from files...", text::white, __LINE__);
 		std::thread itemLoading = Items::LoadItemsFromFiles(&game.item_icons);
+		std::thread tileLoading = Tiles::LoadTilesFromFiles(&game.tile_colors);
 
 		Engine::Instance().AddScene(&main);
 		main.CreateObject("Box", { 0,0 }, { 1,1 }, "res/plank.png");
@@ -103,6 +103,7 @@ public:
 		player.currentWeapon.mod = 5;
 
 		itemLoading.join();
+		tileLoading.join();
 		Console::Log("Done!", text::green, __LINE__);
 	}
 

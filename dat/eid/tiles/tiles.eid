@@ -1,0 +1,138 @@
+SECTIONS {
+sections : [TILE_GRASS,TILE_TALLGRASS,TILE_DIRT,TILE_SAND,TILE_STONE,TILE_TREE_BASE,TILE_CACTUS_BASE,TILE_STONE_FLOOR,TILE_CRYSTAL]
+}
+
+TILE_GRASS {
+id : 1;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : "TILE_TALLGRASS";
+itemName : "NULL";
+hasItem : false;
+walkable : "true";
+changesOverTime : true;
+timedReplacement : "TILE_TALLGRASS";
+double_size : false;
+color : [0.5,0.5,0.5];
+}
+
+TILE_TALLGRASS {
+id : 3;
+direction : 0;
+liquid : 0;
+collectible : true;
+replacement : "TILE_GRASS";
+itemName : "GRASS";
+hasItem : false;
+walkable : true;
+changesOverTime : false;
+timedReplacement : 0;
+double_size : false;
+color : [0.5,0.5,0.5];
+}
+
+TILE_DIRT {
+id : 2;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : 1;
+itemName : "NULL";
+hasItem : false;
+walkable : true;
+changesOverTime : true;
+timedReplacement : "TILE_GRASS";
+double_size : false;
+color : [0.5,0.5,0.5];
+}
+
+TILE_SAND {
+id : 7;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : 1;
+itemName : "NULL";
+hasItem : false;
+walkable : true;
+changesOverTime : false;
+timedReplacement : 0;
+double_size : false;
+color : [0.5,0.5,0.5];
+}
+
+TILE_STONE {
+id : 6;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : 1;
+itemName : "NULL";
+hasItem : false;
+walkable : false;
+changesOverTime : false;
+timedReplacement : 0;
+double_size : false;
+color : [0.5,0.5,0.5];
+}
+
+TILE_TREE_BASE {
+id : 11;
+direction : 0;
+liquid : 0;
+collectible : true;
+replacement : "TILE_GRASS";
+itemName : "RESIN";
+hasItem : false;
+walkable : true;
+changesOverTime : false;
+timedReplacement : 0;
+double_size : true;
+color : [0.5,0.5,0.5];
+}
+
+TILE_CACTUS_BASE {
+id : 12;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : 1;
+itemName : "NULL";
+hasItem : false;
+walkable : false;
+changesOverTime : false;
+timedReplacement : 0;
+double_size : true;
+color : [0.5,0.5,0.5];
+}
+
+TILE_STONE_FLOOR {
+id : 13;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : 1;
+itemName : "NULL";
+hasItem : false;
+walkable : true;
+changesOverTime : false;
+timedReplacement : 0;
+double_size : false;
+color : [0.5,0.5,0.5];
+}
+
+TILE_CRYSTAL {
+id : 14;
+direction : 0;
+liquid : 0;
+collectible : true;
+replacement : "TILE_STONE_FLOOR";
+itemName : "CRYSTAL";
+hasItem : false;
+walkable : false;
+changesOverTime : false;
+timedReplacement : 0;
+double_size : false;
+color : [0.5,0.5,0.5];
+}

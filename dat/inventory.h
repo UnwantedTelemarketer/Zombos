@@ -127,9 +127,8 @@ public:
 		{
 			Item item = GetItemFromFile("items.eid", tile->itemName);
 			if (covered) { item.coveredIn = tile->liquid; }
-
-			int id = tile->collectedReplacement;
-			*tile = tileByID[id];
+			
+			*tile = Tiles::GetTile(tile->collectedReplacement);
 			tile->ticksNeeded = Math::RandInt(1, 1000) + 500;
 			AddItem(item);
 			return true;

@@ -10,7 +10,7 @@ stackable : true;
 holdsLiquid : false;
 consumable : true;
 cookable : true;
-cooks_into : "COOKED_MEAT"
+cooksInto : "COOKED_MEAT"
 amount : 1;
 consumeTxt : "You eat the uncooked meat. You feel a bit sick.";
 useTxt : "Does Nothig.";
@@ -30,7 +30,7 @@ consumable : true;
 amount : 1;
 consumeTxt : "You eat the meat. You feel much less hungry.";
 useTxt : "Does Nothig.";
-effects : [3,25,0,0];
+effects : [3,35,0,0];
 equipType : 0;
 sprite : "G";
 spriteColor : [0.6, 0.1, 0.2];

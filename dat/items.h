@@ -56,6 +56,44 @@ namespace EID {
 
 		return item;
 	}
+	static Tile MakeTile (std::string file, std::string header) {
+		OpenedData data;
+		ItemReader::GetDataFromFile(file, header, &data);
+		Tile tile;
+		tile.CreateFromData(data);
+
+		return tile;
+	}
+}
+
+namespace Tiles {
+	static std::map<std::string, Tile> list;
+
+	Tile GetTile(std::string name) {
+		return list[name];
+	}
+
+	static void LoadTiles(std::map<int, vec3>* tileColors) {
+		Console::Log("Loading Items from files...", text::white, __LINE__);
+		std::vector<std::string> sections;
+		OpenedData data;
+		ItemReader::GetDataFromFile("tiles/tile_lists.eid", "LISTS", &data);
+		for (auto const& x : data.tokens) {
+
+			OpenedData sectionsData;
+			ItemReader::GetDataFromFile("tiles/" + x.first, "SECTIONS", &sectionsData);
+			for (auto const& tileSection : sectionsData.getArray("sections")) {
+				list[tileSection] = EID::MakeTile("tiles/" + x.first, tileSection);
+				tileColors->insert({ list[tileSection].id,list[tileSection].tileColor });
+			}
+		}
+		Console::Log("Loaded Items!", text::white, __LINE__);
+	}
+
+	static std::thread LoadTilesFromFiles(std::map<int, vec3>* tileColors) {
+		std::thread loadingTiles{ LoadTiles, tileColors };
+		return loadingTiles;
+	}
 }
 
 namespace Items {
@@ -71,6 +109,7 @@ namespace Items {
 	}
 
 	static void LoadItems(std::map<std::string, std::string>* icons) {
+		Console::Log("Loading Tiles from files...", text::white, __LINE__);
 		std::vector<std::string> sections;
 		OpenedData data;
 		ItemReader::GetDataFromFile("items/item_lists.eid", "LISTS", &data);
@@ -85,6 +124,7 @@ namespace Items {
 				icons->insert({ list[itemName].section , list[itemName].sprite });
 			}
 		}
+		Console::Log("Loaded Tiles!", text::white, __LINE__);
 	}
 
 	static std::thread LoadItemsFromFiles(std::map<std::string, std::string>* icons) {
@@ -94,196 +134,8 @@ namespace Items {
 }
 
 
-Tile Tile_Template =
-{
-	-1, // Starting block
-	still, //technical direction (for conveyors)
-	nothing, //Liquid
-	nullptr, //Entity
-	false, // Collectible
-	-1, // Block that it becomes after being collected
-	"NULL", //Item name
-	0, // how long its burn lasts
-	true, //walkable
-	false, //changes over time
-	-1 //what it becomes after a time limit
-};
 
-Tile Tile_Container =
-{
-	ID_CONTAINER, //Starting Block
-	still,
-	nothing,  //Liquid
-	nullptr,  //Entity
-	true,	  //Collectible
-	ID_CONTAINER_OPEN, //Block after collection
-	"BAD_PISTOL",
-	0,
-	false,
-	false
-};
-
-Tile Tile_Container_Open =
-{
-	ID_CONTAINER_OPEN, //Starting Block
-	still,
-	nothing,  //Liquid
-	nullptr,  //Entity
-	false,	  //Collectible
-	ID_CONTAINER_OPEN, //Block after collection
-	"NULL",
-	0,
-	false,
-	false
-};
-
-Tile Tile_Grass =
-{
-	ID_GRASS, //Starting Block
-	still,
-	nothing,  //Liquid
-	nullptr,  //Entity
-	false,	  //Collectible
-	ID_GRASS, //Block after collection
-	"NULL",
-	0,
-	true,
-	true,
-	ID_FLOWER
-};
-
-Tile Tile_TallGrass =
-{
-	ID_FLOWER,
-	still,
-	nothing,
-	nullptr,
-	true,
-	ID_GRASS,
-	"GRASS"
-};
-
-Tile Tile_Stick =
-{
-	10,
-	still,
-	nothing,
-	nullptr,
-	true,
-	ID_GRASS,
-	"STICK"
-};
-
-Tile Tile_Dirt =
-{
-	ID_DIRT,
-	still,
-	nothing,
-	nullptr,
-	false,
-	ID_DIRT,
-	"NULL",
-	-1,
-	true,
-	true,
-	ID_GRASS
-};
-
-Tile Tile_Sand =
-{
-	ID_SAND,
-	still,
-	nothing,
-	nullptr,
-	false,
-	ID_SAND,
-	"NULL",
-	-1,
-	true,
-	false
-};
-
-Tile Tile_Scrap =
-{
-	ID_SCRAP,
-	still,
-	nothing,
-	nullptr,
-	true,
-	ID_FLOWER,
-	"SCRAP",
-	-1
-};
-
-Tile Tile_Stone =
-{
-	ID_STONE,
-	still,
-	nothing,
-	nullptr,
-	false,
-	ID_NULL,
-	"NULL",
-	-1,
-	false
-};
-
-Tile Tile_Tree_Base =
-{
-	ID_TREE_BASE,
-	still,
-	nothing,
-	nullptr,
-	true,
-	ID_TREE_BASE,
-	"RESIN",
-	0,
-	true
-};
-
-Tile Tile_Cactus_Base =
-{
-	ID_CACTUS_BASE,
-	still,
-	nothing,
-	nullptr,
-	false,
-	ID_NULL,
-	"NULL",
-	0,
-	false
-};
-
-Tile Tile_Stone_Floor =
-{
-	13, // Starting block ID
-	still, //technical direction (for conveyors)
-	nothing, //Liquid
-	nullptr, //Entity
-	false, // Collectible
-	-1, // Block that it becomes after being collected
-	"NULL", //Item name
-	0, // how long its burn lasts
-	true, //walkable
-	false, //changes over time
-	-1 //what it becomes after a time limit
-}; 
-
-Tile Tile_Crystal =
-{
-	14, // Starting block ID
-	still, //technical direction (for conveyors)
-	nothing, //Liquid
-	nullptr, //Entity
-	false, // Collectible
-	-1, // Block that it becomes after being collected
-	"NULL", //Item name
-	0, // how long its burn lasts
-	false, //walkable
-	false, //changes over time
-	-1 //what it becomes after a time limit
-}; 
-
+/*
 Tile Tile_Big_Rock =
 {
 	15, // Starting block ID
@@ -327,20 +179,13 @@ Tile Tile_Mud =
 	true, //walkable
 	false, //changes over time
 	-1 //what it becomes after a time limit
-};
+};*/
 
 //============================  CONVEYOR BELTS ==============================
 
 
 static std::unordered_map<int, Tile> tileByID = 
 {
-	{ID_GRASS, Tile_Grass},
-	{ID_FLOWER, Tile_TallGrass},
-	{ID_DIRT, Tile_Dirt},
-	{ID_SCRAP, Tile_Scrap},
-	{ID_STONE, Tile_Stone},
-	{ID_SAND, Tile_Sand},
-	{ID_CONTAINER, Tile_Container},
 	{ID_CONVEYOR_U, {ID_CONVEYOR_U, direction::up}},
 	{ID_CONVEYOR_D, {ID_CONVEYOR_D, direction::down}},
 	{ID_CONVEYOR_L, {ID_CONVEYOR_L, direction::left}},
@@ -349,5 +194,4 @@ static std::unordered_map<int, Tile> tileByID =
 	{ID_CONVEYOR_UR, {ID_CONVEYOR_UR}},
 	{ID_CONVEYOR_DL, {ID_CONVEYOR_DL}},
 	{ID_CONVEYOR_DR, {ID_CONVEYOR_DR}},
-	{10, Tile_Stone}
 };
