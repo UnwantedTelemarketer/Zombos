@@ -92,6 +92,21 @@ double_size : true;
 color : [0.5,0.5,0.5];
 }
 
+TILE_TREE_BASE_E {
+id : 201;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : "TILE_GRASS";
+itemName : "NULL";
+hasItem : false;
+walkable : true;
+changesOverTime : false;
+timedReplacement : 0;
+double_size : true;
+color : [0.5,0.5,0.5];
+}
+
 TILE_CACTUS_BASE {
 id : 12;
 direction : 0;

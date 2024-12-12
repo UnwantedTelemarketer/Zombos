@@ -393,7 +393,7 @@ private:
 #define ENT_CHICKEN "L"
 #define ID_CHICKEN 2
 
-#define ENT_HUMAN "E"
+#define ENT_HUMAN "Z"
 #define ID_HUMAN 3
 
 
