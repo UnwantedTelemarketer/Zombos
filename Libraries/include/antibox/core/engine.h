@@ -36,7 +36,8 @@ namespace antibox {
 		static Engine& Instance();
 
 		//Play sound once at file path
-		void StartSound(const char* path, bool loop);
+		void StartSound(const char* path, std::string name, bool loop);
+		void StopSoundLooping(std::string name);
 		void SetVolume(float volume);
 		float GetVolume();
 		void LerpFloat(float* val, float endVal, float time);

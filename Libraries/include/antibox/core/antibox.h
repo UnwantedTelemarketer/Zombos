@@ -48,8 +48,9 @@ namespace antibox {
 		//Returns the volume as a float.
 		float GetVolume() { return antibox::Engine::Instance().GetVolume(); }
 		//Provide path to audio file.
-		void Play(std::string path) { antibox::Engine::Instance().StartSound(path.c_str(), false); }
-		void PlayLoop(std::string path) { antibox::Engine::Instance().StartSound(path.c_str(), true); }
+		void Play(std::string path) { antibox::Engine::Instance().StartSound(path.c_str(), "null", false); }
+		void PlayLoop(std::string path, std::string name) { antibox::Engine::Instance().StartSound(path.c_str(), name, true); }
+		void StopLoop(std::string name) { antibox::Engine::Instance().StopSoundLooping(name); }
 		//Does nothing right now
 		void Stop(std::string path) { Console::Log("Not implemented :/", text::white, __LINE__); }
 	}

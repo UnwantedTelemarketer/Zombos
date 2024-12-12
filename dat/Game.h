@@ -5,6 +5,7 @@
 #include "items.h"
 #include <thread>
 #include "filemanager.h"
+#include <cmath>
 
 
 using namespace antibox;
@@ -47,7 +48,7 @@ public:
 	bool isDark() { return ((worldTime >= 20.f || worldTime < 6.f) || mainMap.isUnderground); }
 	double GetTick() { return (tickRate - tickCount); }
 	float TickRate() { return tickRate; }
-	void SetTick(float secs) { tickRate = secs * 1000; effectTickRate = tickRate / 4; }
+	void SetTick(float secs) { tickRate = secs * 1000; effectTickRate = tickRate / 6; }
 
 	void AddRecipes();
 	void Setup(int x, int y, float tick, int seed, int biome);
@@ -107,6 +108,8 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	sandWalk = { "dat/sounds/movement/sand1.wav","dat/sounds/movement/sand2.wav", "dat/sounds/movement/sand3.wav" };
 	grassWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };
 	rockWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };
+	mainMap.currentWeather = clear;
+	mainMap.ticksUntilWeatherUpdate = Math::RandInt(15, 600);
 
 	if(seed == -1) deleteAllFilesInDirectory();
 	SetTick(tick);
@@ -138,8 +141,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	}
 	mainMap.isUnderground = false;
 	Math::PushBackLog(&actionLog, "Welcome to Zombos! Press H to open the help menu.");
-	Audio::PlayLoop("dat/sounds/ambient12.wav");
-	Audio::PlayLoop("dat/sounds/birds.wav");
+	Audio::PlayLoop("dat/sounds/ambient12.wav", "ambient_day");
 }
 
 void GameManager::AddRecipes() {
@@ -409,16 +411,31 @@ void GameManager::MovePlayer(int dir) {
 
 
 void GameManager::UpdateEffects() {
+	
+	//1 is smoke, 2 is rain
 	int tempMap[30][30]{};
-	for (size_t i = 0; i < CHUNK_HEIGHT; i++)
+
+	if (mainMap.currentWeather == rainy || mainMap.currentWeather == thunder) {
+		if (Math::RandInt(0, 2) == 1) {
+			tempMap[0][Math::RandInt(0, 29)] = 2;
+			tempMap[0][Math::RandInt(0, 29)] = 2;
+		}
+	}
+
+	for (int i = 0; i < CHUNK_HEIGHT; i++)
 	{
-		for (size_t j = 0; j < CHUNK_WIDTH; j++)
+		for (int j = 0; j < CHUNK_WIDTH; j++)
 		{
 			if (mainMap.effectLayer.localCoords[i][j] == 1) {
 				int newJ = j + Math::RandInt(0, 2);
 				int newI = i - Math::RandInt(0, 2);
 				if ((newI >= CHUNK_WIDTH || newI < 0) || (newJ >= CHUNK_WIDTH || newJ < 0)) { continue; }
 				tempMap[newI][newJ] = 1;
+			}
+			if (mainMap.effectLayer.localCoords[i][j] == 2) {
+				if (i + 2 >= CHUNK_WIDTH || i < 0) { tempMap[i][j] = 0; }
+				else if (Math::RandInt(0, 30) == 1) { tempMap[i][j] = 0; mainMap.TileAtPos({ i,j })->liquid = water; }
+				else { tempMap[(int)std::floor((i + 1) * 1.1)][j] = 2; }
 			}
 		}
 	}
@@ -449,6 +466,23 @@ void GameManager::UpdateTick() {
 
 	if (tickCount >= tickRate)
 	{
+		if (mainMap.UpdateWeather()) {
+			switch (mainMap.currentWeather) {
+			case rainy:
+				Math::PushBackLog(&actionLog, "It begins to rain.");
+				Audio::PlayLoop("dat/sounds/rain.wav", "rain");
+				break;
+			case clear:
+				Audio::StopLoop("rain");
+				Math::PushBackLog(&actionLog, "The weather clears up.");
+				break;
+			case thunder:
+				Audio::StopLoop("rain");
+				Math::PushBackLog(&actionLog, "Thunder booms in the distance.");
+				break;
+			}
+		}
+
 		tickCount = 0;
 		//hunger and thirst
 		mPlayer.thirst -= 0.075f;
@@ -826,10 +860,10 @@ ImVec4 GameManager::GetTileColor(Vector2_I tile, float intensity) {
 
 class Commands {
 public:
-	void RunCommand(std::string input, Inventory* inv, Player* p);
+	void RunCommand(std::string input, GameManager* game);
 };
 
-void Commands::RunCommand(std::string input, Inventory* inv, Player* p) {
+void Commands::RunCommand(std::string input, GameManager* game) {
 	std::vector<std::string> tokens = Tokenizer::getTokens(input);
 	for (int i = 0; i < tokens.size(); i++) {
 		if (tokens[i] == "give") {
@@ -838,19 +872,31 @@ void Commands::RunCommand(std::string input, Inventory* inv, Player* p) {
 				LAZY_LOG("Item \"" + tokens[i+1] + "\" cannot be found.")
 					return; 
 			}
-			inv->AddItemFromFile(tokens[i + 1], stoi(tokens[i + 2]));
+			game->pInv.AddItemFromFile(tokens[i + 1], stoi(tokens[i + 2]));
 		}
 		else if (tokens[i] == "set")
 		{
 			if (tokens.size() < 3) { return; }
 			if (tokens[i + 1] == "health") {
-				p->health = stoi(tokens[i + 2]);
+				game->mPlayer.health = stoi(tokens[i + 2]);
 			}
 			else if (tokens[i + 1] == "thirst") {
-				p->thirst = stoi(tokens[i + 2]);
+				game->mPlayer.thirst = stoi(tokens[i + 2]);
 			}
 			else if (tokens[i + 1] == "hunger") {
-				p->hunger = stoi(tokens[i + 2]);
+				game->mPlayer.hunger = stoi(tokens[i + 2]);
+			}
+			else if (tokens[i + 1] == "weather") {
+				if(tokens[i + 2] == "clear") {
+					Audio::StopLoop("rain");
+					game->mainMap.currentWeather = clear;
+				}else if (tokens[i + 2] == "rain") {
+					Audio::PlayLoop("dat/sounds/rain.wav", "rain");
+					game->mainMap.currentWeather = rainy;
+				}else if (tokens[i + 2] == "thunder") {
+					Audio::StopLoop("rain");
+					game->mainMap.currentWeather = thunder;
+				}
 			}
 		}
 		//else if()

@@ -30,13 +30,20 @@ void AudioEngine::PlayAudio(const char* path) {
     ma_engine_play_sound(&mEngine, path, NULL);
 }
 
-void AudioEngine::PlayAudioLooping(const char* path) {
+void AudioEngine::StopAudioLooping(std::string name) {
+    ma_device_stop(mDevices[name]);
+}
+
+void AudioEngine::PlayAudioLooping(const char* path, std::string name) {
+    if (mDevices.count(name) != 0) { ma_device_start(mDevices[name]); }
     ma_result result;
-    ma_decoder* currentDecoder = isPlaying1 ? &mDecoder2 : &mDecoder;
-    ma_device* currentDevice = isPlaying1 ? &mDevice2 : &mDevice;
+    ma_decoder* currentDecoder = new ma_decoder;
+    ma_device* currentDevice = new ma_device;
+    mDecoders.insert({ name, currentDecoder });
+    mDevices.insert({ name, currentDevice });
 
     // Initialize the decoder with the specified audio file
-       result = ma_decoder_init_file(path, NULL, currentDecoder);
+    result = ma_decoder_init_file(path, NULL, currentDecoder);
     if (result != MA_SUCCESS) {
         std::cout << "Failed to initialize decoder for file: " << path << std::endl;
         return;

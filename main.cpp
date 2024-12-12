@@ -5,7 +5,7 @@
 
 #include <chrono>
 
-#define DOSFONT "dat/fonts/symbolic/symbolic_crystal_extended.ttf"
+#define DOSFONT "dat/fonts/symbolic/symbolic_rain_extended.ttf"
 #define ITEMFONT "dat/fonts/symbolic/symbolic_item.ttf"
 //#define DEV_TOOLS
 
@@ -122,7 +122,7 @@ public:
 
 		if (Input::KeyDown(KEY_ENTER)) {
 			Console::Log(console_commands, text::green, __LINE__);
-			cmd.RunCommand(console_commands, &pInv, &player);
+			cmd.RunCommand(console_commands, &game);
 			console_commands[0] = '\0';
 		}
 
@@ -399,18 +399,19 @@ public:
 				
 				if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
 				{
-					//screen += ENT_PLAYER;
-					//colors.push_back(game.GetPlayerColor());
 					printIcon = ENT_PLAYER;
 					iconColor = game.GetPlayerColor();
 				}
 
 				else if (map.effectLayer.localCoords[i][j] == 1)
 				{
-					//screen += "?";
-					//colors.push_back(ImVec4{ 0.65,0.65,0.65,1 });
 					printIcon = "?";
 					iconColor = Cosmetic::SmokeColor();
+				}
+				else if (map.effectLayer.localCoords[i][j] == 2)
+				{
+					printIcon = "a";
+					iconColor = Cosmetic::CoveredColor(water);
 				}
 
 				else {
@@ -932,6 +933,10 @@ public:
 			if (ImGui::Button("Change Tickrate")) {
 				game.SetTick(tickRateVisual);
 			}
+
+			ImGui::Text("Weather : "); ImGui::SameLine();
+			ImGui::Text(Cosmetic::WeatherName(game.mainMap.currentWeather));
+
 			ImGui::Text(("Local X: " + std::to_string(player.coords.x)).c_str());
 			ImGui::Text(("Local Y: " + std::to_string(player.coords.y)).c_str());
 

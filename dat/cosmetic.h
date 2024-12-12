@@ -10,5 +10,6 @@ public:
 	static ImVec4 SmokeColor();
 	static char FireChar(std::string chars);
 	static const char* CoveredName(int liquid);
+	static const char* WeatherName(int weather);
 };
 

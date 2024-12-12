@@ -89,3 +89,15 @@ ImVec4 Cosmetic::CoveredColor(int liquid)
 		break;
 	}
 }
+
+const char* Cosmetic::WeatherName(int weather) {
+	if (weather == 0) {
+		return "Clear";
+	}
+	else if (weather == 1) {
+		return "Rainy";
+	}
+	else if (weather == 2) {
+		return "Thunder";
+	}
+}

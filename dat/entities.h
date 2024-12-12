@@ -255,6 +255,7 @@ struct Tile {
 	int ticksNeeded = 1;
 	bool hasItem = false;
 	float brightness = 1.f;
+	int liquidTime = 0;
 	bool visited = false;
 	bool technical_update = false;
 	vec2_i coords;

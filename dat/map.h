@@ -28,6 +28,7 @@ struct World
 
 
 enum biome { desert, ocean, forest, swamp, taiga, urban, jungle };
+enum weather {clear, rainy, thunder};
 class Map {
 public:
 	bool chunkUpdateFlag = false;
@@ -37,6 +38,8 @@ public:
 	World underground; //map but underground, different map entirely
 	bool isUnderground;
 	std::vector<Vector2_I> line;
+	weather currentWeather;
+	int ticksUntilWeatherUpdate = 0;
 
 	//x and y are global coords, z and w are local
 	std::map<Vector4_I, Container> containers;
@@ -78,6 +81,7 @@ public:
 	void floodFillUtil(int x, int y, float prevBrightness, float newBrightness, int max, bool twinkle, bool firstTile);
 	void floodFill(Vector2_I centerTile, int distance, bool twinkle);
 	void ResetLightValues();
+	bool UpdateWeather();
 	std::shared_ptr<Chunk> GetProperChunk(Vector2_I coords);
 
 	~Map();
@@ -166,6 +170,20 @@ void Map::UpdateMemoryZone(Vector2_I coords) {
 		world.chunks.erase(vec);
 	}
 	
+}
+
+bool Map::UpdateWeather() {
+	ticksUntilWeatherUpdate--;
+	if (ticksUntilWeatherUpdate == 0) {
+		weather newWeather = (weather)Math::RandInt(0, 2);
+		while (newWeather == currentWeather) {
+			newWeather = (weather)Math::RandInt(0, 2);
+		}
+		ticksUntilWeatherUpdate = Math::RandInt(600, 1000);
+		currentWeather = newWeather;
+		return true;
+	}
+	return false;
 }
 
 void Map::ReadChunk(Vector2_I curChunk, std::string path) {
@@ -887,6 +905,12 @@ void Map::UpdateTiles(vec2_i coords) {
 				curTile->burningFor++;
 				if (curTile->burningFor >= 100) { curTile->burningFor = 0; }
 				curTile->liquid = nothing;
+			}
+			if (curTile->liquid != nothing) {
+				curTile->liquidTime++;
+				if (curTile->liquidTime >= 100) {
+					curTile->liquid = nothing;
+				}
 			}
 			//logic for upwards facing flashlight pyramid
 			curTile->technical_update = false;

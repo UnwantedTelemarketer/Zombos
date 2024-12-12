@@ -24,6 +24,7 @@
  - Snowy Biome (igloo, snow)
  - Jungle Biome (flowers, bigger trees, birds, rain)
  - Swamp Biome (mud, water)
+ - glowing moss biome
  - Campsites (campfire, tent, chair)
  - Weather Events (rain, lightning, blizzard, sandstorm)
  - Talking with humans

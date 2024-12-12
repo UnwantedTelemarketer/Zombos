@@ -47,6 +47,7 @@ namespace antibox
 		floatsToLerp.push_back({ val, time, *val, {endVal, 0} });
 	}
 
+
 	void Engine::Run() { //This is what loops forever until the window is closed
 		if (mApp == nullptr) { mApp = mAppList[0]; }//If we dont have an app, set the private app to the one submitted from wherever run is called.
 		else { return; } //if there is no app anywhere, just dont run
@@ -205,10 +206,14 @@ namespace antibox
 		}
 	}
 
-	void Engine::StartSound(const char* path, bool loop)
+	void Engine::StartSound(const char* path, std::string name, bool loop)
 	{
-		if (loop) { mAudio->PlayAudioLooping(path);  return; }
+		if (loop) { mAudio->PlayAudioLooping(path, name);  return; }
 		mAudio->PlayAudio(path);
+	}
+
+	void Engine::StopSoundLooping(std::string name) {
+		mAudio->StopAudioLooping(name);
 	}
 
 	void Engine::SetVolume(float volume) {
