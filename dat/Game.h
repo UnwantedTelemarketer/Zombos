@@ -109,7 +109,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	sandWalk = { "dat/sounds/movement/sand1.wav","dat/sounds/movement/sand2.wav", "dat/sounds/movement/sand3.wav" };
 	grassWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };
 	rockWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };
-	mainMap.currentWeather = clear;
+	mainMap.SetWeather(clear);
 	mainMap.ticksUntilWeatherUpdate = Math::RandInt(15, 600);
 
 	if(seed == -1) deleteAllFilesInDirectory();
@@ -487,14 +487,11 @@ void GameManager::UpdateTick() {
 			switch (mainMap.currentWeather) {
 			case rainy:
 				Math::PushBackLog(&actionLog, "It begins to rain.");
-				Audio::PlayLoop("dat/sounds/rain.mp3", "rain");
 				break;
 			case clear:
-				Audio::StopLoop("rain");
 				Math::PushBackLog(&actionLog, "The weather clears up.");
 				break;
 			case thunder:
-				Audio::StopLoop("rain");
 				Math::PushBackLog(&actionLog, "Thunder booms in the distance.");
 				break;
 			}
@@ -904,14 +901,11 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 			}
 			else if (tokens[i + 1] == "weather") {
 				if(tokens[i + 2] == "clear") {
-					Audio::StopLoop("rain");
-					game->mainMap.currentWeather = clear;
+					game->mainMap.SetWeather(clear);
 				}else if (tokens[i + 2] == "rain") {
-					Audio::PlayLoop("dat/sounds/rain.mp3", "rain");
-					game->mainMap.currentWeather = rainy;
+					game->mainMap.SetWeather(rainy);
 				}else if (tokens[i + 2] == "thunder") {
-					Audio::StopLoop("rain");
-					game->mainMap.currentWeather = thunder;
+					game->mainMap.SetWeather(thunder);
 				}
 			}
 		}

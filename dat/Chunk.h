@@ -17,10 +17,11 @@ struct Chunk {
 		return GetTileAtCoords({ x, y });
 	}
 	Tile* GetTileAtCoords(Vector2_I pos) {
-		if (pos.x >= CHUNK_WIDTH) { pos.x = CHUNK_WIDTH - 1; }
-		if (pos.x < 0) { pos.x = 0; }
-		if (pos.y >= CHUNK_HEIGHT) { pos.y = CHUNK_HEIGHT - 1; }
-		if (pos.y < 0) { pos.y = 0; }
+		bool xInvalid = false, yInvalid = false;
+		if (pos.x >= CHUNK_WIDTH) { xInvalid = true; pos.x = CHUNK_WIDTH - 1; }
+		if (pos.x < 0) { xInvalid = true; pos.x = 0; }
+		if (pos.y >= CHUNK_HEIGHT) { yInvalid = true; pos.y = CHUNK_HEIGHT - 1; }
+		if (pos.y < 0) { yInvalid = true; pos.y = 0; }
 
 		return &localCoords[pos.x][pos.y];
 	}

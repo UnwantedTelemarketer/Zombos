@@ -50,6 +50,8 @@ public:
 	float sfxvolume = 1.f;
 	float musicvolume = 1.f;
 	bool interacting, flashlightActive;
+	int xMin, xMax, yMin, yMax;
+	bool freeView = false;
 
 	//Game Stuff
 	Commands cmd;
@@ -252,6 +254,9 @@ public:
 				Audio::SetVolumeLoop(musicvolume, "ambient_day");
 				Audio::SetVolumeLoop(musicvolume, "ambient_cave");
 			}
+			if (ImGui::RadioButton("Free View Enabled (Experimental)", freeView)) {
+				freeView = !freeView;
+			}
 
 			ImGui::End();
 		}
@@ -312,6 +317,7 @@ public:
 			game.Setup(data.getInt("x_pos"), data.getInt("y_pos"), 0.5f, data.getInt("seed"), data.getInt("biomes"));
 			currentState = playing;
 			game.worldTime = data.getFloat("time");
+			map.SetWeather((weather)data.getInt("weather"));
 		}
 		ImGui::End();
 	}
@@ -351,13 +357,28 @@ public:
 
 		bool item = false;
 		ImVec2 playerPos;
-		for (int i = 0; i < CHUNK_HEIGHT; i++) {
-			for (int j = 0; j < CHUNK_WIDTH; j++) {
 
+
+		for (int i = 0; i < 30; i++){// player.coords.x - 15; i < player.coords.x + 15; i++) {
+			for (int j = 0; j < 30; j++) {//player.coords.y - 15; j < player.coords.y + 15; j++) {
+				vec2_i curCoords = { i, j };
+				Tile* curTile = nullptr;
+
+				curTile = map.CurrentChunk()->GetTileAtCoords(curCoords);
+				//curTile = map.GetTileFromThisOrNeighbor(curCoords);
+				float intensity = 0.f;
+				bool effectShowing = false;
+				Tile* underTile = map.CurrentChunk()->GetTileAtCoords({i+1,j});
+
+				if(curTile == nullptr){
+					printIcon = "!";
+					iconColor = { 1,0,0,1 };
+					goto printing;
+				}
+
+
+				intensity = curTile->brightness;
 				
-				float intensity = map.CurrentChunk()->localCoords[i][j].brightness;
-				Tile& curTile = map.CurrentChunk()->localCoords[i][j];
-				Tile& underTile = map.CurrentChunk()->localCoords[i + 1][j];
 
 				//Flashlight pyramid logic, idk weird math stuff. pack it away please
 				{//===================================================================
@@ -394,7 +415,6 @@ public:
 					if (intensity < 0.f) intensity = 0.f;
 					if (intensity > 1.f) { intensity = 1.f; }
 				}//===================================================================
-				bool effectShowing = false;
 				if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
 				{
 					printIcon = ENT_PLAYER;
@@ -415,12 +435,12 @@ public:
 				}
 
 				else {
-					printIcon = game.GetTileChar(curTile);
-					iconColor = game.GetTileColor(curTile, intensity);
+					printIcon = game.GetTileChar(*curTile);
+					iconColor = game.GetTileColor(*curTile, intensity);
 				}
 
-				if (i < CHUNK_HEIGHT - 1 && !effectShowing) {
-					Entity* curEnt = underTile.entity;
+				/*if (i < CHUNK_HEIGHT - 1 && !effectShowing) {
+					Entity* curEnt = underTile->entity;
 
 					if (curEnt != nullptr) {
 						if (curEnt->targeting() && curEnt->health > 0) {
@@ -430,31 +450,31 @@ public:
 							iconColor = ImVec4{ 1,0,0,1 };
 						}
 					}
-					if (underTile.id == 11) {
+					if (underTile->id == 11) {
 						//screen += "G";
 						//colors.push_back(game.GetTileColor(underTile, intensity));
 						if(printIcon != ENT_PLAYER) printIcon = "G";
-						iconColor = game.GetTileColor(underTile, intensity);
+						iconColor = game.GetTileColor(*underTile, intensity);
 					}
-					if (underTile.id == 12) {
+					if (underTile->id == 12) {
 						//screen += "J";
 						//colors.push_back(game.GetTileColor(underTile, intensity));
 						if (printIcon != ENT_PLAYER) printIcon = "J";
-						iconColor = game.GetTileColor(underTile, intensity);
+						iconColor = game.GetTileColor(*underTile, intensity);
 					}
-				}
+				}*/
 
-				if (curTile.hasItem)
+				if (curTile->hasItem)
 				{
 					item = true;
 					itemPositions.push_back(ImGui::GetCursorPos());
-					itemTiles.push_back(curTile);
-					itemIcons.push_back(game.GetItemChar(curTile));
+					itemTiles.push_back(*curTile);
+					itemIcons.push_back(game.GetItemChar(*curTile));
 					ImGui::Text(" ");
 					ImGui::SameLine();
 					continue;
 				}
-
+				printing:
 
 				//screen += game.GetTileChar(curTile);
 				//colors.push_back(game.GetTileColor(curTile, intensity));
@@ -1099,6 +1119,7 @@ public:
 			dat.ints.append("global_x", map.CurrentChunk()->globalChunkCoord.x);
 			dat.ints.append("global_y", map.CurrentChunk()->globalChunkCoord.y);
 			dat.floats.append("time", game.worldTime);
+			dat.ints.append("weather", map.currentWeather);
 
 			//Console::Log(map.CurrentChunk()->globalChunkCoord, SUCCESS, __LINE__);
 

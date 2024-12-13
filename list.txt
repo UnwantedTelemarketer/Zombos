@@ -16,6 +16,7 @@
  DONE - make day and night longer
  DONE - lerp dry tiles
  DONE - Add cave entrances
+ DONE - Change map rendering to center on player?
  - add seeds and farming
  - move factions, npcs and other stuff to eid
  - add cold mechanic (colder at night, too cold take damage)

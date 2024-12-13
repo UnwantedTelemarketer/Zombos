@@ -55,6 +55,7 @@ public:
 	void SpawnChunkEntities(std::shared_ptr<Chunk> chunk);
 	std::shared_ptr<Chunk> CurrentChunk();
 	Tile* TileAtPos(Vector2_I coords);
+	Tile* GetTileFromThisOrNeighbor(Vector2_I tilecoords);
 	biome GetBiome(Vector2_I coords);
 	void MakeNewChunk(Vector2_I coords);
 	void AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog);
@@ -82,6 +83,7 @@ public:
 	void floodFill(Vector2_I centerTile, int distance, bool twinkle);
 	void ResetLightValues();
 	bool UpdateWeather();
+	void SetWeather(weather we);
 	std::shared_ptr<Chunk> GetProperChunk(Vector2_I coords);
 
 	~Map();
@@ -180,10 +182,23 @@ bool Map::UpdateWeather() {
 			newWeather = (weather)Math::RandInt(0, 2);
 		}
 		ticksUntilWeatherUpdate = Math::RandInt(600, 1000);
-		currentWeather = newWeather;
+		SetWeather(newWeather);
 		return true;
 	}
 	return false;
+}
+
+void Map::SetWeather(weather we) {
+	currentWeather = we;
+	switch (currentWeather) {
+	case thunder:
+	case rainy:
+		Audio::PlayLoop("dat/sounds/rain.mp3", "rain");
+		break;
+	case clear:
+		Audio::StopLoop("rain");
+		break;
+	}
 }
 
 void Map::ReadChunk(Vector2_I curChunk, std::string path) {
@@ -238,6 +253,8 @@ std::shared_ptr<Chunk> Map::CurrentChunk() {
 	}
 }
 
+
+
 std::shared_ptr<Chunk> Map::GetProperChunk(Vector2_I coords) {
 	return !isUnderground
 		? world.chunks[{coords.x, coords.y}]
@@ -250,6 +267,31 @@ std::shared_ptr<Chunk> Map::GetProperChunk(Vector2_I coords) {
 Tile* Map::TileAtPos(Vector2_I coords)
 {
 	return &CurrentChunk()->localCoords[coords.x][coords.y];
+}
+
+Tile* Map::GetTileFromThisOrNeighbor(Vector2_I tilecoords)
+{
+	Tile* curTile;
+	vec2_i globalCoords = c_glCoords;
+	if (tilecoords.x > 30) {
+		tilecoords.x -= 30;
+		globalCoords.x += 1;
+	}
+	else if (tilecoords.x < 0) {
+		tilecoords.x += 30;
+		globalCoords.x -= 1;
+	}
+	if (tilecoords.y > 30) {
+		tilecoords.y -= 30;
+		globalCoords.y += 1;
+	}
+	if (tilecoords.y < 0) {
+		tilecoords.y += 30;
+		globalCoords.y -= 1;
+	}
+
+	curTile = world.chunks[globalCoords]->GetTileAtCoords(tilecoords);
+	return curTile;
 }
 
 biome Map::GetBiome(Vector2_I coords) 
