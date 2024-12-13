@@ -5,8 +5,6 @@
  - Fixed a few bugs, but added a ton. I literally cannot figure out why some of these bugs 
    have showed up, and performance seems to have dropped a decent amount (again not sure why).
 
- - Disabled rain temporarily for bug reasons
-
  - Output file for all console outs.
 
 Known Bugs

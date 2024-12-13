@@ -302,7 +302,7 @@ struct Tile {
 			tileColor = { 1, 0, 0 };
 			break;
 		case nothing:
-			Utilities::Lerp("bgColor", &tileColor, mainTileColor, 0.5f);
+			Utilities::Lerp("tileColor" + std::to_string(Math::RandInt(1,50000)), &tileColor, mainTileColor, 0.5f);
 			break;
 		}
 		 
