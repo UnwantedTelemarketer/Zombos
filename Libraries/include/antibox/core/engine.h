@@ -30,7 +30,7 @@ namespace antibox {
 		bool firstClick, movingCam;
 		int keyDownCode; //Variable holding the last pressed key
 		int currentSceneID;
-		std::vector<lerp_pack> floatsToLerp;
+		std::map<std::string, lerp_pack> floatsToLerp;
 
 		//Singleton for engine
 		static Engine& Instance();
@@ -41,7 +41,7 @@ namespace antibox {
 		void SetVolume(float volume);
 		void SetVolumeLoop(float volume, std::string name);
 		float GetVolume();
-		void LerpFloat(float* val, float endVal, float time);
+		void LerpFloat(std::string lerpID, float* val, float endVal, float time);
 
 		~Engine(); //Destructor
 

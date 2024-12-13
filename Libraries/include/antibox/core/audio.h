@@ -16,7 +16,7 @@ private:
 public:
 	ma_result init();
 	void PlayAudio(const char* path);
-	void PlayAudioLooping(const char* path, std::string name);
+	void PlayAudioLooping(std::string, std::string name);
 	void StopAudioLooping(std::string name);
 	void SetVolume(float volume);
 	void SetVolumeLoop(float volume, std::string name);

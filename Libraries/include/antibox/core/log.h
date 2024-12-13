@@ -12,6 +12,7 @@ namespace antibox {
 
 namespace Console {
 
+	extern std::vector<std::string> allLogs;
 
 	//Logs a message to the command prompt. ERROR is red, WARNING is yellow, SUCCESS is green, LOG is white.
 	void Log(std::string message, textColor type, int lineNum);

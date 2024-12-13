@@ -34,7 +34,7 @@ void AudioEngine::StopAudioLooping(std::string name) {
     ma_device_stop(mDevices[name]);
 }
 
-void AudioEngine::PlayAudioLooping(const char* path, std::string name) {
+void AudioEngine::PlayAudioLooping(std::string path, std::string name) {
 
     if (mDevices.count(name) != 0) {
         ma_device_uninit(mDevices[name]); // Uninitialize and clean up the device.
@@ -55,7 +55,7 @@ void AudioEngine::PlayAudioLooping(const char* path, std::string name) {
     mDevices.insert({ name, currentDevice });
 
     // Initialize the decoder with the specified audio file
-    result = ma_decoder_init_file(path, NULL, currentDecoder);
+    result = ma_decoder_init_file(path.c_str(), NULL, currentDecoder);
     if (result != MA_SUCCESS) {
         std::cout << "Failed to initialize decoder for file: " << path << std::endl;
         return;
@@ -94,7 +94,13 @@ void AudioEngine::SetVolumeLoop(float volume, std::string name)
 {
     // Check if the device exists for the given name
     if (mDevices.count(name) == 0) {
+        std::cout << "this device does not exist." << std::endl;
         return;
+    }
+
+    if (mDevices[name] == nullptr) {
+        std::cout << "this device is in the map but is a nullptr." << std::endl;
+        return;  // Or handle this error more gracefully
     }
 
     // Ensure the volume is within a valid range (0.0f to 1.0f)

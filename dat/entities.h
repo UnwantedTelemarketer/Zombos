@@ -302,7 +302,7 @@ struct Tile {
 			tileColor = { 1, 0, 0 };
 			break;
 		case nothing:
-			Utilities::Lerp(&tileColor, mainTileColor, 0.5f);
+			Utilities::Lerp("bgColor", &tileColor, mainTileColor, 0.5f);
 			break;
 		}
 		 

@@ -34,11 +34,11 @@ namespace antibox {
 	namespace Utilities {
 		float deltaTime() { return antibox::Engine::Instance().deltaTime(); }
 		float getFPS() { return antibox::Engine::Instance().getFPS(); }
-		void Lerp(float* val, float endVal, float time) { antibox::Engine::Instance().LerpFloat(val, endVal, time); }
-		void Lerp(Vector3* val, Vector3 endVal, float time) {
-			antibox::Engine::Instance().LerpFloat(&val->x, endVal.x, time);
-			antibox::Engine::Instance().LerpFloat(&val->y, endVal.y, time);
-			antibox::Engine::Instance().LerpFloat(&val->z, endVal.z, time);
+		void Lerp(std::string lerpID, float* val, float endVal, float time) { antibox::Engine::Instance().LerpFloat(lerpID, val, endVal, time); }
+		void Lerp(std::string lerpID, Vector3* val, Vector3 endVal, float time) {
+			antibox::Engine::Instance().LerpFloat(lerpID + "1", &val->x, endVal.x, time);
+			antibox::Engine::Instance().LerpFloat(lerpID + "2", &val->y, endVal.y, time);
+			antibox::Engine::Instance().LerpFloat(lerpID + "3", &val->z, endVal.z, time);
 		}
 	}
 

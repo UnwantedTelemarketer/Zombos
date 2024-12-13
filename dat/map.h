@@ -56,6 +56,9 @@ public:
 	std::shared_ptr<Chunk> CurrentChunk();
 	Tile* TileAtPos(Vector2_I coords);
 	Tile* GetTileFromThisOrNeighbor(Vector2_I tilecoords);
+	int EffectAtPos(Vector2_I coords);
+	int GetEffectFromThisOrNeighbor(Vector2_I tilecoords);
+	void SetEffectInThisOrNeighbor(Vector2_I tilecoords, int effect);
 	biome GetBiome(Vector2_I coords);
 	void MakeNewChunk(Vector2_I coords);
 	void AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog);
@@ -116,6 +119,15 @@ void Map::CreateMap(int l_seed, int b_seed)
 	biomeTempNoise.SetSeed(biomeSeed);
 	biomeMoistureNoise.SetSeed(Math::RandInt(1, 2147483647));
 	UpdateMemoryZone(c_glCoords);
+
+	for (int i = 0; i < 30; i++)
+	{
+		for (int j = 0; j < 30; j++)
+		{
+			effectLayer.localCoords[i][j] = 0;
+		}
+	}
+
 }
 
 static void T_SaveChunks(std::shared_ptr<Chunk> chunk) {
@@ -264,6 +276,49 @@ std::shared_ptr<Chunk> Map::GetProperChunk(Vector2_I coords) {
 //std::vector<Tile> GetTileInRadius(vec2_i center) {
 
 //}
+
+int Map::EffectAtPos(Vector2_I coords) {
+	return effectLayer.localCoords[coords.x][coords.y];
+}
+
+void Map::SetEffectInThisOrNeighbor(Vector2_I tilecoords, int effect) {
+
+	if (tilecoords.x >= 30) {
+		tilecoords.x -= 30;
+	}
+	else if (tilecoords.x < 0) {
+		tilecoords.x += 30;
+	}
+	if (tilecoords.y >= 30) {
+		tilecoords.y -= 30;
+	}
+	if (tilecoords.y < 0) {
+		tilecoords.y += 30;
+	}
+
+	effectLayer.localCoords[tilecoords.x][tilecoords.y] = effect;
+
+}
+
+int Map::GetEffectFromThisOrNeighbor(Vector2_I tilecoords) {
+
+	if (tilecoords.x >= 30) {
+		tilecoords.x -= 30;
+	}
+	else if (tilecoords.x < 0) {
+		tilecoords.x += 30;
+	}
+	if (tilecoords.y >= 30) {
+		tilecoords.y -= 30;
+	}
+	if (tilecoords.y < 0) {
+		tilecoords.y += 30;
+	}
+
+	return effectLayer.localCoords[tilecoords.x][tilecoords.y];
+	
+}
+
 Tile* Map::TileAtPos(Vector2_I coords)
 {
 	return &CurrentChunk()->localCoords[coords.x][coords.y];
@@ -273,7 +328,7 @@ Tile* Map::GetTileFromThisOrNeighbor(Vector2_I tilecoords)
 {
 	Tile* curTile;
 	vec2_i globalCoords = c_glCoords;
-	if (tilecoords.x > 30) {
+	if (tilecoords.x >= 30) {
 		tilecoords.x -= 30;
 		globalCoords.x += 1;
 	}
@@ -281,7 +336,7 @@ Tile* Map::GetTileFromThisOrNeighbor(Vector2_I tilecoords)
 		tilecoords.x += 30;
 		globalCoords.x -= 1;
 	}
-	if (tilecoords.y > 30) {
+	if (tilecoords.y >= 30) {
 		tilecoords.y -= 30;
 		globalCoords.y += 1;
 	}
@@ -290,7 +345,12 @@ Tile* Map::GetTileFromThisOrNeighbor(Vector2_I tilecoords)
 		globalCoords.y -= 1;
 	}
 
-	curTile = world.chunks[globalCoords]->GetTileAtCoords(tilecoords);
+	if (!isUnderground) {
+		curTile = world.chunks[globalCoords]->GetTileAtCoords(tilecoords);
+	}
+	else {
+		curTile = underground.chunks[globalCoords]->GetTileAtCoords(tilecoords);
+	}
 	return curTile;
 }
 
@@ -422,7 +482,7 @@ void Map::CheckBounds(Player* p) {
 	}
 
 	if (changed) {
-		ClearEffects();
+		//ClearEffects();
 		UpdateMemoryZone(c_glCoords);
 	}
 
@@ -770,13 +830,13 @@ void Map::GenerateTomb(std::shared_ptr<Chunk> chunk) {
 	chunk->entities.push_back(zomb);
 }
 
-void Map::ClearEffects() {
+/*void Map::ClearEffects() {
 	for (int i = 0; i < CHUNK_WIDTH; i++) {
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
-			effectLayer.localCoords[i][j] = 0;
+			effectLayer.[i][j] = 0;
 		}
 	}
-}
+}*/
 
 std::vector<Vector2_I> Map::GetLine(Vector2_I startTile, Vector2_I endTile, int limit) {
 	std::vector<Vector2_I> lineList;

@@ -1,6 +1,8 @@
 #include "engine.h"
 #include "app.h"
 #include "../graphics/shader.h"
+#include <iostream>
+#include <fstream>  
 
 namespace antibox
 {
@@ -35,7 +37,7 @@ namespace antibox
 		window->init(props);
 		mRenderManager.Init();
 		mApp->Init();
-		mAudio->init();
+		Console::Log(mAudio->init(), text::red, __LINE__);
 		prevtime = std::chrono::high_resolution_clock::now();
 	}
 
@@ -43,8 +45,11 @@ namespace antibox
 		mApp->Init();
 	}
 
-	void Engine::LerpFloat(float* val, float endVal, float time) {
-		floatsToLerp.push_back({ val, time, *val, {endVal, 0} });
+	void Engine::LerpFloat(std::string lerpID, float* val, float endVal, float time) {
+		if (floatsToLerp.count(lerpID) == 0) {
+			floatsToLerp.erase(lerpID);
+		}
+		floatsToLerp.insert({ lerpID, { val, time, *val, { endVal, 0 } } });
 	}
 
 
@@ -65,6 +70,12 @@ namespace antibox
 			closeScene = glfwWindowShouldClose(window->glfwin());
 		}
 		End(); //Once the user closes the window, run End
+		std::ofstream myfile("output_log.txt");
+		for (size_t i = 0; i < Console::allLogs.size(); i++)
+		{
+			myfile << Console::allLogs[i];
+		}
+		myfile.close();
 	}
 
 	void Engine::ChangeApp(int appNum) {
@@ -137,21 +148,27 @@ namespace antibox
 			counter = 0;
 		} //report the framerate and ms between frames
 		
+
 		//Lerp all currently lerping things
-		for (size_t i = 0; i < floatsToLerp.size(); i++)
-		{
-			lerp_pack* pack = &floatsToLerp[i];
-			pack->endVal_Time.y += deltaTime() / 1000.f;
-			float normalizedTime = pack->endVal_Time.y / pack->startingTime;
-			*pack->val = Math::Lerp(normalizedTime, pack->startingVal, pack->endVal_Time.x);
-			if (*pack->val >= pack->endVal_Time.x) 
-			{ 
-				*pack->val = pack->endVal_Time.x;
-				floatsToLerp.erase(floatsToLerp.begin() + i); 
-				i--;
-				if (i >= floatsToLerp.size()) { break; }
+		if (!floatsToLerp.empty()) {
+			for (auto currentPack = floatsToLerp.begin(); currentPack != floatsToLerp.end();) {
+				lerp_pack& pack = currentPack->second;
+				pack.endVal_Time.y += deltaTime() / 1000.f;
+				float normalizedTime = pack.endVal_Time.y / pack.startingTime;
+
+
+				*pack.val = Math::Lerp(normalizedTime, pack.startingVal, pack.endVal_Time.x);
+
+				if (*pack.val >= pack.endVal_Time.x) {
+					*pack.val = pack.endVal_Time.x;
+					currentPack = floatsToLerp.erase(currentPack); // Erase and get the next valid iterator
+				}
+				else {
+					++currentPack; // Move to the next element
+				}
 			}
 		}
+
 
 		if(movingCam) RotateCam();
 

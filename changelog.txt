@@ -1,3 +1,21 @@
+--v0.1.4 Changes--
+
+ - Added experimental Free View mode (center on player)
+
+ - Fixed a few bugs, but added a ton. I literally cannot figure out why some of these bugs 
+   have showed up, and performance seems to have dropped a decent amount (again not sure why).
+
+ - Disabled rain temporarily for bug reasons
+
+ - Output file for all console outs.
+
+Known Bugs
+
+ - Entering caves with free view mode crashes the game.
+ - Trees/Cacti don't show up properly across chunks in Free View
+ - Background colors dont always change properly
+
+
 --v0.1.3 Changes--
 
  - Added caves into the desert (aggressive zombie inside)

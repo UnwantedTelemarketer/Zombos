@@ -384,21 +384,21 @@ void GameManager::MovePlayer(int dir) {
 	if(!isDark())
 	if (curBiome == desert) { 
 		if (lerpingTo != desert) {
-			Utilities::Lerp(&bgColor, BG_DESERT, 0.5f);
+			Utilities::Lerp("bgColor", &bgColor, BG_DESERT, 0.5f);
 			mainBGcolor = BG_DESERT;
 			currentBiome = lerpingTo = desert;
 		}
 	}
 	else if (curBiome == taiga) {
 		if (lerpingTo != taiga) {
-			Utilities::Lerp(&bgColor, BG_TAIGA, 1.f);
+			Utilities::Lerp("bgColor", &bgColor, BG_TAIGA, 1.f);
 			mainBGcolor = BG_TAIGA;
 			currentBiome = lerpingTo = taiga;
 		}
 	}
 	else if (curBiome == forest){
 		if (lerpingTo != forest) {
-			Utilities::Lerp(&bgColor, BG_FOREST, 1.f);
+			Utilities::Lerp("bgColor", &bgColor, BG_FOREST, 1.f);
 			mainBGcolor = BG_FOREST;
 			currentBiome = lerpingTo = forest;
 		}
@@ -406,14 +406,14 @@ void GameManager::MovePlayer(int dir) {
 	else if (curBiome == ocean) {
 		if (lerpingTo != ocean) {
 			Audio::Play("dat/sounds/movement/enter_water.wav");
-			Utilities::Lerp(&bgColor, BG_WATER, 1.f);
+			Utilities::Lerp("bgColor", &bgColor, BG_WATER, 1.f);
 			mainBGcolor = BG_WATER;
 			currentBiome = lerpingTo = ocean;
 		}
 	}
 	else {
 		if (lerpingTo != swamp) {
-			Utilities::Lerp(&bgColor, BG_SWAMP, 0.5f);
+			Utilities::Lerp("bgColor", &bgColor, BG_SWAMP, 0.5f);
 			mainBGcolor = BG_SWAMP;
 			currentBiome = lerpingTo = swamp;
 		}
@@ -425,7 +425,7 @@ void GameManager::MovePlayer(int dir) {
 
 
 void GameManager::UpdateEffects() {
-	
+
 	//1 is smoke, 2 is rain
 	int tempMap[30][30]{};
 
@@ -639,7 +639,7 @@ void GameManager::AttemptAttack(Entity* ent)
 			Math::PushBackLog(&actionLog, "Zombie bites you for 10 damage!");
 			mPlayer.TakeDamage(pierceDamage, 10);
 			bgColor = { 1,0,0 };
-			Utilities::Lerp(&bgColor, mainBGcolor, 0.5f);
+			Utilities::Lerp("bgColor", &bgColor, mainBGcolor, 0.5f);
 		}
 	}
 }
@@ -739,11 +739,11 @@ std::string GameManager::GetWalkSound(){
 ImVec4 GameManager::GetPlayerColor() {
 	Vector3 end_color = { pInv.clothes.x, pInv.clothes.y, pInv.clothes.z};
 	int amount_of_colors = 1;
-	if (mainMap.CurrentChunk()->localCoords[mPlayer.coords.x + 1][mPlayer.coords.y].double_size)
+	/*if (mainMap.CurrentChunk()->localCoords[mPlayer.coords.x + 1][mPlayer.coords.y].double_size)
 	{
 		end_color += { 0, 0.35, 0 };
 		amount_of_colors++;
-	}
+	}*/
 	switch (mPlayer.coveredIn) {
 	case water:
 		end_color += { 0, 0, 0.8 };

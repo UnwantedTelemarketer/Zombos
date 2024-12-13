@@ -22,6 +22,7 @@ struct Chunk {
 		if (pos.x < 0) { xInvalid = true; pos.x = 0; }
 		if (pos.y >= CHUNK_HEIGHT) { yInvalid = true; pos.y = CHUNK_HEIGHT - 1; }
 		if (pos.y < 0) { yInvalid = true; pos.y = 0; }
+		if (xInvalid && yInvalid) { return nullptr; }
 
 		return &localCoords[pos.x][pos.y];
 	}

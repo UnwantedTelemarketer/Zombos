@@ -105,6 +105,8 @@ public:
 
 		player.currentWeapon.mod = 5;
 
+		sfxvolume = Audio::GetVolume();
+
 		itemLoading.join();
 		tileLoading.join();
 		Console::Log("Done!", text::green, __LINE__);
@@ -238,6 +240,19 @@ public:
 			map.ClearLine();
 			map.DrawLine(map.GetLine(player.coords, player.crosshair, 25));
 		};
+		
+		if (freeView) {
+			xMin = player.coords.x - 15;
+			xMax = player.coords.x + 15;
+			yMin = player.coords.y - 15;
+			yMax = player.coords.y + 15;
+		}
+		else {
+			xMin = 0;
+			xMax = CHUNK_HEIGHT;
+			yMin = 0;
+			yMax = CHUNK_WIDTH;
+		}
 	}
 
 	void ImguiRender() override
@@ -358,17 +373,22 @@ public:
 		bool item = false;
 		ImVec2 playerPos;
 
-
-		for (int i = 0; i < 30; i++){// player.coords.x - 15; i < player.coords.x + 15; i++) {
-			for (int j = 0; j < 30; j++) {//player.coords.y - 15; j < player.coords.y + 15; j++) {
+		for (int i = xMin; i < xMax; i++){
+			for (int j = yMin; j < yMax; j++) {
 				vec2_i curCoords = { i, j };
 				Tile* curTile = nullptr;
+				Tile* underTile = nullptr;
 
-				curTile = map.CurrentChunk()->GetTileAtCoords(curCoords);
-				//curTile = map.GetTileFromThisOrNeighbor(curCoords);
+				if(!freeView) { 
+					curTile = map.CurrentChunk()->GetTileAtCoords(curCoords);
+					underTile = map.CurrentChunk()->GetTileAtCoords({ curCoords.x + 1, curCoords.y });
+				}
+				else { 
+					curTile = map.GetTileFromThisOrNeighbor(curCoords);
+					underTile = map.GetTileFromThisOrNeighbor({ curCoords.x + 1, curCoords.y });
+				}
 				float intensity = 0.f;
 				bool effectShowing = false;
-				Tile* underTile = map.CurrentChunk()->GetTileAtCoords({i+1,j});
 
 				if(curTile == nullptr){
 					printIcon = "!";
@@ -421,13 +441,13 @@ public:
 					iconColor = game.GetPlayerColor();
 				}
 
-				else if (map.effectLayer.localCoords[i][j] == 1)
+				else if (map.GetEffectFromThisOrNeighbor(curCoords) == 1)
 				{
 					effectShowing = true;
 					printIcon = "?";
 					iconColor = Cosmetic::SmokeColor();
 				}
-				else if (map.effectLayer.localCoords[i][j] == 2)
+				else if (map.GetEffectFromThisOrNeighbor(curCoords) == 2)
 				{
 					effectShowing = true;
 					printIcon = "a";
@@ -439,7 +459,7 @@ public:
 					iconColor = game.GetTileColor(*curTile, intensity);
 				}
 
-				/*if (i < CHUNK_HEIGHT - 1 && !effectShowing) {
+				if (i < CHUNK_HEIGHT - 1 && !effectShowing && underTile != nullptr) {
 					Entity* curEnt = underTile->entity;
 
 					if (curEnt != nullptr) {
@@ -462,7 +482,7 @@ public:
 						if (printIcon != ENT_PLAYER) printIcon = "J";
 						iconColor = game.GetTileColor(*underTile, intensity);
 					}
-				}*/
+				}
 
 				if (curTile->hasItem)
 				{

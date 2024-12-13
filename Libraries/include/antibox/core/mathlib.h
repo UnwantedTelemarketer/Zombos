@@ -28,9 +28,6 @@ namespace antibox {
 		inline float Lerp(float time, float startVal, float endVal) {
 			return (((endVal - startVal) * time) + startVal);
 		}
-		/*inline Vector3 Lerp(float time, Vector3 startCol, Vector3 endCol) {
-			return { Lerp(time, startCol.x, endCol.x), Lerp(time, startCol.y, endCol.y), Lerp(time, startCol.z, endCol.z) };
-		}*/
 	}
 
 

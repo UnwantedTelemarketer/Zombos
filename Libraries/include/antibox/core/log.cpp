@@ -5,9 +5,15 @@
 using namespace antibox;
 
 
+	std::vector<std::string> Console::allLogs;
+
+
 void Console::Log(std::string message, textColor type = "\033[0;37m", int lineNum = -1)
 { 
-	std::cout << "[ Line " << lineNum << " ]: " << type << message << "\033[0m\n" << std::endl;
+	std::string msg = "[ Line " + std::to_string(lineNum) + " ]: " + type + message + "\033[0m\n";
+	std::cout << msg << std::endl;
+	allLogs.push_back(msg);
+
 }
 /*void Console::Log(unsigned char* message, textColor type = "\033[0;37m", int lineNum = -1)
 {
@@ -15,38 +21,52 @@ void Console::Log(std::string message, textColor type = "\033[0;37m", int lineNu
 }*/
 void Console::Log(const char* message, textColor type = "\033[0;37m", int lineNum = -1)
 {
-	std::cout << "[ Line " << lineNum << " ]: " << type << message << "\033[0m\n" << std::endl;
+	std::string msg = "[ Line " + std::to_string(lineNum) + " ]: " + type + message + "\033[0m\n";
+	std::cout << msg << std::endl;
+	allLogs.push_back(msg);
 }
 
 void Console::Log(uint32_t message, textColor type = "\033[0;37m", int lineNum = -1)
 {
-	std::cout << "[ Line " << lineNum << " ]: " << type << std::to_string(message) << "\033[0m\n" << std::endl;
+	std::string msg = "[ Line " + std::to_string(lineNum) + " ]: " + type + std::to_string(message) + "\033[0m\n";
+	std::cout << msg << std::endl;
+	allLogs.push_back(msg);
 }
 void Console::Log(int number, textColor type = "\033[0;37m", int lineNum = -1)
 {
-	std::cout << "[ Line " << lineNum << " ]: " << type << std::to_string(number) << "\033[0m\n" << std::endl;
+	std::string msg = "[ Line " + std::to_string(lineNum) + " ]: " + type + std::to_string(number) + "\033[0m\n";
+	std::cout << msg << std::endl;
+	allLogs.push_back(msg);
 }
 void Console::Log(double number, textColor type = "\033[0;37m", int lineNum = -1)
 {
-	std::cout << "[ Line " << lineNum << " ]: " << type << std::to_string(number) << "\033[0m\n" << std::endl;
+	std::string msg = "[ Line " + std::to_string(lineNum) + " ]: " + type + std::to_string(number) + "\033[0m\n";
+	std::cout << msg << std::endl;
+	allLogs.push_back(msg);
 }
 void Console::Log(bool tf, textColor type = "\033[0;37m", int lineNum = -1)
 {
 	std::string message = tf ? "True" : "False";
-	std::cout << "[ Line " << lineNum << " ]: " << type << message << "\033[0m\n" << std::endl;
+	std::string msg = "[ Line " + std::to_string(lineNum) + " ]: " + type + message + "\033[0m\n";
+	std::cout << msg << std::endl;
+	allLogs.push_back(msg);
 }
 void Console::Log(void* pointer, textColor type = "\033[0;37m", int lineNum = -1)
 {
+	std::string msg;
 	if (pointer == nullptr) {
-		std::cout << "[ Line " << lineNum << " ]: " << type << "nullptr" << "\033[0m\n" << std::endl;
+		msg = "[ Line " + std::to_string(lineNum) + " ]: " + type + "nullptr" + "\033[0m\n";
 	}
 	else {
-		std::cout << "[ Line " << lineNum << " ]: " << type << pointer << "\033[0m\n" << std::endl;
+		msg = "[ Line " + std::to_string(lineNum) + " ]: " + type + "pointer" + "\033[0m\n";
 	}
+	std::cout << msg << std::endl;
+	allLogs.push_back(msg);
 }
 
 void Console::Log(std::vector<std::string> list, textColor type = "\033[0;37m", int lineNum = -1)
 {
+	std::string msg;
 	std::string message = "List : {";
 	for (size_t i = 0; i < list.size(); i++)
 	{
@@ -54,17 +74,23 @@ void Console::Log(std::vector<std::string> list, textColor type = "\033[0;37m", 
 		message += ", ";
 	}
 	message += "}";
-	std::cout << "[ Line " << lineNum << " ]: " << type << message << "\033[0m\n" << std::endl;
+	msg = "[ Line " + std::to_string(lineNum) + " ]: " + type + message + "\033[0m\n";
+	std::cout << msg << std::endl;
+	allLogs.push_back(msg);
 }
 
 void Console::Log(antibox::Vector2 vec, textColor type = "\033[0;37m", int lineNum = -1)
 {
-	std::cout << "[ Line " << lineNum << " ]: " << type << "Vector2 {" << std::to_string(vec.x) + ", " + std::to_string(vec.y) << "}" << "\033[0m\n" << std::endl;
+	std::string msg = "[ Line " + std::to_string(lineNum) + " ]: " + type + "Vector2 {" + std::to_string(vec.x) + ", " + std::to_string(vec.y) + "}" + "\033[0m\n";
+	std::cout << msg << std::endl;
+	allLogs.push_back(msg);
 }
 
 void Console::Log(antibox::Vector2_I vec, textColor type = "\033[0;37m", int lineNum = -1)
 {
-	std::cout << "[ Line " << lineNum << " ]: " << type << "Vector2 {" << std::to_string(vec.x) + ", " + std::to_string(vec.y) << "}" << "\033[0m\n" << std::endl;
+	std::string msg = "[ Line " + std::to_string(lineNum) + " ]: " + type + "Vector2 {" + std::to_string(vec.x) + ", " + std::to_string(vec.y) + "}" + "\033[0m\n";
+	std::cout << msg << std::endl;
+	allLogs.push_back(msg);
 }
 
 //template <typename T, typename T2>
