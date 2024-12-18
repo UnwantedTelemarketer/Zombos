@@ -515,6 +515,19 @@ void GameManager::UpdateTick() {
 			mPlayer.CoverIn(tileLiquid, Math::RandInt(10, 30));
 		}
 
+		if (mPlayer.coveredIn == water) {
+			mPlayer.bodyTemp -= 0.025f;
+		}
+
+		else if (!isDark()) {
+			mPlayer.bodyTemp += 0.025f;
+			if (mPlayer.bodyTemp > 98.5f) mPlayer.bodyTemp = 98.5f;
+		}
+
+		if (mPlayer.bodyTemp < 95.f) {
+			mPlayer.health -= 1.f;
+		}
+
 		//soak items and tick down to dry them off in your inventory
 		for (int i = 0; i < pInv.items.size(); i++)
 		{
@@ -523,17 +536,6 @@ void GameManager::UpdateTick() {
 				if (Math::RandInt(1, 7) == 5) {
 					pInv.items[i].CoverIn(mPlayer.coveredIn, Math::RandInt(30, 120));
 				}
-				if (mPlayer.coveredIn == water) {
-					mPlayer.bodyTemp -= 0.025f;
-				}
-			}
-			else if(!isDark()) {
-				mPlayer.bodyTemp += 0.025f;
-				if (mPlayer.bodyTemp > 98.5f) mPlayer.bodyTemp = 98.5f;
-			}
-
-			if (mPlayer.bodyTemp < 95.f) {
-				mPlayer.health -= 1.f;
 			}
 
 			//if the item is soaked, dry it off slowly

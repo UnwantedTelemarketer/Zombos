@@ -1,31 +1,13 @@
-[ Line 112 ]: [0;37mLoading Tiles from files...[0m
 [ Line 216 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
 [ Line 77 ]: [0;37mLoading Items from files...[0m
+[ Line 112 ]: [0;37mLoading Tiles from files...[0m
 [ Line 79 ]: [1;32mLoaded texture from res/plank.png.[0m
 [ Line 90 ]: [0;37mLoaded Items![0m
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
 [ Line 127 ]: [0;37mLoaded Tiles![0m
 [ Line 112 ]: [1;32mDone![0m
 [ Line 40 ]: [1;31m0[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/249251.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/250251.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/251251.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/250248.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/251248.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/250251.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/251251.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/252251.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/250248.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/251248.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/252248.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/251251.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/252251.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/251249.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/251250.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/251251.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/254249.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/254250.chunk[0m
-[ Line 217 ]: [1;32mReading Chunk from dat/map/254251.chunk[0m
+[ Line 129 ]: [1;32mset weather rain[0m
 [ Line -1 ]: [0;37mNow saving...[0m
 [ Line 304 ]: [1;32mWrote to file dat/eid/save.eid[0m
-[ Line 1159 ]: [1;32mSave complete in 11.242684ms.[0m
+[ Line 1159 ]: [1;32mSave complete in 10.979297ms.[0m
