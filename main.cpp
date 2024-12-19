@@ -11,7 +11,7 @@
 
 using namespace antibox;
 
-enum GameState { playing, menu };
+enum GameState { playing, menu, map_gen_test };
 static char console_commands[128] = "";
 
 class Caves : public App {
@@ -54,6 +54,7 @@ public:
 	bool freeView = false;
 
 	//Game Stuff
+	std::shared_ptr<Chunk> test_chunk;
 	Commands cmd;
 	GameManager game;
 	Inventory& pInv = game.pInv;
@@ -84,6 +85,7 @@ public:
 	std::shared_ptr<GameObject> p;
 
 	void Init() override {
+		test_chunk = std::make_shared<Chunk>();
 		std::thread itemLoading = Items::LoadItemsFromFiles(&game.item_icons);
 		std::thread tileLoading = Tiles::LoadTilesFromFiles(&game.tile_colors);
 
@@ -102,6 +104,7 @@ public:
 		gameScreen.showDialogue = true;
 		gameScreen.console_showing = false;
 		gameScreen.helpMenu = true;
+		game.LoadData();
 
 		player.currentWeapon.mod = 5;
 
@@ -110,6 +113,8 @@ public:
 		itemLoading.join();
 		tileLoading.join();
 		Console::Log("Done!", text::green, __LINE__);
+		map.SetupNoise(-1, -1);
+		map.BuildChunk(test_chunk);
 	}
 
 	void Update() {
@@ -118,8 +123,13 @@ public:
 		if (colChangeTime >= 1.f) {
 			colChangeTime = 0;
 		}
+
+
+		if (Input::KeyDown(KEY_M)){
+			currentState = map_gen_test;
+		}
 		//the rest of the update is game logic so we stop here in the menu
-		if (currentState == menu) { return; }
+		if (currentState != playing) { return; }
 
 		//-=================================================================
 
@@ -282,11 +292,69 @@ public:
 		case menu:
 			MenuScene();
 			break;
+		case map_gen_test:
+			MapTool();
+			break;
 		default:
 			break;
 		}
 
 
+	}
+
+	void MapTool() {
+		ImGui::Begin("Settings");
+		ImGui::InputInt("Biome Seed", &map.biomeSeed);
+		ImGui::InputInt("Land Seed", &map.landSeed);
+		ImGui::InputFloat("Temperature Minimum", &map.tempMin, 0.1f);
+		ImGui::InputFloat("Moisture Minimum", &map.moistureMin, 0.1f);
+		if (ImGui::Button("Generate")) {
+			map.BuildChunk(test_chunk);
+		}
+		ImGui::End();
+
+		ImGui::Begin("Map Generator");
+		bool item = false;
+		ImGui::PushFont(Engine::Instance().getFont("main"));
+		for (int i = 0; i < CHUNK_WIDTH; i++) {
+			for (int j = 0; j < CHUNK_HEIGHT; j++) {
+				Tile* curTile = test_chunk->GetTileAtCoords({ i, j });
+
+				if (curTile->hasItem)
+				{
+					item = true;
+					itemPositions.push_back(ImGui::GetCursorPos());
+					itemTiles.push_back(*curTile);
+					itemIcons.push_back(game.GetItemChar(*curTile));
+					ImGui::Text(" ");
+					ImGui::SameLine();
+					continue;
+				}
+
+				printIcon = game.GetTileChar(*curTile);
+				iconColor = game.GetTileColor(*curTile, 0.f);
+
+				ImGui::TextColored(iconColor, printIcon.c_str());
+				ImGui::SameLine();
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 0.05);
+			}
+			ImGui::Text("");
+		}
+		if (item) {
+			ImGui::PopFont();
+			ImGui::PushFont(Engine::Instance().getFont("items"));
+			for (size_t i = 0; i < itemIcons.size(); i++)
+			{
+				ImGui::SetCursorPos(itemPositions[i]);
+
+				ImGui::TextColored(game.GetItemColor(itemTiles[i]), itemIcons[i].c_str());
+			}
+			itemTiles.clear();
+			itemIcons.clear();
+			itemPositions.clear();
+		}
+
+		ImGui::End();
 	}
 
 	void MenuScene() {
@@ -297,6 +365,7 @@ public:
 		ImGui::Text("Los Zombos");
 		ImGui::SetFontSize(16.f);
 		ImGui::End();
+
 
 		ImGui::Begin("Menu");
 		if (gameScreen.createChar) { Create_Character(); }

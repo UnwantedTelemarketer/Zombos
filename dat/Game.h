@@ -75,7 +75,7 @@ public:
 	Entity* NearEnt();
 
 	bool EnterCave();
-
+	void LoadData();
 	std::string GetWalkSound();
 
 	std::string GetItemChar(Tile tile);
@@ -97,8 +97,21 @@ static void T_UpdateChunk(GameManager* gm, Vector2_I coords)
 	gm->mainMap.UpdateTiles(coords);
 }
 
+void GameManager::LoadData() {
+	OpenedData data;
+	ItemReader::GetDataFromFile("dialogue.eid", "RANDOM", &data);
+	for (size_t i = 1; i < 6; i++)
+	{
+		npcMessages.push_back(data.getString(std::to_string(i)));
+	}
 
+	OpenedData tileData;
+	ItemReader::GetDataFromFile("tiles.eid", "TILES", &tileData);
 
+	for (auto const& x : tileData.tokens) {
+		tile_icons.insert({ stoi(tileData.getArray(x.first)[1]) , tileData.getArray(x.first)[0] });
+	}
+}
 
 void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1) {
 	BG_DESERT = { 0.15, 0.15, 0 };
@@ -127,19 +140,6 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 		{Wildlife, {}}
 	};
 	
-	OpenedData data;
-	ItemReader::GetDataFromFile("dialogue.eid", "RANDOM", &data);
-	for (size_t i = 1; i < 6; i++)
-	{
-		npcMessages.push_back(data.getString(std::to_string(i)));
-	}
-
-	OpenedData tileData;
-	ItemReader::GetDataFromFile("tiles.eid", "TILES", &tileData);
-
-	for (auto const& x : tileData.tokens){
-		tile_icons.insert({ stoi(tileData.getArray(x.first)[1]) , tileData.getArray(x.first)[0] });
-	}
 	mainMap.isUnderground = false;
 	Math::PushBackLog(&actionLog, "Welcome to Zombos! Press H to open the help menu.");
 	Audio::PlayLoop("dat/sounds/ambient12.wav", "ambient_day");

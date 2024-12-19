@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+    
+<div id="text">
+<body style="background-color:rgb(39, 39, 39); color:whitesmoke; font-family:monospace; font-size: 18px;">
+
+    <p>To use the visual editor, include antibox.h and use the following:</p>
+
+    <p>std::vector<App*> CreateGame() {<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;return { new VisualEditor };<br>
+    }</p>
+    
+    Below is documentation for the typed engine
+    
+    <h2>_______________________SAMPLE PROJ_______________________</h2>
+    <pre><span style="color:rgb(160, 160, 160)">    
+    #include</span> <span style="color:orange">"antibox/core/antibox.h"</span>
+    
+    using namespace antibox;
+    
+    <span style="color:lightgreen">//To create a new project, you'll need to create your own class that derives from antibox::App</span>
+    class _NAME_ : public App {   
+    
+        <span style="color:lightgreen">//To edit window properties, use the method GetWindowProperties():</span>
+        WindowProperties GetWindowProperties() {
+            WindowProperties props;
+    
+            props.w = 1280; <span style="color:lightgreen">//this is width</span>
+            props.h = 720; <span style="color:lightgreen">//this is height</span>
+            props.title = "Title"; <span style="color:lightgreen">//This is title </span>
+            props.cc = { 0.45, 0.45, 0.45, 1 }; <span style="color:lightgreen">//This is background color</span>
+            props.framebuffer_display = false; <span style="color:lightgreen">//False if you want to display straight to screen</span>
+    
+            return props; <span style="color:lightgreen">//return because its a method that returns a WindowProperties object</span>
+        }
+    
+        <span style="color:lightgreen">//A project required four methods:</span>
+    
+        void Init() override{} <span style="color:lightgreen">//This will be called before the first frame.</span>
+        void Update() override {} <span style="color:lightgreen">//This is called before each frame is rendered.</span>
+        void Render() override {} <span style="color:lightgreen">//This is the calls to render each frame.</span>
+        void Shutdown() override {} <span style="color:lightgreen">//This is called when the user closes the window.</span>
+    
+        <span style="color:lightgreen">//And one optional one:</span>
+    
+        void ImguiRender() override {} <span style="color:lightgreen">//This is called to render ImGui.</span>
+    
+    };
+    
+    <span style="color:lightgreen">//To run your custom window, you need to create a new method called CreateApp and return a new list of windows</span>
+    std::vector<antibox::App*> CreateApp() {
+        return { new _NAME_ };
+    }
+</pre>
+<h2 style="text-align: center;">_______________________OBJECTS_______________________</h2>
+    
+    <h3>------------SCENE------------</h3>
+    <pre>
+    antibox::Scene(string name) - base class
+    
+    int <span style="color:palegoldenrod">GetSceneID</span>()                                                                   - returns the scene id
+    string <span style="color:palegoldenrod">GetSceneName</span>()                                                              - returns the name of the scene
+    void<span style="color:palegoldenrod"> CreateObject</span>(string name, Vector2 position, Vector2 size, string sprite_path) - Creates a GameObject and adds it to the scene to be managed there
+    std::shared_ptr&lt;GameObject&gt;<span style="color:palegoldenrod"> FindObject</span>(string name)                                - Returns a shared pointer to gameobject in the hierarchy with matching name
+</pre>
+    
+    <h3>---------GAMEOBJECT---------</h3>
+    <pre>
+    antibox::GameObject(string name, Vector2 position, Vector2 size, string sprite_path)
+    - base class
+    
+    <span style="color:palegoldenrod">SetPos</span>(Vector2 position) - Sets position
+    <span style="color:palegoldenrod">SetSize</span>(Vector2 size)    - Changes sprite size
+    <span style="color:palegoldenrod">SetColor</span>(Vector4 color)  - Nothing right now
+    <span style="color:palegoldenrod">Move</span>(Vector2 distance)   - Changes position by distance
+    
+    Vector2 <span style="color:palegoldenrod">GetPos</span>()         - Returns the position as a vector2
+    Vector2 <span style="color:palegoldenrod">GetSize</span>()        - Returns the size as a vector2
+    string <span style="color:palegoldenrod">GetName</span>()         - Returns the name of the gameobject
+    
+    <h2 style="text-align: center;">____________________________________FUNCTIONS______________________________________</h2>
+    
+    <h3>------INPUT------</h3>
+    Input::<span style="color:palegoldenrod">KeyDown</span>(int keycode)         - Return true on the FIRST frame a key is pressed
+    Input::<span style="color:palegoldenrod">KeyHeldDown</span>(int keycode)     - Return true on EACH frame a key is pressed
+    
+    -Keycode macros all start with <span style="color:orange">"KEY_"</span>
+    
+    Input::<span style="color:palegoldenrod">MouseButtonDown</span>(int keycode) - Return true on FIRST frame a mouse button is pressed
+    Input::<span style="color:palegoldenrod">MouseButtonHeld</span>(int keycode) - Return true on EACH frame a mouse button is pressed
+    
+    Mouse Button name macros are:
+    <span style="color:plum">MOUSE_LEFT
+    MOUSE_RIGHT
+    MOUSE_MIDDLE
+    </span>
+    
+    
+    <h3>-----AUDIO------</h3>
+    <span style="color:palegoldenrod">Play</span>(std::string path_to_soundfile) - Plays a sound file
+    <span style="color:palegoldenrod">PlayLoop</span>(std::string path_to_soundfile, std::string id) - Plays a sound file that loops, with specific ID
+    
+    <span style="color:palegoldenrod">Stop</span>(std::string path_to_soundfile) - Does nothing for now
+    <span style="color:palegoldenrod">StopLoop</span>(std::string soundID) - Does nothing for now
+    
+    <span style="color:palegoldenrod">SetVolume</span>(float newVolume) - Sets the engine's volume
+    <span style="color:palegoldenrod">SetVolumeLoop</span>(float newVolume, std::string ID) - Sets the sound's volume
+    <span style="color:palegoldenrod">GetVolume</span>() - Returns the current volume as a float
+    
+    
+    <h3>---UTILITIES----</h3>
+    <span style="color:palegoldenrod">getFPS</span>() - Returns the current Frames per Second
+    <span style="color:palegoldenrod">deltaTime</span>() - Returns the time between the last frame and this one
+    <span style="color:palegoldenrod">getFont</span>() - Returns the custom IMGUI font set in WindowProperties
+    
+    
+    <h3>-----EDITOR-----</h3>
+    AddScene(Scene* scene) - Adds a scene to the game loop to have objects updated
+    
+    
+    <h3>-----MATH-----</h3>
+    RandNum(int max) - Returns a random float between 0 and max (inclusive).
+    RandInt(int min, int max) - Returns an random integer between the min and max (inclusive).
+    RandString(vector<string> list) - Returns a random string from a vector of strings.
+    
+    PushBackLog(vector<string>* log, string message, int max)
+    - Adds message to log, unless it surpasses max, in which it will drop the first element.
+    
+    All vectors are floats, except for the _i versions.
+    Vector2(x,y) - also "vec2"
+    Vector2_I(x,y) - also "vec2_i"
+    Vector3(x,y,z) - also "vec3" or "Color"
+    Vector4(x,y,z,w) - also "vec4"
+    Vector4_I(x,y,z,w) - also "vec4_i"
+    Vector26()
+    
+    maybe - returns either true or false, randomly.
+    
+    <h3>-----CONSOLE-----</h3>
+    
+    Console::Log(type, color, lineNumber) - Logs a message to the console
+    
+    All console logs will require (T message, textColor color, int lineNum).
+    Types supported:
+    -string
+    -const char*
+    -uint32_t
+    -int
+    -double
+    -bool
+    -void* (for pointer addresses)
+    -vector<string>
+    -Vector2
+    -Vector2_I
+    
+    If desired type isnt there, you can use:
+    GenericConsoleOut<T>(T obj, textColor color) - Will try to log your type
+    
+    textColor is a const char[8], or an array of console color codes.
+    Premade colors (in namespace "text")
+    -blue
+    -red
+    -green
+    -yellow
+    -white
+    -black
+    -purple
+    -cyan
+    
+    Alternative name macros:
+    ERROR - red
+    LOG - white
+    SUCCESS - green
+    WARNING - yellow
+    
+    <h3>-----HELPERS-----</h3>
+    All in namespace antibox
+    
+    limited_array<T> - creates a vector of type T. Has the following:
+    
+        - length : determines how many items can be added before removing the first
+        - append(T item) : adds to the end, and if length is surpassed, drops first element
+        - c_arr() : returns a pointer to the start, as like a c style array
+        - byte_size() : returns the size of the array in bytes
+    
+    </pre>
+
+</body>
+</div>
+
+<script>
+    const textElement = document.getElementById('text');
+    textElement.innerHTML = textElement.innerHTML
+        .replace(/uint32_t/g, '<span style="color: lightskyblue;">uint32_t</span>')
+        .replace(/int/g, '<span style="color: lightskyblue;">int</span>')
+        .replace(/double/g, '<span style="color: lightskyblue;">double</span>')
+        .replace(/float/g, '<span style="color: lightskyblue;">float</span>')
+        .replace(/bool/g, '<span style="color: lightskyblue;">bool</span>')
+        .replace(/string/g, '<span style="color: lightskyblue;">string</span>')
+        .replace(/Vector2/g, '<span style="color: lightskyblue;">Vector2</span>')
+        .replace(/Vector3/g, '<span style="color: lightskyblue;">Vector3</span>')
+        .replace(/Vector4/g, '<span style="color: lightskyblue;">Vector4</span>')
+        .replace(/void/g, '<span style="color: lightskyblue;">void</span>')
+        .replace(/GameObject/g, '<span style="color: lightskyblue;">GameObject</span>')
+        .replace(/shared_ptr/g, '<span style="color: lightskyblue;">shared_ptr</span>');
+</script>
+
+</html>
