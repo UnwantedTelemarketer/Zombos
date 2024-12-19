@@ -15,15 +15,14 @@ using namespace antibox;
 class _NAME_ : public App {   
 
 //To edit window properties, use the method GetWindowProperties():
-	WindowProperties GetWindowProperties(){
+	WindowProperties GetWindowProperties() {
 		WindowProperties props;
-		ImGuiWindowProperties imgui; //Optional if you want ImGui
 
 		props.w = 1280; //this is width
 		props.h = 720; //this is height
-		props.title = "Title"; //This is title
-
-		props.imgui.DockingEnabled = true; //If you want to be able to dock your ImGui Windows
+		props.title = "Title"; //This is title 
+		props.cc = { 0.45, 0.45, 0.45, 1 }; //This is background color
+		props.framebuffer_display = false; //False if you want to display straight to screen
 
 		return props; //return because its a method that returns a WindowProperties object
 	}
@@ -41,12 +40,25 @@ class _NAME_ : public App {
 
 };
 
-//To run your custom window, you need to create a new method called CreateApp and return a new copy of your window
-antibox::App* CreateApp() {
-	return new _NAME_();
+//To run your custom window, you need to create a new method called CreateApp and return a new list of windows
+std::vector<antibox::App*> CreateApp() {
+	return { new _NAME_ };
 }
 
 ______________________________________OBJECTS______________________________________
+
+------------SCENE------------
+antibox::Scene(string name) - base class
+
+GetSceneID() - returns the scene id
+GetSceneName() - returns the name of the scene
+
+CreateObject(string name, Vector2 position, Vector2 size, string sprite_path) 
+- Creates a GameObject and adds it to the scene to be managed there
+
+FindObject(string name)
+- Returns a shared pointer to gameobject in the hierarchy with matching name
+
 
 ---------GAMEOBJECT---------
 antibox::GameObject(string name, Vector2 position, Vector2 size, string sprite_path)
@@ -61,18 +73,6 @@ GetPos() - Returns the position as a vector2
 GetSize() - Returns the size as a vector2
 GetName() - Returns the name of the gameobject
 
-
-------------SCENE------------
-antibox::Scene(string name) - base class
-
-GetSceneID() - returns the scene id
-GetSceneName() - returns the name of the scene
-
-CreateObject(string name, Vector2 position, Vector2 size, string sprite_path) 
-- Creates a GameObject and adds it to the scene to be managed there
-
-FindObject(string name)
-- Returns a shared pointer to gameobject in the hierarchy with matching name
 
 ____________________________________FUNCTIONS______________________________________
 
@@ -92,8 +92,13 @@ Mouse Button name macros are:
 
 -----AUDIO------
 Play(std::string path_to_soundfile) - Plays a sound file
+PlayLoop(std::string path_to_soundfile, std::string id) - Plays a sound file that loops, with specific ID
+
 Stop(std::string path_to_soundfile) - Does nothing for now
+StopLoop(std::string soundID) - Does nothing for now
+
 SetVolume(float newVolume) - Sets the engine's volume
+SetVolumeLoop(float newVolume, std::string ID) - Sets the sound's volume
 GetVolume() - Returns the current volume as a float
 
 
@@ -108,7 +113,7 @@ AddScene(Scene* scene) - Adds a scene to the game loop to have objects updated
 
 
 -----MATH-----
-RandNum(int max) - Returns a random float between 1 and max (inclusive).
+RandNum(int max) - Returns a random float between 0 and max (inclusive).
 RandInt(int min, int max) - Returns an random integer between the min and max (inclusive).
 RandString(vector<string> list) - Returns a random string from a vector of strings.
 
