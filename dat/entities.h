@@ -192,6 +192,7 @@ struct Saved_Tile {
 	int burningFor = 0;
 	int ticksPassed = 0;
 	int ticksNeeded = 1;
+	int liquidTicks = 0;
 	bool hasItem = false;
 	std::string itemName = "NULL";
 	int x, y = 0;
@@ -205,6 +206,7 @@ struct Saved_Tile {
 		stream.write(reinterpret_cast<const char*>(&burningFor), sizeof(burningFor));
 		stream.write(reinterpret_cast<const char*>(&ticksPassed), sizeof(ticksPassed));
 		stream.write(reinterpret_cast<const char*>(&ticksNeeded), sizeof(ticksNeeded));
+		stream.write(reinterpret_cast<const char*>(&liquidTicks), sizeof(liquidTicks));
 		stream.write(reinterpret_cast<const char*>(&hasItem), sizeof(hasItem));
 		stream.write(reinterpret_cast<const char*>(&x), sizeof(x));
 		stream.write(reinterpret_cast<const char*>(&y), sizeof(y));
@@ -227,6 +229,7 @@ struct Saved_Tile {
 		stream.read(reinterpret_cast<char*>(&burningFor), sizeof(burningFor));
 		stream.read(reinterpret_cast<char*>(&ticksPassed), sizeof(ticksPassed));
 		stream.read(reinterpret_cast<char*>(&ticksNeeded), sizeof(ticksNeeded));
+		stream.read(reinterpret_cast<char*>(&liquidTicks), sizeof(liquidTicks));
 		stream.read(reinterpret_cast<char*>(&hasItem), sizeof(hasItem));
 		stream.read(reinterpret_cast<char*>(&x), sizeof(x));
 		stream.read(reinterpret_cast<char*>(&y), sizeof(y));
@@ -276,6 +279,7 @@ struct Tile {
 		burningFor = tile.burningFor;
 		ticksPassed = tile.ticksPassed;
 		ticksNeeded = tile.ticksNeeded;
+		liquidTime = tile.liquidTicks;
 		hasItem = tile.hasItem;
 		itemName = tile.itemName;
 		coords = { tile.x, tile.y };
@@ -349,6 +353,7 @@ static void CreateSavedTile(Saved_Tile* sTile, Tile tile) {
 	sTile->burningFor = tile.burningFor;
 	sTile->ticksPassed = tile.ticksPassed;
 	sTile->ticksNeeded = tile.ticksNeeded;
+	sTile->liquidTicks = tile.liquidTime;
 	sTile->hasItem = tile.hasItem;
 	sTile->itemName = tile.itemName;
 	sTile->x = tile.coords.x;

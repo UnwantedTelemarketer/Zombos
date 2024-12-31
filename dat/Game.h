@@ -701,20 +701,11 @@ std::string GameManager::GetTileChar(Tile tile) {
 			return ENT_HUMAN;
 		}
 	}
-	if (tile.liquid != nothing) {
-		/*switch (tile.liquid) {
-		case fire:
-			return TILE_FIRE;
-		case water:
-			return TILE_LIQUID;
-		}*/
-		"";
-	}
 	//if (tile.hasItem) {
 		//return item_icons[tile.itemName];
 	//}
-	if (tile.liquid == water && tile.id == ID_DIRT) {
-		return "A";
+	if (tile.liquid == water && tile.liquidTime == -1) {
+		return "?";
 	}
 	return tile_icons[tile.id];
 }

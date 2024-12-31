@@ -1,17 +1,17 @@
 STATS {
-x_pos : 26;
-y_pos : 5;
-seed : 13584;
-biomes : 26334;
-global_x : 249;
-global_y : 251;
+x_pos : 8;
+y_pos : 23;
+seed : 3981;
+biomes : 1893;
+global_x : 250;
+global_y : 248;
 weather : 0;
 color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
 health : 100.000000;
-thirst : 94.600220;
-hunger : 96.399780;
-time : 9.600014;
-items : [BANDAGE,1,LIGHTER,1,FLAT_MUSHROOM,3,];
+thirst : 95.275192;
+hunger : 103.849808;
+time : 9.150012;
+items : [BANDAGE,1,LIGHTER,1,FLAT_MUSHROOM,2,SNOW,1,];
 }

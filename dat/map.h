@@ -650,6 +650,7 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 
 				if (current < -0.2f) {
 					chunk->localCoords[i][j].SetLiquid(water);
+					chunk->localCoords[i][j].liquidTime = -1;
 				}
 				else if (currentTile < -0.15f && Math::RandInt(0, 3) >= 2) {
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_TREE_BASE");
@@ -926,7 +927,7 @@ void Map::UpdateTiles(vec2_i coords) {
 				if (curTile->burningFor >= 100) { curTile->burningFor = 0; }
 				curTile->SetLiquid(nothing);
 			}
-			if (curTile->liquid != nothing && curTile->id != ID_DIRT) {
+			if (curTile->liquid != nothing && curTile->liquidTime != -1) {
 				curTile->liquidTime++;
 				if (curTile->liquidTime >= 100) {
 					curTile->SetLiquid(nothing);
