@@ -6,7 +6,7 @@
 #include <chrono>
 
 #define DOSFONT "dat/fonts/symbolic/symbolic_rain_extended.ttf"
-#define ITEMFONT "dat/fonts/symbolic/symbolic_item.ttf"
+#define ITEMFONT "dat/fonts/symbolic/symbolic_items_extended.ttf"
 //#define DEV_TOOLS
 
 using namespace antibox;
@@ -354,6 +354,8 @@ public:
 			itemPositions.clear();
 		}
 
+		ImGui::PopFont();
+
 		ImGui::End();
 	}
 
@@ -434,160 +436,163 @@ public:
 			ImGui::End();
 		}
 		//------Map rendering-------
+		
 		if (game.worldTime >= 20.f || game.worldTime < 6.f) { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.0,0.0,1 }); }
-		else{ ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ game.bgColor.x,game.bgColor.y,game.bgColor.z,1 }); }
-		ImGui::Begin("Map");
-		if (gameScreen.fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
+		else { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ game.bgColor.x,game.bgColor.y,game.bgColor.z,1 }); }
+		{
+			ImGui::Begin("Map");
+			if (gameScreen.fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
 
-		bool item = false;
-		ImVec2 playerPos;
+			bool item = false;
+			ImVec2 playerPos;
 
-		for (int i = xMin; i < xMax; i++){
-			for (int j = yMin; j < yMax; j++) {
-				vec2_i curCoords = { i, j };
-				Tile* curTile = nullptr;
-				Tile* underTile = nullptr;
+			for (int i = xMin; i < xMax; i++) {
+				for (int j = yMin; j < yMax; j++) {
+					vec2_i curCoords = { i, j };
+					Tile* curTile = nullptr;
+					Tile* underTile = nullptr;
 
-				if(!freeView) { 
-					curTile = map.CurrentChunk()->GetTileAtCoords(curCoords);
-					underTile = map.CurrentChunk()->GetTileAtCoords({ curCoords.x + 1, curCoords.y });
-				}
-				else { 
-					curTile = map.GetTileFromThisOrNeighbor(curCoords);
-					underTile = map.GetTileFromThisOrNeighbor({ curCoords.x + 1, curCoords.y });
-				}
-				float intensity = 0.f;
-				bool effectShowing = false;
-
-				if(curTile == nullptr){
-					printIcon = "!";
-					iconColor = { 1,0,0,1 };
-					goto printing;
-				}
-
-
-				intensity = curTile->brightness;
-				
-
-				//Flashlight pyramid logic, idk weird math stuff. pack it away please
-				{//===================================================================
-					float newBrightness = 1.0f;
-					if ((i <= player.coords.x && i >= player.coords.x - 10)
-						&& (j >= player.coords.y - ((player.coords.x) - i)
-						&& j <= player.coords.y + ((player.coords.x) - i))
-						&& flashlightActive
-						&& playerDir == direction::up) {
-						newBrightness = 0.1f *(player.coords.x - i);
+					if (!freeView) {
+						curTile = map.CurrentChunk()->GetTileAtCoords(curCoords);
+						underTile = map.CurrentChunk()->GetTileAtCoords({ curCoords.x + 1, curCoords.y });
 					}
-					else if ((i >= player.coords.x && i <= player.coords.x + 10)
-						&& (j >= player.coords.y - ((i - player.coords.x))
-						&& j <= player.coords.y + (i - (player.coords.x)))
-						&& flashlightActive
-						&& playerDir == direction::down) {
-						newBrightness = 0.1f *(i - player.coords.x);
+					else {
+						curTile = map.GetTileFromThisOrNeighbor(curCoords);
+						underTile = map.GetTileFromThisOrNeighbor({ curCoords.x + 1, curCoords.y });
 					}
-					else if ((j <= player.coords.y && j >= player.coords.y - 10)
-						&& (i >= player.coords.x - ((player.coords.y) - j)
-						&& i <= player.coords.x + ((player.coords.y) - j))
-						&& flashlightActive
-						&& playerDir == direction::left) {
-						newBrightness = 0.1f *(player.coords.y - j);
+					float intensity = 0.f;
+					bool effectShowing = false;
+
+					if (curTile == nullptr) {
+						printIcon = "!";
+						iconColor = { 1,0,0,1 };
+						goto printing;
 					}
-					else if ((j >= player.coords.y && j <= player.coords.y + 10)
-						&& (i >= player.coords.x - ((j - player.coords.y))
-						&& i <= player.coords.x + (j - (player.coords.y)))
-						&& flashlightActive
-						&& playerDir == direction::right) {
-						newBrightness = 0.1f * (j - player.coords.y);
+
+
+					intensity = curTile->brightness;
+
+
+					//Flashlight pyramid logic, idk weird math stuff. pack it away please
+					{//===================================================================
+						float newBrightness = 1.0f;
+						if ((i <= player.coords.x && i >= player.coords.x - 10)
+							&& (j >= player.coords.y - ((player.coords.x) - i)
+								&& j <= player.coords.y + ((player.coords.x) - i))
+							&& flashlightActive
+							&& playerDir == direction::up) {
+							newBrightness = 0.1f * (player.coords.x - i);
+						}
+						else if ((i >= player.coords.x && i <= player.coords.x + 10)
+							&& (j >= player.coords.y - ((i - player.coords.x))
+								&& j <= player.coords.y + (i - (player.coords.x)))
+							&& flashlightActive
+							&& playerDir == direction::down) {
+							newBrightness = 0.1f * (i - player.coords.x);
+						}
+						else if ((j <= player.coords.y && j >= player.coords.y - 10)
+							&& (i >= player.coords.x - ((player.coords.y) - j)
+								&& i <= player.coords.x + ((player.coords.y) - j))
+							&& flashlightActive
+							&& playerDir == direction::left) {
+							newBrightness = 0.1f * (player.coords.y - j);
+						}
+						else if ((j >= player.coords.y && j <= player.coords.y + 10)
+							&& (i >= player.coords.x - ((j - player.coords.y))
+								&& i <= player.coords.x + (j - (player.coords.y)))
+							&& flashlightActive
+							&& playerDir == direction::right) {
+							newBrightness = 0.1f * (j - player.coords.y);
+						}
+						intensity = newBrightness < intensity ? newBrightness : intensity;
+						if (intensity < 0.f) intensity = 0.f;
+						if (intensity > 1.f) { intensity = 1.f; }
+					}//===================================================================
+					if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
+					{
+						printIcon = ENT_PLAYER;
+						iconColor = game.GetPlayerColor();
 					}
-					intensity = newBrightness < intensity ? newBrightness : intensity;
-					if (intensity < 0.f) intensity = 0.f;
-					if (intensity > 1.f) { intensity = 1.f; }
-				}//===================================================================
-				if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
-				{
-					printIcon = ENT_PLAYER;
-					iconColor = game.GetPlayerColor();
-				}
 
-				else if (map.GetEffectFromThisOrNeighbor(curCoords) == 1)
-				{
-					effectShowing = true;
-					printIcon = "?";
-					iconColor = Cosmetic::SmokeColor();
-				}
-				else if (map.GetEffectFromThisOrNeighbor(curCoords) == 2)
-				{
-					effectShowing = true;
-					printIcon = "a";
-					iconColor = Cosmetic::CoveredColor(water);
-				}
+					else if (map.GetEffectFromThisOrNeighbor(curCoords) == 1)
+					{
+						effectShowing = true;
+						printIcon = "?";
+						iconColor = Cosmetic::SmokeColor();
+					}
+					else if (map.GetEffectFromThisOrNeighbor(curCoords) == 2)
+					{
+						effectShowing = true;
+						printIcon = "a";
+						iconColor = Cosmetic::CoveredColor(water);
+					}
 
-				else {
-					printIcon = game.GetTileChar(*curTile);
-					iconColor = game.GetTileColor(*curTile, intensity);
-				}
+					else {
+						printIcon = game.GetTileChar(*curTile);
+						iconColor = game.GetTileColor(*curTile, intensity);
+					}
 
-				if (i < CHUNK_HEIGHT - 1 && !effectShowing && underTile != nullptr) {
-					Entity* curEnt = underTile->entity;
+					if (i < CHUNK_HEIGHT - 1 && !effectShowing && underTile != nullptr) {
+						Entity* curEnt = underTile->entity;
 
-					if (curEnt != nullptr) {
-						if (curEnt->targeting() && curEnt->health > 0) {
-							//screen += "!";
-							//colors.push_back(ImVec4{ 1,0,0,1 });
-							printIcon = "!";
-							iconColor = ImVec4{ 1,0,0,1 };
+						if (curEnt != nullptr) {
+							if (curEnt->targeting() && curEnt->health > 0) {
+								//screen += "!";
+								//colors.push_back(ImVec4{ 1,0,0,1 });
+								printIcon = "!";
+								iconColor = ImVec4{ 1,0,0,1 };
+							}
+						}
+						if (underTile->id == 11) {
+							//screen += "G";
+							//colors.push_back(game.GetTileColor(underTile, intensity));
+							if (printIcon != ENT_PLAYER) printIcon = "G";
+							iconColor = game.GetTileColor(*underTile, intensity);
+						}
+						if (underTile->id == 12) {
+							//screen += "J";
+							//colors.push_back(game.GetTileColor(underTile, intensity));
+							if (printIcon != ENT_PLAYER) printIcon = "J";
+							iconColor = game.GetTileColor(*underTile, intensity);
 						}
 					}
-					if (underTile->id == 11) {
-						//screen += "G";
-						//colors.push_back(game.GetTileColor(underTile, intensity));
-						if(printIcon != ENT_PLAYER) printIcon = "G";
-						iconColor = game.GetTileColor(*underTile, intensity);
-					}
-					if (underTile->id == 12) {
-						//screen += "J";
-						//colors.push_back(game.GetTileColor(underTile, intensity));
-						if (printIcon != ENT_PLAYER) printIcon = "J";
-						iconColor = game.GetTileColor(*underTile, intensity);
-					}
-				}
 
-				if (curTile->hasItem)
-				{
-					item = true;
-					itemPositions.push_back(ImGui::GetCursorPos());
-					itemTiles.push_back(*curTile);
-					itemIcons.push_back(game.GetItemChar(*curTile));
-					ImGui::Text(" ");
-					ImGui::SameLine();
-					continue;
-				}
+					if (curTile->hasItem)
+					{
+						item = true;
+						itemPositions.push_back(ImGui::GetCursorPos());
+						itemTiles.push_back(*curTile);
+						itemIcons.push_back(game.GetItemChar(*curTile));
+						ImGui::Text(" ");
+						ImGui::SameLine();
+						continue;
+					}
 				printing:
 
-				//screen += game.GetTileChar(curTile);
-				//colors.push_back(game.GetTileColor(curTile, intensity));
+					//screen += game.GetTileChar(curTile);
+					//colors.push_back(game.GetTileColor(curTile, intensity));
 
-				ImGui::TextColored(iconColor, printIcon.c_str());
-				ImGui::SameLine();
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 0.05);
+					ImGui::TextColored(iconColor, printIcon.c_str());
+					ImGui::SameLine();
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 0.05);
+				}
+				ImGui::Text("");
 			}
-			ImGui::Text("");
-		}
 
 
-		if (item) {
-			ImGui::PopFont();
-			ImGui::PushFont(Engine::Instance().getFont("items"));
-			for (size_t i = 0; i < itemIcons.size(); i++)
-			{
-				ImGui::SetCursorPos(itemPositions[i]);
+			if (item) {
+				ImGui::PopFont();
+				ImGui::PushFont(Engine::Instance().getFont("items"));
+				for (size_t i = 0; i < itemIcons.size(); i++)
+				{
+					ImGui::SetCursorPos(itemPositions[i]);
 
-				ImGui::TextColored(game.GetItemColor(itemTiles[i]), itemIcons[i].c_str());
+					ImGui::TextColored(game.GetItemColor(itemTiles[i]), itemIcons[i].c_str());
+				}
+				itemTiles.clear();
+				itemIcons.clear();
+				itemPositions.clear();
 			}
-			itemTiles.clear();
-			itemIcons.clear();
-			itemPositions.clear();
 		}
 
 		if (gameScreen.fancyGraphics) ImGui::PopFont();

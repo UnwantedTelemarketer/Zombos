@@ -648,6 +648,7 @@
     <None Include="dat\eid\factions.eid" />
     <None Include="dat\eid\ground_items.eid" />
     <None Include="dat\eid\items.eid" />
+    <None Include="dat\eid\items\clothing.eid" />
     <None Include="dat\eid\items\crafting_recipes.eid" />
     <None Include="dat\eid\items\nature_items.eid" />
     <None Include="dat\eid\tiles\tiles.eid" />

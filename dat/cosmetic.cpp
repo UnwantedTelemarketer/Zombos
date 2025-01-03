@@ -84,6 +84,9 @@ ImVec4 Cosmetic::CoveredColor(int liquid)
 	case 4:
 		return { 0.65, 0.1, 0, 1 }; // dark red (steve lacy reference??)
 		break;
+	case 5:
+		return { 0.6, 0.4, 0.3, 1 };
+		break;
 	default:
 		return { 1, 1, 1, 1 }; //white
 		break;

@@ -1,0 +1,19 @@
+SECTIONS {
+sections : [LEATHER_BOOTS];
+}
+
+LEATHER_BOOTS {
+name : "Leather Boots";
+description : "Leather boots to help with weather.";
+id : "leather_boots";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "weatr bppts";
+useTxt : "Does Nothig.";
+effects : [0,0,0,0,15];
+equipType : 4;
+sprite : "G";
+spriteColor : [1.0, 0.1, 0.2];
+}

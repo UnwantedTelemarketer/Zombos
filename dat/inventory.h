@@ -139,6 +139,7 @@ public:
 
 			tile->hasItem = false;
 			tile->ticksNeeded = Math::RandInt(1, 1000) + 500;
+			tile->itemName = "";
 			AddItem(item);
 			return true;
 		}

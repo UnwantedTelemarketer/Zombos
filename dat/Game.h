@@ -118,7 +118,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	BG_WATER = { 0, 0.1, 0.15 };
 	BG_FOREST = { 0, 0.15, 0 };
 	BG_TAIGA = { 0.15, 0.15, 0.2 };
-	BG_SWAMP = { 0.15, 0.1, 0.05 };
+	BG_SWAMP = { 0.1, 0.15, 0.05 };
 	sandWalk = { "dat/sounds/movement/sand1.wav","dat/sounds/movement/sand2.wav", "dat/sounds/movement/sand3.wav" };
 	grassWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };
 	rockWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };
@@ -356,6 +356,12 @@ void GameManager::SpawnEntity(Entity* ent) {
 }
 
 void GameManager::MovePlayer(int dir) {
+	if (mainMap.GetTileFromThisOrNeighbor(mPlayer.coords)->liquid == mud) {
+		if (Math::RandInt(0, 7) == 5) {
+			Math::PushBackLog(&actionLog, "You get stuck in mud.");
+			return;
+		}
+	}
 	switch (dir) {
 	case 1:
 		mainMap.MovePlayer(mPlayer.coords.x - 1, mPlayer.coords.y, &mPlayer, &actionLog);
@@ -451,7 +457,7 @@ void GameManager::UpdateEffects() {
 			}
 			if (mainMap.effectLayer.localCoords[i][j] == 2) {
 				if (i + 2 >= CHUNK_WIDTH || i < 0) { tempMap[i][j] = 0; }
-				else if (Math::RandInt(0, 30) == 1) { tempMap[i][j] = 0; mainMap.TileAtPos({ i,j })->SetLiquid(water); }
+				else if (Math::RandInt(0, 30) == 1 && mainMap.TileAtPos({ i,j })->liquid == nothing) { tempMap[i][j] = 0; mainMap.TileAtPos({ i,j })->SetLiquid(water); }
 				else { tempMap[(int)std::floor((i + 1) * 1.1)][j] = 2; }
 			}
 		}

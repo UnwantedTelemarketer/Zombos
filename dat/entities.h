@@ -293,21 +293,26 @@ struct Tile {
 		return ticksPassed >= ticksNeeded && changesOverTime;
 	}
 
-	void SetLiquid(Liquid l) {
+	void SetLiquid(Liquid l, vec3 col = {0,0,0}) {
 		liquid = l;
-		switch (l) {
-		case water:
-			tileColor = { 0, 0.5, 1 };
-			break;
-		case guts:
-			tileColor = { 0.45, 0, 0 };
-			break;
-		case blood:
-			tileColor = { 1, 0, 0 };
-			break;
-		case nothing:
-			Utilities::Lerp("tileColor" + std::to_string(Math::RandInt(1,50000)), &tileColor, mainTileColor, 0.5f);
-			break;
+		if (col == vec3(0, 0, 0 )) {
+			switch (l) {
+			case water:
+				tileColor = { 0, 0.5, 1 };
+				break;
+			case guts:
+				tileColor = { 0.45, 0, 0 };
+				break;
+			case blood:
+				tileColor = { 1, 0, 0 };
+				break;
+			case nothing:
+				Utilities::Lerp("tileColor" + std::to_string(Math::RandInt(1, 50000)), &tileColor, mainTileColor, 0.5f);
+				break;
+			}
+		}
+		else {
+			tileColor = col;
 		}
 		 
 	}

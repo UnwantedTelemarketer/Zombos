@@ -27,7 +27,7 @@ struct World
 };
 
 
-enum biome { desert, ocean, forest, swamp, taiga, urban, jungle };
+enum biome { desert, ocean, forest, swamp, taiga,grassland, urban, jungle };
 enum weather {clear, rainy, thunder};
 class Map {
 public:
@@ -371,7 +371,7 @@ biome Map::GetBiome(Vector2_I coords)
 	biome currentBiome;
 
 	if (curTemp < tempMin) {
-		if (curMois < moistureMin) { currentBiome = forest; }
+		if (curMois < moistureMin) { currentBiome = grassland; }
 		else { currentBiome = taiga; }
 	}
 	else {
@@ -444,7 +444,7 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 
 	Liquid l = CurrentChunk()->GetTileAtCoords(x, y)->liquid; //check if the tile has a liquid
 
-	if (p->coveredIn != nothing && l == nothing && Math::RandInt(1, 5) >= 3) {
+	if (p->coveredIn != nothing && p->coveredIn != mud && l == nothing && Math::RandInt(1, 5) >= 3) {
 		CurrentChunk()->GetTileAtCoords(p->coords.x, p->coords.y)->SetLiquid(p->coveredIn);
 	}
 
@@ -570,7 +570,7 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 			curMois = (curMois + 1) / 2;
 
 			if (curTemp < tempMin) {
-				if (curMois < moistureMin) { currentBiome = forest; }
+				if (curMois < moistureMin) { currentBiome = grassland; }
 				else { currentBiome = taiga; }
 			}
 			else {
@@ -605,7 +605,7 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 					}
 				}
 				break;
-			case forest:
+			case taiga:
 				if (currentTile < -0.10f && Math::RandInt(0, 4) >= 2) {
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_TREE_BASE");
 					chunk->localCoords[i][j].double_size = true;
@@ -618,13 +618,10 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				else {
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
 					chunk->localCoords[i][j].tileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+					chunk->localCoords[i][j].tileColor.z = 0.35f;
 					if (Math::RandInt(1, 35) == 34) {
 						chunk->localCoords[i][j].hasItem = true;
 						chunk->localCoords[i][j].itemName = "STICK";
-					}
-					else if (Math::RandInt(1, 200) == 34) {
-						chunk->localCoords[i][j].hasItem = true;
-						chunk->localCoords[i][j].itemName = "FLAT_MUSHROOM";
 					}
 					else if (Math::RandInt(1, 175) == 34) {
 						chunk->localCoords[i][j].hasItem = true;
@@ -633,29 +630,44 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 
 				}
 				break;
-			case taiga:
-
-				chunk->localCoords[i][j] = Tiles::GetTile("TILE_SNOW");
-				if (currentTile < -0.10f && Math::RandInt(0, 4) >= 2) {
-					chunk->localCoords[i][j] = Tiles::GetTile("TILE_TREE_BASE");
-					chunk->localCoords[i][j].double_size = true;
+			case grassland:
+				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
+				chunk->localCoords[i][j].tileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+				if (currentTile < -0.10f) {
+					chunk->localCoords[i][j] = Tiles::GetTile("TILE_TALLGRASS");
 				}
 				break;
 			case swamp:
 				chunk->localCoords[i][j] = Tiles::GetTile("TILE_MUD");
-				if (Math::RandInt(0, 35) == 5) {
-					chunk->localCoords[i][j].itemName = "FLAT_MUSHROOM";
-					chunk->localCoords[i][j].hasItem = true;
+				if (current < -0.2f) {
+					chunk->localCoords[i][j].SetLiquid(water, { 0.f, 0.5f, 0.4f });
+					chunk->localCoords[i][j].liquidTime = -1;
+					if (Math::RandInt(0, 25) == 5) {
+						chunk->localCoords[i][j].itemName = "LILYPAD";
+						chunk->localCoords[i][j].hasItem = true;
+					}
 				}
 
-				if (current < -0.2f) {
-					chunk->localCoords[i][j].SetLiquid(water);
-					chunk->localCoords[i][j].liquidTime = -1;
-				}
-				else if (currentTile < -0.15f && Math::RandInt(0, 3) >= 2) {
+				else if (currentTile < 0.2f && Math::RandInt(0, 3) >= 2) {
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_TREE_BASE");
 					chunk->localCoords[i][j].double_size = true;
 				}
+
+				else if (Math::RandInt(0, 35) == 5) {
+					if (Math::RandInt(0, 35) == 5) {
+						chunk->localCoords[i][j].itemName = "GLOWING_MUSHROOM";
+						chunk->localCoords[i][j].hasItem = true;
+					}
+					else {
+						chunk->localCoords[i][j].itemName = "FLAT_MUSHROOM";
+						chunk->localCoords[i][j].hasItem = true;
+					}
+				}
+				else {
+					chunk->localCoords[i][j].SetLiquid(mud);
+					chunk->localCoords[i][j].liquidTime = -1;
+				}
+
 				break;
 			}
 
@@ -876,7 +888,7 @@ void Map::UpdateTiles(vec2_i coords) {
 			//if (curTile->id == 1) { curTile->tileColor = { 0, 0.65f + ((Math::RandNum(2) - 1) / 10), 0}; }
 			
 			//Crystals glow
-			if (curTile->id == 14) { floodFill({ x, y }, 3, true); }
+			if (curTile->id == 14 || curTile->itemName == "GLOWING_MUSHROOM") { floodFill({x, y}, 3, true); }
 
 			//spread fire to a list so we dont spread more than one tile per update
 			if (curTile->liquid == fire) {
