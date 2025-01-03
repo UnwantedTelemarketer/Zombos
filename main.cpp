@@ -778,7 +778,7 @@ public:
 						//if its consumable, remove one. 
 						if (pInv.items[currentItemIndex].consumable) {
 							//If its the last one, move the cursor so we dont get out of vector range
-							if (pInv.RemoveItem(pInv.items[currentItemIndex].id)) {
+							if (pInv.RemoveItem(pInv.items[currentItemIndex].section)) {
 								currentItemIndex--;
 							}
 
@@ -952,23 +952,21 @@ public:
 				if (curCont != nullptr) {
 					//add the item into the box only if theres enough space, and remove it from the inventory
 					if (curCont->AddItem(pInv.items[currentItemIndex])) {
-						if (pInv.RemoveItem(pInv.items[currentItemIndex].id, pInv.items[currentItemIndex].count)) { currentItemIndex = 0; }
+						if (pInv.RemoveItem(pInv.items[currentItemIndex].section, pInv.items[currentItemIndex].count)) { currentItemIndex = 0; }
 					}
 				}
 				//Or on the floor
 				else {
 					if (invSelectedName != "" && !selectedTile->hasItem) {
 						selectedTile->hasItem = true;
-						std::string upperName = pInv.items[currentItemIndex].name;
-
-						for (auto& c : upperName) c = toupper(c);
+						std::string upperName = pInv.items[currentItemIndex].section;
 
 						selectedTile->itemName = upperName;
 						selectedTile->collectible = true;
 						if (selectedTile->itemName == "CAMPFIRE" || selectedTile->itemName == "CHEST") {
 							game.mainMap.CreateContainer({ selectedTile->coords });
 						}
-						if (pInv.RemoveItem(pInv.items[currentItemIndex].id)) { currentItemIndex = 0; }
+						if (pInv.RemoveItem(pInv.items[currentItemIndex].section)) { currentItemIndex = 0; }
 					}
 					else {
 						Math::PushBackLog(&game.actionLog, "There is already an item on that space.");
@@ -1013,10 +1011,14 @@ public:
 			}
 
 			int _ = 0;
-			if (pInv.TryGetItem("rock", false, &_)) {
+			if (pInv.TryGetItem("ROCK", false, &_)) {
 				if (ImGui::Button("Place Wall")) {
-					*selectedTile = tileByID[ID_STONE];
-					pInv.RemoveItem("rock");
+					*selectedTile = Tiles::GetTile("TILE_STONE");
+					pInv.RemoveItem("ROCK");
+				}
+				if (ImGui::Button("Place Floor")) {
+					*selectedTile = Tiles::GetTile("TILE_STONE_FLOOR");
+					pInv.RemoveItem("ROCK");
 				}
 			}
 

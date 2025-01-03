@@ -117,7 +117,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	BG_DESERT = { 0.15, 0.15, 0 };
 	BG_WATER = { 0, 0.1, 0.15 };
 	BG_FOREST = { 0, 0.15, 0 };
-	BG_TAIGA = { 0.15, 0.15, 0.2 };
+	BG_TAIGA = { 0, 0.2, 0.15 };
 	BG_SWAMP = { 0.1, 0.15, 0.05 };
 	sandWalk = { "dat/sounds/movement/sand1.wav","dat/sounds/movement/sand2.wav", "dat/sounds/movement/sand3.wav" };
 	grassWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };

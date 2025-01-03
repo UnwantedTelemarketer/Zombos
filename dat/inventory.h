@@ -17,7 +17,7 @@ public:
 		if (it.stackable) {
 			for (int i = 0; i < items.size(); i++)
 			{
-				if (items[i].id == it.id)
+				if (items[i].section == it.section)
 				{
 					items[i].count += it.count * count;
 					if (items[i].count != 0) itemNames[i] = items[i].name + " x " + std::to_string(items[i].count);
@@ -55,7 +55,7 @@ public:
 	bool RemoveItem(std::string itemID, int amount = 1) {
 		for (int i = 0; i < items.size(); i++)
 		{
-			if (items[i].id == itemID)
+			if (items[i].section == itemID)
 			{
 				items[i].count -= amount;
 				if (items[i].count > 1) itemNames[i] = items[i].name + " x " + std::to_string(items[i].count);
@@ -94,7 +94,7 @@ public:
 	{
 		for (int i = 0; i < items.size(); i++)
 		{
-			if (items[i].id == itemID)
+			if (items[i].section == itemID)
 			{
 				if (items[i].coveredIn != nothing && items[i].liquidAmount >= 100.f) { continue; }
 				*indexOfItem = i;
@@ -109,7 +109,7 @@ public:
 		bool covered = false;
 		if (tile->liquid != nothing)
 		{
-			if (TryGetItem("canteen", false, &itemIndex)) {
+			if (TryGetItem("CANTEEN", false, &itemIndex)) {
 				Item* item = &items[itemIndex];
 				if (item->liquidAmount < 100.f && item->heldLiquid == tile->liquid || item->heldLiquid == nothing)
 				{
@@ -137,9 +137,9 @@ public:
 			Item item = GetItemFromFile("items.eid", tile->itemName);
 			if (covered) { item.CoverIn(tile->liquid, Math::RandInt(30,60)); }
 
+			tile->itemName = "";
 			tile->hasItem = false;
 			tile->ticksNeeded = Math::RandInt(1, 1000) + 500;
-			tile->itemName = "";
 			AddItem(item);
 			return true;
 		}
@@ -252,10 +252,10 @@ public:
 		{
 			for (int b = 0; b < validIds.size(); b++)
 			{
-				if (items[i].id == validIds[b]) {
+				if (items[i].section == validIds[b]) {
 					for (int c = 0; c < std::min(items[i].count, max); c++)
 					{
-						ids.push_back(items[i].id);
+						ids.push_back(items[i].section);
 					}
 				}
 			}

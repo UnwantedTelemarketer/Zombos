@@ -111,7 +111,7 @@ void Map::SetupNoise(int l_seed, int b_seed) {
 	mapNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 	mapNoise.SetFrequency(0.85f);
 	biomeTempNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	biomeTempNoise.SetFrequency(0.075f);
+	biomeTempNoise.SetFrequency(0.025f);
 	biomeMoistureNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 	biomeMoistureNoise.SetFrequency(0.020f);
 
@@ -714,13 +714,13 @@ void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
 				if (chestCounter == whenDoesChestSpawn) {
 					chunk->GetTileAtCoords(corner.x + i, corner.y + j)->itemName = "CHEST";
 					chunk->GetTileAtCoords(corner.x + i, corner.y + j)->hasItem = true;
-					CreateContainer({ chunk->globalChunkCoord.x, chunk->globalChunkCoord.y, corner.x + i, corner.y + j });
+					//CreateContainer({ chunk->globalChunkCoord.x, chunk->globalChunkCoord.y, corner.x + i, corner.y + j });
 
-					containers[{ 
+					/*containers[{
 						chunk->globalChunkCoord.x,
 						chunk->globalChunkCoord.y,
 							corner.x + i,
-							corner.y + j }].AddItem(Items::GetItem("MACHETE"));
+							corner.y + j }].AddItem(Items::GetItem("MACHETE"));*/
 				}
 				chestCounter++;
 

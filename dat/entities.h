@@ -25,7 +25,6 @@ struct ActionEffect {
 //Name, ID, Stackable, Holds Liquid, Consumable, Count, Consume Text, Use Text
 struct Item {
 	std::string name, section, description, cooks_into;
-	std::string id = "none";
 	bool stackable, holdsLiquid, consumable, cookable;
 	int count = 1;
 	std::string consumeTxt, useTxt;
@@ -55,7 +54,7 @@ struct Item {
 		name = item.getString("name");
 		section = item.section_name;
 		description = item.getString("description");
-		id = item.getString("id");
+		//id = item.getString("id");
 		stackable = item.getBool("stackable");
 		holdsLiquid = item.getBool("holdsLiquid");
 		consumable = item.getBool("consumable");

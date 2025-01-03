@@ -1,17 +1,17 @@
 STATS {
-x_pos : 9;
-y_pos : 1;
-seed : 28044;
-biomes : 16765;
-global_x : 244;
-global_y : 249;
+x_pos : 17;
+y_pos : 24;
+seed : 25047;
+biomes : 22395;
+global_x : 248;
+global_y : 251;
 weather : 0;
 color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
-health : 100.000000;
-thirst : 72.926102;
-hunger : 81.948898;
-time : 0.000000;
-items : [BANDAGE,1,LIGHTER,1,,1,];
+health : 39.500000;
+thirst : 0.000000;
+hunger : 27.298367;
+time : 6.550007;
+items : [LIGHTER,1,FLAT_MUSHROOM,6,RESIN,9,STICK,6,BASIC_FLOWER,2,GRASS,5,SCRAP,2,OLD_CLOTH,1,GUTS,1,COOKED_MEAT,2,ROCK,6,BANDAGE,1,GLOWING_MUSHROOM,1,CHEST,1,CAMPFIRE,1,];
 }
