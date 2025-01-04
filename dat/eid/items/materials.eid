@@ -56,6 +56,8 @@ description : "Glass shards found all over the place from before the fall.";
 stackable : true;
 holdsLiquid : false;
 consumable : false;
+cookable : true;
+cooksInto : "MOLTEN_GLASS";
 amount : 1;
 consumeTxt : "Glass.";
 useTxt : "You cut yourself with a piece of glass.";

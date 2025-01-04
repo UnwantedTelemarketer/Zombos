@@ -53,7 +53,7 @@ struct Chunk {
 		{
 			for (size_t j = 0; j < CHUNK_HEIGHT; j++)
 			{
-				localCoords[i][j].LoadTile(sChunk.tiles[i][j]);
+				Tiles::LoadTile(&localCoords[i][j], sChunk.tiles[i][j]);
 			}
 		}
 	}

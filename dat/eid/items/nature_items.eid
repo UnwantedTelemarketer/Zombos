@@ -53,7 +53,7 @@ useTxt : "you cannot use this.";
 effects : [3,7,0,0];
 equipType : 0;
 sprite : "U";
-spriteColor : [0.7, 0.87, 0.7];
+spriteColor : [0.2, 0.37, 0.2];
 }
 
 BASIC_FLOWER {

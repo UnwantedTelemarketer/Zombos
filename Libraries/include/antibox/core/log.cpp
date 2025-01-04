@@ -86,6 +86,13 @@ void Console::Log(antibox::Vector2 vec, textColor type = "\033[0;37m", int lineN
 	allLogs.push_back(msg);
 }
 
+void Console::Log(antibox::Vector3 vec3, textColor type = "\033[0;37m", int lineNum = -1)
+{
+	std::string msg = "[ Line " + std::to_string(lineNum) + " ]: " + type + "Vector3 {" + std::to_string(vec3.x) + ", " + std::to_string(vec3.y) + ", " + std::to_string(vec3.z) + "}" + "\033[0m\n";
+	std::cout << msg << std::endl;
+	allLogs.push_back(msg);
+}
+
 void Console::Log(antibox::Vector2_I vec, textColor type = "\033[0;37m", int lineNum = -1)
 {
 	std::string msg = "[ Line " + std::to_string(lineNum) + " ]: " + type + "Vector2 {" + std::to_string(vec.x) + ", " + std::to_string(vec.y) + "}" + "\033[0m\n";

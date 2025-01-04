@@ -5,14 +5,17 @@
 
 #include <chrono>
 
-#define DOSFONT "dat/fonts/symbolic/symbolic_rain_extended.ttf"
+#define DOSFONT  "dat/fonts/symbolic/symbolic_cattail_extended.ttf"
 #define ITEMFONT "dat/fonts/symbolic/symbolic_items_extended.ttf"
+#define VGAFONT  "dat/fonts/VGA437.ttf"
+#define SWAP_FONT(newfont) ImGui::PopFont(); ImGui::PushFont(Engine::Instance().getFont(newfont));
 //#define DEV_TOOLS
 
 using namespace antibox;
 
 enum GameState { playing, menu, map_gen_test };
 static char console_commands[128] = "";
+int prevCommandIndex = 0;
 
 class Caves : public App {
 
@@ -20,7 +23,7 @@ private:
 	WindowProperties GetWindowProperties() {
 		WindowProperties props;
 
-		props.imguiProps = { true, true, false, {DOSFONT, ITEMFONT}, {"main", "items"}, 16.f };
+		props.imguiProps = { true, true, false, {DOSFONT, ITEMFONT, VGAFONT}, {"main", "items", "ui"}, 16.f};
 		props.w = 1340;
 		props.h = 720;
 		props.vsync = 0;
@@ -125,7 +128,7 @@ public:
 		}
 
 
-		if (Input::KeyDown(KEY_M)){
+		if (Input::KeyDown(KEY_M) && currentState != playing){
 			currentState = map_gen_test;
 		}
 		//the rest of the update is game logic so we stop here in the menu
@@ -135,16 +138,27 @@ public:
 
 		if (player.health <= 0) { currentState = menu; player.health = 100; }
 
-		if (Input::KeyDown(KEY_ENTER)) {
-			Console::Log(console_commands, text::green, __LINE__);
-			cmd.RunCommand(console_commands, &game);
-			console_commands[0] = '\0';
+		if (gameScreen.console_showing) {
+			if (Input::KeyDown(KEY_ENTER)) {
+				Console::Log(console_commands, text::green, __LINE__);
+				cmd.RunCommand(console_commands, &game);
+				console_commands[0] = '\0';
+				prevCommandIndex = -1;
+			}
+			if (Input::KeyDown(KEY_UP)) {
+				std::string prevCom = cmd.GetOldCommand(&prevCommandIndex);
+				//LAZY_LOG(prevCommandIndex);
+				memset(console_commands, '\0', sizeof(console_commands));
+
+				for (int i = 0; i < prevCom.size(); i++) {
+					console_commands[i] = prevCom[i];
+				}
+			}
 		}
 
 		gameScreen.FlipScreens();
 
 		if (gameScreen.console_showing) { return; }
-
 
 		game.UpdateTick();
 
@@ -171,9 +185,9 @@ public:
 			{
 				Tile& selTile = *map.TileAtPos(Vector2_I{ player.coords.x + 1, player.coords.y });
 				selectedTile = { &selTile };
-				if (selTile.entity != nullptr) {
+				/*if (selTile.entity != nullptr) {
 
-				}
+				}*/
 				interacting = false;
 				return;
 			}
@@ -360,7 +374,7 @@ public:
 	}
 
 	void MenuScene() {
-
+		ImGui::PushFont(Engine::Instance().getFont("ui"));
 		//ImGui::ShowDemoWindow();
 		ImGui::Begin("title");
 		ImGui::SetFontSize(48.f);
@@ -406,6 +420,8 @@ public:
 			map.SetWeather((weather)data.getInt("weather"));
 		}
 		ImGui::End();
+
+		ImGui::PopFont();
 	}
 
 	void Create_Character() {
@@ -424,6 +440,7 @@ public:
 
 	void GameScene() {
 
+		ImGui::PushFont(Engine::Instance().getFont("ui"));
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
 		//Entity* ent = game.NearEnt();
@@ -435,13 +452,15 @@ public:
 			ImGui::InputTextWithHint("console", "enter commands", console_commands, IM_ARRAYSIZE(console_commands));
 			ImGui::End();
 		}
-		//------Map rendering-------
+		//-------Map rendering-------
 		
 		if (game.worldTime >= 20.f || game.worldTime < 6.f) { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.0,0.0,1 }); }
 		else { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ game.bgColor.x,game.bgColor.y,game.bgColor.z,1 }); }
 		{
 			ImGui::Begin("Map");
-			if (gameScreen.fancyGraphics) { ImGui::PushFont(Engine::Instance().getFont("main")); }
+			if (gameScreen.fancyGraphics) { 
+				SWAP_FONT("main");
+			}
 
 			bool item = false;
 			ImVec2 playerPos;
@@ -549,10 +568,16 @@ public:
 							if (printIcon != ENT_PLAYER) printIcon = "G";
 							iconColor = game.GetTileColor(*underTile, intensity);
 						}
-						if (underTile->id == 12) {
+						else if (underTile->id == 12) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
 							if (printIcon != ENT_PLAYER) printIcon = "J";
+							iconColor = game.GetTileColor(*underTile, intensity);
+						}
+						else if (underTile->id == 18) {
+							//screen += "J";
+							//colors.push_back(game.GetTileColor(underTile, intensity));
+							if (printIcon != ENT_PLAYER) printIcon = "Y";
 							iconColor = game.GetTileColor(*underTile, intensity);
 						}
 					}
@@ -595,7 +620,10 @@ public:
 			}
 		}
 
-		if (gameScreen.fancyGraphics) ImGui::PopFont();
+		if (gameScreen.fancyGraphics) { 
+			SWAP_FONT("ui");
+		}
+
 
 		ImGui::End();
 		ImGui::PopStyleColor(1);
@@ -616,7 +644,7 @@ public:
 		//ImGui::PushFont(Engine::Instance().getFont());
 		for (int i = 0; i < game.actionLog.size(); i++)
 		{
-			ImGui::Text(game.actionLog[i].c_str());
+			ImGui::TextWrapped(game.actionLog[i].c_str());
 		}
 		//ImGui::PopFont();
 		ImGui::End();
@@ -696,13 +724,13 @@ public:
 			ImGui::Begin("Current Item");
 			ImGui::Text((pInv.items[currentItemIndex].name + "\n\n").c_str());
 
-			ImGui::PushFont(Engine::Instance().getFont("items"));
+			SWAP_FONT("items");
 			ImGui::SetFontSize(32.f);
 			ImGui::Text(game.item_icons[pInv.items[currentItemIndex].section].c_str());
 			ImGui::SetFontSize(16.f);
-			ImGui::PopFont();
+			SWAP_FONT("ui");
 
-			ImGui::Text(pInv.items[currentItemIndex].description.c_str());
+			ImGui::TextWrapped(pInv.items[currentItemIndex].description.c_str());
 
 			std::string liquid = pInv.GetLiquidName(currentItemIndex);
 			ImVec4 color, colorBG;
@@ -827,11 +855,11 @@ public:
 			}
 			if (recipeSelectedName != "") {
 				std::vector<std::string> components = game.Crafter.getRecipeComponents(recipeSelectedName);
-				ImGui::PushFont(Engine::Instance().getFont("items"));
+				SWAP_FONT("items");
 				ImGui::SetFontSize(32.f);
 				ImGui::Text(("\n" + game.item_icons[recipeSelectedName]).c_str());
 				ImGui::SetFontSize(16.f);
-				ImGui::PopFont();
+				SWAP_FONT("ui");
 				ImGui::Text(" - Required Components - ");
 				for (size_t i = 0; i < components.size(); i++)
 				{
@@ -878,14 +906,14 @@ public:
 
 			Container* curCont = game.mainMap.ContainerAtCoord(selectedTile->coords);
 
-			ImGui::PushFont(Engine::Instance().getFont("main"));
+			SWAP_FONT("main");
 			if (curCont != nullptr) {
 				ImGui::TextColored(ImVec4{ 0.5, 0.34, 0, 1 }, "U");
 			}
 			else {
 				ImGui::TextColored(game.GetTileColor(*selectedTile, 1.f), game.GetTileChar(*selectedTile).c_str());
 			}
-			ImGui::PopFont();
+			SWAP_FONT("ui");
 
 
 			if (curCont != nullptr) {
@@ -921,7 +949,7 @@ public:
 				if (ImGui::Button(text.c_str())) { gameScreen.containerOpen = !gameScreen.containerOpen; }
 				if (gameScreen.containerOpen) {
 					std::vector<std::string> names = selectedTile->entity->getItemNames();
-					if (ImGui::BeginListBox("Items"))
+					if (ImGui::BeginListBox("Items", {0, ((float)names.size() + 1) * 20.f}))
 					{
 						for (int n = 0; n < names.size(); n++)
 						{
@@ -1115,7 +1143,7 @@ public:
 		ImGui::End();
 #endif
 
-		//ImGui::PopFont();
+		ImGui::PopFont();
 	}
 
 	void TechScreen() {

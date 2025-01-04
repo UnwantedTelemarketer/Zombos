@@ -107,7 +107,17 @@ public:
 	bool AttemptCollect(Tile* tile) {
 		int itemIndex = 0;
 		bool covered = false;
-		if (tile->liquid != nothing)
+		if (tile->hasItem) {
+			Item item = GetItemFromFile("items.eid", tile->itemName);
+			if (covered) { item.CoverIn(tile->liquid, Math::RandInt(30, 60)); }
+
+			tile->itemName = "";
+			tile->hasItem = false;
+			tile->ticksNeeded = Math::RandInt(1, 1000) + 500;
+			AddItem(item);
+			return true;
+		}
+		else if (tile->liquid != nothing)
 		{
 			if (TryGetItem("CANTEEN", false, &itemIndex)) {
 				Item* item = &items[itemIndex];
@@ -125,20 +135,10 @@ public:
 		}
 		if (tile->collectible)
 		{
-			Item item = GetItemFromFile("items.eid", tile->itemName);
+			Item item = GetItemFromFile("items.eid", tile->collectibleName);
 			if (covered) { item.coveredIn = tile->liquid; }
 			
 			*tile = Tiles::GetTile(tile->collectedReplacement);
-			tile->ticksNeeded = Math::RandInt(1, 1000) + 500;
-			AddItem(item);
-			return true;
-		}
-		if (tile->hasItem) {
-			Item item = GetItemFromFile("items.eid", tile->itemName);
-			if (covered) { item.CoverIn(tile->liquid, Math::RandInt(30,60)); }
-
-			tile->itemName = "";
-			tile->hasItem = false;
 			tile->ticksNeeded = Math::RandInt(1, 1000) + 500;
 			AddItem(item);
 			return true;

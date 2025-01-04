@@ -638,8 +638,10 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				}
 				break;
 			case swamp:
-				chunk->localCoords[i][j] = Tiles::GetTile("TILE_MUD");
-				if (current < -0.2f) {
+				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
+				chunk->localCoords[i][j].tileColor = {0.5, 0.55, 0.35};
+				chunk->localCoords[i][j].tileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+				if (current < -0.3f) {
 					chunk->localCoords[i][j].SetLiquid(water, { 0.f, 0.5f, 0.4f });
 					chunk->localCoords[i][j].liquidTime = -1;
 					if (Math::RandInt(0, 25) == 5) {
@@ -648,9 +650,19 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 					}
 				}
 
-				else if (currentTile < 0.2f && Math::RandInt(0, 3) >= 2) {
-					chunk->localCoords[i][j] = Tiles::GetTile("TILE_TREE_BASE");
+				else if (currentTile < 0.1f && Math::RandInt(0, 2) == 1) {
+					if (Math::RandInt(0, 5) == 2) {
+						chunk->localCoords[i][j] = Tiles::GetTile("TILE_TREE_BASE");
+					}
+					else {
+						chunk->localCoords[i][j] = Tiles::GetTile("TILE_CATTAIL");
+					}
 					chunk->localCoords[i][j].double_size = true;
+				}
+				else if (currentTile < 0.3f) {
+					chunk->localCoords[i][j] = Tiles::GetTile("TILE_MUD");
+					chunk->localCoords[i][j].SetLiquid(mud);
+					chunk->localCoords[i][j].liquidTime = -1;
 				}
 
 				else if (Math::RandInt(0, 35) == 5) {
@@ -662,10 +674,6 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 						chunk->localCoords[i][j].itemName = "FLAT_MUSHROOM";
 						chunk->localCoords[i][j].hasItem = true;
 					}
-				}
-				else {
-					chunk->localCoords[i][j].SetLiquid(mud);
-					chunk->localCoords[i][j].liquidTime = -1;
 				}
 
 				break;
@@ -887,7 +895,7 @@ void Map::UpdateTiles(vec2_i coords) {
 			//change grass color
 			//if (curTile->id == 1) { curTile->tileColor = { 0, 0.65f + ((Math::RandNum(2) - 1) / 10), 0}; }
 			
-			//Crystals glow
+			//Crystals glows
 			if (curTile->id == 14 || curTile->itemName == "GLOWING_MUSHROOM") { floodFill({x, y}, 3, true); }
 
 			//spread fire to a list so we dont spread more than one tile per update

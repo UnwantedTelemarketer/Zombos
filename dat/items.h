@@ -68,9 +68,15 @@ namespace EID {
 
 namespace Tiles {
 	static std::map<std::string, Tile> list;
+	static std::map<int, std::string> nameByID;
 
 	Tile GetTile(std::string name) {
 		return list[name];
+	}
+
+	Tile* GetTile(int ID) {
+		//get the name by the id, and then get the item. Used for loading saved chunks to cut down on data that needss to be saved on disk vs ram
+		return &list[nameByID[ID]];
 	}
 
 	static void LoadTiles(std::map<int, vec3>* tileColors) {
@@ -84,6 +90,7 @@ namespace Tiles {
 			ItemReader::GetDataFromFile("tiles/" + x.first, "SECTIONS", &sectionsData);
 			for (auto const& tileSection : sectionsData.getArray("sections")) {
 				list[tileSection] = EID::MakeTile("tiles/" + x.first, tileSection);
+				nameByID[list[tileSection].id] = tileSection;
 				tileColors->insert({ list[tileSection].id,list[tileSection].tileColor });
 			}
 		}
@@ -93,6 +100,22 @@ namespace Tiles {
 	static std::thread LoadTilesFromFiles(std::map<int, vec3>* tileColors) {
 		std::thread loadingTiles{ LoadTiles, tileColors };
 		return loadingTiles;
+	}
+
+	static void LoadTile(Tile* createdTile, Saved_Tile tile) {
+		createdTile->id = tile.id;
+		createdTile->burningFor = tile.burningFor;
+		createdTile->ticksPassed = tile.ticksPassed;
+		createdTile->ticksNeeded = tile.ticksNeeded;
+		createdTile->liquidTime = tile.liquidTicks;
+		createdTile->hasItem = tile.hasItem;
+		createdTile->itemName = tile.itemName;
+		createdTile->coords = { tile.x, tile.y };
+		createdTile->walkable = Tiles::GetTile(tile.id)->walkable;
+		createdTile->mainTileColor = Tiles::GetTile(tile.id)->mainTileColor;
+
+		createdTile->tileColor = createdTile->mainTileColor;
+		createdTile->SetLiquid(tile.liquid);
 	}
 }
 

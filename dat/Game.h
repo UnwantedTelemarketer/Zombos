@@ -121,7 +121,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	BG_SWAMP = { 0.1, 0.15, 0.05 };
 	sandWalk = { "dat/sounds/movement/sand1.wav","dat/sounds/movement/sand2.wav", "dat/sounds/movement/sand3.wav" };
 	grassWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };
-	rockWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };
+	rockWalk = { "dat/sounds/movement/rock_walk1.wav","dat/sounds/movement/rock_walk2.wav", "dat/sounds/movement/rock_walk3.wav" };
 	mainMap.SetWeather(clear);
 	mainMap.ticksUntilWeatherUpdate = Math::RandInt(15, 600);
 
@@ -380,6 +380,7 @@ void GameManager::MovePlayer(int dir) {
 	}
 	if (mainMap.TileAtPos(mPlayer.coords)->id == ID_STONE) {
 		if (EnterCave()) {
+			//Audio::LerpMusic("ambient_day", "dat/sounds/wet-pizza-rat.mp3", "ambient_cave");
 			Audio::StopLoop("ambient_day");
 			Audio::PlayLoop("dat/sounds/wet-pizza-rat.mp3", "ambient_cave");
 			Math::PushBackLog(&actionLog, "You enter a dark cave underground.");
@@ -729,6 +730,8 @@ std::string GameManager::GetWalkSound(){
 	case desert:
 		return sandWalk[Math::RandInt(0, 3)];
 	case forest:
+	case taiga:
+	case grassland:
 		return grassWalk[Math::RandInt(0, 3)];
 	default:
 		return "dat/sounds/bfxr/walk1.wav";
@@ -871,8 +874,11 @@ ImVec4 GameManager::GetTileColor(Vector2_I tile, float intensity) {
 }
 
 class Commands {
+private:
+	std::vector<std::string> previous_commands;
 public:
 	void RunCommand(std::string input, GameManager* game);
+	std::string GetOldCommand(int* index);
 };
 
 void Commands::RunCommand(std::string input, GameManager* game) {
@@ -908,9 +914,20 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 				}
 			}
 		}
-		//else if()
+	}
+	if (previous_commands.size() > 5) {
+		previous_commands.erase(previous_commands.begin());
+	}
+	//if the previous commands already has the command we run, so we dont have duplicates
+	if (std::find(previous_commands.begin(), previous_commands.end(), input) == previous_commands.end()) {
+		previous_commands.push_back(input);
 	}
 
+}
+std::string Commands::GetOldCommand(int* index) {
+	*index += 1;
+	if (*index >= previous_commands.size()) { *index = 0; }
+	return previous_commands[*index];
 }
 
 #endif

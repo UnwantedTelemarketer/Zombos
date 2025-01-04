@@ -10,7 +10,7 @@ stackable : true;
 holdsLiquid : false;
 consumable : true;
 cookable : true;
-cooksInto : "COOKED_MEAT"
+cooksInto : "COOKED_MEAT";
 amount : 1;
 consumeTxt : "You eat the uncooked meat. You feel a bit sick.";
 useTxt : "Does Nothig.";

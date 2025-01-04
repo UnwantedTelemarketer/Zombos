@@ -8,6 +8,7 @@ typedef const char textColor[8];
 namespace antibox {
 	struct Vector2;
 	struct Vector2_I;
+	struct Vector3;
 }
 
 namespace Console {
@@ -30,6 +31,7 @@ namespace Console {
 	void Log(std::vector<std::string> list, textColor type, int lineNum);
 	void Log(antibox::Vector2 vec, textColor type, int lineNum);
 	void Log(antibox::Vector2_I vec, textColor type, int lineNum);
+	void Log(antibox::Vector3 vec3, textColor type, int lineNum);
 
 	//template <typename T, typename T2>
 	//void Log(std::pair<T, T2> pair, textColor type, int lineNum);

@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [TILE_GRASS,TILE_TALLGRASS,TILE_DIRT,TILE_SAND,TILE_STONE,TILE_TREE_BASE,TILE_CACTUS_BASE,TILE_STONE_FLOOR,TILE_CRYSTAL,TILE_SNOW,TILE_MUD]
+sections : [TILE_GRASS,TILE_TALLGRASS,TILE_DIRT,TILE_SAND,TILE_STONE,TILE_TREE_BASE,TILE_TREE_BASE_E,TILE_CACTUS_BASE,TILE_STONE_FLOOR,TILE_CRYSTAL,TILE_SNOW,TILE_MUD,TILE_MUD_EMPTY,TILE_CATTAIL]
 }
 
 TILE_GRASS {
@@ -22,8 +22,9 @@ id : 3;
 direction : 0;
 liquid : 0;
 collectible : true;
+collectibleName : "GRASS"
 replacement : "TILE_GRASS";
-itemName : "GRASS";
+itemName : "NULL";
 hasItem : false;
 walkable : true;
 changesOverTime : false;
@@ -82,14 +83,15 @@ id : 11;
 direction : 0;
 liquid : 0;
 collectible : true;
-replacement : "TILE_GRASS";
-itemName : "RESIN";
+collectibleName : "RESIN";
+replacement : "TILE_TREE_BASE_E";
+itemName : "NULL";
 hasItem : false;
 walkable : true;
 changesOverTime : false;
 timedReplacement : 0;
 double_size : true;
-color : [0, 0.25, 0];
+color : [0, 0.45, 0];
 }
 
 TILE_TREE_BASE_E {
@@ -101,10 +103,10 @@ replacement : "TILE_GRASS";
 itemName : "NULL";
 hasItem : false;
 walkable : true;
-changesOverTime : false;
-timedReplacement : 0;
+changesOverTime : "TILE_TREE_BASE";
+timedReplacement : true;
 double_size : true;
-color : [0, 0.45, 0];
+color : [0, 0.25, 0];
 }
 
 TILE_CACTUS_BASE {
@@ -120,6 +122,22 @@ changesOverTime : false;
 timedReplacement : 0;
 double_size : true;
 color : [0, 0.65, 0];
+}
+
+TILE_CATTAIL {
+id : 18;
+direction : 0;
+liquid : 0;
+collectible : true;
+collectibleName : "GRASS";
+replacement : "TILE_MUD";
+itemName : "NULL";
+hasItem : false;
+walkable : true;
+changesOverTime : false;
+timedReplacement : 0;
+double_size : true;
+color : [0.8, 0.7, 0.5];
 }
 
 TILE_STONE_FLOOR {
@@ -144,7 +162,7 @@ liquid : 0;
 collectible : true;
 replacement : "TILE_STONE_FLOOR";
 itemName : "CRYSTAL";
-hasItem : false;
+hasItem : true;
 walkable : false;
 changesOverTime : false;
 timedReplacement : 0;
@@ -157,8 +175,9 @@ id : 15;
 direction : 0;
 liquid : 0;
 collectible : true;
+collectibleName : "SNOW";
 replacement : "TILE_DIRT";
-itemName : "SNOW";
+itemName : "NULL";
 hasItem : false;
 walkable : true;
 changesOverTime : false;
@@ -180,4 +199,20 @@ changesOverTime : false;
 timedReplacement : 0;
 double_size : false;
 color : [0.6,0.4,0.3];
+}
+
+TILE_MUD_EMPTY {
+id : 17;
+direction : 0;
+liquid : 0;
+collectible : true;
+collectibleName : "CLAY";
+replacement : "TILE_MUD";
+itemName : "NULL";
+hasItem : false;
+walkable : true;
+changesOverTime : true;
+timedReplacement : "TILE_MUD";
+double_size : false;
+color : [0.95,0.75,0.65];
 }
