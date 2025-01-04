@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [GRASS,ROCK,SCRAP,STICK,OLD_CLOTH,RESIN]
+sections : [GRASS,ROCK,SCRAP,STICK,OLD_CLOTH,RESIN,GLASS_SHARDS]
 }
 
 GRASS {
@@ -48,6 +48,21 @@ effects : [0,0,4,2,5];
 equipType : 1;
 sprite : "B";
 spriteColor : [0.6, 0.6, 0.6];
+}
+
+GLASS_SHARDS {
+name : "Glass Shards";
+description : "Glass shards found all over the place from before the fall.";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "Glass.";
+useTxt : "You cut yourself with a piece of glass.";
+effects : [0,0,4,2,5];
+equipType : 1;
+sprite : "B";
+spriteColor : [0.6, 0.6, 0.7];
 }
 
 STICK {
