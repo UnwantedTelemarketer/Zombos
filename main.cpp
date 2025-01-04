@@ -842,7 +842,7 @@ public:
 		if (gameScreen.craftingMenu) {
 			ImGui::Begin("Crafting");
 
-			if (ImGui::BeginListBox("Recipes"))
+			if (ImGui::BeginListBox("Recipes")) 
 			{
 				ImGui::InputText("Material", recipe_search, IM_ARRAYSIZE(recipe_search));
 				std::vector<std::string> recipesList = game.Crafter.getRecipesByItem(recipe_search);
@@ -856,6 +856,7 @@ public:
 				}
 				ImGui::EndListBox();
 			}
+
 			if (recipeSelectedName != "") {
 				std::vector<std::string> components = game.Crafter.getRecipeComponents(recipeSelectedName);
 				SWAP_FONT("items");
@@ -882,6 +883,15 @@ public:
 					}
 				}
 			}
+			
+
+			ImGui::PushStyleColor(ImGuiCol_Button, { 0.5,0,0,1 });
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.8,0,0,1 });
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 1,0.7,0.7,1 });
+			if (ImGui::Button("Close Crafting Window")) {
+				gameScreen.craftingMenu = false;
+			}
+			ImGui::PopStyleColor(3);
 			ImGui::End();
 		}
 

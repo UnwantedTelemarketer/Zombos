@@ -415,10 +415,14 @@ public:
 	}
 
 	std::vector<std::string> getRecipesByItem(std::string itemName) {
-		if (recipes.contains(itemName)) { return { itemName }; }
-		else if (recipes_by_item.count(itemName) == 0) { return { }; }
+		bool isRecipe = false;
+		if (recipes.contains(itemName)) { isRecipe = true; }
+		else if (recipes_by_item.count(itemName) == 0 && !isRecipe) { return { }; }
 
-		return recipes_by_item[itemName];
+		std::vector<std::string> recipeList = recipes_by_item[itemName];
+		if (isRecipe) { recipeList.insert(recipeList.begin(), itemName); }
+
+		return recipeList;
 	}
 
 private:

@@ -19,7 +19,7 @@ struct GameUI {
 		if (Input::KeyDown(KEY_GRAVE_ACCENT)) {
 			console_showing = !console_showing;
 		}
-		if (console_showing) { return; }
+		if (console_showing || craftingMenu) { return; }
 		if (Input::KeyDown(KEY_P))
 		{
 			debugOpen = !debugOpen;
