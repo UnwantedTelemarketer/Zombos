@@ -360,6 +360,10 @@ class Inventory;
 class CraftingSystem {
 public:
 	void addRecipe(std::string output, std::map<std::string, int> inputs) {
+		for (auto const& input_item : inputs) {
+			if (recipes_by_item.count(input_item.first) == 0) { recipes_by_item[input_item.first] = {}; }
+			recipes_by_item[input_item.first].push_back(output);
+		}
 		recipes.insert({ output, inputs });
 	}
 
@@ -410,9 +414,19 @@ public:
 		return recipeComps;
 	}
 
+	std::vector<std::string> getRecipesByItem(std::string itemName) {
+		if (recipes.contains(itemName)) { return { itemName }; }
+		else if (recipes_by_item.count(itemName) == 0) { return { }; }
+
+		return recipes_by_item[itemName];
+	}
+
 private:
 
 	std::unordered_map<std::string, std::map<std::string, int>> recipes;
+
+	//				  --item_name   --list of recipes using the item
+	std::unordered_map<std::string, std::vector<std::string>> recipes_by_item;
 };
 
 

@@ -41,7 +41,6 @@ public:
 	vec3 BG_DESERT, BG_WATER, BG_FOREST, BG_TAIGA, BG_SWAMP;
 
 
-	std::vector<std::string> recipeNames;
 	float worldTime = 6.f;
 	float darkTime = 1.f;
 	bool paused = false;
@@ -130,7 +129,6 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	mPlayer.coords.x = x;
 	mPlayer.coords.y = y;
 	AddRecipes();
-	recipeNames = Crafter.getRecipeNames();
 	mainMap.CreateMap(seed, biome);
 
 	//Faction, Enemies

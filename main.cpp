@@ -55,6 +55,7 @@ public:
 	bool interacting, flashlightActive;
 	int xMin, xMax, yMin, yMax;
 	bool freeView = false;
+	char recipe_search[128] = "";
 
 	//Game Stuff
 	std::shared_ptr<Chunk> test_chunk;
@@ -158,7 +159,7 @@ public:
 
 		gameScreen.FlipScreens();
 
-		if (gameScreen.console_showing) { return; }
+		if (gameScreen.console_showing || gameScreen.craftingMenu) { return; }
 
 		game.UpdateTick();
 
@@ -843,11 +844,13 @@ public:
 
 			if (ImGui::BeginListBox("Recipes"))
 			{
-				for (int n = 0; n < game.recipeNames.size(); n++)
+				ImGui::InputText("Material", recipe_search, IM_ARRAYSIZE(recipe_search));
+				std::vector<std::string> recipesList = game.Crafter.getRecipesByItem(recipe_search);
+				for (int n = 0; n < recipesList.size(); n++)
 				{
 					const bool is_selected = (recipeSelected == n);
-					if (ImGui::Selectable(game.recipeNames[n].c_str(), is_selected)) {
-						recipeSelectedName = game.recipeNames[n];
+					if (ImGui::Selectable(recipesList[n].c_str(), is_selected)) {
+						recipeSelectedName = recipesList[n];
 						recipeSelected = n;
 					}
 				}

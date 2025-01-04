@@ -438,11 +438,15 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 		}
 
 		else if (CurrentChunk()->localCoords[x][y].walkable == false) {
+			//they cant walk on non walkable surfaces or deep water
 			Math::PushBackLog(actionLog, "You can't walk there.");
 			return;
 		}
 
 	Liquid l = CurrentChunk()->GetTileAtCoords(x, y)->liquid; //check if the tile has a liquid
+	if (l == water && CurrentChunk()->GetTileAtCoords(x, y)->liquidTime == -1) {
+		Audio::Play("dat/sounds/movement/enter_water.wav");
+	}
 
 	if (p->coveredIn != nothing && p->coveredIn != mud && l == nothing && Math::RandInt(1, 5) >= 3) {
 		CurrentChunk()->GetTileAtCoords(p->coords.x, p->coords.y)->SetLiquid(p->coveredIn);
