@@ -1,11 +1,10 @@
 SECTIONS {
-sections : [BANDAGE,LIGHTER,CANTEEN,GUTS]
+sections : [BANDAGE,LIGHTER,CANTEEN,GUTS,GLASS_JAR,GLOWING_MUSHROOM_JAR];
 }
 
 BANDAGE {
 name : "Sterile Bandage";
 description : "Clean bandage that can be used to heal.";
-id : "bandage";
 stackable : true;
 holdsLiquid : false;
 consumable : true;
@@ -66,4 +65,32 @@ sprite : "W";
 spriteColor : [0.65, 0.0, 0.0];
 }
 
+GLASS_JAR {
+name : "Glass Jar";
+description : "Holds liquid.";
+stackable : false;
+holdsLiquid : true;
+consumable : false;
+amount : 1;
+consumeTxt : "You take a sip from the jar.";
+useTxt : "You pour liquid on yourself.";
+effects : [2,10,2,25];
+equipType : 0;
+sprite : "E";
+spriteColor : [0.5, 0.50, 0.5];
+}
 
+GLOWING_MUSHROOM_JAR {
+name : "Glowing Mushroom Jar";
+description : "Glowing mushroom sealed in a glass jar. Small light source.";
+stackable : false;
+holdsLiquid : true;
+consumable : false;
+amount : 1;
+consumeTxt : "You take a sip from your canteen.";
+useTxt : "You pour liquid on yourself.";
+effects : [0,10,0,25];
+equipType : 0;
+sprite : "E";
+spriteColor : [0.0, 0.50, 0.0];
+}
