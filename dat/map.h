@@ -561,6 +561,7 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 	float current = 0.f;
 	biome currentBiome = ocean;
 	int event = Math::RandInt(0, 15);
+	float taiga_pond_height = Math::RandInt(80,99);
 	for (int i = 0; i < CHUNK_WIDTH; i++) {
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
 
@@ -605,12 +606,17 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_SAND");
 					if (Math::RandInt(1, 300) == 255) {
 						chunk->localCoords[i][j].hasItem = true;
-						chunk->localCoords[i][j].itemName = "SCRAP";
+						chunk->localCoords[i][j].itemName = "GLASS_SHARDS";
 					}
 				}
 				break;
 			case taiga:
-				if (currentTile < -0.10f && Math::RandInt(0, 4) >= 2) {
+				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
+				if (currentTile < -(taiga_pond_height / 100)) {
+					chunk->localCoords[i][j].SetLiquid(water, { 0,0.5,1 });
+					chunk->localCoords[i][j].liquidTime = -1;
+				}
+				else if (currentTile < -0.10f && Math::RandInt(0, 4) >= 2) {
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_TREE_BASE");
 					chunk->localCoords[i][j].double_size = true;
 				}
@@ -620,7 +626,6 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				}
 
 				else {
-					chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
 					chunk->localCoords[i][j].tileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
 					chunk->localCoords[i][j].tileColor.z = 0.35f;
 					if (Math::RandInt(1, 35) == 34) {
@@ -687,6 +692,11 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 			{ 
 				chunk->localCoords[i][j].hasItem = true;
 				chunk->localCoords[i][j].itemName = "ROCK";
+			}
+			else if (Math::RandInt(1, 350) == 124 && !chunk->localCoords[i][j].hasItem)
+			{
+				chunk->localCoords[i][j].hasItem = true;
+				chunk->localCoords[i][j].itemName = "SCRAP";
 			}
 
 			if (chunk->localCoords[i][j].ticksNeeded == 1) {
