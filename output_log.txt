@@ -3,10 +3,12 @@
 [ Line 150 ]: [0;37mLoading Tiles from files...[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 79 ]: [1;32mLoaded texture from res/plank.png.[0m
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
+[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 97 ]: [0;37mLoaded Items![0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
@@ -40,10 +42,16 @@
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 165 ]: [0;37mLoaded Tiles![0m
 [ Line 121 ]: [1;32mDone![0m
-[ Line 40 ]: [1;31m0[0m
-[ Line 222 ]: [1;32mReading Chunk from dat/map/252253.chunk[0m
-[ Line 222 ]: [1;32mReading Chunk from dat/map/253253.chunk[0m
-[ Line 222 ]: [1;32mReading Chunk from dat/map/253252.chunk[0m
+[ Line 40 ]: [1;31m1069938928[0m
+[ Line 222 ]: [1;32mReading Chunk from dat/map/244254.chunk[0m
+[ Line 222 ]: [1;32mReading Chunk from dat/map/245254.chunk[0m
+[ Line 222 ]: [1;32mReading Chunk from dat/map/246254.chunk[0m
+[ Line 222 ]: [1;32mReading Chunk from dat/map/244255.chunk[0m
+[ Line 222 ]: [1;32mReading Chunk from dat/map/245255.chunk[0m
+[ Line 222 ]: [1;32mReading Chunk from dat/map/246255.chunk[0m
+[ Line 222 ]: [1;32mReading Chunk from dat/map/244256.chunk[0m
+[ Line 222 ]: [1;32mReading Chunk from dat/map/245256.chunk[0m
+[ Line 222 ]: [1;32mReading Chunk from dat/map/246256.chunk[0m
 [ Line -1 ]: [0;37mNow saving...[0m
 [ Line 313 ]: [1;32mWrote to file dat/eid/save.eid[0m
-[ Line 1379 ]: [1;32mSave complete in 31.712294ms.[0m
+[ Line 1313 ]: [1;32mSave complete in 9.852365ms.[0m

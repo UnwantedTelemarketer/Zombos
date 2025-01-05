@@ -100,8 +100,6 @@ struct Item {
 };
 
 struct Container {
-	Vector2_I localCoords;
-	Vector2_I globalCoords;
 	std::vector<Item> items;
 	int sizeLimit = 999;
 
@@ -290,7 +288,7 @@ struct Tile {
 
 	void SetLiquid(Liquid l, bool perm = false) {
 		liquid = l;
-
+		liquidTime = perm ? -1 : 0;
 		switch (l) {
 		case water:// check if the water placed is like permanent like a body of water, and choose the color based on biome
 			//I HOPE THIS NEVER BREAKS AGAIN BUT IM SURE IT WILL

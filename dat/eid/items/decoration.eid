@@ -13,6 +13,21 @@ consumeTxt : "Stick.";
 useTxt : "Stick.";
 effects : [0,0,0,0];
 equipType : 0;
-sprite : "O";
+sprite : "P";
+spriteColor : [0.65, 0.35, 0.0];
+}
+
+TABLE {
+name : "Table";
+description : "Table for using.";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "Stick.";
+useTxt : "Stick.";
+effects : [0,0,0,0];
+equipType : 0;
+sprite : "Q";
 spriteColor : [0.65, 0.35, 0.0];
 }

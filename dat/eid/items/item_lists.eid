@@ -9,4 +9,5 @@ weapons.eid : 0;
 custom_items.eid : 0;
 nature_items.eid : 0;
 clothing.eid : 0;
+decoration.eid : 0;
 }

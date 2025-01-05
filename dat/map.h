@@ -40,9 +40,6 @@ public:
 	weather currentWeather;
 	int ticksUntilWeatherUpdate = 0;
 
-	//x and y are global coords, z and w are local
-	std::map<Vector4_I, Container> containers;
-
 	int landSeed = 0, biomeSeed = 0;
 	float tempMin = 0.5f, moistureMin = 0.5f;
 	FastNoiseLite mapNoise, biomeTempNoise, biomeMoistureNoise;
@@ -74,10 +71,6 @@ public:
 	void ClearEntities(std::vector<Vector2_I> positions, std::shared_ptr<Chunk> chunk);
 	void ClearChunkOfEnts(std::shared_ptr<Chunk> chunk);
 	void ClearEffects();
-	void CreateContainer(Vector2_I coordsLocal);
-	void RemoveContainer(Vector2_I coordsLocal);
-	void CreateContainer(Vector4_I coords);
-	Container* ContainerAtCoord(Vector2_I localCoords);
 	void PlaceEntities(std::shared_ptr<Chunk> chunk);
 	void UpdateTiles(vec2_i coords);
 	void DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y);
@@ -1043,7 +1036,7 @@ void Map::FixEntityIndex(std::shared_ptr<Chunk> chunk) {
 	}
 }
 
-void Map::CreateContainer(Vector2_I coordsLocal) {
+/*void Map::CreateContainer(Vector2_I coordsLocal) {
 	containers[{ c_glCoords.x, c_glCoords.y, coordsLocal.x, coordsLocal.y }] =
 	{ { c_glCoords.x, c_glCoords.y}, {coordsLocal.x, coordsLocal.y }, {} };
 }
@@ -1062,7 +1055,7 @@ Container* Map::ContainerAtCoord(Vector2_I localCoords) {
 		return &containers[{ c_glCoords.x, c_glCoords.y, localCoords.x, localCoords.y }];
 	}
 	return nullptr;
-}
+}*/
 
 // Recursive helper function for flood fill algorithm
 void Map::floodFillUtil(int x, int y, float prevBrightness, float newBrightness, int max, bool twinkle, bool firstTile)

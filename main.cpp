@@ -964,6 +964,7 @@ public:
 				saveButton += recipeSelectedName;
 				saveButton += " Recipe";
 				if (ImGui::Button(saveButton.c_str())) {
+					Audio::Play(sfxs["ui_select"]);
 					if (game.Crafter.savedRecipes.contains(recipeSelectedName)) {
 						game.Crafter.UnsaveRecipe(recipeSelectedName);
 					}
@@ -978,6 +979,7 @@ public:
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.8,0,0,1 });
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 1,0.7,0.7,1 });
 			if (ImGui::Button("Close Crafting Window")) {
+				Audio::Play(sfxs["fail"]);
 				gameScreen.craftingMenu = false;
 			}
 			ImGui::PopStyleColor(3);
@@ -1018,90 +1020,21 @@ public:
 			}
 			SWAP_FONT("ui");
 
-
-			if (curCont != nullptr) {
-				std::string text = gameScreen.containerOpen ? "Close Container" : "Open Container";
-				if (ImGui::Button(text.c_str())) { gameScreen.containerOpen = !gameScreen.containerOpen; }
-		if (gameScreen.containerOpen) {
-			std::vector<std::string> names = curCont->getItemNames();
-			if (ImGui::BeginListBox("Items"))
-			{
-				for (int n = 0; n < names.size(); n++)
-				{
-					const bool is_selected = (recipeSelected == n);
-					if (ImGui::Selectable(names[n].c_str(), is_selected)) {
-						itemSelectedName = names[n];
-						recipeSelected = n;
-					}
-				}
-				ImGui::EndListBox();
-
-		if (itemSelectedName != "") {
-			if (ImGui::Button(("Collect " + itemSelectedName).c_str())) {
-				pInv.AddItem(curCont->items[recipeSelected]);
-				curCont->items.erase(curCont->items.begin() + recipeSelected);
-				itemSelectedName = "";
-							}
-						}
-					}
-				}
-			}
-
-			if (selectedTile->entity != nullptr && selectedTile->entity->health <= 0) {
-				std::string text = gameScreen.containerOpen ? "Close Container" : "Open Container";
-				if (ImGui::Button(text.c_str())) { gameScreen.containerOpen = !gameScreen.containerOpen; }
-				if (gameScreen.containerOpen) {
-					std::vector<std::string> names = selectedTile->entity->getItemNames();
-					if (ImGui::BeginListBox("Items", {0, ((float)names.size() + 1) * 20.f}))
-					{
-						for (int n = 0; n < names.size(); n++)
-						{
-							const bool is_selected = (recipeSelected == n);
-							if (ImGui::Selectable(names[n].c_str(), is_selected)) {
-								itemSelectedName = names[n];
-								itemSelected = n;
-							}
-						}
-						ImGui::EndListBox();
-
-						if (itemSelectedName != "") {
-							if (ImGui::Button(("Collect " + itemSelectedName).c_str())) {
-								pInv.AddItem(selectedTile->entity->inv[recipeSelected]);
-								selectedTile->entity->inv.erase(selectedTile->entity->inv.begin() + recipeSelected);
-								itemSelectedName = "";
-							}
-						}
-					}
-				}
-			}
-
 			if (selectedTile->hasItem) { ImGui::Text(("Item on tile: " + selectedTile->itemName).c_str()); }
-
+			
 			if (ImGui::Button("Drop Selected Item")) {
-				//Dropping it into a box
-				Container* curCont = game.mainMap.ContainerAtCoord(selectedTile->coords);
-				if (curCont != nullptr) {
-					//add the item into the box only if theres enough space, and remove it from the inventory
-					if (curCont->AddItem(pInv.items[currentItemIndex])) {
-						if (pInv.RemoveItem(pInv.items[currentItemIndex].section, pInv.items[currentItemIndex].count)) { currentItemIndex = 0; }
-					}
-				}
-				//Or on the floor
-				else {
-					if (invSelectedName != "" && !selectedTile->hasItem) {
-						selectedTile->hasItem = true;
-						std::string upperName = pInv.items[currentItemIndex].section;
+				if (invSelectedName != "" && !selectedTile->hasItem) {
+					selectedTile->hasItem = true;
+					std::string upperName = pInv.items[currentItemIndex].section;
 
-						selectedTile->itemName = upperName;
-						selectedTile->collectible = true;
-						if (selectedTile->itemName == "CAMPFIRE" || selectedTile->itemName == "CHEST") {
-							game.mainMap.CreateContainer({ selectedTile->coords });
-						}
-						if (pInv.RemoveItem(pInv.items[currentItemIndex].section)) { currentItemIndex = 0; }
+					selectedTile->itemName = upperName;
+					selectedTile->collectible = true;
+					if (selectedTile->itemName == "CAMPFIRE" || selectedTile->itemName == "CHEST") {
 					}
-					else {
-						Math::PushBackLog(&game.actionLog, "There is already an item on that space.");
-					}
+					if (pInv.RemoveItem(pInv.items[currentItemIndex].section)) { currentItemIndex = 0; }
+				}
+				else {
+					Math::PushBackLog(&game.actionLog, "There is already an item on that space.");
 				}
 			}
 
