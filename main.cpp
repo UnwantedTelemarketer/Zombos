@@ -899,13 +899,15 @@ public:
 			if (ImGui::CollapsingHeader("Saved Recipes")) {
 
 				if (ImGui::BeginListBox("Saved")) {
-					for (int n = 0; n < game.Crafter.savedRecipes.size(); n++)
+					int n = 0;
+					for (auto const& rec : game.Crafter.savedRecipes)
 					{
 						const bool is_selected = (recipeSelected == n);
-						if (ImGui::Selectable(game.Crafter.savedRecipes[n].c_str(), is_selected)) {
-							recipeSelectedName = game.Crafter.savedRecipes[n];
+						if (ImGui::Selectable(rec.c_str(), is_selected)) {
+							recipeSelectedName = rec;
 							recipeSelected = n;
 						}
+						n++;
 					}
 					ImGui::EndListBox();
 				}
@@ -956,10 +958,18 @@ public:
 				}
 
 				std::string saveButton = "Save ";
+				if (game.Crafter.savedRecipes.contains(recipeSelectedName)) {
+					saveButton = "Unsave ";
+				}
 				saveButton += recipeSelectedName;
 				saveButton += " Recipe";
 				if (ImGui::Button(saveButton.c_str())) {
-					game.Crafter.SaveRecipe(recipeSelectedName);
+					if (game.Crafter.savedRecipes.contains(recipeSelectedName)) {
+						game.Crafter.UnsaveRecipe(recipeSelectedName);
+					}
+					else {
+						game.Crafter.SaveRecipe(recipeSelectedName);
+					}
 				}
 			}
 			
@@ -1353,9 +1363,9 @@ public:
 			{
 				dat.items.append(pInv.items[i].section, pInv.items[i].count);
 			}
-			for (int i = 0; i < game.Crafter.savedRecipes.size(); i++)
+			for (auto const& rec : game.Crafter.savedRecipes)
 			{
-				dat.listString.push_back(game.Crafter.savedRecipes[i]);
+				dat.listString.push_back(rec);
 			}
 
 			ItemReader::SaveDataToFile("dat/eid/save.eid", "STATS", dat, true);

@@ -2,6 +2,7 @@
 #include "antibox/objects/tokenizer.h"
 #include <iostream>
 #include <fstream>
+#include <set>
 
 enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid = 6};
 enum biome { desert, ocean, forest, swamp, taiga, grassland, urban, jungle };
@@ -447,10 +448,13 @@ public:
 	}
 
 	void SaveRecipe(std::string recName) {
-		savedRecipes.push_back(recName);
+		savedRecipes.insert(recName);
 	}
-	std::vector<std::string> savedRecipes;
+	void UnsaveRecipe(std::string recName) {
+		savedRecipes.erase(recName);
+	}
 
+	std::set<std::string> savedRecipes;
 private:
 
 	std::unordered_map<std::string, std::map<std::string, int>> recipes;
