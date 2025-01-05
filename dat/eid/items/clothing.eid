@@ -12,8 +12,9 @@ consumable : false;
 amount : 1;
 consumeTxt : "weatr bppts";
 useTxt : "Does Nothig.";
-effects : [0,0,0,0,15];
-equipType : 4;
+effects : [0,0,0,0];
+equipType : 5;
+equipModifier : 15;
 sprite : "G";
 spriteColor : [1.0, 0.1, 0.2];
 }

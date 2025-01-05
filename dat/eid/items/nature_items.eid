@@ -54,6 +54,7 @@ effects : [3,7,0,0];
 equipType : 0;
 sprite : "U";
 spriteColor : [0.2, 0.37, 0.2];
+emissionDistance : 3;
 }
 
 BASIC_FLOWER {
@@ -84,6 +85,7 @@ effects : [3,2,0,0];
 equipType : 0;
 sprite : "S";
 spriteColor : [0.85, 0.85, 0.0];
+emissionDistance : 3;
 }
 
 SNOW {

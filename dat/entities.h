@@ -8,7 +8,7 @@ enum Liquid { nothing, water, blood, fire, guts, mud, snow };
 enum Action { use, consume, combine };
 enum Behaviour { Wander, Protective, Stationary, Aggressive };
 enum Faction { Human, Zombie, Wildlife };
-enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4};
+enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6};
 
 //What the effect is and how much it does.
 struct EffectAmount {
@@ -41,6 +41,7 @@ struct Item {
 	equipType eType = notEquip;
 	int mod = 0;
 	std::string sprite;
+	int emissionDist = 0;
 	Vector3 spriteColor = {1,1,1};
 
 	void CoverIn(Liquid l, int ticks) {
@@ -71,17 +72,24 @@ struct Item {
 		catch (std::exception e) { cookable = false; }
 
 		try {
+			emissionDist = item.getInt("emissionDistance");
+		}//this is fine if it doesnt work, not all items are emissive
+		catch (std::exception e) { emissionDist = 0; }
+
+		try {
 			spriteColor.x = stof(item.getArray("spriteColor")[0]);
 			spriteColor.y = stof(item.getArray("spriteColor")[1]);
 			spriteColor.z = stof(item.getArray("spriteColor")[2]);
 		}
 		catch (std::exception e) {
 			Console::Log("ERROR: Couldn't find spriteColor parameter for item '" + name + "'.", text::red, __LINE__);
+			spriteColor = { 1,0,0 };
 		}
 
 		std::vector<std::string> effects = item.getArray("effects");
 
-		if(eType != none) mod = stoi(effects[4]);
+		if(eType != none) mod = item.getInt("equipModifier");
+		
 
 		use = { {(ConsumeEffect)stoi(effects[0]), (float)stoi(effects[1])},
 				{(ConsumeEffect)stoi(effects[2]), (float)stoi(effects[3])} };
@@ -284,8 +292,8 @@ struct Tile {
 			switch (l) {
 			case water:
 				tileColor = mainTileColor;
-				tileColor += { 0, 0.5, 1 };
-				tileColor /= 2;
+				tileColor += { 0, 0.75, 1.5 };
+				tileColor /= 2.5;
 				break;
 			case guts:
 				tileColor = { 0.45, 0, 0 };
@@ -434,16 +442,16 @@ private:
 };
 
 
-#define ENT_PLAYER "E"
+#define ENT_PLAYER "A"
 #define ID_PLAYER 0
 
-#define ENT_ZOMBIE "F"
+#define ENT_ZOMBIE "B"
 #define ID_ZOMBIE 1
 
-#define ENT_CHICKEN "L"
+#define ENT_CHICKEN "D"
 #define ID_CHICKEN 2
 
-#define ENT_HUMAN "Z"
+#define ENT_HUMAN "C"
 #define ID_HUMAN 3
 
 

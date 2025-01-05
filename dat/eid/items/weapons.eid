@@ -12,8 +12,9 @@ consumable : false;
 amount : 1;
 consumeTxt : "no eating";
 useTxt : "You shoot yourself.";
-effects : [0,0,4,80,50];
+effects : [0,0,4,80];
 equipType : 1;
+equipModifier : 50;
 spriteColor : [0.5, 0.50, 0.5];
 }
 
@@ -28,8 +29,9 @@ consumable : false;
 amount : 1;
 consumeTxt : "You eat the meat. You feel much less hungry.";
 useTxt : "Does Nothig.";
-effects : [0,0,0,0, 25];
+effects : [0,0,0,0];
 equipType : 1;
+equipModifier : 25;
 sprite : "E";
 spriteColor : [0.5, 0.50, 0.5];
 }
@@ -44,8 +46,9 @@ consumable : false;
 amount : 1;
 consumeTxt : "cant consume.";
 useTxt : "You stab yourself.";
-effects : [0,0,4,35,35];
+effects : [0,0,4,35];
 equipType : 1;
+equipModifier : 35;
 sprite : "E";
 spriteColor : [0.5, 0.50, 0.5];
 }

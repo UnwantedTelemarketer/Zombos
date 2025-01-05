@@ -127,6 +127,10 @@ namespace Items {
 		return list[itemName];
 	}
 
+	static Item* GetItem_NoCopy(std::string itemName) {
+		return &list[itemName];
+	}
+
 	static Vector3 GetItemColor (std::string itemName) {
 		return colors[itemName];
 	}

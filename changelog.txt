@@ -1,7 +1,13 @@
 --v0.2.0 Changes--
  - Two new biomes (Swamp and Grasslands)
 
+ - Equipment Slots now available
+
  - New Mobs, Recipes and Items
+
+ - New building options
+
+ - New Crafting menu (searchable, view items in inventory for the ID for searching)
 
  - Console commands save the last 5 commands (cycle with arrow key)
 

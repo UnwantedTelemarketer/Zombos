@@ -28,8 +28,9 @@ consumable : false;
 amount : 1;
 consumeTxt : "nothing.";
 useTxt : "nothing.";
-effects : [0,0,0,5,5];
+effects : [0,0,0,5];
 equipType : 1;
+equipModifier : 5;
 sprite : "C";
 spriteColor : [0.4, 0.4, 0.4];
 }
@@ -44,8 +45,9 @@ consumable : false;
 amount : 1;
 consumeTxt : "Metal.";
 useTxt : "You cut yourself with a piece of the metal.";
-effects : [0,0,4,2,5];
+effects : [0,0,4,2];
 equipType : 1;
+equipModifier : 5;
 sprite : "B";
 spriteColor : [0.6, 0.6, 0.6];
 }
@@ -61,8 +63,9 @@ cooksInto : "MOLTEN_GLASS";
 amount : 1;
 consumeTxt : "Glass.";
 useTxt : "You cut yourself with a piece of glass.";
-effects : [0,0,4,2,5];
+effects : [0,0,4,2];
 equipType : 1;
+equipModifier : 5;
 sprite : "B";
 spriteColor : [0.6, 0.6, 0.7];
 }
@@ -77,8 +80,9 @@ consumable : false;
 amount : 1;
 consumeTxt : "Stick.";
 useTxt : "Stick.";
-effects : [0,0,0,2,2];
+effects : [0,0,0,2];
 equipType : 1;
+equipModifier : 2;
 sprite : "A";
 spriteColor : [0.60, 0.35, 0.0];
 }

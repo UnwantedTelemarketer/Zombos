@@ -355,7 +355,8 @@ void GameManager::SpawnEntity(Entity* ent) {
 
 void GameManager::MovePlayer(int dir) {
 	if (mainMap.GetTileFromThisOrNeighbor(mPlayer.coords)->liquid == mud) {
-		if (Math::RandInt(0, 7) == 5) {
+		//hardcoding being able to walk through mud in leather boots lol
+		if (Math::RandInt(0, 5) == 3 && pInv.equippedItems[boots].section != "LEATHER_BOOTS") {
 			Math::PushBackLog(&actionLog, "You get stuck in mud.");
 			return;
 		}
@@ -456,7 +457,10 @@ void GameManager::UpdateEffects() {
 			}
 			if (mainMap.effectLayer.localCoords[i][j] == 2) {
 				if (i + 2 >= CHUNK_WIDTH || i < 0) { tempMap[i][j] = 0; }
-				else if (Math::RandInt(0, 30) == 1 && mainMap.TileAtPos({ i,j })->liquid == nothing) { tempMap[i][j] = 0; mainMap.TileAtPos({ i,j })->SetLiquid(water); }
+
+				else if (Math::RandInt(0, 30) == 1 && mainMap.TileAtPos({ i,j })->id != 13 && mainMap.TileAtPos({ i,j })->liquid == nothing)
+				{ tempMap[i][j] = 0; mainMap.TileAtPos({ i,j })->SetLiquid(water); }
+
 				else { tempMap[(int)std::floor((i + 1) * 1.1)][j] = 2; }
 			}
 		}
@@ -749,7 +753,7 @@ ImVec4 GameManager::GetPlayerColor() {
 		end_color += { 0, 0, 0.8 };
 		amount_of_colors++;
 		break;
-	case blood:
+	case blood:   
 		end_color += {0.45, 0, 0};
 		amount_of_colors++;
 		break;

@@ -626,8 +626,8 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				}
 
 				else {
-					chunk->localCoords[i][j].tileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
-					chunk->localCoords[i][j].tileColor.z = 0.35f;
+					chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+					chunk->localCoords[i][j].mainTileColor.z = 0.35f;
 					if (Math::RandInt(1, 35) == 34) {
 						chunk->localCoords[i][j].hasItem = true;
 						chunk->localCoords[i][j].itemName = "STICK";
@@ -641,15 +641,15 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				break;
 			case grassland:
 				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
-				chunk->localCoords[i][j].tileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+				chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
 				if (currentTile < -0.10f) {
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_TALLGRASS");
 				}
 				break;
 			case swamp:
 				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
-				chunk->localCoords[i][j].tileColor = {0.5, 0.55, 0.35};
-				chunk->localCoords[i][j].tileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+				chunk->localCoords[i][j].mainTileColor = {0.5, 0.55, 0.35};
+				chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
 				if (current < -0.3f) {
 					chunk->localCoords[i][j].SetLiquid(water, { 0.f, 0.5f, 0.4f });
 					chunk->localCoords[i][j].liquidTime = -1;
@@ -910,7 +910,13 @@ void Map::UpdateTiles(vec2_i coords) {
 			//if (curTile->id == 1) { curTile->tileColor = { 0, 0.65f + ((Math::RandNum(2) - 1) / 10), 0}; }
 			
 			//Crystals glows
-			if (curTile->id == 14 || curTile->itemName == "GLOWING_MUSHROOM") { floodFill({x, y}, 3, true); }
+			if (curTile->id == 14 ) { floodFill({x, y}, 3, true); }
+
+			//glowing items glow
+			int dist = Items::GetItem_NoCopy(curTile->itemName)->emissionDist;
+			if (dist > 0) {
+				floodFill({ x, y }, dist, true);
+			}
 
 			//spread fire to a list so we dont spread more than one tile per update
 			if (curTile->liquid == fire) {

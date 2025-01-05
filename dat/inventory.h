@@ -11,6 +11,7 @@ private:
 public:
 	Color clothes;
 	std::vector<Item> items;
+	std::unordered_map<equipType, Item> equippedItems;
 
 	void AddItem(Item it, int count = 1)
 	{
@@ -34,6 +35,28 @@ public:
 		}
 	}
 
+	void EquipItem(int index) {
+		Item tempItem = items[index];
+		if (equippedItems.contains(tempItem.eType)) {
+			Item oldEquipped = equippedItems[tempItem.eType];
+			equippedItems[tempItem.eType] = tempItem;
+			RemoveItem(items[index].section);
+			AddItem(oldEquipped);
+		}
+		else {
+			equippedItems.insert({ tempItem.eType, tempItem });
+			RemoveItem(items[index].section);
+		}
+
+		Cleanup();
+	}
+	
+	void Unequip(equipType type) {
+		Item tempItem = equippedItems[type];
+		AddItem(tempItem);
+		equippedItems.erase(type);
+		Cleanup();
+	}
 
 	void Cleanup() {
 		std::vector<int> itemsToErase;

@@ -7,6 +7,7 @@
 
 #define DOSFONT  "dat/fonts/symbolic/symbolic_cattail_extended.ttf"
 #define ITEMFONT "dat/fonts/symbolic/symbolic_items_extended.ttf"
+#define MOBFONT "dat/fonts/symbolic/symbolic_mobs_ex.ttf"
 #define VGAFONT  "dat/fonts/VGA437.ttf"
 #define SWAP_FONT(newfont) ImGui::PopFont(); ImGui::PushFont(Engine::Instance().getFont(newfont));
 //#define DEV_TOOLS
@@ -23,7 +24,7 @@ private:
 	WindowProperties GetWindowProperties() {
 		WindowProperties props;
 
-		props.imguiProps = { true, true, false, {DOSFONT, ITEMFONT, VGAFONT}, {"main", "items", "ui"}, 16.f};
+		props.imguiProps = { true, true, false, {DOSFONT, ITEMFONT, VGAFONT, MOBFONT}, {"main", "items", "ui", "mobs"}, 16.f};
 		props.w = 1340;
 		props.h = 720;
 		props.vsync = 0;
@@ -41,6 +42,9 @@ private:
 	std::vector<Tile> itemTiles;
 	std::vector<std::string> itemIcons;
 	std::vector<ImVec2> itemPositions;
+	std::vector<std::string> mobIcons;
+	std::vector<ImVec2> mobPositions;
+	std::vector<ImVec4> mobColors;
 public:
 	//UI stuff
 	GameUI gameScreen;
@@ -109,8 +113,6 @@ public:
 		gameScreen.console_showing = false;
 		gameScreen.helpMenu = true;
 		game.LoadData();
-
-		player.currentWeapon.mod = 5;
 
 		sfxvolume = Audio::GetVolume();
 
@@ -379,7 +381,7 @@ public:
 		//ImGui::ShowDemoWindow();
 		ImGui::Begin("title");
 		ImGui::SetFontSize(48.f);
-		ImGui::Text("Los Zombos");
+		ImGui::Text("Zombox");
 		ImGui::SetFontSize(16.f);
 		ImGui::End();
 
@@ -433,7 +435,6 @@ public:
 		pInv.clothes = { clothes.x, clothes.y, clothes.z };
 		if (ImGui::Button("Start")) {
 			pInv.AddItemFromFile("BANDAGE");
-			pInv.AddItemFromFile("LIGHTER");
 			currentState = playing;
 		}
 		ImGui::End();
@@ -530,8 +531,9 @@ public:
 					}//===================================================================
 					if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
 					{
-						printIcon = ENT_PLAYER;
-						iconColor = game.GetPlayerColor();
+						mobPositions.push_back(ImGui::GetCursorPos());
+						mobIcons.push_back(ENT_PLAYER);
+						mobColors.push_back(game.GetPlayerColor());
 					}
 
 					else if (map.GetEffectFromThisOrNeighbor(curCoords) == 1)
@@ -546,7 +548,15 @@ public:
 						printIcon = "a";
 						iconColor = Cosmetic::CoveredColor(water);
 					}
+					else if (curTile->entity != nullptr) {
+						mobPositions.push_back(ImGui::GetCursorPos());
+						mobIcons.push_back(game.GetTileChar(*curTile));
+						mobColors.push_back(game.GetTileColor(*curTile, 0.f));
+						ImGui::Text(" ");
+						ImGui::SameLine();
+						continue;
 
+					}
 					else {
 						printIcon = game.GetTileChar(*curTile);
 						iconColor = game.GetTileColor(*curTile, intensity);
@@ -605,19 +615,31 @@ public:
 				ImGui::Text("");
 			}
 
-
+			//print items with separate font
 			if (item) {
-				ImGui::PopFont();
-				ImGui::PushFont(Engine::Instance().getFont("items"));
+				SWAP_FONT("items")
 				for (size_t i = 0; i < itemIcons.size(); i++)
 				{
 					ImGui::SetCursorPos(itemPositions[i]);
-
 					ImGui::TextColored(game.GetItemColor(itemTiles[i]), itemIcons[i].c_str());
 				}
 				itemTiles.clear();
 				itemIcons.clear();
 				itemPositions.clear();
+			}
+
+			//print mobs with separate font
+			if (mobPositions.size() > 0) {
+				SWAP_FONT("mobs")
+				for (size_t i = 0; i < mobPositions.size(); i++)
+				{
+					ImGui::SetCursorPos(mobPositions[i]);
+
+					ImGui::TextColored(mobColors[i], mobIcons[i].c_str());
+				}
+				mobIcons.clear();
+				mobPositions.clear();
+				mobColors.clear();
 			}
 		}
 
@@ -683,12 +705,33 @@ public:
 
 			ImGui::Text("Body Temperature :"); ImGui::SameLine();
 			ImGui::Text(std::to_string(round(player.bodyTemp * 10.0f) / 10.0f).c_str());
-			ImGui::Text("-------------");
-			ImGui::Text("Currently Equipped Weapon :"); ImGui::SameLine();
-			ImGui::Text(player.currentWeapon.name.c_str());
-			ImGui::Text("Damage :"); ImGui::SameLine();
-			ImGui::Text(std::to_string(player.currentWeapon.mod).c_str());
+			ImGui::Text("------EQUIPPED ITEMS------");
 
+			if (pInv.equippedItems.contains(gloves)) {
+				ImGui::Text("Gloves :"); ImGui::SameLine();
+				ImGui::Text(pInv.equippedItems[gloves].name.c_str()); ImGui::SameLine();
+				if (ImGui::Button("Unequip Gloves")) {
+					pInv.Unequip(gloves);
+				}
+			}
+
+			if (pInv.equippedItems.contains(boots)) {
+				ImGui::Text("Boots :"); ImGui::SameLine();
+				ImGui::Text(pInv.equippedItems[boots].name.c_str()); ImGui::SameLine();
+				if (ImGui::Button("Unequip Boots")) {
+					pInv.Unequip(boots);
+				}
+			}
+
+			if (pInv.equippedItems.contains(weapon)) {
+				ImGui::Text("Weapon :"); ImGui::SameLine();
+				ImGui::Text(pInv.equippedItems[weapon].name.c_str());
+				ImGui::Text("Damage :"); ImGui::SameLine();
+				ImGui::Text(std::to_string(pInv.equippedItems[weapon].mod).c_str()); ImGui::SameLine();
+				if (ImGui::Button("Unequip Weapon")) {
+					pInv.Unequip(weapon);
+				}
+			}
 			ImGui::End();
 
 		}
@@ -785,6 +828,9 @@ public:
 				ImGui::Text("]");
 			}
 
+			ImGui::Text("Crafting ID ::"); ImGui::SameLine();
+			ImGui::Text(pInv.items[currentItemIndex].section.c_str());
+
 			if (ImGui::Button("Use"))
 			{
 				gameScreen.useBool = !gameScreen.useBool;
@@ -792,7 +838,7 @@ public:
 			if (pInv.items[currentItemIndex].eType != notEquip) {
 				if (ImGui::Button("Equip"))
 				{
-					player.currentWeapon = pInv.items[currentItemIndex];
+					pInv.EquipItem(currentItemIndex);
 				}
 			}
 
