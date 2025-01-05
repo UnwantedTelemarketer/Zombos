@@ -113,9 +113,8 @@ namespace Tiles {
 		createdTile->coords = { tile.x, tile.y };
 		createdTile->walkable = Tiles::GetTile(tile.id)->walkable;
 		createdTile->mainTileColor = Tiles::GetTile(tile.id)->mainTileColor;
+		createdTile->biomeID = tile.biomeID;
 
-		createdTile->tileColor = createdTile->mainTileColor;
-		createdTile->SetLiquid(tile.liquid);
 	}
 }
 

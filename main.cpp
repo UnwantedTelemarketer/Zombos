@@ -284,6 +284,7 @@ public:
 
 	void ImguiRender() override
 	{
+		//ImGui::ShowDemoWindow();
 		//GameScene();
 		if (gameScreen.settingsOpen) {
 			ImGui::Begin("Settings");
@@ -888,21 +889,40 @@ public:
 		if (gameScreen.craftingMenu) {
 			ImGui::Begin("Crafting");
 
-			if (ImGui::BeginListBox("Recipes")) 
-			{
-				ImGui::InputText("Material", recipe_search, IM_ARRAYSIZE(recipe_search));
-				std::vector<std::string> recipesList = game.Crafter.getRecipesByItem(recipe_search);
-				for (int n = 0; n < recipesList.size(); n++)
-				{
-					const bool is_selected = (recipeSelected == n);
-					if (ImGui::Selectable(recipesList[n].c_str(), is_selected)) {
-						recipeSelectedName = recipesList[n];
-						recipeSelected = n;
+			//Saved Recipe section
+			if (ImGui::CollapsingHeader("Saved Recipes")) {
+
+				if (ImGui::BeginListBox("Saved")) {
+					for (int n = 0; n < game.Crafter.savedRecipes.size(); n++)
+					{
+						const bool is_selected = (recipeSelected == n);
+						if (ImGui::Selectable(game.Crafter.savedRecipes[n].c_str(), is_selected)) {
+							recipeSelectedName = game.Crafter.savedRecipes[n];
+							recipeSelected = n;
+						}
 					}
+					ImGui::EndListBox();
 				}
-				ImGui::EndListBox();
+			}
+			if (ImGui::CollapsingHeader("Search for Recipes")) {
+				//search section
+				if (ImGui::BeginListBox("Recipes"))
+				{
+					ImGui::InputText("Material", recipe_search, IM_ARRAYSIZE(recipe_search));
+					std::vector<std::string> recipesList = game.Crafter.getRecipesByItem(recipe_search);
+					for (int n = 0; n < recipesList.size(); n++)
+					{
+						const bool is_selected = (recipeSelected == n);
+						if (ImGui::Selectable(recipesList[n].c_str(), is_selected)) {
+							recipeSelectedName = recipesList[n];
+							recipeSelected = n;
+						}
+					}
+					ImGui::EndListBox();
+				}
 			}
 
+			//Selected recipe section
 			if (recipeSelectedName != "") {
 				std::vector<std::string> components = game.Crafter.getRecipeComponents(recipeSelectedName);
 				SWAP_FONT("items");
@@ -928,6 +948,13 @@ public:
 						Audio::Play(sfxs["fail"]);
 					}
 				}
+
+				std::string saveButton = "Save ";
+				saveButton += recipeSelectedName;
+				saveButton += " Recipe";
+				if (ImGui::Button(saveButton.c_str())) {
+					game.Crafter.SaveRecipe(recipeSelectedName);
+				}
 			}
 			
 
@@ -940,6 +967,7 @@ public:
 			ImGui::PopStyleColor(3);
 			ImGui::End();
 		}
+
 
 		// Help Menu
 

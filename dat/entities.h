@@ -4,6 +4,7 @@
 #include <fstream>
 
 enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid = 6};
+enum biome { desert, ocean, forest, swamp, taiga, grassland, urban, jungle };
 enum Liquid { nothing, water, blood, fire, guts, mud, snow };
 enum Action { use, consume, combine };
 enum Behaviour { Wander, Protective, Stationary, Aggressive };
@@ -203,6 +204,7 @@ struct Saved_Tile {
 	bool hasItem = false;
 	std::string itemName = "NULL";
 	int x, y = 0;
+	short biomeID;
 	/*bool walkable = false;
 	float maincolor_x, maincolor_y, maincolor_z;*/
 
@@ -217,10 +219,7 @@ struct Saved_Tile {
 		stream.write(reinterpret_cast<const char*>(&hasItem), sizeof(hasItem));
 		stream.write(reinterpret_cast<const char*>(&x), sizeof(x));
 		stream.write(reinterpret_cast<const char*>(&y), sizeof(y));
-		/*stream.write(reinterpret_cast<const char*>(&maincolor_x), sizeof(maincolor_x));
-		stream.write(reinterpret_cast<const char*>(&maincolor_y), sizeof(maincolor_y));
-		stream.write(reinterpret_cast<const char*>(&maincolor_z), sizeof(maincolor_z));
-		stream.write(reinterpret_cast<const char*>(&walkable), sizeof(walkable));*/
+		stream.write(reinterpret_cast<const char*>(&biomeID), sizeof(biomeID));
 
 		size_t size = itemName.size();
 		stream.write(reinterpret_cast<const char*>(&size), sizeof(size));
@@ -240,10 +239,7 @@ struct Saved_Tile {
 		stream.read(reinterpret_cast<char*>(&hasItem), sizeof(hasItem));
 		stream.read(reinterpret_cast<char*>(&x), sizeof(x));
 		stream.read(reinterpret_cast<char*>(&y), sizeof(y));
-		/*stream.read(reinterpret_cast<char*>(&maincolor_x), sizeof(maincolor_x));
-		stream.read(reinterpret_cast<char*>(&maincolor_y), sizeof(maincolor_y));
-		stream.read(reinterpret_cast<char*>(&maincolor_z), sizeof(maincolor_z));
-		stream.read(reinterpret_cast<char*>(&walkable), sizeof(walkable));*/
+		stream.read(reinterpret_cast<char*>(&biomeID), sizeof(biomeID));
 
 		size_t size = 0;
 		stream.read(reinterpret_cast<char*>(&size), sizeof(size));
@@ -281,33 +277,49 @@ struct Tile {
 	bool double_size = false;
 	vec3 tileColor;
 	vec3 mainTileColor;
+	short biomeID;
 
 	bool CanUpdate() {
 		return ticksPassed >= ticksNeeded && changesOverTime;
 	}
 
-	void SetLiquid(Liquid l, vec3 col = {0,0,0}) {
+	void ResetColor() {
+		tileColor = mainTileColor;
+	}
+
+	void SetLiquid(Liquid l, bool perm = false) {
 		liquid = l;
-		if (col == vec3(0, 0, 0 )) {
-			switch (l) {
-			case water:
+
+		switch (l) {
+		case water:// check if the water placed is like permanent like a body of water, and choose the color based on biome
+			//I HOPE THIS NEVER BREAKS AGAIN BUT IM SURE IT WILL
+			//BECAUSE THIS IS SO GROSSLY HARDCODED AND I CANNOT FIGURE OUT ANOTHER WAY SO IM DONE AND IT WORKS
+			if (perm) {
+				switch (biomeID) {
+				case taiga:
+					tileColor = mainTileColor;
+					tileColor = { 0,0.5,1 };
+					break;
+				case swamp:
+					tileColor = mainTileColor;
+					tileColor = { 0.f, 0.5f, 0.4f };
+				}
+			}
+			else {
 				tileColor = mainTileColor;
 				tileColor += { 0, 0.75, 1.5 };
 				tileColor /= 2.5;
-				break;
-			case guts:
-				tileColor = { 0.45, 0, 0 };
-				break;
-			case blood:
-				tileColor = { 1, 0, 0 };
-				break;
-			case nothing:
-				Utilities::Lerp("tileColor" + std::to_string(Math::RandInt(1, 50000)), &tileColor, mainTileColor, 0.5f);
-				break;
 			}
-		}
-		else {
-			tileColor = col;
+			break;
+		case guts:
+			tileColor = { 0.45, 0, 0 };
+			break;
+		case blood:
+			tileColor = { 1, 0, 0 };
+			break;
+		case nothing:
+			Utilities::Lerp("tileColor" + std::to_string(Math::RandInt(1, 50000)), &tileColor, mainTileColor, 0.5f);
+			break;
 		}
 		 
 	}
@@ -361,6 +373,7 @@ static void CreateSavedTile(Saved_Tile* sTile, Tile tile) {
 	sTile->itemName = tile.itemName;
 	sTile->x = tile.coords.x;
 	sTile->y = tile.coords.y;
+	sTile->biomeID = tile.biomeID;
 }
 
 class Inventory;
@@ -432,6 +445,11 @@ public:
 
 		return recipeList;
 	}
+
+	void SaveRecipe(std::string recName) {
+		savedRecipes.push_back(recName);
+	}
+	std::vector<std::string> savedRecipes;
 
 private:
 

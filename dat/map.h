@@ -27,7 +27,6 @@ struct World
 };
 
 
-enum biome { desert, ocean, forest, swamp, taiga,grassland, urban, jungle };
 enum weather {clear, rainy, thunder};
 class Map {
 public:
@@ -613,7 +612,8 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 			case taiga:
 				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
 				if (currentTile < -(taiga_pond_height / 100)) {
-					chunk->localCoords[i][j].SetLiquid(water, { 0,0.5,1 });
+					chunk->localCoords[i][j].biomeID = (short)currentBiome;
+					chunk->localCoords[i][j].SetLiquid(water, true);
 					chunk->localCoords[i][j].liquidTime = -1;
 				}
 				else if (currentTile < -0.10f && Math::RandInt(0, 4) >= 2) {
@@ -628,6 +628,7 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				else {
 					chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
 					chunk->localCoords[i][j].mainTileColor.z = 0.35f;
+					chunk->localCoords[i][j].ResetColor();
 					if (Math::RandInt(1, 35) == 34) {
 						chunk->localCoords[i][j].hasItem = true;
 						chunk->localCoords[i][j].itemName = "STICK";
@@ -650,8 +651,10 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
 				chunk->localCoords[i][j].mainTileColor = {0.5, 0.55, 0.35};
 				chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+				chunk->localCoords[i][j].ResetColor();
 				if (current < -0.3f) {
-					chunk->localCoords[i][j].SetLiquid(water, { 0.f, 0.5f, 0.4f });
+					chunk->localCoords[i][j].biomeID = (short)currentBiome;
+					chunk->localCoords[i][j].SetLiquid(water, true);
 					chunk->localCoords[i][j].liquidTime = -1;
 					if (Math::RandInt(0, 25) == 5) {
 						chunk->localCoords[i][j].itemName = "LILYPAD";
@@ -704,6 +707,7 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 			}
 
 			chunk->localCoords[i][j].coords = { i, j };
+			chunk->localCoords[i][j].biomeID = (short)currentBiome;
 		}
 	}
 	//if(Math::RandInt(0, 15) == 14) {Place}

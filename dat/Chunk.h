@@ -54,6 +54,23 @@ struct Chunk {
 			for (size_t j = 0; j < CHUNK_HEIGHT; j++)
 			{
 				Tiles::LoadTile(&localCoords[i][j], sChunk.tiles[i][j]);
+				//Correctly load the correct color of tile if its grass
+				if (localCoords[i][j].id == 1) 
+				{
+					switch (localCoords[i][j].biomeID) {
+					case (short)swamp:
+						localCoords[i][j].mainTileColor = { 0.5, 0.55, 0.35 };
+						localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+						break;
+					case (short)taiga:
+						localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+						localCoords[i][j].mainTileColor.z = 0.35f;
+						
+						break;
+					}
+				}
+				localCoords[i][j].ResetColor();
+				localCoords[i][j].SetLiquid(sChunk.tiles[i][j].liquid, localCoords[i][j].liquidTime == -1);
 			}
 		}
 	}
@@ -97,6 +114,7 @@ static void CreateSavedChunk(Saved_Chunk* sChunk, Chunk ch) {
 			sChunk->tiles[i][j].itemName = ch.localCoords[i][j].itemName;
 			sChunk->tiles[i][j].x = ch.localCoords[i][j].coords.x;
 			sChunk->tiles[i][j].y = ch.localCoords[i][j].coords.y;
+			sChunk->tiles[i][j].biomeID = ch.localCoords[i][j].biomeID;
 		}
 	}
 }

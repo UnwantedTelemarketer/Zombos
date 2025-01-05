@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [GRASS,ROCK,SCRAP,STICK,OLD_CLOTH,RESIN,GLASS_SHARDS]
+sections : [GRASS,ROCK,SCRAP,STICK,OLD_CLOTH,RESIN,GLASS_SHARDS,LEATHER]
 }
 
 GRASS {
@@ -119,4 +119,17 @@ sprite : "K"
 spriteColor : [0.7, 0.8, 0.8];
 }
 
-
+LEATHER {
+name : "Leather";
+description : "Cow skin. Used for lots of things.";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : ".";
+useTxt : ".";
+effects : [0,0,0,0];
+equipType : 0;
+sprite : "K"
+spriteColor : [0.60, 0.35, 0.0];
+}
