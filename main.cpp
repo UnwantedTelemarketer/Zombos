@@ -418,6 +418,10 @@ public:
 				}
 				i++;
 			}
+			for (int i = 0; i < data.getArray("savedRecipes").size(); i++)
+			{
+				game.Crafter.SaveRecipe(data.getArray("savedRecipes")[i]); //retrieve saved recipes
+			}
 			game.Setup(data.getInt("x_pos"), data.getInt("y_pos"), 0.5f, data.getInt("seed"), data.getInt("biomes"));
 			currentState = playing;
 			game.worldTime = data.getFloat("time");
@@ -436,6 +440,8 @@ public:
 		pInv.clothes = { clothes.x, clothes.y, clothes.z };
 		if (ImGui::Button("Start")) {
 			pInv.AddItemFromFile("BANDAGE");
+			pInv.AddItemFromFile("MATCH");
+			pInv.AddItemFromFile("MATCH");
 			currentState = playing;
 		}
 		ImGui::End();
@@ -1119,21 +1125,30 @@ public:
 				}
 			}
 
-			if (ImGui::Button("Burn")) {
-				selectedTile->liquid = fire;
+			//only light fires if we are holding a lighter or match
+			if (pInv.CurrentEquipMatches(weapon, "LIGHTER") || pInv.CurrentEquipMatches(weapon, "MATCH")) {
+				if (ImGui::Button("Burn")) {
+					selectedTile->liquid = fire;
+					map.floodFill(selectedTile->coords, 5, false);
 
-				map.floodFill(selectedTile->coords, 5, false);
+					if (pInv.CurrentEquipMatches(weapon, "MATCH")) {
+						pInv.Unequip(weapon);
+						pInv.RemoveItem("MATCH");
+					}
+				}
 			}
 
 			int _ = 0;
 			if (pInv.TryGetItem("ROCK", false, &_)) {
-				if (ImGui::Button("Place Wall")) {
-					*selectedTile = Tiles::GetTile("TILE_STONE");
-					pInv.RemoveItem("ROCK");
-				}
-				if (ImGui::Button("Place Floor")) {
-					*selectedTile = Tiles::GetTile("TILE_STONE_FLOOR");
-					pInv.RemoveItem("ROCK");
+				if (ImGui::CollapsingHeader("Building Options")) {
+					if (ImGui::Button("Place Wall ( 1 x Rock )")) {
+						*selectedTile = Tiles::GetTile("TILE_STONE");
+						pInv.RemoveItem("ROCK");
+					}
+					if (ImGui::Button("Place Floor ( 1 x Rock )")) {
+						*selectedTile = Tiles::GetTile("TILE_STONE_FLOOR");
+						pInv.RemoveItem("ROCK");
+					}
 				}
 			}
 
@@ -1337,6 +1352,10 @@ public:
 			for (int i = 0; i < pInv.items.size(); i++)
 			{
 				dat.items.append(pInv.items[i].section, pInv.items[i].count);
+			}
+			for (int i = 0; i < game.Crafter.savedRecipes.size(); i++)
+			{
+				dat.listString.push_back(game.Crafter.savedRecipes[i]);
 			}
 
 			ItemReader::SaveDataToFile("dat/eid/save.eid", "STATS", dat, true);

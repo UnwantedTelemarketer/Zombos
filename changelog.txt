@@ -5,9 +5,13 @@
 
  - New Mobs, Recipes and Items
 
- - New building options
+ - New building menu
+	--Floors and Walls buildable with rocks
 
- - New Crafting menu (searchable, view items in inventory for the ID for searching)
+ - New Crafting Menu
+	-- View items in inventory for crafting ID
+	-- Search for recipes using a material name or for a specific recipe
+	-- Ability to save recipes added
 
  - Console commands save the last 5 commands (cycle with arrow key)
 

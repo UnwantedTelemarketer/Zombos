@@ -122,6 +122,7 @@ struct SaveData {
 	match<float> floats;
 	match<std::string> strings;
 	match<int> items;
+	std::vector <std::string> listString;
 	match<Vector2_I> vec2;
 };
 
@@ -285,6 +286,14 @@ public:
 			for (int i = 0; i < data.items.size(); i++)
 			{
 				file.append(data.items.keys[i] + "," + std::to_string(data.items.values[i]) + ",");
+			}
+			file.append("];\n");
+		}
+		if (data.listString.size() > 0) {
+			file.append("savedRecipes : [");
+			for (int i = 0; i < data.listString.size(); i++)
+			{
+				file.append(data.listString[i] + ",");
 			}
 			file.append("];\n");
 		}

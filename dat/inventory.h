@@ -37,6 +37,7 @@ public:
 
 	void EquipItem(int index) {
 		Item tempItem = items[index];
+		tempItem.count = 1;
 		if (equippedItems.contains(tempItem.eType)) {
 			Item oldEquipped = equippedItems[tempItem.eType];
 			equippedItems[tempItem.eType] = tempItem;
@@ -56,6 +57,15 @@ public:
 		AddItem(tempItem);
 		equippedItems.erase(type);
 		Cleanup();
+	}
+
+	bool CurrentEquipMatches(equipType t, std::string itemName) {
+		if (!equippedItems.contains(t)) {
+			return false;
+		}
+		else {
+			return equippedItems[t].section == itemName;
+		}
 	}
 
 	void Cleanup() {

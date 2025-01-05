@@ -11,6 +11,7 @@ enum Behaviour { Wander, Protective, Stationary, Aggressive };
 enum Faction { Human, Zombie, Wildlife };
 enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6};
 
+
 //What the effect is and how much it does.
 struct EffectAmount {
 	ConsumeEffect effect = none;
@@ -175,7 +176,6 @@ struct Player {
 	Vector2_I coords;
 	Vector2_I crosshair;
 	Liquid coveredIn = nothing;
-	Item currentWeapon = {"Fists"};
 	float bodyTemp = 98.5f;
 
 	void TakeDamage(ConsumeEffect type, int dmg) {

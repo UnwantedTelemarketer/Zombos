@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [BANDAGE,LIGHTER,CANTEEN,GUTS,GLASS_JAR,GLOWING_MUSHROOM_JAR,LANTERN];
+sections : [BANDAGE,LIGHTER,CANTEEN,GUTS,GLASS_JAR,GLOWING_MUSHROOM_JAR,LANTERN,MATCH];
 }
 
 BANDAGE {
@@ -28,8 +28,25 @@ amount : 1;
 consumeTxt : "cant consume.";
 useTxt : "You light yourself on fire.";
 effects : [0,0,4,35];
-equipType : 0;
+equipType : 1;
+equipModifier : 2;
 sprite : "X";
+spriteColor : [0.35, 0.35, 0.35];
+}
+
+MATCH {
+name : "Match";
+description : "Consumable firestarter.";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "cant consume.";
+useTxt : "You light yourself on fire.";
+effects : [0,0,4,35];
+equipType : 1;
+equipModifier : 2;
+sprite : "A";
 spriteColor : [0.35, 0.35, 0.35];
 }
 
@@ -91,7 +108,7 @@ consumeTxt : ".";
 useTxt : ".";
 effects : [0,0,0,0];
 equipType : 1;
-equipModifier : 5;
+equipModifier : 1;
 sprite : "Z";
 spriteColor : [0.65, 0.55, 0.5];
 emissionDistance : 5;
@@ -107,7 +124,8 @@ amount : 1;
 consumeTxt : "You take a sip from your canteen.";
 useTxt : "You pour liquid on yourself.";
 effects : [0,10,0,25];
-equipType : 0;
+equipType : 1;
+equipModifier : 1;
 sprite : "!";
 spriteColor : [0.0, 0.50, 0.0];
 emissionDistance : 4;

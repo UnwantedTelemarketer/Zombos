@@ -62,7 +62,7 @@ public:
 	biome GetBiome(Vector2_I coords);
 	void MakeNewChunk(Vector2_I coords);
 	void AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog);
-	void MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLog);
+	void MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLog, Inventory& pInv);
 	void CheckBounds(Player* p);
 	void CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk);
 	void BuildChunk(std::shared_ptr<Chunk> chunk);
@@ -419,12 +419,12 @@ void Map::AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* act
 
 //T_Chunk& EntityLayer() { return entityLayer; }
 
-void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLog) {
+void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLog, Inventory& pInv) {
 	if (x > 0 && y > 0 && x < CHUNK_WIDTH && y < CHUNK_HEIGHT)
 		if (CurrentChunk()->localCoords[x][y].entity != nullptr) {
 			Entity* curEnt = CurrentChunk()->localCoords[x][y].entity;
 			if (curEnt->health > 0) {
-				AttackEntity(curEnt, p->currentWeapon.mod, actionLog);
+				AttackEntity(curEnt, pInv.equippedItems[weapon].mod, actionLog);
 			}
 			else {
 				vec2_i newCoords = { x - p->coords.x, y - p->coords.y };

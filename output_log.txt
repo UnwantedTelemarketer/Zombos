@@ -1,13 +1,11 @@
-[ Line 138 ]: [0;37mLoading Tiles from files...[0m
-[ Line 216 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
 [ Line 83 ]: [0;37mLoading Items from files...[0m
-[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 216 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
+[ Line 138 ]: [0;37mLoading Tiles from files...[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 79 ]: [1;32mLoaded texture from res/plank.png.[0m
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
-[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 97 ]: [0;37mLoaded Items![0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
@@ -37,9 +35,12 @@
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 153 ]: [0;37mLoaded Tiles![0m
 [ Line 121 ]: [1;32mDone![0m
-[ Line 40 ]: [1;31m-390663152[0m
+[ Line 40 ]: [1;31m1916270896[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 304 ]: [1;32mWrote to file dat/eid/save.eid[0m
-[ Line 1350 ]: [1;32mSave complete in 10.312246ms.[0m
+[ Line 313 ]: [1;32mWrote to file dat/eid/save.eid[0m
+[ Line 1369 ]: [1;32mSave complete in 11.503040ms.[0m
