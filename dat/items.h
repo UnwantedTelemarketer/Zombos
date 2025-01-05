@@ -134,6 +134,18 @@ namespace Items {
 		return colors[itemName];
 	}
 
+	static std::string GetRandomItemFromPool(std::string filename) {
+		OpenedData dat;
+		if (Math::RandInt(0, 4) == 3) {
+			ItemReader::GetDataFromFile("loot_tables/" + filename, "RARE", &dat);
+		}
+		else {
+			ItemReader::GetDataFromFile("loot_tables/" + filename, "COMMON", &dat);
+		}
+		int randItem = Math::RandInt(0, dat.getArray("items").size());
+		return dat.getArray("items")[randItem];
+	}
+
 	static void LoadItems(std::map<std::string, std::string>* icons) {
 		Console::Log("Loading Tiles from files...", text::white, __LINE__);
 		std::vector<std::string> sections;

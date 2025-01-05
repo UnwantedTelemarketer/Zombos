@@ -650,7 +650,10 @@
     <None Include="dat\eid\items.eid" />
     <None Include="dat\eid\items\clothing.eid" />
     <None Include="dat\eid\items\crafting_recipes.eid" />
+    <None Include="dat\eid\items\decoration.eid" />
     <None Include="dat\eid\items\nature_items.eid" />
+    <None Include="dat\eid\loot_tables\car.eid" />
+    <None Include="dat\eid\loot_tables\house.eid" />
     <None Include="dat\eid\tiles\tiles.eid" />
     <None Include="dat\eid\item_data.eid" />
     <None Include="dat\eid\tiles.eid" />

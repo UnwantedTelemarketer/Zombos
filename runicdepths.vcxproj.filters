@@ -1670,6 +1670,9 @@
     <None Include="dat\eid\tiles\tiles.eid" />
     <None Include="dat\eid\tiles\tile_lists.eid" />
     <None Include="dat\eid\items\clothing.eid" />
+    <None Include="dat\eid\loot_tables\car.eid" />
+    <None Include="dat\eid\loot_tables\house.eid" />
+    <None Include="dat\eid\items\decoration.eid" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="other.txt" />

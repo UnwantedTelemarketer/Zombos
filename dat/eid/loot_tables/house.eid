@@ -1,0 +1,12 @@
+COMMON {
+items : [ROPE,LIGHTER,BITS,GLASS_JAR];
+ROPE : 2;
+LIGHTER : 1;
+BITS : 5;
+GLASS_JAR : 1;
+}
+
+RARE {
+items : [MACHETE];
+MACHETE : 1;
+}

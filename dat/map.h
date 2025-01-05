@@ -723,8 +723,8 @@ void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
 	//pick some corners to draw to
 	int wallLength = Math::RandInt(3, 8);
 
-	int chestCounter = 0;
-	int whenDoesChestSpawn = 10;
+	int itemCounter = 0;
+	int itemMax = 3;
 
 	//draw the walls
 	for (int i = 0; i < wallLength; i++)
@@ -737,18 +737,11 @@ void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
 			}
 			else {
 				chunk->localCoords[corner.x + i][corner.y + j] = Tiles::GetTile("TILE_STONE_FLOOR");
-				if (chestCounter == whenDoesChestSpawn) {
-					chunk->GetTileAtCoords(corner.x + i, corner.y + j)->itemName = "CHEST";
+				if (itemCounter <= itemMax && Math::RandInt(0,15) == 12) {
+					chunk->GetTileAtCoords(corner.x + i, corner.y + j)->itemName = Items::GetRandomItemFromPool("house.eid");
 					chunk->GetTileAtCoords(corner.x + i, corner.y + j)->hasItem = true;
-					//CreateContainer({ chunk->globalChunkCoord.x, chunk->globalChunkCoord.y, corner.x + i, corner.y + j });
-
-					/*containers[{
-						chunk->globalChunkCoord.x,
-						chunk->globalChunkCoord.y,
-							corner.x + i,
-							corner.y + j }].AddItem(Items::GetItem("MACHETE"));*/
+					itemCounter++;
 				}
-				chestCounter++;
 
 			}
 		}
