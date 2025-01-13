@@ -914,17 +914,19 @@ void Map::UpdateTiles(vec2_i coords) {
 				if (Math::RandInt(0, 2) == 1) effectLayer.localCoords[x - 1][y] = 1;
 				//If its a campfire, then let it burn but dont spread
 				if (curTile->hasItem && curTile->itemName == "CAMPFIRE") {
-					Container* curCont = ContainerAtCoord(curTile->coords);
-					for (size_t i = 0; i < curCont->items.size(); i++)
-					{
-						if (!curCont->items[i].cookable) { continue; }
-						//cook an item, then if its done, add the cooked item
-						curCont->items[i].ticksUntilCooked -= 1;
-						if (curCont->items[i].ticksUntilCooked <= 0) {
-							int amount = curCont->items[i].count;
-							curCont->AddItem(Items::GetItem(curCont->items[i].cooks_into), amount);
-							curCont->items.erase(curCont->items.begin() + i);
-							i--;
+					Container* curCont = curTile->tileContainer;
+					if (curCont != nullptr) {
+						for (size_t i = 0; i < curCont->items.size(); i++)
+						{
+							if (!curCont->items[i].cookable) { continue; }
+							//cook an item, then if its done, add the cooked item
+							curCont->items[i].ticksUntilCooked -= 1;
+							if (curCont->items[i].ticksUntilCooked <= 0) {
+								int amount = curCont->items[i].count;
+								curCont->AddItem(Items::GetItem(curCont->items[i].cooks_into), amount);
+								curCont->items.erase(curCont->items.begin() + i);
+								i--;
+							}
 						}
 					}
 					floodFill({ x, y }, 5, false);

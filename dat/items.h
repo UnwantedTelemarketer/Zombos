@@ -114,7 +114,6 @@ namespace Tiles {
 		createdTile->walkable = Tiles::GetTile(tile.id)->walkable;
 		createdTile->mainTileColor = Tiles::GetTile(tile.id)->mainTileColor;
 		createdTile->biomeID = tile.biomeID;
-
 	}
 }
 
@@ -222,7 +221,7 @@ Tile Tile_Mud =
 //============================  CONVEYOR BELTS ==============================
 
 
-static std::unordered_map<int, Tile> tileByID = 
+/*static std::unordered_map<int, Tile> tileByID =
 {
 	{ID_CONVEYOR_U, {ID_CONVEYOR_U, direction::up}},
 	{ID_CONVEYOR_D, {ID_CONVEYOR_D, direction::down}},
@@ -232,4 +231,4 @@ static std::unordered_map<int, Tile> tileByID =
 	{ID_CONVEYOR_UR, {ID_CONVEYOR_UR}},
 	{ID_CONVEYOR_DL, {ID_CONVEYOR_DL}},
 	{ID_CONVEYOR_DR, {ID_CONVEYOR_DR}},
-};
+};*/

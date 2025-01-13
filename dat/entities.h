@@ -193,6 +193,45 @@ struct Player {
 };
 struct Tile;
 
+struct Saved_Container {
+	int x, y;
+	std::vector<std::string> items;
+	void Serialize(std::ofstream& stream) {
+		// Write the number of strings
+		size_t numStrings = items.size();
+		stream.write(reinterpret_cast<const char*>(&numStrings), sizeof(numStrings));
+
+		// Write each string
+		for (const auto& str : items) {
+			size_t length = str.size();
+			stream.write(reinterpret_cast<const char*>(&length), sizeof(length)); // Write string length
+			stream.write(str.data(), length); // Write string data
+		}
+		stream.write(reinterpret_cast<const char*>(&x), sizeof(x));
+		stream.write(reinterpret_cast<const char*>(&y), sizeof(y));
+	}
+
+	void Deserialize(std::ifstream& stream){
+		// Read the number of strings
+		size_t numStrings;
+		stream.read(reinterpret_cast<char*>(&numStrings), sizeof(numStrings));
+
+		// Read each string
+		std::vector<std::string> strings;
+		for (size_t i = 0; i < numStrings; ++i) {
+			size_t length;
+			stream.read(reinterpret_cast<char*>(&length), sizeof(length)); // Read string length
+
+			std::string str(length, '\0'); // Allocate memory for the string
+			stream.read(&str[0], length); // Read string data
+			items.push_back(std::move(str));
+		}
+		stream.read(reinterpret_cast<char*>(&x), sizeof(x)); 
+		stream.read(reinterpret_cast<char*>(&y), sizeof(y)); 
+
+	}
+};
+
 struct Saved_Tile {
 	int id = -1;
 	Liquid liquid = nothing;
@@ -204,8 +243,8 @@ struct Saved_Tile {
 	std::string itemName = "NULL";
 	int x, y = 0;
 	short biomeID;
-	/*bool walkable = false;
-	float maincolor_x, maincolor_y, maincolor_z;*/
+	bool hasContainer = false;
+	Saved_Container cont;
 
 	void Serialize(std::ofstream& stream) {
 		stream.write(reinterpret_cast<const char*>(&id), sizeof(id));
@@ -219,6 +258,10 @@ struct Saved_Tile {
 		stream.write(reinterpret_cast<const char*>(&x), sizeof(x));
 		stream.write(reinterpret_cast<const char*>(&y), sizeof(y));
 		stream.write(reinterpret_cast<const char*>(&biomeID), sizeof(biomeID));
+		stream.write(reinterpret_cast<const char*>(&hasContainer), sizeof(hasContainer));
+		if (hasContainer) {
+			cont.Serialize(stream);
+		}
 
 		size_t size = itemName.size();
 		stream.write(reinterpret_cast<const char*>(&size), sizeof(size));
@@ -239,6 +282,10 @@ struct Saved_Tile {
 		stream.read(reinterpret_cast<char*>(&x), sizeof(x));
 		stream.read(reinterpret_cast<char*>(&y), sizeof(y));
 		stream.read(reinterpret_cast<char*>(&biomeID), sizeof(biomeID));
+		stream.read(reinterpret_cast<char*>(&hasContainer), sizeof(hasContainer));
+		if (hasContainer) {
+			cont.Deserialize(stream);
+		}
 
 		size_t size = 0;
 		stream.read(reinterpret_cast<char*>(&size), sizeof(size));
@@ -256,6 +303,7 @@ struct Tile {
 	direction technical_dir = direction::up;
 	Liquid liquid = nothing;
 	Entity* entity = nullptr;
+	Container* tileContainer = nullptr;
 	bool collectible = false;
 	std::string collectibleName = "NULL";
 	std::string collectedReplacement;
@@ -323,19 +371,6 @@ struct Tile {
 		 
 	}
 
-	/*
-	17, // Starting block ID
-	still, //technical direction (for conveyors)
-	mud, //Liquid
-	nullptr, //Entity
-	false, // Collectible
-	ID_DIRT, // Block that it becomes after being collected
-	"MUD", //Item name
-	0, // how long its burn lasts
-	true, //walkable
-	false, //changes over time
-	-1 //what it becomes after a time limit
-	*/
 
 	void CreateFromData(OpenedData data) {
 		id = data.getInt("id");
@@ -373,6 +408,15 @@ static void CreateSavedTile(Saved_Tile* sTile, Tile tile) {
 	sTile->x = tile.coords.x;
 	sTile->y = tile.coords.y;
 	sTile->biomeID = tile.biomeID;
+
+	if (tile.tileContainer != nullptr) {
+		sTile->hasContainer = true;
+		sTile->cont.x = tile.coords.x;
+		sTile->cont.y = tile.coords.y;
+		for (auto const& item : tile.tileContainer->items) {
+			sTile->cont.items.push_back(item.section);
+		}
+	}
 }
 
 class Inventory;

@@ -39,7 +39,7 @@ private:
 	vec3 clothes;
 	std::string printIcon;
 	ImVec4 iconColor;
-	std::vector<Tile> itemTiles;
+	std::vector<Tile*> itemTiles;
 	std::vector<std::string> itemIcons;
 	std::vector<ImVec2> itemPositions;
 	std::vector<std::string> mobIcons;
@@ -342,15 +342,15 @@ public:
 				{
 					item = true;
 					itemPositions.push_back(ImGui::GetCursorPos());
-					itemTiles.push_back(*curTile);
-					itemIcons.push_back(game.GetItemChar(*curTile));
+					itemTiles.push_back(curTile);
+					itemIcons.push_back(game.GetItemChar(curTile));
 					ImGui::Text(" ");
 					ImGui::SameLine();
 					continue;
 				}
 
-				printIcon = game.GetTileChar(*curTile);
-				iconColor = game.GetTileColor(*curTile, 0.f);
+				printIcon = game.GetTileChar(curTile);
+				iconColor = game.GetTileColor(curTile, 0.f);
 
 				ImGui::TextColored(iconColor, printIcon.c_str());
 				ImGui::SameLine();
@@ -462,12 +462,12 @@ public:
 			ImGui::End();
 		}
 		//-------Map rendering-------
-		
+
 		if (game.worldTime >= 20.f || game.worldTime < 6.f) { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.0,0.0,1 }); }
 		else { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ game.bgColor.x,game.bgColor.y,game.bgColor.z,1 }); }
 		{
 			ImGui::Begin("Map");
-			if (gameScreen.fancyGraphics) { 
+			if (gameScreen.fancyGraphics) {
 				SWAP_FONT("main");
 			}
 
@@ -557,16 +557,16 @@ public:
 					}
 					else if (curTile->entity != nullptr) {
 						mobPositions.push_back(ImGui::GetCursorPos());
-						mobIcons.push_back(game.GetTileChar(*curTile));
-						mobColors.push_back(game.GetTileColor(*curTile, 0.f));
+						mobIcons.push_back(game.GetTileChar(curTile));
+						mobColors.push_back(game.GetTileColor(curTile, 0.f));
 						ImGui::Text(" ");
 						ImGui::SameLine();
 						continue;
 
 					}
 					else {
-						printIcon = game.GetTileChar(*curTile);
-						iconColor = game.GetTileColor(*curTile, intensity);
+						printIcon = game.GetTileChar(curTile);
+						iconColor = game.GetTileColor(curTile, intensity);
 					}
 
 					if (i < CHUNK_HEIGHT - 1 && !effectShowing && underTile != nullptr) {
@@ -584,19 +584,19 @@ public:
 							//screen += "G";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
 							if (printIcon != ENT_PLAYER) printIcon = "G";
-							iconColor = game.GetTileColor(*underTile, intensity);
+							iconColor = game.GetTileColor(underTile, intensity);
 						}
 						else if (underTile->id == 12) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
 							if (printIcon != ENT_PLAYER) printIcon = "J";
-							iconColor = game.GetTileColor(*underTile, intensity);
+							iconColor = game.GetTileColor(underTile, intensity);
 						}
 						else if (underTile->id == 18) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
 							if (printIcon != ENT_PLAYER) printIcon = "Y";
-							iconColor = game.GetTileColor(*underTile, intensity);
+							iconColor = game.GetTileColor(underTile, intensity);
 						}
 					}
 
@@ -604,8 +604,8 @@ public:
 					{
 						item = true;
 						itemPositions.push_back(ImGui::GetCursorPos());
-						itemTiles.push_back(*curTile);
-						itemIcons.push_back(game.GetItemChar(*curTile));
+						itemTiles.push_back(curTile);
+						itemIcons.push_back(game.GetItemChar(curTile));
 						ImGui::Text(" ");
 						ImGui::SameLine();
 						continue;
@@ -625,11 +625,11 @@ public:
 			//print items with separate font
 			if (item) {
 				SWAP_FONT("items")
-				for (size_t i = 0; i < itemIcons.size(); i++)
-				{
-					ImGui::SetCursorPos(itemPositions[i]);
-					ImGui::TextColored(game.GetItemColor(itemTiles[i]), itemIcons[i].c_str());
-				}
+					for (size_t i = 0; i < itemIcons.size(); i++)
+					{
+						ImGui::SetCursorPos(itemPositions[i]);
+						ImGui::TextColored(game.GetItemColor(itemTiles[i]), itemIcons[i].c_str());
+					}
 				itemTiles.clear();
 				itemIcons.clear();
 				itemPositions.clear();
@@ -638,19 +638,19 @@ public:
 			//print mobs with separate font
 			if (mobPositions.size() > 0) {
 				SWAP_FONT("mobs")
-				for (size_t i = 0; i < mobPositions.size(); i++)
-				{
-					ImGui::SetCursorPos(mobPositions[i]);
+					for (size_t i = 0; i < mobPositions.size(); i++)
+					{
+						ImGui::SetCursorPos(mobPositions[i]);
 
-					ImGui::TextColored(mobColors[i], mobIcons[i].c_str());
-				}
+						ImGui::TextColored(mobColors[i], mobIcons[i].c_str());
+					}
 				mobIcons.clear();
 				mobPositions.clear();
 				mobColors.clear();
 			}
 		}
 
-		if (gameScreen.fancyGraphics) { 
+		if (gameScreen.fancyGraphics) {
 			SWAP_FONT("ui");
 		}
 
@@ -658,12 +658,12 @@ public:
 		ImGui::End();
 		ImGui::PopStyleColor(1);
 
-		TechScreen();
+		//TechScreen();
 
-		if(game.mainMap.isUnderground) {
+		if (game.mainMap.isUnderground) {
 			if (ImGui::Button("Go Up")) {
 				Audio::StopLoop("ambient_cave");
-				Audio::PlayLoop("dat/sounds/ambient12.wav","ambient_day");
+				Audio::PlayLoop("dat/sounds/ambient12.wav", "ambient_day");
 				Audio::SetVolumeLoop(musicvolume, "ambient_day");
 				game.mainMap.isUnderground = !game.mainMap.isUnderground;
 			}
@@ -707,7 +707,7 @@ public:
 				std::string text = "Covered in: ";
 				text += Cosmetic::CoveredName((int)player.coveredIn);
 				ImGui::TextColored(color, text.c_str());
-				ImGui::ProgressBar((float)(player.liquidLast-player.ticksCovered) / player.liquidLast, ImVec2(0.0f, 0.0f));
+				ImGui::ProgressBar((float)(player.liquidLast - player.ticksCovered) / player.liquidLast, ImVec2(0.0f, 0.0f));
 			}
 
 			ImGui::Text("Body Temperature :"); ImGui::SameLine();
@@ -744,7 +744,7 @@ public:
 		}
 		//------Inventory------
 		ImGui::Begin("Inventory");
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, {0.15, 0.15, 0.15, 1});
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.15, 0.15, 0.15, 1 });
 		if (ImGui::BeginListBox("Inventory"))
 		{
 			for (int n = 0; n < pInv.items.size(); n++)
@@ -973,7 +973,7 @@ public:
 					}
 				}
 			}
-			
+
 
 			ImGui::PushStyleColor(ImGuiCol_Button, { 0.5,0,0,1 });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.8,0,0,1 });
@@ -1009,19 +1009,66 @@ public:
 		{
 			ImGui::Begin("Selected Block");
 
-			Container* curCont = game.mainMap.ContainerAtCoord(selectedTile->coords);
+			Container* curCont = selectedTile->tileContainer;
+
+			//Both Lists for the entity and for the chest
+			if (selectedTile->entity != nullptr) {
+				if (ImGui::CollapsingHeader("Corpse")) {
+					ImGui::BeginListBox("Items");
+					std::vector<std::string> containerList = selectedTile->entity->getItemNames();
+					for (int n = 0; n < containerList.size(); n++)
+					{
+						const bool is_selected = (itemSelected == n);
+						if (ImGui::Selectable(containerList[n].c_str(), is_selected)) {
+							itemSelectedName = containerList[n];
+							itemSelected = n;
+						}
+					}
+					ImGui::EndListBox();
+
+					if (ImGui::Button("Take Item")) {
+						pInv.AddItem(selectedTile->entity->inv[itemSelected]);
+						selectedTile->entity->inv.erase(selectedTile->entity->inv.begin() + itemSelected);
+					}
+				}
+			}
+			else if (curCont != nullptr) {
+				if (ImGui::CollapsingHeader("Container")) {
+					ImGui::BeginListBox("Items");
+					std::vector<std::string> containerList = curCont->getItemNames();
+					for (int n = 0; n < containerList.size(); n++)
+					{
+						const bool is_selected = (itemSelected == n);
+						if (ImGui::Selectable(containerList[n].c_str(), is_selected)) {
+							itemSelectedName = containerList[n];
+							itemSelected = n;
+						}
+					}
+					ImGui::EndListBox();
+
+					if (ImGui::Button("Put selected item in Container")) {
+						curCont->AddItem(pInv.items[currentItemIndex]);
+						if (pInv.RemoveItem(pInv.items[currentItemIndex].section)) { currentItemIndex = 0; }
+					}
+					
+					if (ImGui::Button("Take Item")) {
+						pInv.AddItem(curCont->items[itemSelected]);
+						curCont->items.erase(curCont->items.begin() + itemSelected);
+					}
+				}
+			}
 
 			SWAP_FONT("main");
-			if (curCont != nullptr) {
+			/*if (curCont != nullptr) {
 				ImGui::TextColored(ImVec4{ 0.5, 0.34, 0, 1 }, "U");
 			}
-			else {
-				ImGui::TextColored(game.GetTileColor(*selectedTile, 1.f), game.GetTileChar(*selectedTile).c_str());
-			}
+			else {*/
+			ImGui::TextColored(game.GetTileColor(selectedTile, 1.f), game.GetTileChar(selectedTile).c_str());
+			//}
 			SWAP_FONT("ui");
 
 			if (selectedTile->hasItem) { ImGui::Text(("Item on tile: " + selectedTile->itemName).c_str()); }
-			
+
 			if (ImGui::Button("Drop Selected Item")) {
 				if (invSelectedName != "" && !selectedTile->hasItem) {
 					selectedTile->hasItem = true;
@@ -1030,9 +1077,12 @@ public:
 					selectedTile->itemName = upperName;
 					selectedTile->collectible = true;
 					if (selectedTile->itemName == "CAMPFIRE" || selectedTile->itemName == "CHEST") {
+						//add a container to that tile
+						selectedTile->tileContainer = new Container;
 					}
 					if (pInv.RemoveItem(pInv.items[currentItemIndex].section)) { currentItemIndex = 0; }
 				}
+
 				else {
 					Math::PushBackLog(&game.actionLog, "There is already an item on that space.");
 				}
@@ -1042,8 +1092,7 @@ public:
 			bool canCollect = true;
 			if (selectedTile->collectible || selectedTile->liquid != nothing || selectedTile->hasItem) {
 				if (ImGui::Button("Collect")) {
-					if (game.mainMap.ContainerAtCoord(selectedTile->coords) != nullptr
-						&& game.mainMap.ContainerAtCoord(selectedTile->coords)->items.size() != 0)
+					if (selectedTile->tileContainer != nullptr && selectedTile->tileContainer->items.size() != 0)
 					{
 						Math::PushBackLog(&game.actionLog, "This container still contains items.");
 						canCollect = false;
@@ -1054,8 +1103,10 @@ public:
 					if (canCollect) {
 						if (pInv.AttemptCollect(selectedTile))
 						{
-							if (selectedTile->itemName == "CAMPFIRE" || selectedTile->itemName == "CHEST") {
-								game.mainMap.RemoveContainer({ selectedTile->coords });
+							if (selectedTile->tileContainer != nullptr) {
+								//Phew!!
+								delete selectedTile->tileContainer;
+								selectedTile->tileContainer = nullptr;
 							}
 							Audio::Play(sfxs["collect"]);
 							Math::PushBackLog(&game.actionLog, "You collect an item off the ground.");
@@ -1094,7 +1145,6 @@ public:
 					}
 				}
 			}
-
 			ImGui::End();
 		}
 
@@ -1191,6 +1241,7 @@ public:
 		ImGui::PopFont();
 	}
 
+	/*
 	void TechScreen() {
 		ImGui::Begin("Technology");
 
@@ -1238,7 +1289,7 @@ public:
 		if (gameScreen.fancyGraphics) ImGui::PopFont();
 		ImGui::End();
 	}
-
+	*/
 	void DisplayEntity(Entity* ent)
 	{
 		if (gameScreen.showDialogue) {

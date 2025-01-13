@@ -77,13 +77,13 @@ public:
 	void LoadData();
 	std::string GetWalkSound();
 
-	std::string GetItemChar(Tile tile);
-	ImVec4 GetItemColor(Tile tile);
-	std::string GetTileChar(Tile tile);
+	std::string GetItemChar(Tile* tile);
+	ImVec4 GetItemColor(Tile* tile);
+	std::string GetTileChar(Tile* tile);
 
 	std::string GetTileChar(Vector2_I tile);
 
-	ImVec4 GetTileColor(Tile tile, float intensity);
+	ImVec4 GetTileColor(Tile* tile, float intensity);
 	ImVec4 GetTileColor(Vector2_I tile, float intensity);
 	ImVec4 GetPlayerColor();
 };
@@ -677,30 +677,30 @@ bool GameManager::EnterCave() {
 	return false;
 }
 
-std::string GameManager::GetItemChar(Tile tile) {
-	if (!tile.hasItem || item_icons.count(tile.itemName) == 0) {
+std::string GameManager::GetItemChar(Tile* tile) {
+	if (!tile->hasItem || item_icons.count(tile->itemName) == 0) {
 		return "!";
 	}
-	return item_icons[tile.itemName];
+	return item_icons[tile->itemName];
 }
 
-ImVec4 GameManager::GetItemColor(Tile tile) {
-	if (!tile.hasItem) {
+ImVec4 GameManager::GetItemColor(Tile* tile) {
+	if (!tile->hasItem) {
 		return {1, 0,0,1};
 	}
-	if (tile.liquid == fire) { return Cosmetic::FireColor(); }
-	vec3 color = Items::GetItemColor(tile.itemName);
-	color.x /= (darkTime * tile.brightness);
-	color.y /= (darkTime * tile.brightness);
-	color.z /= (darkTime * tile.brightness);
+	if (tile->liquid == fire) { return Cosmetic::FireColor(); }
+	vec3 color = Items::GetItemColor(tile->itemName);
+	color.x /= (darkTime * tile->brightness);
+	color.y /= (darkTime * tile->brightness);
+	color.z /= (darkTime * tile->brightness);
 	return {color.x, color.y, color.z, 1};
 }
 
-std::string GameManager::GetTileChar(Tile tile) {
+std::string GameManager::GetTileChar(Tile* tile) {
 
-	if (tile.entity != nullptr)
+	if (tile->entity != nullptr)
 	{
-		switch (tile.entity->entityID)
+		switch (tile->entity->entityID)
 		{
 		case ID_ZOMBIE:
 			return ENT_ZOMBIE;
@@ -713,14 +713,14 @@ std::string GameManager::GetTileChar(Tile tile) {
 	//if (tile.hasItem) {
 		//return item_icons[tile.itemName];
 	//}
-	if (tile.liquid == water && tile.liquidTime == -1) {
+	if (tile->liquid == water && tile->liquidTime == -1) {
 		return "?";
 	}
-	return tile_icons[tile.id];
+	return tile_icons[tile->id];
 }
 
 std::string GameManager::GetTileChar(Vector2_I tile) {
-	return GameManager::GetTileChar(mainMap.CurrentChunk()->localCoords[tile.x][tile.y]);
+	return GameManager::GetTileChar(&mainMap.CurrentChunk()->localCoords[tile.x][tile.y]);
 }
 
 std::string GameManager::GetWalkSound(){
@@ -766,16 +766,16 @@ ImVec4 GameManager::GetPlayerColor() {
 	return ImVec4{ end_color.x, end_color.y, end_color.z, 1};
 }
 
-ImVec4 GameManager::GetTileColor(Tile tile, float intensity) {
+ImVec4 GameManager::GetTileColor(Tile* tile, float intensity) {
 	ImVec4 color;
 	//check for entitites
-	if (tile.entity != nullptr)
+	if (tile->entity != nullptr)
 	{
-		if (tile.entity->health <= 0) {
+		if (tile->entity->health <= 0) {
 			color = { 1,0,0,1 };
 			goto dimming;
 		}
-		switch (tile.entity->entityID)
+		switch (tile->entity->entityID)
 		{
 		case ID_ZOMBIE:
 			color = { 0,1,0,1 };
@@ -791,18 +791,18 @@ ImVec4 GameManager::GetTileColor(Tile tile, float intensity) {
 			break;
 		}
 	}
-	if (tile.liquid == fire) {
+	if (tile->liquid == fire) {
 		color = Cosmetic::FireColor();
 		goto dimming;
 	}
 
 	//check if its burnt
-	if (tile.burningFor > 0) {
+	if (tile->burningFor > 0) {
 		color = { 0.45, 0.45, 0.45, 1 };
 		goto dimming;
 	}
 
-	color = { tile.tileColor.x, tile.tileColor.y, tile.tileColor.z, 1 };
+	color = { tile->tileColor.x, tile->tileColor.y, tile->tileColor.z, 1 };
 	//regular tile color
 	/*switch (tile.id) {
 	case 0:
@@ -872,7 +872,7 @@ dimming:
 
 
 ImVec4 GameManager::GetTileColor(Vector2_I tile, float intensity) {
-	return GameManager::GetTileColor(mainMap.CurrentChunk()->localCoords[tile.x][tile.y], intensity);
+	return GameManager::GetTileColor(&mainMap.CurrentChunk()->localCoords[tile.x][tile.y], intensity);
 }
 
 class Commands {

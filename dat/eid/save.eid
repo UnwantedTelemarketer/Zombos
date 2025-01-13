@@ -1,18 +1,17 @@
 STATS {
-x_pos : 15;
-y_pos : 4;
-seed : 24172;
-biomes : 14570;
-global_x : 245;
-global_y : 255;
-weather : 1;
+x_pos : 11;
+y_pos : 11;
+seed : 4132;
+biomes : 8240;
+global_x : 250;
+global_y : 250;
+weather : 0;
 color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
 health : 100.000000;
-thirst : 10.000992;
-hunger : 39.998173;
-time : 17.900013;
-items : [LIGHTER,1,SCRAP,2,MEAT,1,OLD_CLOTH,2,GUTS,2,ROCK,1,BANDAGE,1,MATCH,1,BITS,2,ROPE,1,CHEST,1,LANTERN,1,];
-savedRecipes : [LANTERN,];
+thirst : 92.575302;
+hunger : 95.049698;
+time : 10.950019;
+items : [BANDAGE,1,MATCH,2,];
 }

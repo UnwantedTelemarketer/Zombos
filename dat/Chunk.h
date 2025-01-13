@@ -40,6 +40,7 @@ struct Chunk {
 				for (size_t j = 0; j < CHUNK_HEIGHT; j++)
 				{
 					sChunk.tiles[i][j].Deserialize(inFile);
+
 				}
 			}
 
@@ -71,6 +72,14 @@ struct Chunk {
 				}
 				localCoords[i][j].ResetColor();
 				localCoords[i][j].SetLiquid(sChunk.tiles[i][j].liquid, localCoords[i][j].liquidTime == -1);
+
+
+				if (sChunk.tiles[i][j].hasContainer) {
+					localCoords[i][j].tileContainer = new Container;
+					for (auto const& item : sChunk.tiles[i][j].cont.items) {
+						localCoords[i][j].tileContainer->AddItem(Items::GetItem(item));
+					}
+				}
 			}
 		}
 	}
