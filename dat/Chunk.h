@@ -8,6 +8,9 @@ struct Saved_Chunk {
 };
 
 struct Chunk {
+private:
+	std::vector<Container*> containers;
+public:
 	bool beenBuilt = false;
 	Vector2_I globalChunkCoord;
 	Tile localCoords[CHUNK_WIDTH][CHUNK_HEIGHT];
@@ -76,6 +79,7 @@ struct Chunk {
 
 				if (sChunk.tiles[i][j].hasContainer) {
 					localCoords[i][j].tileContainer = new Container;
+					containers.push_back(localCoords[i][j].tileContainer);
 					for (auto const& item : sChunk.tiles[i][j].cont.items) {
 						localCoords[i][j].tileContainer->AddItem(Items::GetItem(item));
 					}
@@ -105,6 +109,9 @@ struct Chunk {
 			}
 		}
 		delete sChunk;
+		for (auto const& cont : containers) {
+			delete cont;
+		}
 		outFile.close();
 	}
 };

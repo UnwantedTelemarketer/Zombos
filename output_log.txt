@@ -1,12 +1,11 @@
 [ Line 216 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
-[ Line 149 ]: [0;37mLoading Tiles from files...[0m
 [ Line 83 ]: [0;37mLoading Items from files...[0m
-[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 149 ]: [0;37mLoading Tiles from files...[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 79 ]: [1;32mLoaded texture from res/plank.png.[0m
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
+[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 97 ]: [0;37mLoaded Items![0m
@@ -40,18 +39,7 @@
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 77 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 164 ]: [0;37mLoaded Tiles![0m
 [ Line 121 ]: [1;32mDone![0m
-[ Line 40 ]: [1;31m0[0m
-[ Line 215 ]: [1;32mReading Chunk from dat/map/249249.chunk[0m
-[ Line 215 ]: [1;32mReading Chunk from dat/map/250249.chunk[0m
-[ Line 215 ]: [1;32mReading Chunk from dat/map/251249.chunk[0m
-[ Line 215 ]: [1;32mReading Chunk from dat/map/249250.chunk[0m
-[ Line 215 ]: [1;32mReading Chunk from dat/map/250250.chunk[0m
-[ Line 215 ]: [1;32mReading Chunk from dat/map/251250.chunk[0m
-[ Line 215 ]: [1;32mReading Chunk from dat/map/249251.chunk[0m
-[ Line 215 ]: [1;32mReading Chunk from dat/map/250251.chunk[0m
-[ Line 215 ]: [1;32mReading Chunk from dat/map/251251.chunk[0m
-[ Line -1 ]: [0;37mNow saving...[0m
-[ Line 313 ]: [1;32mWrote to file dat/eid/save.eid[0m
-[ Line 1363 ]: [1;32mSave complete in 17.570370ms.[0m
+[ Line 40 ]: [1;31m-28825424[0m

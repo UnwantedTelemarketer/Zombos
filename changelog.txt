@@ -13,6 +13,8 @@
 	-- Search for recipes using a material name or for a specific recipe
 	-- Ability to save recipes added
 
+ - Containers now save properly when loading the game
+
  - Console commands save the last 5 commands (cycle with arrow key)
 
  - QOL changes

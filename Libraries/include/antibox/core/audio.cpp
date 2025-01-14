@@ -94,12 +94,12 @@ void AudioEngine::SetVolumeLoop(float volume, std::string name)
 {
     // Check if the device exists for the given name
     if (mDevices.count(name) == 0) {
-        std::cout << "this device does not exist." << std::endl;
+        //std::cout << "this device does not exist." << std::endl;
         return;
     }
 
     if (mDevices[name] == nullptr) {
-        std::cout << "this device is in the map but is a nullptr." << std::endl;
+        //std::cout << "this device is in the map but is a nullptr." << std::endl;
         return;  // Or handle this error more gracefully
     }
 

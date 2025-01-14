@@ -731,10 +731,13 @@ std::string GameManager::GetWalkSound(){
 	case ocean:
 	case desert:
 		return sandWalk[Math::RandInt(0, 3)];
+		break;
 	case forest:
 	case taiga:
+	case swamp:
 	case grassland:
 		return grassWalk[Math::RandInt(0, 3)];
+		break;
 	default:
 		return "dat/sounds/bfxr/walk1.wav";
 	}
