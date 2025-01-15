@@ -4,7 +4,7 @@ sections : [LEATHER_BOOTS];
 
 LEATHER_BOOTS {
 name : "Leather Boots";
-description : "Leather boots to help with weather.";
+description : "Leather boots to help with weather. (Walks through mud without getting stuck)";
 id : "leather_boots";
 stackable : false;
 holdsLiquid : false;

@@ -1,6 +1,6 @@
 //Section required to list out all items in the file
 SECTIONS {
-sections : [FLAT_MUSHROOM,GLOWING_MUSHROOM,COOKED_FLAT_MUSHROOM,BASIC_FLOWER,CRYSTAL,SNOW,LILYPAD,CLAY]
+sections : [FLAT_MUSHROOM,GLOWING_MUSHROOM,COOKED_FLAT_MUSHROOM,BASIC_FLOWER,CRYSTAL,SNOW,LILYPAD,CLAY,BULL_HORN]
 }
 
 //ConsumeEffects none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid = 6
@@ -131,4 +131,19 @@ effects : [0,0,0,0];
 equipType : 0;
 sprite : "S";
 spriteColor : [0.65, 0.35, 0.0];
+}
+
+BULL_HORN {
+name : "Bull Horn"; 
+description : "Sharp horn from a wild bull.";
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+amount : 1;
+consumeTxt : "You eat the lilypad.";
+useTxt : "you cannot use this.";
+effects : [0,0,0,0];
+equipType : 0;
+sprite : "A";
+spriteColor : [0.75, 0.75, 0.75];
 }

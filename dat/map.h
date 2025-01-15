@@ -52,11 +52,13 @@ public:
 	void SpawnChunkEntities(std::shared_ptr<Chunk> chunk);
 	std::shared_ptr<Chunk> CurrentChunk();
 	Tile* TileAtPos(Vector2_I coords);
+	Tile* GetTileFromThisOrNeighbor(Vector2_I tilecoords, Vector2_I global_coords);
 	Tile* GetTileFromThisOrNeighbor(Vector2_I tilecoords);
 	int EffectAtPos(Vector2_I coords);
 	int GetEffectFromThisOrNeighbor(Vector2_I tilecoords);
 	void SetEffectInThisOrNeighbor(Vector2_I tilecoords, int effect);
 	biome GetBiome(Vector2_I coords);
+	biome GetBiome(Vector2_I coords, Vector2_I global_coords);
 	void MakeNewChunk(Vector2_I coords);
 	void AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog);
 	void MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLog, Inventory& pInv);
@@ -216,6 +218,7 @@ void Map::ReadChunk(Vector2_I curChunk, std::string path) {
 	std::shared_ptr<Chunk> tempChunk = std::make_shared<Chunk>();
 	tempChunk->globalChunkCoord = curChunk;
 	tempChunk->LoadChunk(curChunk);
+	SpawnChunkEntities(tempChunk);
 	world.chunks[curChunk] = tempChunk;
 }
 
@@ -234,18 +237,38 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 	for (int i = 0; i < Math::RandInt(0, 4); i++) //CHANGE THIS TO SPAWN ENTITIES
 	{
 		Entity* zomb;
+		Vector2_I spawnCoords = { Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };
 		int num = Math::RandInt(1, 10);
 		if (num >= 9) {
-			zomb = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human, 10, 10, true, Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT), true };
+			zomb = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human, 10, 10, true, spawnCoords.x, spawnCoords.y, true };
 		}
 		else if (num >= 5) {
-			zomb = new Entity{ 15, "Zombie", ID_ZOMBIE, Aggressive, true, Zombie, 7, 8, false, Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };
+			zomb = new Entity{ 15, "Zombie", ID_ZOMBIE, Aggressive, true, Zombie, 7, 8, false, spawnCoords.x, spawnCoords.y };
 
 			zomb->inv.push_back(Items::GetItem("OLD_CLOTH"));
 			zomb->inv.push_back(Items::GetItem("GUTS"));
 		}
 		else {
-			zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, Wildlife, 5, 1, false, Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };
+			switch (GetBiome(spawnCoords, chunk->globalChunkCoord)) {
+			case swamp:
+				zomb = new Entity{ 10, "Frog", ID_FROG, Wander, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				zomb->inv.push_back(Items::GetItem("LEATHER"));
+				break;
+			case taiga:
+				zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				break;
+			case grassland:
+				zomb = new Entity{ 40, "Bull", ID_COW, Aggressive, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				zomb->inv.push_back(Items::GetItem("LEATHER"));
+				zomb->inv.push_back(Items::GetItem("BULL_HORN"));
+				break;
+			case desert:
+				zomb = new Entity{ 10, "Cat", ID_CAT, Wander, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				break;
+			default:
+				zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				break;
+			}
 
 			zomb->inv.push_back(Items::GetItem("MEAT"));
 		}
@@ -322,10 +345,9 @@ Tile* Map::TileAtPos(Vector2_I coords)
 	return &CurrentChunk()->localCoords[coords.x][coords.y];
 }
 
-Tile* Map::GetTileFromThisOrNeighbor(Vector2_I tilecoords)
-{
+Tile* Map::GetTileFromThisOrNeighbor(Vector2_I tilecoords, Vector2_I global_coords) {
 	Tile* curTile;
-	vec2_i globalCoords = c_glCoords;
+	vec2_i globalCoords = global_coords;
 	if (tilecoords.x >= 30) {
 		tilecoords.x -= 30;
 		globalCoords.x += 1;
@@ -352,10 +374,15 @@ Tile* Map::GetTileFromThisOrNeighbor(Vector2_I tilecoords)
 	return curTile;
 }
 
-biome Map::GetBiome(Vector2_I coords) 
+Tile* Map::GetTileFromThisOrNeighbor(Vector2_I tilecoords)
 {
-	int bonusX = c_glCoords.x * CHUNK_WIDTH;
-	int bonusY = c_glCoords.y * CHUNK_HEIGHT;
+	return GetTileFromThisOrNeighbor(tilecoords, c_glCoords);
+}
+
+biome Map::GetBiome(Vector2_I coords, Vector2_I global_coords)
+{
+	int bonusX = global_coords.x * CHUNK_WIDTH;
+	int bonusY = global_coords.y * CHUNK_HEIGHT;
 	float curTemp = biomeTempNoise.GetNoise((coords.x + bonusX) * 0.1, (coords.y + bonusY) * 0.1);
 	float curMois = biomeMoistureNoise.GetNoise((coords.x + bonusX) * 0.1, (coords.y + bonusY) * 0.1);
 	curTemp = (curTemp + 1) / 2;
@@ -372,6 +399,11 @@ biome Map::GetBiome(Vector2_I coords)
 	}
 	
 	return currentBiome;
+}
+
+biome Map::GetBiome(Vector2_I coords)
+{
+	return GetBiome(coords, c_glCoords);
 }
 
 void Map::AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog) {
@@ -416,7 +448,7 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 	if (x > 0 && y > 0 && x < CHUNK_WIDTH && y < CHUNK_HEIGHT)
 		if (CurrentChunk()->localCoords[x][y].entity != nullptr) {
 			Entity* curEnt = CurrentChunk()->localCoords[x][y].entity;
-			if (curEnt->health > 0) {
+			if (curEnt->health > 0 && pInv.CurrentEquipExists(weapon)){
 				AttackEntity(curEnt, pInv.equippedItems[weapon].mod, actionLog);
 			}
 			else {

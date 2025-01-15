@@ -518,6 +518,15 @@ private:
 #define ENT_HUMAN "C"
 #define ID_HUMAN 3
 
+#define ENT_FROG "F"
+#define ID_FROG 4
+
+#define ENT_CAT "G"
+#define ID_CAT 5
+
+#define ENT_COW "a"
+#define ID_COW 6
+
 
 #ifdef REGULAR_FONT
 #define TILE_LIQUID "~"

@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [BAD_PISTOL,MACHETE,KNIFE]
+sections : [BAD_PISTOL,MACHETE,KNIFE,BULL_KNIFE]
 } 
 
 BAD_PISTOL {
@@ -40,6 +40,22 @@ KNIFE {
 name : "Makeshift Knife";
 description : "A makeshift knife to aid in many situations.";
 id : "knife";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "cant consume.";
+useTxt : "You stab yourself.";
+effects : [0,0,4,35];
+equipType : 1;
+equipModifier : 35;
+sprite : "E";
+spriteColor : [0.5, 0.50, 0.5];
+}
+
+BULL_KNIFE {
+name : "Bull-Horn Knife";
+description : "A knife made from a bull's horn.";
 stackable : false;
 holdsLiquid : false;
 consumable : false;

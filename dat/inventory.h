@@ -67,6 +67,14 @@ public:
 			return equippedItems[t].section == itemName;
 		}
 	}
+	bool CurrentEquipExists(equipType t) {
+		if (!equippedItems.contains(t)) {
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
 
 	void Cleanup() {
 		std::vector<int> itemsToErase;

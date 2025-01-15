@@ -7,7 +7,7 @@
 
 #define DOSFONT  "dat/fonts/symbolic/symbolic_cattail_extended.ttf"
 #define ITEMFONT "dat/fonts/symbolic/symbolic_items_extended.ttf"
-#define MOBFONT "dat/fonts/symbolic/symbolic_mobs_ex.ttf"
+#define MOBFONT "dat/fonts/symbolic/symbolic_mobs_extended.ttf"
 #define VGAFONT  "dat/fonts/VGA437.ttf"
 #define SWAP_FONT(newfont) ImGui::PopFont(); ImGui::PushFont(Engine::Instance().getFont(newfont));
 //#define DEV_TOOLS
@@ -45,6 +45,7 @@ private:
 	std::vector<std::string> mobIcons;
 	std::vector<ImVec2> mobPositions;
 	std::vector<ImVec4> mobColors;
+	vec2_i view_distance;
 public:
 	//UI stuff
 	GameUI gameScreen;
@@ -58,8 +59,8 @@ public:
 	float musicvolume = 1.f;
 	bool interacting, flashlightActive;
 	int xMin, xMax, yMin, yMax;
-	bool freeView = false;
 	char recipe_search[128] = "";
+	Vector4 customTabColor;
 
 	//Game Stuff
 	std::shared_ptr<Chunk> test_chunk;
@@ -93,6 +94,7 @@ public:
 	std::shared_ptr<GameObject> p;
 
 	void Init() override {
+
 		test_chunk = std::make_shared<Chunk>();
 		std::thread itemLoading = Items::LoadItemsFromFiles(&game.item_icons);
 		std::thread tileLoading = Tiles::LoadTilesFromFiles(&game.tile_colors);
@@ -112,6 +114,7 @@ public:
 		gameScreen.showDialogue = true;
 		gameScreen.console_showing = false;
 		gameScreen.helpMenu = true;
+		game.freeView = true;
 		game.LoadData();
 
 		sfxvolume = Audio::GetVolume();
@@ -119,8 +122,6 @@ public:
 		itemLoading.join();
 		tileLoading.join();
 		Console::Log("Done!", text::green, __LINE__);
-		map.SetupNoise(-1, -1);
-		map.BuildChunk(test_chunk);
 	}
 
 	void Update() {
@@ -133,6 +134,7 @@ public:
 
 		if (Input::KeyDown(KEY_M) && currentState != playing){
 			currentState = map_gen_test;
+			map.CreateMap(map.landSeed, map.biomeSeed);
 		}
 		//the rest of the update is game logic so we stop here in the menu
 		if (currentState != playing) { return; }
@@ -168,7 +170,7 @@ public:
 		if (Input::KeyDown(KEY_UP) || Input::KeyDown(KEY_W)) {
 			if (interacting)
 			{
-				selectedTile = { map.TileAtPos(Vector2_I{ player.coords.x - 1, player.coords.y }) };
+				selectedTile = { map.GetTileFromThisOrNeighbor({ player.coords.x - 1, player.coords.y }) };
 				interacting = false;
 				return;
 			}
@@ -186,11 +188,7 @@ public:
 		else if (Input::KeyDown(KEY_DOWN) || Input::KeyDown(KEY_S)) {
 			if (interacting)
 			{
-				Tile& selTile = *map.TileAtPos(Vector2_I{ player.coords.x + 1, player.coords.y });
-				selectedTile = { &selTile };
-				/*if (selTile.entity != nullptr) {
-
-				}*/
+				selectedTile = map.GetTileFromThisOrNeighbor({ player.coords.x + 1, player.coords.y });
 				interacting = false;
 				return;
 			}
@@ -208,7 +206,7 @@ public:
 		else if (Input::KeyDown(KEY_LEFT) || Input::KeyDown(KEY_A)) {
 			if (interacting)
 			{
-				selectedTile = { map.TileAtPos(Vector2_I{ player.coords.x, player.coords.y - 1}) };
+				selectedTile = { map.GetTileFromThisOrNeighbor({ player.coords.x, player.coords.y - 1}) };
 				interacting = false;
 				return;
 			}
@@ -226,7 +224,7 @@ public:
 		else if (Input::KeyDown(KEY_RIGHT) || Input::KeyDown(KEY_D)) {
 			if (interacting)
 			{
-				selectedTile = { map.TileAtPos(Vector2_I{ player.coords.x, player.coords.y + 1}) };
+				selectedTile = { map.GetTileFromThisOrNeighbor({ player.coords.x, player.coords.y + 1}) };
 				interacting = false;
 				return;
 			}
@@ -268,7 +266,7 @@ public:
 			map.DrawLine(map.GetLine(player.coords, player.crosshair, 25));
 		};
 		
-		if (freeView) {
+		if (game.freeView) {
 			xMin = player.coords.x - 15;
 			xMax = player.coords.x + 15;
 			yMin = player.coords.y - 15;
@@ -297,9 +295,11 @@ public:
 				Audio::SetVolumeLoop(musicvolume, "ambient_day");
 				Audio::SetVolumeLoop(musicvolume, "ambient_cave");
 			}
-			if (ImGui::RadioButton("Free View Enabled (Experimental)", freeView)) {
-				freeView = !freeView;
+			if (ImGui::RadioButton("Free View Enabled (Experimental)", game.freeView)) {
+				game.freeView = !game.freeView;
 			}
+
+			//ImGui::ColorPicker3("Tab Color", &customTabColor.x);
 
 			ImGui::End();
 		}
@@ -327,16 +327,18 @@ public:
 		ImGui::InputFloat("Temperature Minimum", &map.tempMin, 0.1f);
 		ImGui::InputFloat("Moisture Minimum", &map.moistureMin, 0.1f);
 		if (ImGui::Button("Generate")) {
-			map.BuildChunk(test_chunk);
+			map.CreateMap(map.landSeed, map.biomeSeed);
 		}
 		ImGui::End();
 
 		ImGui::Begin("Map Generator");
 		bool item = false;
 		ImGui::PushFont(Engine::Instance().getFont("main"));
-		for (int i = 0; i < CHUNK_WIDTH; i++) {
-			for (int j = 0; j < CHUNK_HEIGHT; j++) {
-				Tile* curTile = test_chunk->GetTileAtCoords({ i, j });
+		for (int i = -CHUNK_WIDTH; i < CHUNK_WIDTH * 2; i++) {
+			for (int j = -CHUNK_HEIGHT; j < CHUNK_HEIGHT * 2; j++) {
+				
+				Tile* curTile = map.GetTileFromThisOrNeighbor({ i, j });
+				Tile* underTile = map.GetTileFromThisOrNeighbor({ i + 1, j });
 
 				if (curTile->hasItem)
 				{
@@ -351,6 +353,27 @@ public:
 
 				printIcon = game.GetTileChar(curTile);
 				iconColor = game.GetTileColor(curTile, 0.f);
+
+				if (underTile != nullptr) {
+					if (underTile->id == 11) {
+						//screen += "G";
+						//colors.push_back(game.GetTileColor(underTile, intensity));
+						printIcon = "G";
+						iconColor = game.GetTileColor(underTile, 0.f);
+					}
+					else if (underTile->id == 12) {
+						//screen += "J";
+						//colors.push_back(game.GetTileColor(underTile, intensity));
+						printIcon = "J";
+						iconColor = game.GetTileColor(underTile, 0.f);
+					}
+					else if (underTile->id == 18) {
+						//screen += "J";
+						//colors.push_back(game.GetTileColor(underTile, intensity));
+						printIcon = "Y";
+						iconColor = game.GetTileColor(underTile, 0.f);
+					}
+				}
 
 				ImGui::TextColored(iconColor, printIcon.c_str());
 				ImGui::SameLine();
@@ -425,6 +448,7 @@ public:
 			game.Setup(data.getInt("x_pos"), data.getInt("y_pos"), 0.5f, data.getInt("seed"), data.getInt("biomes"));
 			currentState = playing;
 			game.worldTime = data.getFloat("time");
+			game.lerpingTo = urban;
 			map.SetWeather((weather)data.getInt("weather"));
 		}
 		ImGui::End();
@@ -448,6 +472,8 @@ public:
 	}
 
 	void GameScene() {
+
+		//ImGui::PushStyleColor(ImGuiCol_TitleBg, { customTabColor.x - 0.4f,customTabColor.y - 0.4f,customTabColor.z - 0.4f,1 });
 
 		ImGui::PushFont(Engine::Instance().getFont("ui"));
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
@@ -480,7 +506,7 @@ public:
 					Tile* curTile = nullptr;
 					Tile* underTile = nullptr;
 
-					if (!freeView) {
+					if (!game.freeView) {
 						curTile = map.CurrentChunk()->GetTileAtCoords(curCoords);
 						underTile = map.CurrentChunk()->GetTileAtCoords({ curCoords.x + 1, curCoords.y });
 					}
@@ -661,11 +687,12 @@ public:
 		//TechScreen();
 
 		if (game.mainMap.isUnderground) {
-			if (ImGui::Button("Go Up")) {
+			if (ImGui::Button("Leave Cave")) {
 				Audio::StopLoop("ambient_cave");
 				Audio::PlayLoop("dat/sounds/ambient12.wav", "ambient_day");
 				Audio::SetVolumeLoop(musicvolume, "ambient_day");
 				game.mainMap.isUnderground = !game.mainMap.isUnderground;
+				game.freeView = true;
 			}
 		}
 
@@ -1012,7 +1039,7 @@ public:
 			Container* curCont = selectedTile->tileContainer;
 
 			//Both Lists for the entity and for the chest
-			if (selectedTile->entity != nullptr) {
+			if (selectedTile->entity != nullptr && selectedTile->entity->health <= 0) {
 				if (ImGui::CollapsingHeader("Corpse")) {
 					ImGui::BeginListBox("Items");
 					std::vector<std::string> containerList = selectedTile->entity->getItemNames();
@@ -1026,9 +1053,11 @@ public:
 					}
 					ImGui::EndListBox();
 
-					if (ImGui::Button("Take Item")) {
-						pInv.AddItem(selectedTile->entity->inv[itemSelected]);
-						selectedTile->entity->inv.erase(selectedTile->entity->inv.begin() + itemSelected);
+					if (containerList.size() > 0) {
+						if (ImGui::Button("Take Item")) {
+							pInv.AddItem(selectedTile->entity->inv[itemSelected]);
+							selectedTile->entity->inv.erase(selectedTile->entity->inv.begin() + itemSelected);
+						}
 					}
 				}
 			}
@@ -1050,10 +1079,11 @@ public:
 						curCont->AddItem(pInv.items[currentItemIndex]);
 						if (pInv.RemoveItem(pInv.items[currentItemIndex].section)) { currentItemIndex = 0; }
 					}
-					
-					if (ImGui::Button("Take Item")) {
-						pInv.AddItem(curCont->items[itemSelected]);
-						curCont->items.erase(curCont->items.begin() + itemSelected);
+					if (containerList.size() > 0) {
+						if (ImGui::Button("Take Item")) {
+							pInv.AddItem(curCont->items[itemSelected]);
+							curCont->items.erase(curCont->items.begin() + itemSelected);
+						}
 					}
 				}
 			}
@@ -1239,6 +1269,7 @@ public:
 #endif
 
 		ImGui::PopFont();
+		//ImGui::PopStyleColor(3);
 	}
 
 	/*

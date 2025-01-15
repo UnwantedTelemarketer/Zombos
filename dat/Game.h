@@ -20,6 +20,7 @@ private:
 	std::vector<std::string> missMessages = { "blank", "You swing at nothing and almost fall over.", "You miss.", "You don't hit anything." };
 	std::vector<std::string> npcMessages;
 public:
+	bool freeView = false;
 	CraftingSystem Crafter;
 	Map mainMap;
 	Player mPlayer;
@@ -110,6 +111,7 @@ void GameManager::LoadData() {
 	for (auto const& x : tileData.tokens) {
 		tile_icons.insert({ stoi(tileData.getArray(x.first)[1]) , tileData.getArray(x.first)[0] });
 	}
+	lerpingTo = urban;
 }
 
 void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1) {
@@ -354,10 +356,12 @@ void GameManager::SpawnEntity(Entity* ent) {
 }
 
 void GameManager::MovePlayer(int dir) {
-	if (mainMap.GetTileFromThisOrNeighbor(mPlayer.coords)->liquid == mud) {
+	Tile* playerTile = mainMap.GetTileFromThisOrNeighbor(mPlayer.coords);
+	if (playerTile->liquid == mud || 
+		(playerTile->liquid == water && playerTile->liquidTime == -1)) {
 		//hardcoding being able to walk through mud in leather boots lol
-		if (Math::RandInt(0, 5) == 3 && pInv.equippedItems[boots].section != "LEATHER_BOOTS") {
-			Math::PushBackLog(&actionLog, "You get stuck in mud.");
+		if (Math::RandInt(0, 4) == 3 && pInv.CurrentEquipMatches(boots, "LEATHER_BOOTS")) {
+			Math::PushBackLog(&actionLog, "You get stuck in the liquid.");
 			return;
 		}
 	}
@@ -377,8 +381,10 @@ void GameManager::MovePlayer(int dir) {
 	default:
 		break;
 	}
+
 	if (mainMap.TileAtPos(mPlayer.coords)->id == ID_STONE) {
 		if (EnterCave()) {
+			freeView = false;
 			//Audio::LerpMusic("ambient_day", "dat/sounds/wet-pizza-rat.mp3", "ambient_cave");
 			Audio::StopLoop("ambient_day");
 			Audio::PlayLoop("dat/sounds/wet-pizza-rat.mp3", "ambient_cave");
@@ -663,6 +669,7 @@ bool GameManager::EnterCave() {
 	if (!mainMap.isUnderground)
 	{
 		if (mainMap.underground.chunks.count({ mainMap.c_glCoords }) == 0) {
+			lerpingTo = urban;
 			mainBGcolor = { 0,0,0 };
 			bgColor = mainBGcolor;
 			std::shared_ptr<Chunk> tempChunk = std::make_shared<Chunk>();
@@ -708,6 +715,12 @@ std::string GameManager::GetTileChar(Tile* tile) {
 			return ENT_CHICKEN;
 		case ID_HUMAN:
 			return ENT_HUMAN;
+		case ID_FROG:
+			return ENT_FROG;
+		case ID_CAT:
+			return ENT_CAT;
+		case ID_COW:
+			return ENT_COW;
 		}
 	}
 	//if (tile.hasItem) {
@@ -789,6 +802,15 @@ ImVec4 GameManager::GetTileColor(Tile* tile, float intensity) {
 			goto dimming;
 			break;
 		case ID_HUMAN:
+			color = { 1,1,1,1 };
+			goto dimming;
+			break;
+		case ID_FROG:
+			color = { 0,0.7,0,1 };
+			goto dimming;
+			break;
+		case ID_CAT:
+		case ID_COW:
 			color = { 1,1,1,1 };
 			goto dimming;
 			break;

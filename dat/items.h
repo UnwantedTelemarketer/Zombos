@@ -111,9 +111,15 @@ namespace Tiles {
 		createdTile->hasItem = tile.hasItem;
 		createdTile->itemName = tile.itemName;
 		createdTile->coords = { tile.x, tile.y };
-		createdTile->walkable = Tiles::GetTile(tile.id)->walkable;
-		createdTile->mainTileColor = Tiles::GetTile(tile.id)->mainTileColor;
 		createdTile->biomeID = tile.biomeID;
+
+		//load static data from the tile to save file size
+		createdTile->walkable = Tiles::GetTile(tile.id)->walkable;
+		createdTile->collectible = Tiles::GetTile(tile.id)->collectible;
+		createdTile->collectibleName = Tiles::GetTile(tile.id)->collectibleName;
+		createdTile->collectedReplacement = Tiles::GetTile(tile.id)->collectedReplacement;
+		createdTile->mainTileColor = Tiles::GetTile(tile.id)->mainTileColor;
+
 	}
 }
 
