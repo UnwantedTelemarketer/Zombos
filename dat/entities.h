@@ -6,7 +6,7 @@
 
 enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid = 6};
 enum biome { desert, ocean, forest, swamp, taiga, grassland, urban, jungle };
-enum Liquid { nothing, water, blood, fire, guts, mud, snow };
+enum Liquid { nothing = 0, water = 1, blood = 2, fire = 3, guts = 4, mud = 5 , snow = 6};
 enum Action { use, consume, combine };
 enum Behaviour { Wander, Protective, Stationary, Aggressive };
 enum Faction { Human, Zombie, Wildlife };
@@ -34,7 +34,7 @@ struct Item {
 
 	ActionEffect use = { {none, none}, {none, none} };
 
-	float weight;
+	float weight = 0.f;
 	float liquidAmount = 0.f;
 	Liquid coveredIn = nothing; //liquids
 	Liquid heldLiquid = nothing;
@@ -43,7 +43,7 @@ struct Item {
 	int ticksUntilCooked = 16;
 	equipType eType = notEquip;
 	int mod = 0;
-	std::string sprite;
+	std::string sprite = "#";
 	int emissionDist = 0;
 	Vector3 spriteColor = {1,1,1};
 
@@ -175,7 +175,7 @@ struct Player {
 	Vector2_I coords;
 	Vector2_I crosshair;
 	Liquid coveredIn = nothing;
-	float bodyTemp = 98.5f;
+	float visualTemp, bodyTemp = 98.5f;
 
 	void TakeDamage(ConsumeEffect type, int dmg) {
 		health -= dmg;

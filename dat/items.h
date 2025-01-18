@@ -147,7 +147,7 @@ namespace Items {
 		else {
 			ItemReader::GetDataFromFile("loot_tables/" + filename, "COMMON", &dat);
 		}
-		int randItem = Math::RandInt(0, dat.getArray("items").size());
+		int randItem = Math::RandInt(0, dat.getArray("items").size() - 1);
 		return dat.getArray("items")[randItem];
 	}
 

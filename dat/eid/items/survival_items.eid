@@ -53,7 +53,6 @@ spriteColor : [0.35, 0.35, 0.35];
 CANTEEN {
 name : "Canteen";
 description : "Holds liquid.";
-id : "canteen";
 stackable : false;
 holdsLiquid : true;
 consumable : false;
@@ -92,7 +91,8 @@ amount : 1;
 consumeTxt : "You take a sip from the jar.";
 useTxt : "You pour liquid on yourself.";
 effects : [2,10,2,25];
-equipType : 0;
+equipType : 1;
+equipMod : 2;
 sprite : "Z";
 spriteColor : [0.5, 0.50, 0.5];
 }

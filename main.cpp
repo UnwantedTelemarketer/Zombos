@@ -51,6 +51,7 @@ public:
 	GameUI gameScreen;
 	Tile* selectedTile = nullptr;
 	int currentItemIndex = 0;
+	int ySeparator = 2;
 	std::string openClose;
 	antibox::framerate frame;
 	std::vector<float> frametimes;
@@ -59,6 +60,7 @@ public:
 	float musicvolume = 1.f;
 	bool interacting, flashlightActive;
 	int xMin, xMax, yMin, yMax;
+	int xViewDist, yViewDist;
 	char recipe_search[128] = "";
 	Vector4 customTabColor;
 
@@ -116,6 +118,8 @@ public:
 		gameScreen.helpMenu = true;
 		game.freeView = true;
 		game.LoadData();
+		xViewDist = 15;
+		yViewDist = 15;
 
 		sfxvolume = Audio::GetVolume();
 
@@ -254,6 +258,11 @@ public:
 		else if (Input::KeyDown(KEY_F)) {
 			flashlightActive = !flashlightActive;
 			Audio::Play(sfxs["click"]);
+			std::vector<Vector2_I> circle = map.GetSquareEdge(player.coords, 7);
+			for (size_t i = 0; i < circle.size(); i++)
+			{
+				map.GetTileFromThisOrNeighbor(circle[i])->SetLiquid(blood);
+			}
 		}
 
 
@@ -267,10 +276,10 @@ public:
 		};
 		
 		if (game.freeView) {
-			xMin = player.coords.x - 15;
-			xMax = player.coords.x + 15;
-			yMin = player.coords.y - 15;
-			yMax = player.coords.y + 15;
+			xMin = player.coords.x - xViewDist;
+			xMax = player.coords.x + xViewDist;
+			yMin = player.coords.y - yViewDist;
+			yMax = player.coords.y + yViewDist;
 		}
 		else {
 			xMin = 0;
@@ -286,7 +295,13 @@ public:
 		//GameScene();
 		if (gameScreen.settingsOpen) {
 			ImGui::Begin("Settings");
+			ImGui::Text("\n--UI Settings--");
+			ImGui::SliderInt("Y Separator Value", &ySeparator, 0, 20);
+			ImGui::SliderInt("View Distance (Width)", &yViewDist, 1, 40);
+			ImGui::SliderInt("View Distance (Height)", &xViewDist, 1, 40);
 
+
+			ImGui::Text("\n--Sound Settings--");
 			if (ImGui::SliderFloat("SFX Volume Level", &sfxvolume, 0.f, 1.f)) {
 				Audio::SetVolume(sfxvolume);
 				Audio::SetVolumeLoop(sfxvolume / 2, "rain");
@@ -295,6 +310,8 @@ public:
 				Audio::SetVolumeLoop(musicvolume, "ambient_day");
 				Audio::SetVolumeLoop(musicvolume, "ambient_cave");
 			}
+
+			ImGui::Text("\n--Additional Settings--");
 			if (ImGui::RadioButton("Free View Enabled (Experimental)", game.freeView)) {
 				game.freeView = !game.freeView;
 			}
@@ -425,6 +442,8 @@ public:
 		{
 			OpenedData data;
 			ItemReader::GetDataFromFile("save.eid", "STATS", &data);
+			OpenedData settings;
+			ItemReader::GetDataFromFile("save.eid", "SETTINGS", &settings);
 
 			player.health = data.getFloat("health");
 			player.thirst = data.getFloat("thirst");
@@ -433,14 +452,8 @@ public:
 
 			pInv.clothes = { data.getFloat("color_r"), data.getFloat("color_g"), data.getFloat("color_b") };
 
-			for (int i = 0; i < data.getArray("items").size() - 1; i++) //loop through all items
-			{
-				for (int s = 0; s < stoi(data.getArray("items")[i + 1]); s++)
-				{
-					pInv.AddItemFromFile(data.getArray("items")[i]); //give it a certain amount of items
-				}
-				i++;
-			}
+			pInv.LoadItemsFromData(&data);
+
 			for (int i = 0; i < data.getArray("savedRecipes").size(); i++)
 			{
 				game.Crafter.SaveRecipe(data.getArray("savedRecipes")[i]); //retrieve saved recipes
@@ -450,6 +463,11 @@ public:
 			game.worldTime = data.getFloat("time");
 			game.lerpingTo = urban;
 			map.SetWeather((weather)data.getInt("weather"));
+
+
+			ySeparator = settings.getInt("ySep");
+			xViewDist = settings.getInt("xView");
+			yViewDist = settings.getInt("yView");
 		}
 		ImGui::End();
 
@@ -491,6 +509,8 @@ public:
 
 		if (game.worldTime >= 20.f || game.worldTime < 6.f) { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.0,0.0,1 }); }
 		else { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ game.bgColor.x,game.bgColor.y,game.bgColor.z,1 }); }
+
+		//map drawing
 		{
 			ImGui::Begin("Map");
 			if (gameScreen.fancyGraphics) {
@@ -499,6 +519,9 @@ public:
 
 			bool item = false;
 			ImVec2 playerPos;
+			ImVec4 batchColor;
+			std::string batchedString = "";
+			char lastTile = ' ';
 
 			for (int i = xMin; i < xMax; i++) {
 				for (int j = yMin; j < yMax; j++) {
@@ -562,11 +585,14 @@ public:
 						if (intensity < 0.f) intensity = 0.f;
 						if (intensity > 1.f) { intensity = 1.f; }
 					}//===================================================================
+
 					if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
 					{
 						mobPositions.push_back(ImGui::GetCursorPos());
 						mobIcons.push_back(ENT_PLAYER);
 						mobColors.push_back(game.GetPlayerColor());
+						//batchedString.append("#");
+						//continue;
 					}
 
 					else if (map.GetEffectFromThisOrNeighbor(curCoords) == 1)
@@ -581,10 +607,17 @@ public:
 						printIcon = "a";
 						iconColor = Cosmetic::CoveredColor(water);
 					}
+					else if (map.GetEffectFromThisOrNeighbor(curCoords) == 15)
+					{
+						effectShowing = true;
+						printIcon = "#";
+						iconColor = {1,0,0,1};
+					}
 					else if (curTile->entity != nullptr) {
 						mobPositions.push_back(ImGui::GetCursorPos());
 						mobIcons.push_back(game.GetTileChar(curTile));
 						mobColors.push_back(game.GetTileColor(curTile, 0.f));
+						//batchedString.append(" ");
 						ImGui::Text(" ");
 						ImGui::SameLine();
 						continue;
@@ -633,6 +666,7 @@ public:
 						itemTiles.push_back(curTile);
 						itemIcons.push_back(game.GetItemChar(curTile));
 						ImGui::Text(" ");
+						//batchedString.append(" ");
 						ImGui::SameLine();
 						continue;
 					}
@@ -640,11 +674,23 @@ public:
 
 					//screen += game.GetTileChar(curTile);
 					//colors.push_back(game.GetTileColor(curTile, intensity));
-
+					//if (lastTile != printIcon[0]) {
+						//ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 0.05);
+						//ImGui::TextColored(batchColor, batchedString.c_str());
+						//batchedString.clear();
+					//}
+					//if it IS the same as the last tile, group them
+					//else {
+						//batchedString.append(printIcon);
+						//batchColor = iconColor;
+					//}
+					//lastTile = printIcon[0];
 					ImGui::TextColored(iconColor, printIcon.c_str());
 					ImGui::SameLine();
-					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 0.05);
 				}
+				//ImGui::TextColored(batchColor, batchedString.c_str());
+				//batchedString.clear();
+				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ySeparator);
 				ImGui::Text("");
 			}
 
@@ -738,7 +784,7 @@ public:
 			}
 
 			ImGui::Text("Body Temperature :"); ImGui::SameLine();
-			ImGui::Text(std::to_string(round(player.bodyTemp * 10.0f) / 10.0f).c_str());
+			ImGui::Text(std::to_string(round(player.visualTemp * 10.0f) / 10.0f).c_str());
 			ImGui::Text("------EQUIPPED ITEMS------");
 
 			if (pInv.equippedItems.contains(gloves)) {
@@ -873,6 +919,7 @@ public:
 				if (ImGui::Button("Equip"))
 				{
 					pInv.EquipItem(currentItemIndex);
+					currentItemIndex = 0;
 				}
 			}
 
@@ -1357,33 +1404,55 @@ public:
 			float curTime = glfwGetTime();
 			LAZY_LOG("Now saving...");
 			SaveData dat;
-			dat.floats.append("color_r", pInv.clothes.x);
-			dat.floats.append("color_g", pInv.clothes.y);
-			dat.floats.append("color_b", pInv.clothes.z);
-			dat.floats.append("health", player.health);
-			dat.floats.append("thirst", player.thirst);
-			dat.floats.append("hunger", player.hunger);
-			dat.ints.append("x_pos", player.coords.x);
-			dat.ints.append("y_pos", player.coords.y);
-			dat.ints.append("seed", map.landSeed);
-			dat.ints.append("biomes", map.biomeSeed);
-			dat.ints.append("global_x", map.CurrentChunk()->globalChunkCoord.x);
-			dat.ints.append("global_y", map.CurrentChunk()->globalChunkCoord.y);
-			dat.floats.append("time", game.worldTime);
-			dat.ints.append("weather", map.currentWeather);
+			dat.sections.insert({ "STATS", {} });
+			dat.sections.insert({ "SETTINGS", {} });
+			dat.addFloat("STATS", "color_r", pInv.clothes.x);
+			dat.addFloat("STATS", "color_g", pInv.clothes.y);
+			dat.addFloat("STATS", "color_b", pInv.clothes.z);
+			dat.addFloat("STATS", "health", player.health);
+			dat.addFloat("STATS", "thirst", player.thirst);
+			dat.addFloat("STATS", "hunger", player.hunger);
+			dat.addInt("STATS", "x_pos", player.coords.x);
+			dat.addInt("STATS", "y_pos", player.coords.y);
+			dat.addInt("STATS", "biomes", map.biomeSeed);
+			dat.addInt("STATS", "seed", map.landSeed);
+			dat.addInt("STATS", "global_x", map.CurrentChunk()->globalChunkCoord.x);
+			dat.addInt("STATS", "global_y", map.CurrentChunk()->globalChunkCoord.y);
+			dat.addFloat("STATS", "time", game.worldTime);
+			dat.addInt("STATS", "weather", map.currentWeather);
+			dat.addInt("SETTINGS", "ySep", ySeparator);
+			dat.addInt("SETTINGS", "xDist", xViewDist);
+			dat.addInt("SETTINGS", "yDist", yViewDist);
 
 			//Console::Log(map.CurrentChunk()->globalChunkCoord, SUCCESS, __LINE__);
 
+			std::vector<std::string> listString;
+			std::vector<std::string> itemList;
+
 			for (int i = 0; i < pInv.items.size(); i++)
 			{
-				dat.items.append(pInv.items[i].section, pInv.items[i].count);
+				std::string itemName = pInv.items[i].section;
+				itemList.push_back(itemName);
+				dat.sections.insert({ itemName, {} });
+				dat.addInt(itemName, "count", pInv.items[i].count);
+				dat.addInt(itemName, "coveredIn", pInv.items[i].coveredIn);
+				dat.addInt(itemName, "ticksUntilDry", pInv.items[i].ticksUntilDry);
+				dat.addInt(itemName, "initialTickTime", pInv.items[i].initialTickTime);
+				dat.addInt(itemName, "heldLiquid", pInv.items[i].heldLiquid);
+				if (pInv.items[i].heldLiquid != nothing) {
+					dat.addInt(itemName, "liquidAmount", pInv.items[i].liquidAmount);
+				}
+				
 			}
 			for (auto const& rec : game.Crafter.savedRecipes)
 			{
-				dat.listString.push_back(rec);
+				listString.push_back(rec);
 			}
 
-			ItemReader::SaveDataToFile("dat/eid/save.eid", "STATS", dat, true);
+			dat.sections["STATS"].lists.insert({ "savedRecipes", listString });
+			dat.sections["STATS"].lists.insert({ "items", itemList });
+
+			ItemReader::SaveDataToFile("dat/eid/save.eid", dat, true);
 
 			for (auto& chunk : game.mainMap.world.chunks) {
 				chunk.second->SaveChunk();

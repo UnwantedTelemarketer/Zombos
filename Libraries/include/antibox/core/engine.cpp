@@ -47,9 +47,10 @@ namespace antibox
 
 	void Engine::LerpFloat(std::string lerpID, float* val, float endVal, float time) {
 		if (floatsToLerp.count(lerpID) == 0) {
+			Console::Log(lerpID + " already on lerp stack. Overwritting...", WARNING, __LINE__);
 			floatsToLerp.erase(lerpID);
 		}
-		floatsToLerp.insert({ lerpID, { val, time, *val, { endVal, 0 } } });
+		floatsToLerp.insert({ lerpID, { val, time, *val, endVal, 0 } });
 	}
 
 
@@ -152,15 +153,23 @@ namespace antibox
 		//Lerp all currently lerping things
 		if (!floatsToLerp.empty()) {
 			for (auto currentPack = floatsToLerp.begin(); currentPack != floatsToLerp.end();) {
-				lerp_pack& pack = currentPack->second;
-				pack.endVal_Time.y += deltaTime() / 1000.f;
-				float normalizedTime = pack.endVal_Time.y / pack.startingTime;
+				lerp_pack* pack = &currentPack->second;
+				pack->elapsedTime += deltaTime() / 1000.f;
 
+				float normalizedTime = std::min(pack->elapsedTime / pack->endTime, 1.0f);
 
-				*pack.val = Math::Lerp(normalizedTime, pack.startingVal, pack.endVal_Time.x);
+				if(pack->valToChange){
+					*pack->valToChange = Math::Lerp(normalizedTime, pack->startingVal, pack->endVal);
+				}
+				else{
+					Console::Log(currentPack->first + " is nullptr. Removing from lerp stack...", ERROR, __LINE__);
+					currentPack = floatsToLerp.erase(currentPack);
+					++currentPack;
+					continue;
+				}
 
-				if (*pack.val >= pack.endVal_Time.x) {
-					*pack.val = pack.endVal_Time.x;
+				if (normalizedTime >= 1.0f) {
+					*pack->valToChange = pack->endVal;
 					currentPack = floatsToLerp.erase(currentPack); // Erase and get the next valid iterator
 				}
 				else {

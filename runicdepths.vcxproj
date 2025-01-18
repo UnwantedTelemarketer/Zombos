@@ -642,6 +642,7 @@
     <ClInclude Include="Libraries\include\noise\noisegen.h" />
     <ClInclude Include="Libraries\include\noise\vectortable.h" />
     <ClInclude Include="Libraries\include\stb\stb_image.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dat\eid\dialogue.eid" />
@@ -803,6 +804,9 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="..\..\..\Users\Thomas Andrew\Downloads\symbolic_chest.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

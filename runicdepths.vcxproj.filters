@@ -1247,6 +1247,9 @@
     <ClInclude Include="dat\filemanager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Libraries\include\antibox\core\default.frag" />
@@ -1680,5 +1683,10 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="..\..\..\Users\Thomas Andrew\Downloads\symbolic_chest.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

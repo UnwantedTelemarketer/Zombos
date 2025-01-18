@@ -15,7 +15,7 @@ namespace antibox {
 		inline float RandNum(int max) { return (rand() % max + 1); }
 
 		//Input the max number, and this will return an int between min and max (exclusive).
-		inline int RandInt(int min, int max) { return min + (rand() % max - min); }
+		inline int RandInt(int min, int max) { return min + rand() % (max - min + 1); }
 
 		//Returns a random string from a vector of strings.
 		inline std::string RandString(std::vector<std::string> list) { return list[rand() % (list.size() - 1) + 1]; } //also bad to look at, but i dont want to make a multiline function in a header
@@ -243,11 +243,14 @@ namespace antibox {
 	typedef Vector3 Color;
 
 
+	//value to change, end time, starting value, ending value, elapsed time
 	struct lerp_pack {
-		float* val;
-		float startingTime;
+		float* valToChange;
+		//end time is what it needs to get to
+		float endTime;
 		float startingVal;
-		//X is the end value, y is the time left
-		Vector2 endVal_Time;
+		//X is the end value, y is the time elapsted so far
+		float endVal;
+		float elapsedTime;
 	};
 }

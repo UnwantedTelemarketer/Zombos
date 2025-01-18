@@ -74,7 +74,9 @@ public:
 					}
 				}
 				localCoords[i][j].ResetColor();
-				localCoords[i][j].SetLiquid(sChunk.tiles[i][j].liquid, localCoords[i][j].liquidTime == -1);
+				if (sChunk.tiles[i][j].liquid != nothing) {
+					localCoords[i][j].SetLiquid(sChunk.tiles[i][j].liquid, localCoords[i][j].liquidTime == -1);
+				}
 
 
 				if (sChunk.tiles[i][j].hasContainer) {

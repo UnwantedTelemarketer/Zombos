@@ -94,7 +94,7 @@ static void T_UpdateChunk(GameManager* gm, Vector2_I coords)
 {
 	if (coords.x >= MAP_WIDTH || coords.y >= MAP_HEIGHT || coords.x < 0 || coords.y < 0) { return; }
 	gm->UpdateEntities(coords);
-	gm->mainMap.UpdateTiles(coords);
+	gm->mainMap.UpdateTiles(coords, &gm->mPlayer);
 }
 
 void GameManager::LoadData() {
@@ -496,6 +496,14 @@ void GameManager::UpdateTick() {
 		effectTickCount = 0;
 	}
 
+
+	if (pInv.CurrentEquipExists(weapon)) {
+		int dist = pInv.equippedItems[weapon].emissionDist;
+		if (dist > 0) {
+			mainMap.floodFill(mPlayer.coords, dist, false);
+		}
+	}
+
 	if (tickCount >= tickRate)
 	{
 		if (mainMap.UpdateWeather()) {
@@ -530,13 +538,12 @@ void GameManager::UpdateTick() {
 			mPlayer.CoverIn(tileLiquid, Math::RandInt(10, 30));
 		}
 
-		if (mPlayer.coveredIn == water) {
+		if (mPlayer.coveredIn == water || mPlayer.bodyTemp > 98.5f) {
 			mPlayer.bodyTemp -= 0.025f;
 		}
 
 		else if (!isDark()) {
-			mPlayer.bodyTemp += 0.025f;
-			if (mPlayer.bodyTemp > 98.5f) mPlayer.bodyTemp = 98.5f;
+			if (mPlayer.bodyTemp < 98.5f) mPlayer.bodyTemp += 0.025f;
 		}
 
 		if (mPlayer.bodyTemp < 95.f) {
@@ -602,6 +609,8 @@ void GameManager::UpdateTick() {
 		T_UpdateChunk(this, mainMap.c_glCoords);
 		//T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y + 1 });
 		//T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y - 1 });
+
+		//Utilities::Lerp("playertemp", &mPlayer.visualTemp, mPlayer.bodyTemp, 0.5f);
 	}
 
 
@@ -655,7 +664,7 @@ void GameManager::AttemptAttack(Entity* ent)
 		{
 			Math::PushBackLog(&actionLog, "Zombie bites you for 10 damage!");
 			mPlayer.TakeDamage(pierceDamage, 10);
-			bgColor = { 1,0,0 };
+			bgColor = { 0.5f,0,0 };
 			Utilities::Lerp("bgColor", &bgColor, mainBGcolor, 0.5f);
 		}
 	}
@@ -671,7 +680,7 @@ bool GameManager::EnterCave() {
 		if (mainMap.underground.chunks.count({ mainMap.c_glCoords }) == 0) {
 			lerpingTo = urban;
 			mainBGcolor = { 0,0,0 };
-			bgColor = mainBGcolor;
+			Utilities::Lerp("bgColor", &bgColor, mainBGcolor, 0.5f);
 			std::shared_ptr<Chunk> tempChunk = std::make_shared<Chunk>();
 			tempChunk->globalChunkCoord = mainMap.c_glCoords;
 			mainMap.GenerateTomb(tempChunk);
@@ -738,18 +747,18 @@ std::string GameManager::GetTileChar(Vector2_I tile) {
 
 std::string GameManager::GetWalkSound(){
 
-	if(mainMap.isUnderground) return rockWalk[Math::RandInt(0, 3)];
+	if(mainMap.isUnderground) return rockWalk[Math::RandInt(0, 2)];
 
 	switch (currentBiome) {
 	case ocean:
 	case desert:
-		return sandWalk[Math::RandInt(0, 3)];
+		return sandWalk[Math::RandInt(0, 2)];
 		break;
 	case forest:
 	case taiga:
 	case swamp:
 	case grassland:
-		return grassWalk[Math::RandInt(0, 3)];
+		return grassWalk[Math::RandInt(0, 2)];
 		break;
 	default:
 		return "dat/sounds/bfxr/walk1.wav";

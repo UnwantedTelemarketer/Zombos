@@ -160,8 +160,8 @@ public:
 		}
 		else if (tile->liquid != nothing)
 		{
-			if (TryGetItem("CANTEEN", false, &itemIndex)) {
-				Item* item = &items[itemIndex];
+			if (CurrentEquipExists(weapon) && equippedItems[weapon].holdsLiquid) {
+				Item* item = &equippedItems[weapon];
 				if (item->liquidAmount < 100.f && item->heldLiquid == tile->liquid || item->heldLiquid == nothing)
 				{
 					item->heldLiquid = tile->liquid;
@@ -266,7 +266,26 @@ public:
 		return false;
 	}
 	
+	void LoadItemsFromData(OpenedData* dat) {
+		std::vector<std::string> itemHeaders = dat->getArray("items");
 
+		for (size_t i = 0; i < itemHeaders.size(); i++)
+		{
+			Item newItem = Items::list[itemHeaders[i]];
+			OpenedData itemDat;
+			ItemReader::GetDataFromFile("save.eid", itemHeaders[i], &itemDat);
+			newItem.count = itemDat.getInt("count");
+			newItem.coveredIn = (Liquid)itemDat.getInt("coveredIn");
+			newItem.ticksUntilDry = itemDat.getInt("ticksUntilDry");
+			newItem.initialTickTime = itemDat.getInt("initialTickTime");
+			newItem.heldLiquid = (Liquid)itemDat.getInt("heldLiquid");
+			if (newItem.heldLiquid != nothing) {
+				newItem.liquidAmount = itemDat.getFloat("liquidAmount");
+			}
+			items.push_back(newItem);
+			itemNames.push_back(newItem.name);
+		}
+	}
 
 	void AddItemFromFile(std::string header, int amount = 1) {
 		for (size_t i = 0; i < amount; i++)

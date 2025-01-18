@@ -1,17 +1,38 @@
+BANDAGE {
+count : 1;
+coveredIn : 2;
+ticksUntilDry : 59;
+initialTickTime : 82;
+heldLiquid : 0;
+}
+MATCH {
+count : 2;
+coveredIn : 2;
+ticksUntilDry : 57;
+initialTickTime : 80;
+heldLiquid : 0;
+}
+SETTINGS {
+ySep : 2;
+xDist : 15;
+yDist : 15;
+}
 STATS {
-x_pos : 19;
-y_pos : 1;
-seed : 23984;
-biomes : 12602;
-global_x : 248;
-global_y : 250;
+x_pos : 25;
+y_pos : 28;
+biomes : 6700;
+seed : 26991;
+global_x : 250;
+global_y : 253;
 weather : 0;
 color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
 health : 90.000000;
-thirst : 88.375473;
-hunger : 92.249527;
-time : 13.750030;
-items : [BANDAGE,1,MATCH,2,OLD_CLOTH,1,GUTS,1,SCRAP,3,GLASS_SHARDS,1,MEAT,2,LEATHER,1,FLAT_MUSHROOM,2,];
+thirst : 95.200195;
+hunger : 96.799805;
+time : 9.200012;
+items : [BANDAGE,MATCH];
+savedRecipes : [];
 }
+

@@ -68,13 +68,17 @@ public:
 	void PlaceBuilding(std::shared_ptr<Chunk> chunk);
 	void GenerateTomb(std::shared_ptr<Chunk> chunk);
 	std::vector<Vector2_I> GetLine(Vector2_I startTile, Vector2_I endTile, int limit);
+	std::vector<Vector2_I> GetSquare(Vector2_I centerTile, int size);
+	std::vector<Vector2_I> GetSquareEdge(Vector2_I centerTile, int size);
+	std::vector<Vector2_I> GetCircle(Vector2_I centerPoint, int size);
+	std::vector<Vector2_I> GetCircleEdge(Vector2_I centerPoint, int size);
 	void DrawLine(std::vector<Vector2_I> list);
 	void ClearLine();
 	void ClearEntities(std::vector<Vector2_I> positions, std::shared_ptr<Chunk> chunk);
 	void ClearChunkOfEnts(std::shared_ptr<Chunk> chunk);
 	void ClearEffects();
 	void PlaceEntities(std::shared_ptr<Chunk> chunk);
-	void UpdateTiles(vec2_i coords);
+	void UpdateTiles(vec2_i coords, Player* p);
 	void DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y);
 	void FixEntityIndex(std::shared_ptr<Chunk> chunk);
 	void floodFillUtil(int x, int y, float prevBrightness, float newBrightness, int max, bool twinkle, bool firstTile);
@@ -84,6 +88,7 @@ public:
 	void SetWeather(weather we);
 	void SetupNoise(int l_seed, int b_seed);
 	std::shared_ptr<Chunk> GetProperChunk(Vector2_I coords);
+	void TempCheck(Player* p, Vector2_I coords);
 
 	~Map();
 
@@ -446,34 +451,34 @@ void Map::AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* act
 
 void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLog, Inventory& pInv) {
 	if (x > 0 && y > 0 && x < CHUNK_WIDTH && y < CHUNK_HEIGHT)
-		if (CurrentChunk()->localCoords[x][y].entity != nullptr) {
-			Entity* curEnt = CurrentChunk()->localCoords[x][y].entity;
+		if (GetTileFromThisOrNeighbor({ x,y })->entity != nullptr) {
+			Entity* curEnt = GetTileFromThisOrNeighbor({ x,y })->entity;
 			if (curEnt->health > 0 && pInv.CurrentEquipExists(weapon)){
 				AttackEntity(curEnt, pInv.equippedItems[weapon].mod, actionLog);
 			}
 			else {
 				vec2_i newCoords = { x - p->coords.x, y - p->coords.y };
 				curEnt->coords += newCoords;
-				CurrentChunk()->localCoords[x][y].entity = nullptr;
-				CurrentChunk()->localCoords[curEnt->coords.x][curEnt->coords.y].entity = curEnt;
+				GetTileFromThisOrNeighbor({ x,y })->entity = nullptr;
+				GetTileFromThisOrNeighbor(curEnt->coords)->entity = curEnt;
 				chunkUpdateFlag = true;
 			}
 			return;
 		}
 
-		else if (CurrentChunk()->localCoords[x][y].walkable == false) {
+		else if (GetTileFromThisOrNeighbor({ x,y })->walkable == false) {
 			//they cant walk on non walkable surfaces or deep water
 			Math::PushBackLog(actionLog, "You can't walk there.");
 			return;
 		}
 
-	Liquid l = CurrentChunk()->GetTileAtCoords(x, y)->liquid; //check if the tile has a liquid
-	if (l == water && CurrentChunk()->GetTileAtCoords(x, y)->liquidTime == -1) {
+	Liquid l = GetTileFromThisOrNeighbor({ x,y })->liquid; //check if the tile has a liquid
+	if (l == water && GetTileFromThisOrNeighbor({ x,y })->liquidTime == -1) {
 		Audio::Play("dat/sounds/movement/enter_water.wav");
 	}
 
 	if (p->coveredIn != nothing && p->coveredIn != mud && l == nothing && Math::RandInt(1, 5) >= 3) {
-		CurrentChunk()->GetTileAtCoords(p->coords.x, p->coords.y)->SetLiquid(p->coveredIn);
+		GetTileFromThisOrNeighbor(p->coords)->SetLiquid(p->coveredIn);
 	}
 
 	p->coords.x = x; p->coords.y = y;
@@ -742,34 +747,37 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 
 
 void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
-	Vector2_I cornerstone = { Math::RandInt(6, CHUNK_WIDTH - 6), Math::RandInt(6, CHUNK_HEIGHT - 6) };
+	Vector2_I cornerstone = { Math::RandInt(9, CHUNK_WIDTH - 9), Math::RandInt(9, CHUNK_HEIGHT - 9) };
 	Vector2_I corner = cornerstone;
 
 	//pick some corners to draw to
-	int wallLength = Math::RandInt(3, 8);
+	int wallLength = Math::RandInt(4, 9);
+
+	std::vector<Vector2_I> buildingBlocks = GetSquare(cornerstone, wallLength);
+	std::vector<Vector2_I> wallBlocks = GetSquareEdge(cornerstone, wallLength);
 
 	int itemCounter = 0;
 	int itemMax = 3;
 
-	//draw the walls
-	for (int i = 0; i < wallLength; i++)
+	//draw the floors
+	for (int i = 0; i < buildingBlocks.size(); i++)
 	{
-		for (int j = 0; j < wallLength; j++)
-		{
-			if (i == 0 && j == 1) { continue; }
-			if (i == 0 || i == wallLength - 1 || j == 0 || j == wallLength - 1) {
-				chunk->localCoords[corner.x + i][corner.y + j] = Tiles::GetTile("TILE_STONE");
-			}
-			else {
-				chunk->localCoords[corner.x + i][corner.y + j] = Tiles::GetTile("TILE_STONE_FLOOR");
-				if (itemCounter <= itemMax && Math::RandInt(0,15) == 12) {
-					chunk->GetTileAtCoords(corner.x + i, corner.y + j)->itemName = Items::GetRandomItemFromPool("house.eid");
-					chunk->GetTileAtCoords(corner.x + i, corner.y + j)->hasItem = true;
-					itemCounter++;
-				}
-
-			}
+		chunk->localCoords[buildingBlocks[i].x][buildingBlocks[i].y] = Tiles::GetTile("TILE_STONE_FLOOR");
+		if (itemCounter <= itemMax && Math::RandInt(0, 15) == 12) {
+			chunk->GetTileAtCoords(buildingBlocks[i])->itemName = Items::GetRandomItemFromPool("house.eid");
+			chunk->GetTileAtCoords(buildingBlocks[i])->hasItem = true;
+			itemCounter++;
 		}
+	}
+
+	int door = Math::RandInt(0, wallBlocks.size());
+	bool doorSpawned = false;
+	//draw walls
+	for (int i = 0; i < wallBlocks.size(); i++)
+	{
+		door--;
+		if (door <= 0 && (i + 1) % wallLength == 0 && !doorSpawned) { doorSpawned = true; continue; }
+		chunk->localCoords[wallBlocks[i].x][wallBlocks[i].y] = Tiles::GetTile("TILE_STONE");
 	}
 }
 
@@ -802,6 +810,77 @@ void Map::GenerateTomb(std::shared_ptr<Chunk> chunk) {
 		}
 	}
 }*/
+std::vector<Vector2_I> Map::GetSquareEdge(Vector2_I centerTile, int size) {
+	std::vector<Vector2_I> squareList;
+	int halfSize = size / 2;
+
+	// Top and bottom edges
+	for (int x = centerTile.x - halfSize; x <= centerTile.x + halfSize; x++) {
+		// Top edge
+		squareList.push_back({ x, centerTile.y - halfSize });
+		// Bottom edge
+		squareList.push_back({ x, centerTile.y + halfSize });
+	}
+
+	// Left and right edges (excluding corners already added)
+	for (int y = centerTile.y - halfSize + 1; y < centerTile.y + halfSize; y++) {
+		// Left edge
+		squareList.push_back({ centerTile.x - halfSize, y });
+		// Right edge
+		squareList.push_back({ centerTile.x + halfSize, y });
+	}
+
+	return squareList;
+}
+
+std::vector<Vector2_I> Map::GetSquare(Vector2_I centerTile, int size) {
+	std::vector<Vector2_I> squareList;
+	int halfSize = size / 2;
+
+	for (int x = centerTile.x - halfSize; x <= centerTile.x + halfSize; x++)
+	{
+		for (int y = centerTile.y - halfSize; y <= centerTile.y + halfSize; y++)
+		{
+			squareList.push_back({ x,y });
+		}
+	}
+	return squareList;
+}
+
+std::vector<Vector2_I> Map::GetCircleEdge(Vector2_I centerTile, int size) {
+	std::vector<Vector2_I> circleList;
+	for (int r = 0; r <= floor(size * sqrt(0.5)); r++) {
+		int d = floor(sqrt(size * size - r * r));
+		circleList.push_back({ centerTile.x + d, centerTile.y + r });
+		circleList.push_back({ centerTile.x - d, centerTile.y - r });
+		circleList.push_back({ centerTile.x + d, centerTile.y - r });
+		circleList.push_back({ centerTile.x - d, centerTile.y + r });
+		circleList.push_back({ centerTile.x + r, centerTile.y - d });
+		circleList.push_back({ centerTile.x + r, centerTile.y + d });
+		circleList.push_back({ centerTile.x - r, centerTile.y - d });
+		circleList.push_back({ centerTile.x - r, centerTile.y + d });
+	}
+	return circleList;
+}
+
+std::vector<Vector2_I> Map::GetCircle(Vector2_I centerTile, int size) {
+	std::vector<Vector2_I> circleList;
+
+	int top = ceil(centerTile.x - centerTile.y),
+		bottom = floor(centerTile.x + size);
+
+	for (int x = top; x <= bottom; x++) {
+		int   dy = x - centerTile.x;
+		float dx = sqrt(size * size - dy * dy);
+		int left = ceil(centerTile.y - dx),
+			right = floor(centerTile.y + dx);
+		for (int y = left; y <= right; y++) {
+			circleList.push_back({ x,y });
+		}
+	}
+
+	return circleList;
+}
 
 std::vector<Vector2_I> Map::GetLine(Vector2_I startTile, Vector2_I endTile, int limit) {
 	std::vector<Vector2_I> lineList;
@@ -851,9 +930,9 @@ void Map::DrawLine(std::vector<Vector2_I> list)
 {
 	line.insert(line.end(), list.begin(), list.end());
 
-	for (int i = 0; i < line.size(); i++)
+	for (int i = 0; i < list.size(); i++)
 	{
-		effectLayer.localCoords[line[i].x][line[i].y] = 15;
+		effectLayer.localCoords[list[i].x][list[i].y] = 15;
 	}
 }
 
@@ -900,7 +979,20 @@ void Map::PlaceEntities(std::shared_ptr<Chunk> chunk)
 
 }
 
-void Map::UpdateTiles(vec2_i coords) {
+void Map::TempCheck(Player* p, Vector2_I coords) {
+	std::vector<Vector2_I> line = GetLine(coords, p->coords, 10);
+	//if a player is near fire
+	if (line.size() <= 2) {
+		//add 0.25 temp unless theyre at 100 
+		p->bodyTemp = p->bodyTemp >= 100 ? 100 : p->bodyTemp + 0.1f;
+	}
+	else if (line.size() <= 5) {
+		//add even faster if theyre closer
+		p->bodyTemp = p->bodyTemp >= 100 ? 100 : p->bodyTemp + 0.15f;
+	}
+}
+
+void Map::UpdateTiles(vec2_i coords, Player* p) {
 	std::vector<Vector2_I> tilesToBurn;
 	std::shared_ptr<Chunk> chunk = GetProperChunk(coords);
 
@@ -943,6 +1035,7 @@ void Map::UpdateTiles(vec2_i coords) {
 			//spread fire to a list so we dont spread more than one tile per update
 			if (curTile->liquid == fire) {
 
+
 				if (Math::RandInt(0, 2) == 1) effectLayer.localCoords[x - 1][y] = 1;
 				//If its a campfire, then let it burn but dont spread
 				if (curTile->hasItem && curTile->itemName == "CAMPFIRE") {
@@ -962,6 +1055,7 @@ void Map::UpdateTiles(vec2_i coords) {
 						}
 					}
 					floodFill({ x, y }, 5, false);
+					TempCheck(p, { x,y });
 					continue;
 				}
 
@@ -983,6 +1077,8 @@ void Map::UpdateTiles(vec2_i coords) {
 				default:
 					break;
 				}
+
+				TempCheck(p, {x,y});
 			}
 
 			//if its been burned recently, dont let it catch again
@@ -997,6 +1093,8 @@ void Map::UpdateTiles(vec2_i coords) {
 					curTile->SetLiquid(nothing);
 				}
 			}
+
+
 			//logic for upwards facing flashlight pyramid
 			curTile->technical_update = false;
 		}
