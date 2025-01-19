@@ -1,10 +1,10 @@
-[ Line 225 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
 [ Line 156 ]: [0;37mLoading Tiles from files...[0m
 [ Line 83 ]: [0;37mLoading Items from files...[0m
+[ Line 225 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 79 ]: [1;32mLoaded texture from res/plank.png.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
 [ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
@@ -20,10 +20,10 @@
 [ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
 [ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 97 ]: [0;37mLoaded Items![0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
 [ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
@@ -87,12 +87,6 @@
 [ Line 50 ]: [0;33mbgColor1 already on lerp stack. Overwritting...[0m
 [ Line 50 ]: [0;33mbgColor2 already on lerp stack. Overwritting...[0m
 [ Line 50 ]: [0;33mbgColor3 already on lerp stack. Overwritting...[0m
-[ Line 223 ]: [1;32mReading Chunk from dat/map/250251.chunk[0m
-[ Line 223 ]: [1;32mReading Chunk from dat/map/251251.chunk[0m
-[ Line 223 ]: [1;32mReading Chunk from dat/map/252251.chunk[0m
-[ Line 223 ]: [1;32mReading Chunk from dat/map/250249.chunk[0m
-[ Line 223 ]: [1;32mReading Chunk from dat/map/250250.chunk[0m
-[ Line 223 ]: [1;32mReading Chunk from dat/map/250251.chunk[0m
 [ Line 50 ]: [0;33mbgColor1 already on lerp stack. Overwritting...[0m
 [ Line 50 ]: [0;33mbgColor2 already on lerp stack. Overwritting...[0m
 [ Line 50 ]: [0;33mbgColor3 already on lerp stack. Overwritting...[0m
@@ -105,21 +99,192 @@
 [ Line 50 ]: [0;33mbgColor1 already on lerp stack. Overwritting...[0m
 [ Line 50 ]: [0;33mbgColor2 already on lerp stack. Overwritting...[0m
 [ Line 50 ]: [0;33mbgColor3 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor21321 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor21322 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor21323 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor215461 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor215462 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor215463 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor22901 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor22902 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor22903 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor24351 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor24352 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor24353 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor327091 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor327092 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor327093 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor321941 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor321942 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor321943 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor55381 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor55382 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor55383 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor122891 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor122892 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor122893 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor254911 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor254912 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor254913 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor208191 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor208192 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor208193 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor27921 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor27922 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor27923 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor36871 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor36872 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor36873 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor54031 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor54032 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor54033 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor109161 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor109162 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor109163 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor211631 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor211632 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor211633 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor177631 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor177632 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor177633 already on lerp stack. Overwritting...[0m
 [ Line 50 ]: [0;33mbgColor1 already on lerp stack. Overwritting...[0m
 [ Line 50 ]: [0;33mbgColor2 already on lerp stack. Overwritting...[0m
 [ Line 50 ]: [0;33mbgColor3 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor1 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor2 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor3 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor1 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor2 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor3 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor1 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor2 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor3 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor1 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor2 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor3 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor1 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor2 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor3 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor321681 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor321682 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor321683 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor90881 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor90882 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor90883 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor12161 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor12162 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor12163 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor283721 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor283722 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor283723 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor79881 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor79882 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor79883 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor325961 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor325962 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor325963 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor322561 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor322562 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor322563 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor126311 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor126312 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor126313 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor217101 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor217102 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor217103 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor99371 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor99372 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor99373 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor232101 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor232102 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor232103 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor10451 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor10452 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor10453 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor147551 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor147552 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor147553 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor297521 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor297522 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor297523 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor178971 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor178972 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor178973 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor305791 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor305792 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor305793 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor132841 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor132842 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor132843 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor42751 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor42752 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor42753 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor158421 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor158422 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor158423 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor285921 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor285922 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor285923 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor76171 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor76172 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor76173 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor273291 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor273292 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor273293 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor315651 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor315652 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor315653 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor180311 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor180312 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor180313 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor43191 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor43192 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor43193 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor284011 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor284012 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor284013 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor143121 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor143122 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor143123 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor171111 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor171112 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor171113 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor21281 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor21282 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor21283 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor117171 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor117172 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor117173 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor174911 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor174912 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor174913 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor177301 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor177302 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor177303 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor31661 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor31662 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor31663 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor292351 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor292352 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor292353 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor210761 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor210762 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor210763 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor272621 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor272622 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor272623 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor306921 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor306922 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor306923 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor263151 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor263152 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor263153 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor108331 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor108332 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor108333 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor64941 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor64942 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor64943 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor179081 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor179082 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor179083 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor184701 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor184702 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor184703 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor274331 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor274332 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor274333 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor187841 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor187842 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor187843 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor1671 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor1672 already on lerp stack. Overwritting...[0m
+[ Line 50 ]: [0;33mtileColor1673 already on lerp stack. Overwritting...[0m
+[ Line -1 ]: [0;37mNow saving...[0m
+[ Line 358 ]: [1;32mWrote to file dat/eid/save.eid[0m
+[ Line 176 ]: [1;32mSave complete in 52.201138ms.[0m

@@ -264,7 +264,7 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 				zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
 				break;
 			case grassland:
-				zomb = new Entity{ 40, "Bull", ID_COW, Aggressive, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				zomb = new Entity{ 40, "Bull", ID_COW, Aggressive, false, Wildlife, 5, 15, false, spawnCoords.x, spawnCoords.y };
 				zomb->inv.push_back(Items::GetItem("LEATHER"));
 				zomb->inv.push_back(Items::GetItem("BULL_HORN"));
 				break;

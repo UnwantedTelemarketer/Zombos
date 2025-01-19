@@ -220,14 +220,22 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 			//if the player is targeted
 			else if (ent->targetingPlayer) {
 				if (mPlayer.coveredIn == guts && ent->name == "Zombie") { ent->targetingPlayer = false; }
-				if (path.size() > 1) { ent->coords = path[1]; }
+				if (path.size() > 1) {
+					if (chunkInUse->GetTileAtCoords(path[1])->walkable) {
+						ent->coords = path[1];
+					}
+				}
 				else { ent->coords = path[0]; }
 				moved = true;
 				break;
 			}
 			//otherwise, if they are enemies go towards them
 			else if (entPath.size() > 2 && isEnemies != 0) {
-				if (entPath.size() > 1) { ent->coords = entPath[1]; }
+				if (entPath.size() > 1) {
+					if (chunkInUse->GetTileAtCoords(entPath[1])->walkable) {
+						ent->coords = entPath[1];
+					}
+				}
 				else { ent->coords = entPath[0]; }
 				moved = true;
 				break;
@@ -298,7 +306,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		}
 	}
 	if (moved) { Audio::Play(GetWalkSound()); }
-	if (ent->coords == mPlayer.coords) {
+	if (ent->coords == mPlayer.coords || tile->walkable == false) {
 		ent->coords = oldCoords;
 		return;
 	}
