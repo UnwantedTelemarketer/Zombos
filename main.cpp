@@ -1073,8 +1073,7 @@ public:
 			ImGui::Text("H to open/close the Help menu");
 			ImGui::Text("ESC to open/close the Settings menu");
 			ImGui::Text("` to open/close the console");
-			ImGui::Text("\nTo place an item in a container, click \n'Drop Selected Item' while interacting with the container.");
-			ImGui::Text("\nTo attack an entity, just walk into it.");
+			ImGui::Text("\nTo attack an entity, walk into it with something equipped.");
 			ImGui::End();
 		}
 
