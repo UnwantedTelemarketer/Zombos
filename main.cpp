@@ -87,7 +87,8 @@ public:
 		{"ui_select", "dat/sounds/ui_confirm.wav"},
 		{"splash", "dat/sounds/enter_water.wav"},
 		{"click", "dat/sounds/click.wav"},
-		{"crunch", "dat/sounds/eat.wav"}
+		{"crunch", "dat/sounds/eat.wav"},
+		{"drink", "dat/sounds/drink.wav"}
 	};
 
 
@@ -95,206 +96,94 @@ public:
 	Scene main = { "TEST" };
 	std::shared_ptr<GameObject> p;
 
-	void Init() override {
+	void SaveCurrentGame() {
+		float curTime = glfwGetTime();
+		LAZY_LOG("Now saving...");
+		SaveData dat;
 
-		test_chunk = std::make_shared<Chunk>();
-		std::thread itemLoading = Items::LoadItemsFromFiles(&game.item_icons);
-		std::thread tileLoading = Tiles::LoadTilesFromFiles(&game.tile_colors);
+		//save settings and basic player data
+		dat.sections.insert({ "STATS", {} });
+		dat.sections.insert({ "SETTINGS", {} });
+		dat.addFloat("STATS", "color_r", pInv.clothes.x);
+		dat.addFloat("STATS", "color_g", pInv.clothes.y);
+		dat.addFloat("STATS", "color_b", pInv.clothes.z);
+		dat.addFloat("STATS", "health", player.health);
+		dat.addFloat("STATS", "thirst", player.thirst);
+		dat.addFloat("STATS", "hunger", player.hunger);
+		dat.addInt("STATS", "x_pos", player.coords.x);
+		dat.addInt("STATS", "y_pos", player.coords.y);
+		dat.addInt("STATS", "biomes", map.biomeSeed);
+		dat.addInt("STATS", "seed", map.landSeed);
+		dat.addInt("STATS", "global_x", map.CurrentChunk()->globalChunkCoord.x);
+		dat.addInt("STATS", "global_y", map.CurrentChunk()->globalChunkCoord.y);
+		dat.addFloat("STATS", "time", game.worldTime);
+		dat.addInt("STATS", "weather", map.currentWeather);
+		dat.addInt("SETTINGS", "ySep", ySeparator);
+		dat.addInt("SETTINGS", "xDist", xViewDist);
+		dat.addInt("SETTINGS", "yDist", yViewDist);
+		dat.addFloat("SETTINGS", "sfxSound", sfxvolume);
+		dat.addFloat("SETTINGS", "musicSound", musicvolume);
 
-		Engine::Instance().AddScene(&main);
-		main.CreateObject("Box", { 0,0 }, { 1,1 }, "res/plank.png");
-		p = main.FindObject("Box");
+		std::vector<std::string> listString;
+		std::vector<std::string> itemList;
 
-		gameScreen.fancyGraphics = true;
-		frame.frames.length = 360;
-		currentState = menu;
-		health = 100.0f;
-		gameScreen.statsOpen = true;
-		openClose = "Close Stats";
-		gameScreen.containerOpen = false;
-		gameScreen.navInv = false;
-		gameScreen.showDialogue = true;
-		gameScreen.console_showing = false;
-		gameScreen.helpMenu = true;
-		game.freeView = true;
-		game.LoadData();
-		xViewDist = 15;
-		yViewDist = 15;
-
-		sfxvolume = Audio::GetVolume();
-
-		itemLoading.join();
-		tileLoading.join();
-		Console::Log("Done!", text::green, __LINE__);
-	}
-
-	void Update() {
-		bool moved = false;
-		colChangeTime += Utilities::deltaTime() / 1000;
-		if (colChangeTime >= 1.f) {
-			colChangeTime = 0;
-		}
-
-
-		if (Input::KeyDown(KEY_M) && currentState != playing){
-			currentState = map_gen_test;
-			map.CreateMap(map.landSeed, map.biomeSeed);
-		}
-		//the rest of the update is game logic so we stop here in the menu
-		if (currentState != playing) { return; }
-
-		//-=================================================================
-
-		if (player.health <= 0) { currentState = menu; player.health = 100; }
-
-		if (gameScreen.console_showing) {
-			if (Input::KeyDown(KEY_ENTER)) {
-				Console::Log(console_commands, text::green, __LINE__);
-				cmd.RunCommand(console_commands, &game);
-				console_commands[0] = '\0';
-				prevCommandIndex = -1;
-			}
-			if (Input::KeyDown(KEY_UP)) {
-				std::string prevCom = cmd.GetOldCommand(&prevCommandIndex);
-				//LAZY_LOG(prevCommandIndex);
-				memset(console_commands, '\0', sizeof(console_commands));
-
-				for (int i = 0; i < prevCom.size(); i++) {
-					console_commands[i] = prevCom[i];
-				}
-			}
-		}
-
-		gameScreen.FlipScreens();
-
-		if (gameScreen.console_showing || gameScreen.craftingMenu) { return; }
-
-		game.UpdateTick();
-
-		if (Input::KeyDown(KEY_UP) || Input::KeyDown(KEY_W)) {
-			if (interacting)
-			{
-				selectedTile = { map.GetTileFromThisOrNeighbor({ player.coords.x - 1, player.coords.y }) };
-				interacting = false;
-				return;
-			}
-			else if (player.aiming) {
-				player.crosshair.x -= 1;
-				return;
-			}
-			else {
-				moved = true;
-				selectedTile = nullptr;
-				game.MovePlayer(MAP_UP);
-				playerDir = direction::up;
-			}
-		}
-		else if (Input::KeyDown(KEY_DOWN) || Input::KeyDown(KEY_S)) {
-			if (interacting)
-			{
-				selectedTile = map.GetTileFromThisOrNeighbor({ player.coords.x + 1, player.coords.y });
-				interacting = false;
-				return;
-			}
-			else if (player.aiming) {
-				player.crosshair.x += 1;
-				return;
-			}
-			else {
-				moved = true;
-				selectedTile = nullptr;
-				game.MovePlayer(MAP_DOWN);
-				playerDir = direction::down;
-			}
-		}
-		else if (Input::KeyDown(KEY_LEFT) || Input::KeyDown(KEY_A)) {
-			if (interacting)
-			{
-				selectedTile = { map.GetTileFromThisOrNeighbor({ player.coords.x, player.coords.y - 1}) };
-				interacting = false;
-				return;
-			}
-			else if (player.aiming) {
-				player.crosshair.y -= 1;
-				return;
-			}
-			else {
-				moved = true;
-				selectedTile = nullptr;
-				game.MovePlayer(MAP_LEFT);
-				playerDir = direction::left;
-			}
-		}
-		else if (Input::KeyDown(KEY_RIGHT) || Input::KeyDown(KEY_D)) {
-			if (interacting)
-			{
-				selectedTile = { map.GetTileFromThisOrNeighbor({ player.coords.x, player.coords.y + 1}) };
-				interacting = false;
-				return;
-			}
-			else if (player.aiming) {
-				player.crosshair.y += 1;
-				return;
-			}
-			else {
-				moved = true;
-				selectedTile = nullptr;
-				game.MovePlayer(MAP_RIGHT);
-				playerDir = direction::right;
-			}
-		}
-
-		
-
-		else if (Input::KeyDown(KEY_E))
+		//save inventory items
+		for (int i = 0; i < pInv.items.size(); i++)
 		{
-			if (!gameScreen.navInv)
-			{
-				Math::PushBackLog(&game.actionLog, "Which direction will you interact with?");
-				interacting = true;
+			std::string itemName = pInv.items[i].section;
+			itemList.push_back(itemName);
+			dat.sections.insert({ itemName, {} });
+			dat.addInt(itemName, "count", pInv.items[i].count);
+			dat.addInt(itemName, "coveredIn", pInv.items[i].coveredIn);
+			dat.addInt(itemName, "ticksUntilDry", pInv.items[i].ticksUntilDry);
+			dat.addInt(itemName, "initialTickTime", pInv.items[i].initialTickTime);
+			dat.addInt(itemName, "durability", pInv.items[i].durability);
+			dat.addInt(itemName, "heldLiquid", pInv.items[i].heldLiquid);
+			if (pInv.items[i].heldLiquid != nothing) {
+				dat.addInt(itemName, "liquidAmount", pInv.items[i].liquidAmount);
 			}
 		}
 
-		else if (Input::KeyDown(KEY_F)) {
-			flashlightActive = !flashlightActive;
-			Audio::Play(sfxs["click"]);
-			std::vector<Vector2_I> circle = map.GetSquareEdge(player.coords, 7);
-			for (size_t i = 0; i < circle.size(); i++)
-			{
-				map.GetTileFromThisOrNeighbor(circle[i])->SetLiquid(blood);
+		//save equipped items
+		for (auto const& eType : Items::EquipmentTypes)
+		{
+			if (pInv.CurrentEquipExists(eType)) {
+				std::string eTypeName = Cosmetic::EquipTypeName(eType);
+				dat.sections.insert({ eTypeName, {} });
+				dat.addInt(eTypeName, "durability", pInv.equippedItems[eType].durability);
+				dat.addString(eTypeName, "name", pInv.equippedItems[eType].section);
 			}
 		}
 
-
-		if (moved) {
-			Audio::Play(game.GetWalkSound());
+		//save saved recipes
+		for (auto const& rec : game.Crafter.savedRecipes)
+		{
+			listString.push_back(rec);
 		}
 
-		if (player.aiming) {
-			map.ClearLine();
-			map.DrawLine(map.GetLine(player.coords, player.crosshair, 25));
-		};
-		
-		if (game.freeView) {
-			xMin = player.coords.x - xViewDist;
-			xMax = player.coords.x + xViewDist;
-			yMin = player.coords.y - yViewDist;
-			yMax = player.coords.y + yViewDist;
+		dat.sections["STATS"].lists.insert({ "savedRecipes", listString });
+		dat.sections["STATS"].lists.insert({ "items", itemList });
+
+		ItemReader::SaveDataToFile("dat/eid/save.eid", dat, true);
+
+		//save loaded chunks
+		for (auto& chunk : game.mainMap.world.chunks) {
+			chunk.second->SaveChunk();
 		}
-		else {
-			xMin = 0;
-			xMax = CHUNK_HEIGHT;
-			yMin = 0;
-			yMax = CHUNK_WIDTH;
-		}
+
+		float endTime = glfwGetTime() - curTime;
+
+		Console::Log("Save complete in " + std::to_string(endTime * 1000) + "ms.", text::green, __LINE__);
 	}
 
-	void ImguiRender() override
-	{
-		//ImGui::ShowDemoWindow();
-		//GameScene();
+	void SettingsScreen() {
 		if (gameScreen.settingsOpen) {
 			ImGui::Begin("Settings");
+
+			if (ImGui::Button("Save Game")) {
+				SaveCurrentGame();
+			}
+
 			ImGui::Text("\n--UI Settings--");
 			ImGui::SliderInt("Y Separator Value", &ySeparator, 0, 20);
 			ImGui::SliderInt("View Distance (Width)", &yViewDist, 1, 40);
@@ -312,111 +201,18 @@ public:
 			}
 
 			ImGui::Text("\n--Additional Settings--");
-			if (ImGui::RadioButton("Free View Enabled (Experimental)", game.freeView)) {
-				game.freeView = !game.freeView;
+			if (!map.isUnderground) {
+				if (ImGui::RadioButton("Free View Enabled (Experimental)", game.freeView)) {
+					game.freeView = !game.freeView;
+				}
 			}
 
 			//ImGui::ColorPicker3("Tab Color", &customTabColor.x);
 
 			ImGui::End();
 		}
-		switch (currentState) {
-		case playing:
-			GameScene();
-			break;
-		case menu:
-			MenuScene();
-			break;
-		case map_gen_test:
-			MapTool();
-			break;
-		default:
-			break;
-		}
-
-
 	}
-
-	void MapTool() {
-		ImGui::Begin("Settings");
-		ImGui::InputInt("Biome Seed", &map.biomeSeed);
-		ImGui::InputInt("Land Seed", &map.landSeed);
-		ImGui::InputFloat("Temperature Minimum", &map.tempMin, 0.1f);
-		ImGui::InputFloat("Moisture Minimum", &map.moistureMin, 0.1f);
-		if (ImGui::Button("Generate")) {
-			map.CreateMap(map.landSeed, map.biomeSeed);
-		}
-		ImGui::End();
-
-		ImGui::Begin("Map Generator");
-		bool item = false;
-		ImGui::PushFont(Engine::Instance().getFont("main"));
-		for (int i = -CHUNK_WIDTH; i < CHUNK_WIDTH * 2; i++) {
-			for (int j = -CHUNK_HEIGHT; j < CHUNK_HEIGHT * 2; j++) {
-				
-				Tile* curTile = map.GetTileFromThisOrNeighbor({ i, j });
-				Tile* underTile = map.GetTileFromThisOrNeighbor({ i + 1, j });
-
-				if (curTile->hasItem)
-				{
-					item = true;
-					itemPositions.push_back(ImGui::GetCursorPos());
-					itemTiles.push_back(curTile);
-					itemIcons.push_back(game.GetItemChar(curTile));
-					ImGui::Text(" ");
-					ImGui::SameLine();
-					continue;
-				}
-
-				printIcon = game.GetTileChar(curTile);
-				iconColor = game.GetTileColor(curTile, 0.f);
-
-				if (underTile != nullptr) {
-					if (underTile->id == 11) {
-						//screen += "G";
-						//colors.push_back(game.GetTileColor(underTile, intensity));
-						printIcon = "G";
-						iconColor = game.GetTileColor(underTile, 0.f);
-					}
-					else if (underTile->id == 12) {
-						//screen += "J";
-						//colors.push_back(game.GetTileColor(underTile, intensity));
-						printIcon = "J";
-						iconColor = game.GetTileColor(underTile, 0.f);
-					}
-					else if (underTile->id == 18) {
-						//screen += "J";
-						//colors.push_back(game.GetTileColor(underTile, intensity));
-						printIcon = "Y";
-						iconColor = game.GetTileColor(underTile, 0.f);
-					}
-				}
-
-				ImGui::TextColored(iconColor, printIcon.c_str());
-				ImGui::SameLine();
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 0.05);
-			}
-			ImGui::Text("");
-		}
-		if (item) {
-			ImGui::PopFont();
-			ImGui::PushFont(Engine::Instance().getFont("items"));
-			for (size_t i = 0; i < itemIcons.size(); i++)
-			{
-				ImGui::SetCursorPos(itemPositions[i]);
-
-				ImGui::TextColored(game.GetItemColor(itemTiles[i]), itemIcons[i].c_str());
-			}
-			itemTiles.clear();
-			itemIcons.clear();
-			itemPositions.clear();
-		}
-
-		ImGui::PopFont();
-
-		ImGui::End();
-	}
-
+	
 	void MenuScene() {
 		ImGui::PushFont(Engine::Instance().getFont("ui"));
 		//ImGui::ShowDemoWindow();
@@ -468,11 +264,108 @@ public:
 			ySeparator = settings.getInt("ySep");
 			xViewDist = settings.getInt("xDist");
 			yViewDist = settings.getInt("yDist");
+			sfxvolume = settings.getFloat("sfxSound");
+			Audio::SetVolume(sfxvolume);
+			musicvolume = settings.getFloat("musicSound");
+			Audio::SetVolumeLoop(musicvolume, "ambient_day");
+
+			for (auto const& eType : Items::EquipmentTypes)
+			{
+				std::string eTypeName = Cosmetic::EquipTypeName(eType);
+				OpenedData data;
+				if (ItemReader::GetDataFromFile("save.eid", eTypeName, &data)) {
+					Item equippedItem = Items::GetItem(data.getString("name"));
+					equippedItem.durability = data.getInt("durability");
+
+					pInv.EquipItem(equippedItem);
+				}
+			}
 		}
+
 		ImGui::End();
 
 		ImGui::PopFont();
 	}
+
+	void MapTool() {
+			ImGui::Begin("Settings");
+			ImGui::InputInt("Biome Seed", &map.biomeSeed);
+			ImGui::InputInt("Land Seed", &map.landSeed);
+			ImGui::InputFloat("Temperature Minimum", &map.tempMin, 0.1f);
+			ImGui::InputFloat("Moisture Minimum", &map.moistureMin, 0.1f);
+			if (ImGui::Button("Generate")) {
+				map.CreateMap(map.landSeed, map.biomeSeed);
+			}
+			ImGui::End();
+
+			ImGui::Begin("Map Generator");
+			bool item = false;
+			ImGui::PushFont(Engine::Instance().getFont("main"));
+			for (int i = -CHUNK_WIDTH; i < CHUNK_WIDTH * 2; i++) {
+				for (int j = -CHUNK_HEIGHT; j < CHUNK_HEIGHT * 2; j++) {
+
+					Tile* curTile = map.GetTileFromThisOrNeighbor({ i, j });
+					Tile* underTile = map.GetTileFromThisOrNeighbor({ i + 1, j });
+
+					if (curTile->hasItem)
+					{
+						item = true;
+						itemPositions.push_back(ImGui::GetCursorPos());
+						itemTiles.push_back(curTile);
+						itemIcons.push_back(game.GetItemChar(curTile));
+						ImGui::Text(" ");
+						ImGui::SameLine();
+						continue;
+					}
+
+					printIcon = game.GetTileChar(curTile);
+					iconColor = game.GetTileColor(curTile, 0.f);
+
+					if (underTile != nullptr) {
+						if (underTile->id == 11) {
+							//screen += "G";
+							//colors.push_back(game.GetTileColor(underTile, intensity));
+							printIcon = "G";
+							iconColor = game.GetTileColor(underTile, 0.f);
+						}
+						else if (underTile->id == 12) {
+							//screen += "J";
+							//colors.push_back(game.GetTileColor(underTile, intensity));
+							printIcon = "J";
+							iconColor = game.GetTileColor(underTile, 0.f);
+						}
+						else if (underTile->id == 18) {
+							//screen += "J";
+							//colors.push_back(game.GetTileColor(underTile, intensity));
+							printIcon = "Y";
+							iconColor = game.GetTileColor(underTile, 0.f);
+						}
+					}
+
+					ImGui::TextColored(iconColor, printIcon.c_str());
+					ImGui::SameLine();
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 0.05);
+				}
+				ImGui::Text("");
+			}
+			if (item) {
+				ImGui::PopFont();
+				ImGui::PushFont(Engine::Instance().getFont("items"));
+				for (size_t i = 0; i < itemIcons.size(); i++)
+				{
+					ImGui::SetCursorPos(itemPositions[i]);
+
+					ImGui::TextColored(game.GetItemColor(itemTiles[i]), itemIcons[i].c_str());
+				}
+				itemTiles.clear();
+				itemIcons.clear();
+				itemPositions.clear();
+			}
+
+			ImGui::PopFont();
+
+			ImGui::End();
+		}
 
 	void Create_Character() {
 		ImGui::Begin("Create your Character");
@@ -496,10 +389,6 @@ public:
 		ImGui::PushFont(Engine::Instance().getFont("ui"));
 		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
-		//Entity* ent = game.NearEnt();
-		//if (ent != nullptr && ent->canTalk) {
-		//	DisplayEntity(ent);
-		//}
 		if (gameScreen.console_showing) {
 			ImGui::Begin("Console");
 			ImGui::InputTextWithHint("console", "enter commands", console_commands, IM_ARRAYSIZE(console_commands));
@@ -611,7 +500,7 @@ public:
 					{
 						effectShowing = true;
 						printIcon = "#";
-						iconColor = {1,0,0,1};
+						iconColor = { 1,0,0,1 };
 					}
 					else if (curTile->entity != nullptr) {
 						mobPositions.push_back(ImGui::GetCursorPos());
@@ -720,6 +609,7 @@ public:
 				mobPositions.clear();
 				mobColors.clear();
 			}
+			ImGui::End();
 		}
 
 		if (gameScreen.fancyGraphics) {
@@ -727,7 +617,6 @@ public:
 		}
 
 
-		ImGui::End();
 		ImGui::PopStyleColor(1);
 
 		//TechScreen();
@@ -784,37 +673,80 @@ public:
 			}
 
 			ImGui::Text("Body Temperature :"); ImGui::SameLine();
-			ImGui::Text(std::to_string(round(player.visualTemp * 10.0f) / 10.0f).c_str());
-			ImGui::Text("------EQUIPPED ITEMS------");
+			ImGui::Text(std::to_string(round(player.bodyTemp * 10.0f) / 10.0f).c_str());
 
-			if (pInv.equippedItems.contains(gloves)) {
+			ImGui::End();
+
+		}
+
+		//------Equipment Screen------
+		if (gameScreen.equipmentScreenOpen) {
+
+			ImGui::Begin("Equipment");
+			if (pInv.CurrentEquipExists(hat)) {
+				ImGui::Text("Hat :"); ImGui::SameLine();
+				ImGui::Text(pInv.equippedItems[hat].name.c_str());
+				if (pInv.equippedItems[hat].maxDurability != -1)
+					ImGui::ProgressBar(pInv.equippedItems[hat].durability / pInv.equippedItems[hat].maxDurability, ImVec2(0.0f, 0.0f));
+				if (ImGui::Button("Unequip Hat")) {
+					pInv.Unequip(hat);
+				}
+			}
+
+			if (pInv.CurrentEquipExists(shirt)) {
+				ImGui::Text("Shirt :"); ImGui::SameLine();
+				ImGui::Text(pInv.equippedItems[shirt].name.c_str());
+				if (pInv.equippedItems[shirt].maxDurability != -1)
+					ImGui::ProgressBar(pInv.equippedItems[shirt].durability / pInv.equippedItems[shirt].maxDurability, ImVec2(0.0f, 0.0f));
+				if (ImGui::Button("Unequip Shirt")) {
+					pInv.Unequip(shirt);
+				}
+			}
+
+			if (pInv.CurrentEquipExists(gloves)) {
 				ImGui::Text("Gloves :"); ImGui::SameLine();
-				ImGui::Text(pInv.equippedItems[gloves].name.c_str()); ImGui::SameLine();
+				ImGui::Text(pInv.equippedItems[gloves].name.c_str());
+				if (pInv.equippedItems[gloves].maxDurability != -1)
+					ImGui::ProgressBar(pInv.equippedItems[gloves].durability / pInv.equippedItems[gloves].maxDurability, ImVec2(0.0f, 0.0f));
 				if (ImGui::Button("Unequip Gloves")) {
 					pInv.Unequip(gloves);
 				}
 			}
 
-			if (pInv.equippedItems.contains(boots)) {
+			if (pInv.CurrentEquipExists(pants)) {
+				ImGui::Text("Pants :"); ImGui::SameLine();
+				ImGui::Text(pInv.equippedItems[pants].name.c_str());
+				if (pInv.equippedItems[pants].maxDurability != -1)
+					ImGui::ProgressBar(pInv.equippedItems[pants].durability / pInv.equippedItems[pants].maxDurability, ImVec2(0.0f, 0.0f));
+				if (ImGui::Button("Unequip Pants")) {
+					pInv.Unequip(pants);
+				}
+			}
+
+			if (pInv.CurrentEquipExists(boots)) {
 				ImGui::Text("Boots :"); ImGui::SameLine();
-				ImGui::Text(pInv.equippedItems[boots].name.c_str()); ImGui::SameLine();
+				ImGui::Text(pInv.equippedItems[boots].name.c_str());
+				if (pInv.equippedItems[boots].maxDurability != -1)
+					ImGui::ProgressBar(pInv.equippedItems[boots].durability / pInv.equippedItems[boots].maxDurability, ImVec2(0.0f, 0.0f));
 				if (ImGui::Button("Unequip Boots")) {
 					pInv.Unequip(boots);
 				}
 			}
 
-			if (pInv.equippedItems.contains(weapon)) {
+			if (pInv.CurrentEquipExists(weapon)) {
 				ImGui::Text("Weapon :"); ImGui::SameLine();
 				ImGui::Text(pInv.equippedItems[weapon].name.c_str());
 				ImGui::Text("Damage :"); ImGui::SameLine();
-				ImGui::Text(std::to_string(pInv.equippedItems[weapon].mod).c_str()); ImGui::SameLine();
+				ImGui::Text(std::to_string(pInv.equippedItems[weapon].mod).c_str());
+				if (pInv.equippedItems[weapon].maxDurability != -1)
+					ImGui::ProgressBar(pInv.equippedItems[weapon].durability / pInv.equippedItems[weapon].maxDurability, ImVec2(0.0f, 0.0f));
 				if (ImGui::Button("Unequip Weapon")) {
 					pInv.Unequip(weapon);
 				}
 			}
 			ImGui::End();
-
 		}
+
 		//------Inventory------
 		ImGui::Begin("Inventory");
 		ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.15, 0.15, 0.15, 1 });
@@ -845,16 +777,23 @@ public:
 		//------item------
 		if (invSelectedName != "")
 		{
+			Item& curItem = pInv.items[currentItemIndex];
+
 			ImGui::Begin("Current Item");
-			ImGui::Text((pInv.items[currentItemIndex].name + "\n\n").c_str());
+			ImGui::Text((curItem.name + "\n\n").c_str());
 
 			SWAP_FONT("items");
 			ImGui::SetFontSize(32.f);
-			ImGui::Text(game.item_icons[pInv.items[currentItemIndex].section].c_str());
+			ImGui::Text(game.item_icons[curItem.section].c_str());
 			ImGui::SetFontSize(16.f);
 			SWAP_FONT("ui");
 
-			ImGui::TextWrapped(pInv.items[currentItemIndex].description.c_str());
+			if (curItem.maxDurability != -1.f) {
+				ImGui::Text("-- Durability --");
+				ImGui::ProgressBar(curItem.durability / curItem.maxDurability, ImVec2(0.0f, 0.0f));
+			}
+
+			ImGui::TextWrapped(curItem.description.c_str());
 
 			std::string liquid = pInv.GetLiquidName(currentItemIndex);
 			ImVec4 color, colorBG;
@@ -876,46 +815,45 @@ public:
 			}
 
 
-			if (!pInv.items[currentItemIndex].stackable) { ImGui::TextColored(ImVec4{ 1,0,0,1 }, "[DOES NOT STACK]"); }
+			if (!curItem.stackable) { ImGui::TextColored(ImVec4{ 1,0,0,1 }, "[DOES NOT STACK]"); }
 
-			if (pInv.items[currentItemIndex].holdsLiquid) {
+			if (curItem.holdsLiquid) {
 				ImGui::Text("Liquid:");
 				ImGui::PushStyleColor(ImGuiCol_PlotHistogram, color);
 				ImGui::PushStyleColor(ImGuiCol_FrameBg, colorBG);
 
-				ImGui::ProgressBar(pInv.items[currentItemIndex].liquidAmount / 100, ImVec2(0.0f, 0.0f));
+				ImGui::ProgressBar(curItem.liquidAmount / 100, ImVec2(0.0f, 0.0f));
 				ImGui::PopStyleColor(2);
 				ImGui::Text("Liquid Type:"); ImGui::SameLine();
 				ImGui::Text(pInv.GetLiquidName(currentItemIndex).c_str());
 			}
 
-			if (pInv.items[currentItemIndex].ticksUntilDry > 0) {
-				Item& tempItem = pInv.items[currentItemIndex];
+			if (curItem.ticksUntilDry > 0) {
 				ImGui::Text("Time until dry:");
 				ImGui::PushStyleColor(ImGuiCol_PlotHistogram, color);
 				ImGui::PushStyleColor(ImGuiCol_FrameBg, colorBG);
 
-				ImGui::ProgressBar((float)tempItem.ticksUntilDry / (float)tempItem.initialTickTime, ImVec2(0.0f, 0.0f));
+				ImGui::ProgressBar((float)curItem.ticksUntilDry / (float)curItem.initialTickTime, ImVec2(0.0f, 0.0f));
 				ImGui::PopStyleColor(2);
 
 			}
 
-			if (pInv.items[currentItemIndex].stackable) {
+			if (curItem.stackable) {
 				ImGui::Text("[ Holding x");
 				ImGui::SameLine();
-				ImGui::Text(std::to_string(pInv.items[currentItemIndex].count).c_str());
+				ImGui::Text(std::to_string(curItem.count).c_str());
 				ImGui::SameLine();
 				ImGui::Text("]");
 			}
 
 			ImGui::Text("Crafting ID ::"); ImGui::SameLine();
-			ImGui::Text(pInv.items[currentItemIndex].section.c_str());
+			ImGui::Text(curItem.section.c_str());
 
 			if (ImGui::Button("Use"))
 			{
 				gameScreen.useBool = !gameScreen.useBool;
 			}
-			if (pInv.items[currentItemIndex].eType != notEquip) {
+			if (curItem.eType != notEquip) {
 				if (ImGui::Button("Equip"))
 				{
 					pInv.EquipItem(currentItemIndex);
@@ -930,33 +868,35 @@ public:
 				{
 					if (pInv.AttemptAction(consume, &pInv.items[currentItemIndex], &player))
 					{
-						Audio::Play(sfxs["crunch"]);
+						if (pInv.items[currentItemIndex].use.onConsume.effect == saturate) Audio::Play(sfxs["crunch"]);
+						else if (pInv.items[currentItemIndex].use.onConsume.effect == quench) Audio::Play(sfxs["drink"]);
+
 						//if its consumable, remove one. 
-						if (pInv.items[currentItemIndex].consumable) {
+						if (curItem.consumable) {
 							//If its the last one, move the cursor so we dont get out of vector range
-							if (pInv.RemoveItem(pInv.items[currentItemIndex].section)) {
+							if (pInv.RemoveItem(curItem.section)) {
 								currentItemIndex--;
 							}
 
 						}
-						Math::PushBackLog(&game.actionLog, pInv.items[currentItemIndex].consumeTxt);
+						Math::PushBackLog(&game.actionLog, curItem.consumeTxt);
 					}
 					else
 					{
-						Math::PushBackLog(&game.actionLog, "You can't consume " + pInv.items[currentItemIndex].name + ".");
+						Math::PushBackLog(&game.actionLog, "You can't consume " + curItem.name + ".");
 					}
 					gameScreen.useBool = !gameScreen.useBool;
 				}
 				if (ImGui::Button("Body (Self)"))
 				{
-					if (pInv.AttemptAction(use, &pInv.items[currentItemIndex], &player))
+					if (pInv.AttemptAction(use, &curItem, &player))
 					{
-						if (pInv.items[currentItemIndex].consumable) { pInv.items[currentItemIndex].count--; }
-						Math::PushBackLog(&game.actionLog, pInv.items[currentItemIndex].useTxt);
+						if (curItem.consumable) { curItem.count--; }
+						Math::PushBackLog(&game.actionLog, curItem.useTxt);
 					}
 					else
 					{
-						Math::PushBackLog(&game.actionLog, "You can't use " + pInv.items[currentItemIndex].name + ".");
+						Math::PushBackLog(&game.actionLog, "You can't use " + curItem.name + ".");
 					}
 					gameScreen.useBool = !gameScreen.useBool;
 				}
@@ -1066,8 +1006,9 @@ public:
 		if (gameScreen.helpMenu) {
 			ImGui::Begin("Help Menu");
 			ImGui::Text("WASD or Arrow keys to move");
-			ImGui::Text("F to toggle flashlight on and off");
-			ImGui::Text("C to open the crafting menu");
+			ImGui::Text("F to toggle Flashlight on and off");
+			ImGui::Text("C to open the Crafting menu");
+			ImGui::Text("I to open/close the Equipment menu");
 			ImGui::Text("E to begin selecting a block then any of the directional keys to select a block");
 			ImGui::Text("P to open/close the Debug menu");
 			ImGui::Text("H to open/close the Help menu");
@@ -1318,55 +1259,6 @@ public:
 		//ImGui::PopStyleColor(3);
 	}
 
-	/*
-	void TechScreen() {
-		ImGui::Begin("Technology");
-
-		ImGui::Text("---Place Conveyor Belt---");
-
-		if (gameScreen.fancyGraphics) ImGui::PushFont(Engine::Instance().getFont("main"));
-
-		//TOP ROW
-		if (ImGui::Button("O")) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_UL];
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("S")) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_R];
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("P")) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_UR];
-		}
-
-		//MIDDLE ROW
-		if (ImGui::Button("M")) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_U];
-		}
-		ImGui::SameLine();
-		if (ImGui::Button(" ")) {}
-		ImGui::SameLine();
-		if (ImGui::Button("N")) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_D];
-		}
-
-		//BOTTOM ROW
-		if (ImGui::Button("Q")) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_DL];
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("T")) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_L];
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("R")) {
-			*game.mainMap.TileAtPos(player.coords) = tileByID[ID_CONVEYOR_DR];
-		}
-
-		if (gameScreen.fancyGraphics) ImGui::PopFont();
-		ImGui::End();
-	}
-	*/
 	void DisplayEntity(Entity* ent)
 	{
 		if (gameScreen.showDialogue) {
@@ -1396,70 +1288,227 @@ public:
 		}
 	}
 
+	//---------------------------------------------BASE FUNCTIONS---------------------------------------------
 
+	void Init() override {
+
+		test_chunk = std::make_shared<Chunk>();
+		std::thread itemLoading = Items::LoadItemsFromFiles(&game.item_icons);
+		std::thread tileLoading = Tiles::LoadTilesFromFiles(&game.tile_colors);
+
+		Engine::Instance().AddScene(&main);
+		main.CreateObject("Box", { 0,0 }, { 1,1 }, "res/plank.png");
+		p = main.FindObject("Box");
+
+		gameScreen.fancyGraphics = true;
+		frame.frames.length = 360;
+		currentState = menu;
+		health = 100.0f;
+		gameScreen.statsOpen = true;
+		openClose = "Close Stats";
+		gameScreen.containerOpen = false;
+		gameScreen.navInv = false;
+		gameScreen.showDialogue = true;
+		gameScreen.console_showing = false;
+		gameScreen.helpMenu = true;
+		gameScreen.equipmentScreenOpen = false;
+		game.freeView = true;
+		game.LoadData();
+		xViewDist = 15;
+		yViewDist = 15;
+
+		sfxvolume = Audio::GetVolume();
+
+		itemLoading.join();
+		tileLoading.join();
+		Console::Log("Done!", text::green, __LINE__);
+	}
+
+	void Update() override{
+		bool moved = false;
+		colChangeTime += Utilities::deltaTime() / 1000;
+		if (colChangeTime >= 1.f) {
+			colChangeTime = 0;
+		}
+
+
+		if (Input::KeyDown(KEY_M) && currentState != playing){
+			currentState = map_gen_test;
+			map.CreateMap(map.landSeed, map.biomeSeed);
+		}
+		//the rest of the update is game logic so we stop here in the menu
+		if (currentState != playing) { return; }
+
+		//-=================================================================
+
+		if (player.health <= 0) { currentState = menu; player.health = 100; }
+
+		if (gameScreen.console_showing) {
+			if (Input::KeyDown(KEY_ENTER)) {
+				Console::Log(console_commands, text::green, __LINE__);
+				cmd.RunCommand(console_commands, &game);
+				console_commands[0] = '\0';
+				prevCommandIndex = -1;
+			}
+			if (Input::KeyDown(KEY_UP)) {
+				if (cmd.prevCommandSize() > 0) {
+					std::string prevCom = cmd.GetOldCommand(&prevCommandIndex);
+					//LAZY_LOG(prevCommandIndex);
+					memset(console_commands, '\0', sizeof(console_commands));
+
+					for (int i = 0; i < prevCom.size(); i++) {
+						console_commands[i] = prevCom[i];
+					}
+				}
+			}
+		}
+
+		gameScreen.FlipScreens();
+
+		if (gameScreen.console_showing || gameScreen.craftingMenu) { return; }
+
+		game.UpdateTick();
+
+		if (Input::KeyDown(KEY_UP) || Input::KeyDown(KEY_W)) {
+			if (interacting)
+			{
+				selectedTile = { map.GetTileFromThisOrNeighbor({ player.coords.x - 1, player.coords.y }) };
+				interacting = false;
+				return;
+			}
+			else if (player.aiming) {
+				player.crosshair.x -= 1;
+				return;
+			}
+			else {
+				moved = true;
+				selectedTile = nullptr;
+				game.MovePlayer(MAP_UP);
+				playerDir = direction::up;
+			}
+		}
+		else if (Input::KeyDown(KEY_DOWN) || Input::KeyDown(KEY_S)) {
+			if (interacting)
+			{
+				selectedTile = map.GetTileFromThisOrNeighbor({ player.coords.x + 1, player.coords.y });
+				interacting = false;
+				return;
+			}
+			else if (player.aiming) {
+				player.crosshair.x += 1;
+				return;
+			}
+			else {
+				moved = true;
+				selectedTile = nullptr;
+				game.MovePlayer(MAP_DOWN);
+				playerDir = direction::down;
+			}
+		}
+		else if (Input::KeyDown(KEY_LEFT) || Input::KeyDown(KEY_A)) {
+			if (interacting)
+			{
+				selectedTile = { map.GetTileFromThisOrNeighbor({ player.coords.x, player.coords.y - 1}) };
+				interacting = false;
+				return;
+			}
+			else if (player.aiming) {
+				player.crosshair.y -= 1;
+				return;
+			}
+			else {
+				moved = true;
+				selectedTile = nullptr;
+				game.MovePlayer(MAP_LEFT);
+				playerDir = direction::left;
+			}
+		}
+		else if (Input::KeyDown(KEY_RIGHT) || Input::KeyDown(KEY_D)) {
+			if (interacting)
+			{
+				selectedTile = { map.GetTileFromThisOrNeighbor({ player.coords.x, player.coords.y + 1}) };
+				interacting = false;
+				return;
+			}
+			else if (player.aiming) {
+				player.crosshair.y += 1;
+				return;
+			}
+			else {
+				moved = true;
+				selectedTile = nullptr;
+				game.MovePlayer(MAP_RIGHT);
+				playerDir = direction::right;
+			}
+		}
+
+		
+
+		else if (Input::KeyDown(KEY_E))
+		{
+			if (!gameScreen.navInv)
+			{
+				Math::PushBackLog(&game.actionLog, "Which direction will you interact with?");
+				interacting = true;
+			}
+		}
+
+		else if (Input::KeyDown(KEY_F)) {
+			flashlightActive = !flashlightActive;
+			Audio::Play(sfxs["click"]);
+		}
+
+
+		if (moved) {
+			Audio::Play(game.GetWalkSound());
+		}
+
+		if (player.aiming) {
+			map.ClearLine();
+			map.DrawLine(map.GetLine(player.coords, player.crosshair, 25));
+		};
+		
+		if (game.freeView) {
+			xMin = player.coords.x - xViewDist;
+			xMax = player.coords.x + xViewDist;
+			yMin = player.coords.y - yViewDist;
+			yMax = player.coords.y + yViewDist;
+		}
+		else {
+			xMin = 0;
+			xMax = CHUNK_HEIGHT;
+			yMin = 0;
+			yMax = CHUNK_WIDTH;
+		}
+	}
+
+	void ImguiRender() override
+	{
+		//ImGui::ShowDemoWindow();
+		//GameScene();
+
+		SettingsScreen();
+		
+		switch (currentState) {
+		case playing:
+			GameScene();
+			break;
+		case menu:
+			MenuScene();
+			break;
+		case map_gen_test:
+			MapTool();
+			break;
+		default:
+			break;
+		}
+
+
+	}
 
 	void Shutdown() override {
 		if (currentState == playing) {
-			float curTime = glfwGetTime();
-			LAZY_LOG("Now saving...");
-			SaveData dat;
-			dat.sections.insert({ "STATS", {} });
-			dat.sections.insert({ "SETTINGS", {} });
-			dat.addFloat("STATS", "color_r", pInv.clothes.x);
-			dat.addFloat("STATS", "color_g", pInv.clothes.y);
-			dat.addFloat("STATS", "color_b", pInv.clothes.z);
-			dat.addFloat("STATS", "health", player.health);
-			dat.addFloat("STATS", "thirst", player.thirst);
-			dat.addFloat("STATS", "hunger", player.hunger);
-			dat.addInt("STATS", "x_pos", player.coords.x);
-			dat.addInt("STATS", "y_pos", player.coords.y);
-			dat.addInt("STATS", "biomes", map.biomeSeed);
-			dat.addInt("STATS", "seed", map.landSeed);
-			dat.addInt("STATS", "global_x", map.CurrentChunk()->globalChunkCoord.x);
-			dat.addInt("STATS", "global_y", map.CurrentChunk()->globalChunkCoord.y);
-			dat.addFloat("STATS", "time", game.worldTime);
-			dat.addInt("STATS", "weather", map.currentWeather);
-			dat.addInt("SETTINGS", "ySep", ySeparator);
-			dat.addInt("SETTINGS", "xDist", xViewDist);
-			dat.addInt("SETTINGS", "yDist", yViewDist);
-
-			//Console::Log(map.CurrentChunk()->globalChunkCoord, SUCCESS, __LINE__);
-
-			std::vector<std::string> listString;
-			std::vector<std::string> itemList;
-
-			for (int i = 0; i < pInv.items.size(); i++)
-			{
-				std::string itemName = pInv.items[i].section;
-				itemList.push_back(itemName);
-				dat.sections.insert({ itemName, {} });
-				dat.addInt(itemName, "count", pInv.items[i].count);
-				dat.addInt(itemName, "coveredIn", pInv.items[i].coveredIn);
-				dat.addInt(itemName, "ticksUntilDry", pInv.items[i].ticksUntilDry);
-				dat.addInt(itemName, "initialTickTime", pInv.items[i].initialTickTime);
-				dat.addInt(itemName, "heldLiquid", pInv.items[i].heldLiquid);
-				if (pInv.items[i].heldLiquid != nothing) {
-					dat.addInt(itemName, "liquidAmount", pInv.items[i].liquidAmount);
-				}
-				
-			}
-			for (auto const& rec : game.Crafter.savedRecipes)
-			{
-				listString.push_back(rec);
-			}
-
-			dat.sections["STATS"].lists.insert({ "savedRecipes", listString });
-			dat.sections["STATS"].lists.insert({ "items", itemList });
-
-			ItemReader::SaveDataToFile("dat/eid/save.eid", dat, true);
-
-			for (auto& chunk : game.mainMap.world.chunks) {
-				chunk.second->SaveChunk();
-			}
-
-			float endTime = glfwGetTime() - curTime;
-
-			Console::Log("Save complete in " + std::to_string(endTime * 1000) + "ms.", text::green, __LINE__);
+			SaveCurrentGame();
 		}
 	}
 };

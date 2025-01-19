@@ -211,6 +211,7 @@ void Map::SetWeather(weather we) {
 	case thunder:
 	case rainy:
 		Audio::PlayLoop("dat/sounds/rain.mp3", "rain");
+		Audio::SetVolumeLoop(Audio::GetVolume() / 2, "rain");
 		break;
 	case clear:
 		Audio::StopLoop("rain");
@@ -453,8 +454,22 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 	if (x > 0 && y > 0 && x < CHUNK_WIDTH && y < CHUNK_HEIGHT)
 		if (GetTileFromThisOrNeighbor({ x,y })->entity != nullptr) {
 			Entity* curEnt = GetTileFromThisOrNeighbor({ x,y })->entity;
+			//check if they have a weapon equipped
 			if (curEnt->health > 0 && pInv.CurrentEquipExists(weapon)){
+				//attack entity
 				AttackEntity(curEnt, pInv.equippedItems[weapon].mod, actionLog);
+
+				//if it has durability
+				if (pInv.equippedItems[weapon].maxDurability != -1) {
+					//remove durability
+					pInv.equippedItems[weapon].durability -= 1.f;
+					//if its at 0, remove it
+					if (pInv.equippedItems[weapon].durability <= 0) {
+						std::string itemName = pInv.equippedItems[weapon].section;
+						pInv.Unequip(weapon);
+						pInv.RemoveItem(itemName);
+					}
+				}
 			}
 			else {
 				vec2_i newCoords = { x - p->coords.x, y - p->coords.y };
@@ -477,6 +492,7 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 		Audio::Play("dat/sounds/movement/enter_water.wav");
 	}
 
+	//if the player is covered in liquid, spread it
 	if (p->coveredIn != nothing && p->coveredIn != mud && l == nothing && Math::RandInt(1, 5) >= 3) {
 		GetTileFromThisOrNeighbor(p->coords)->SetLiquid(p->coveredIn);
 	}
@@ -485,7 +501,9 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 
 	if (l != nothing && Math::RandInt(1, 5) >= 3)  //random check
 	{ 
-		p->CoverIn(l, 10); //cover the player in it
+		if (!pInv.CurrentEquipMatches(boots, "LEATHER_BOOTS")) {
+			p->CoverIn(l, 10); //cover the player in it
+		}
 	}
 
 	CheckBounds(p);
@@ -972,9 +990,12 @@ void Map::PlaceEntities(std::shared_ptr<Chunk> chunk)
 	//place the player and all entities on top of the tiles
 	for (int i = 0; i < chunk->entities.size(); i++)
 	{
-		chunk->localCoords
-		[chunk->entities[i]->coords.x]
-		[chunk->entities[i]->coords.y].entity = chunk->entities[i];
+		try {
+			chunk->localCoords
+				[chunk->entities[i]->coords.x]
+				[chunk->entities[i]->coords.y].entity = chunk->entities[i];
+		}
+		catch (std::exception e) { Console::Log(e.what(), ERROR, __LINE__); }
 	}
 
 }

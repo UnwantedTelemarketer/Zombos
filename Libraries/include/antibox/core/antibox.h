@@ -86,14 +86,14 @@ namespace antibox {
 		//Returns true if the key is pressed once, false if not.
 		bool KeyDown(int keycode) {
 			int state = glfwGetKey(antibox::Engine::Instance().GetWindow()->glfwin(), keycode); //glfw getting mouse down
-			if (state == GLFW_PRESS && !KD_FLAG) {
-				KD_CODE = keycode;
-				KD_FLAG = true;
-				return true;
+			if (state == GLFW_PRESS && !KD_FLAG) { //if we pressed a key and we dont have one held down
+				KD_CODE = keycode; //save this specific key
+				KD_FLAG = true; //flag that we're holding one down
+				return true; 
 			}
-			else if (state == GLFW_RELEASE && KD_FLAG) {
-				if (KD_CODE != keycode) { return false; }
-				KD_FLAG = false;
+			else if (state == GLFW_RELEASE && KD_FLAG) { //otherwise if they let go of a key AND we are previously holding one
+				if (KD_CODE != keycode) { return false; } //if the key we let up isnt the one we're holding down
+				KD_FLAG = false; //let go
 				return false;
 			}
 			return false;

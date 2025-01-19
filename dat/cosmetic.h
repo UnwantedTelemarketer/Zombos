@@ -11,5 +11,6 @@ public:
 	static char FireChar(std::string chars);
 	static const char* CoveredName(int liquid);
 	static const char* WeatherName(int weather);
+	static const char* EquipTypeName(int type);
 };
 

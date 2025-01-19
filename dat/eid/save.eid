@@ -2,65 +2,65 @@ BANDAGE {
 count : 1;
 coveredIn : 0;
 ticksUntilDry : 0;
-initialTickTime : 0;
+initialTickTime : 85;
+durability : -1;
 heldLiquid : 0;
 }
-BITS {
+GUTS {
 count : 1;
-coveredIn : 0;
-ticksUntilDry : 0;
-initialTickTime : 0;
-heldLiquid : 0;
-}
-GLASS_SHARDS {
-count : 3;
-coveredIn : 5;
-ticksUntilDry : 54;
-initialTickTime : 108;
+coveredIn : 2;
+ticksUntilDry : 53;
+initialTickTime : 56;
+durability : -1;
 heldLiquid : 0;
 }
 MATCH {
 count : 2;
-coveredIn : 5;
-ticksUntilDry : 9;
-initialTickTime : 71;
+coveredIn : 2;
+ticksUntilDry : 88;
+initialTickTime : 94;
+durability : -1;
 heldLiquid : 0;
 }
-RESIN {
+OLD_CLOTH {
 count : 1;
 coveredIn : 0;
 ticksUntilDry : 0;
 initialTickTime : 0;
-heldLiquid : 0;
-}
-SCRAP {
-count : 1;
-coveredIn : 0;
-ticksUntilDry : 0;
-initialTickTime : 0;
+durability : -1;
 heldLiquid : 0;
 }
 SETTINGS {
 ySep : 2;
-xDist : 19;
+xDist : 15;
 yDist : 15;
+sfxSound : 0.000000;
+musicSound : 1.000000;
 }
 STATS {
-x_pos : 16;
-y_pos : 13;
-biomes : 29182;
-seed : 30473;
-global_x : 247;
+x_pos : 14;
+y_pos : 15;
+biomes : 764;
+seed : 26733;
+global_x : 250;
 global_y : 250;
 weather : 0;
 color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
 health : 100.000000;
-thirst : 92.275314;
-hunger : 94.849686;
-time : 11.150020;
-items : [BANDAGE,MATCH,GLASS_SHARDS,SCRAP,RESIN,BITS];
+thirst : 93.325272;
+hunger : 95.549728;
+time : 10.450017;
+items : [BANDAGE,MATCH,OLD_CLOTH,GUTS];
 savedRecipes : [];
+}
+shirt {
+durability : 25;
+name : "RAINCOAT";
+}
+weapon {
+durability : -1;
+name : "SCRAP";
 }
 

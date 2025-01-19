@@ -1,11 +1,13 @@
 SECTIONS {
-sections : [LEATHER_BOOTS];
+sections : [LEATHER_BOOTS, RAINCOAT];
 }
+
+
+//notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6
 
 LEATHER_BOOTS {
 name : "Leather Boots";
 description : "Leather boots to help with weather. (Walks through mud without getting stuck)";
-id : "leather_boots";
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -15,6 +17,24 @@ useTxt : "Does Nothig.";
 effects : [0,0,0,0];
 equipType : 5;
 equipModifier : 15;
+durability : 100;
 sprite : "G";
 spriteColor : [1.0, 0.1, 0.2];
+}
+
+RAINCOAT{
+name : "Raincoat";
+description : "Old raincoat. Keeps you from getting wet.";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "weatr bppts";
+useTxt : "Does Nothig.";
+effects : [0,0,0,0];
+equipType : 3;
+equipModifier : 15;
+durability : 25;
+sprite : "K";
+spriteColor : [1.0, 1.0, 0.2];
 }

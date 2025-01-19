@@ -1,69 +1,105 @@
-[ Line 225 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
-[ Line 155 ]: [0;37mLoading Tiles from files...[0m
 [ Line 83 ]: [0;37mLoading Items from files...[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 225 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
+[ Line 156 ]: [0;37mLoading Tiles from files...[0m
 [ Line 79 ]: [1;32mLoaded texture from res/plank.png.[0m
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
 [ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 97 ]: [0;37mLoaded Items![0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
+[ Line 102 ]: [1;31mError: getFloat requires the value to be a float.[0m
 [ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 170 ]: [0;37mLoaded Tiles![0m
-[ Line 128 ]: [1;32mDone![0m
+[ Line 171 ]: [0;37mLoaded Tiles![0m
+[ Line 1324 ]: [1;32mDone![0m
 [ Line 40 ]: [1;31m0[0m
-[ Line 222 ]: [1;32mReading Chunk from dat/map/249249.chunk[0m
-[ Line 222 ]: [1;32mReading Chunk from dat/map/250249.chunk[0m
-[ Line 222 ]: [1;32mReading Chunk from dat/map/251249.chunk[0m
-[ Line 222 ]: [1;32mReading Chunk from dat/map/249250.chunk[0m
-[ Line 222 ]: [1;32mReading Chunk from dat/map/250250.chunk[0m
-[ Line 222 ]: [1;32mReading Chunk from dat/map/251250.chunk[0m
-[ Line 222 ]: [1;32mReading Chunk from dat/map/249251.chunk[0m
-[ Line 222 ]: [1;32mReading Chunk from dat/map/250251.chunk[0m
-[ Line 222 ]: [1;32mReading Chunk from dat/map/251251.chunk[0m
-[ Line 50 ]: [0;33mbgColor1 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor2 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor3 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor1 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor2 already on lerp stack. Overwritting...[0m
-[ Line 50 ]: [0;33mbgColor3 already on lerp stack. Overwritting...[0m
+[ Line 223 ]: [1;32mReading Chunk from dat/map/249249.chunk[0m
+[ Line 223 ]: [1;32mReading Chunk from dat/map/250249.chunk[0m
+[ Line 223 ]: [1;32mReading Chunk from dat/map/251249.chunk[0m
+[ Line 223 ]: [1;32mReading Chunk from dat/map/249250.chunk[0m
+[ Line 223 ]: [1;32mReading Chunk from dat/map/250250.chunk[0m
+[ Line 223 ]: [1;32mReading Chunk from dat/map/251250.chunk[0m
+[ Line 223 ]: [1;32mReading Chunk from dat/map/249251.chunk[0m
+[ Line 223 ]: [1;32mReading Chunk from dat/map/250251.chunk[0m
+[ Line 223 ]: [1;32mReading Chunk from dat/map/251251.chunk[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 90 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line 50 ]: [0;33mbgColor1 already on lerp stack. Overwritting...[0m
 [ Line 50 ]: [0;33mbgColor2 already on lerp stack. Overwritting...[0m
 [ Line 50 ]: [0;33mbgColor3 already on lerp stack. Overwritting...[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 353 ]: [1;32mWrote to file dat/eid/save.eid[0m
-[ Line 1463 ]: [1;32mSave complete in 23.079744ms.[0m
+[ Line 358 ]: [1;32mWrote to file dat/eid/save.eid[0m
+[ Line 176 ]: [1;32mSave complete in 58.296104ms.[0m

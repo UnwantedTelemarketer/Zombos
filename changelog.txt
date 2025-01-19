@@ -3,11 +3,19 @@
 
  - Item Durability introduced
 
+ - Rain now gets the player wet, unless they are wearing a coat
+
+ - Boots now prevent the player from getting wet walking on tiles
+
+ - Bottles on tiles that get wet fill with liquid
+
  - Item Data now saves with detail (Liquid, durability, etc.)
+
+ - Equipped Items now save with detail
 
  - Fixed body temperature, being near fire now warms up the player.
 
- - Settings for visuals
+ - Settings for visuals, saving game
 
  - Performance enhancements
 

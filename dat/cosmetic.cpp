@@ -104,3 +104,24 @@ const char* Cosmetic::WeatherName(int weather) {
 		return "Thunder";
 	}
 }
+const char* Cosmetic::EquipTypeName(int type) {
+	switch (type)
+	{
+	case 0:
+		return "none";
+	case 1:
+		return "weapon";
+	case 2:
+		return "hat";
+	case 3:
+		return "shirt";
+	case 4:
+		return "pants";
+	case 5:
+		return "boots";
+	case 6:
+		return "gloves";
+	default:
+		return "none";
+	}
+}

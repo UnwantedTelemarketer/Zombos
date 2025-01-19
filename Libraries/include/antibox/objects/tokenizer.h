@@ -257,11 +257,16 @@ public:
 static class ItemReader{
 public:
 
-	static void GetDataFromFile(std::string filepath, std::string section, OpenedData* data, bool defaultPath = true) {
+	static bool GetDataFromFile(std::string filepath, std::string section, OpenedData* data, bool defaultPath = true) {
 
 		std::string new_filepath;
 		if (defaultPath) { new_filepath = "dat/eid/" + filepath; }
 		else { new_filepath = filepath; }
+
+		if (!std::filesystem::exists(new_filepath)) {
+			Console::Log("Attempting to read from file '" + new_filepath + "', but can't find file.", ERROR, __LINE__);
+			return false;
+		}
 
 		std::ifstream file(new_filepath);
 
@@ -294,7 +299,7 @@ public:
 			data->tokens[temp_tokens[i]] = temp_tokens[i + 1];
 			i++;
 		}
-		
+		return true;
 	}
 
 	static std::string ReturnDataToSave(SaveData data) {

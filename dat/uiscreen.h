@@ -13,6 +13,7 @@ struct GameUI {
 		containerOpen,
 		helpMenu,
 		console_showing,
+		equipmentScreenOpen,
 		settingsOpen;
 
 	void FlipScreens() {
@@ -31,6 +32,10 @@ struct GameUI {
 		if (Input::KeyDown(KEY_H))
 		{
 			helpMenu = !helpMenu;
+		}
+		if (Input::KeyDown(KEY_I))
+		{
+			equipmentScreenOpen = !equipmentScreenOpen;
 		}
 		if (Input::KeyDown(KEY_ESCAPE))
 		{

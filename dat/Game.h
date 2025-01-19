@@ -535,7 +535,18 @@ void GameManager::UpdateTick() {
 		//if player stands in liquid, soak em.
 		Liquid tileLiquid = mainMap.CurrentChunk()->GetTileAtCoords(mPlayer.coords)->liquid;
 		if (tileLiquid != nothing) {
-			mPlayer.CoverIn(tileLiquid, Math::RandInt(10, 30));
+			if (!pInv.CurrentEquipMatches(boots, "LEATHER_BOOTS") && tileLiquid != fire) {
+				mPlayer.CoverIn(tileLiquid, Math::RandInt(10, 30));
+			}
+		}
+
+		if (mainMap.currentWeather == rainy || mainMap.currentWeather == thunder) {
+			if (Math::RandInt(1, 7) == 2)  //random check
+			{
+				if (!pInv.CurrentEquipMatches(shirt, "RAINCOAT")) {
+					mPlayer.CoverIn(water, 15); //cover the player in it
+				}
+			}
 		}
 
 		if (mPlayer.coveredIn == water || mPlayer.bodyTemp > 98.5f) {
@@ -915,6 +926,7 @@ private:
 public:
 	void RunCommand(std::string input, GameManager* game);
 	std::string GetOldCommand(int* index);
+	int prevCommandSize() { return previous_commands.size(); }
 };
 
 void Commands::RunCommand(std::string input, GameManager* game) {

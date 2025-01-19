@@ -46,6 +46,8 @@ struct Item {
 	std::string sprite = "#";
 	int emissionDist = 0;
 	Vector3 spriteColor = {1,1,1};
+	float maxDurability = -1.f;
+	float durability = 0.f;
 
 	void CoverIn(Liquid l, int ticks) {
 		coveredIn = l;
@@ -67,6 +69,12 @@ struct Item {
 		useTxt = item.getString("useTxt");
 		eType = (equipType)item.getInt("equipType");
 		sprite = item.getString("sprite");
+
+		try {
+			maxDurability = item.getFloat("durability");
+			durability = maxDurability;
+		}//this is fine if it doesnt work, not all items are cookable and shouldnt need to specify
+		catch (std::exception e) { maxDurability = -1.f; }
 
 		try {
 			cookable = item.getBool("cookable");
@@ -188,6 +196,8 @@ struct Player {
 	void CoverIn(Liquid liquid, int turns) {
 		liquidLast = turns;
 		if (coveredIn != nothing && coveredIn != water && liquid == water) { coveredIn = nothing; return; }
+		if (coveredIn == liquid) { ticksCovered -= turns; }
+		ticksCovered = ticksCovered < 0 ? 0 : ticksCovered;
 		coveredIn = liquid;
 	}
 };

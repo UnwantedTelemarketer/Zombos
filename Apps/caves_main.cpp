@@ -937,8 +937,6 @@ public:
 		}
 	}
 
-
-
 	void Shutdown() override {
 		if (currentState == playing) {
 			float curTime = glfwGetTime();

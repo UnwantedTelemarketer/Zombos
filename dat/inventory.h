@@ -35,6 +35,7 @@ public:
 		}
 	}
 
+	//Equip item from inventory
 	void EquipItem(int index) {
 		Item tempItem = items[index];
 		tempItem.count = 1;
@@ -49,6 +50,19 @@ public:
 			RemoveItem(items[index].section);
 		}
 
+		Cleanup();
+	}
+
+	//Add new item straight to the equip slot
+	void EquipItem(Item item) {
+		if (equippedItems.contains(item.eType)) {
+			//Item oldEquipped = equippedItems[item.eType];
+			equippedItems[item.eType] = item;
+			//AddItem(oldEquipped);
+		}
+		else {
+			equippedItems.insert({ item.eType, item });
+		}
 		Cleanup();
 	}
 	
@@ -150,7 +164,13 @@ public:
 		bool covered = false;
 		if (tile->hasItem) {
 			Item item = GetItemFromFile("items.eid", tile->itemName);
-			if (covered) { item.CoverIn(tile->liquid, Math::RandInt(30, 60)); }
+			if (covered) { 
+				if (item.holdsLiquid) {
+					item.heldLiquid = tile->liquid;
+					item.liquidAmount = 100;
+				}
+				item.CoverIn(tile->liquid, Math::RandInt(30, 60));
+			}
 
 			tile->itemName = "";
 			tile->hasItem = false;
@@ -278,6 +298,7 @@ public:
 			newItem.coveredIn = (Liquid)itemDat.getInt("coveredIn");
 			newItem.ticksUntilDry = itemDat.getInt("ticksUntilDry");
 			newItem.initialTickTime = itemDat.getInt("initialTickTime");
+			newItem.durability = itemDat.getFloat("durability");
 			newItem.heldLiquid = (Liquid)itemDat.getInt("heldLiquid");
 			if (newItem.heldLiquid != nothing) {
 				newItem.liquidAmount = itemDat.getFloat("liquidAmount");
