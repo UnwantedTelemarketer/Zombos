@@ -466,8 +466,8 @@ public:
 
 
 			ySeparator = settings.getInt("ySep");
-			xViewDist = settings.getInt("xView");
-			yViewDist = settings.getInt("yView");
+			xViewDist = settings.getInt("xDist");
+			yViewDist = settings.getInt("yDist");
 		}
 		ImGui::End();
 

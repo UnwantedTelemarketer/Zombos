@@ -1,38 +1,66 @@
 BANDAGE {
 count : 1;
-coveredIn : 2;
-ticksUntilDry : 59;
-initialTickTime : 82;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 0;
+heldLiquid : 0;
+}
+BITS {
+count : 1;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 0;
+heldLiquid : 0;
+}
+GLASS_SHARDS {
+count : 3;
+coveredIn : 5;
+ticksUntilDry : 54;
+initialTickTime : 108;
 heldLiquid : 0;
 }
 MATCH {
 count : 2;
-coveredIn : 2;
-ticksUntilDry : 57;
-initialTickTime : 80;
+coveredIn : 5;
+ticksUntilDry : 9;
+initialTickTime : 71;
+heldLiquid : 0;
+}
+RESIN {
+count : 1;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 0;
+heldLiquid : 0;
+}
+SCRAP {
+count : 1;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 0;
 heldLiquid : 0;
 }
 SETTINGS {
 ySep : 2;
-xDist : 15;
+xDist : 19;
 yDist : 15;
 }
 STATS {
-x_pos : 25;
-y_pos : 28;
-biomes : 6700;
-seed : 26991;
-global_x : 250;
-global_y : 253;
+x_pos : 16;
+y_pos : 13;
+biomes : 29182;
+seed : 30473;
+global_x : 247;
+global_y : 250;
 weather : 0;
 color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
-health : 90.000000;
-thirst : 95.200195;
-hunger : 96.799805;
-time : 9.200012;
-items : [BANDAGE,MATCH];
+health : 100.000000;
+thirst : 92.275314;
+hunger : 94.849686;
+time : 11.150020;
+items : [BANDAGE,MATCH,GLASS_SHARDS,SCRAP,RESIN,BITS];
 savedRecipes : [];
 }
 
