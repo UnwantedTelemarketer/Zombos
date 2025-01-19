@@ -36,6 +36,7 @@ public:
 	vec3 mainBGcolor;
 	vec3 bgColor;
 	biome currentBiome, lerpingTo;
+	float testTime;
 
 	std::vector<std::string> sandWalk, grassWalk, rockWalk;
 
@@ -60,7 +61,7 @@ public:
 
 	void RedrawEntities(Vector2_I chunkCoords);
 
-	void DoBehaviour(Entity* ent);
+	void DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse);
 
 	void AttemptAttack(Entity* ent);
 
@@ -163,7 +164,7 @@ void GameManager::AddRecipes() {
 	}
 }
 
-void GameManager::DoBehaviour(Entity* ent)
+void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 {
 	std::vector<Vector2_I> path = mainMap.GetLine(ent->coords, mPlayer.coords, 10);
 	std::vector<Vector2_I> entPath;
@@ -171,9 +172,9 @@ void GameManager::DoBehaviour(Entity* ent)
 	bool moved = false;
 	ent->tempViewDistance = isDark() ? ent->viewDistance * 2 : ent->viewDistance;
 
-	for (int i = 0; i < mainMap.CurrentChunk()->entities.size(); i++) //loop through every entity
+	for (int i = 0; i < chunkInUse->entities.size(); i++) //loop through every entity
 	{
-		Entity* curEnt = mainMap.CurrentChunk()->entities[i]; 
+		Entity* curEnt = chunkInUse->entities[i];
 
 		if (curEnt == ent || curEnt->health <= 0) { continue; } //check that we arent looking at the same entity twice
 
@@ -181,7 +182,7 @@ void GameManager::DoBehaviour(Entity* ent)
 
 		if (curPath.size() < entPath.size() || entPath.size() == 0) { //check that its long enough and target them
 			entPath = curPath;
-			tempTarget = mainMap.CurrentChunk()->entities[i];
+			tempTarget = chunkInUse->entities[i];
 		}
 	}
 
@@ -196,13 +197,13 @@ void GameManager::DoBehaviour(Entity* ent)
 	int dir = Math::RandInt(1, 10);
 	vec2_i oldCoords = ent->coords;
 
-	Tile* tile = mainMap.CurrentChunk()->GetTileAtCoords(ent->coords);
+	Tile* tile = chunkInUse->GetTileAtCoords(ent->coords);
 
 	switch (ent->b) //check the entities behaviour
 	{
 	case Aggressive:
 		//check if player is near
-		if (path.size() < ent->viewDistance && mPlayer.coveredIn != guts) {
+		if (path.size() < ent->viewDistance) {
 			ent->targetingPlayer = true;
 		}
 		else {
@@ -217,21 +218,23 @@ void GameManager::DoBehaviour(Entity* ent)
 				isEnemies = std::find(factionEnemies[ent->faction].begin(), factionEnemies[ent->faction].end(), ent->target->faction) != factionEnemies[ent->faction].end();
 			}
 			//if the player is targeted
-			if (ent->targetingPlayer) {
-				if (mPlayer.coveredIn == guts) { ent->targetingPlayer = false; }
-				ent->coords = path[1];
+			else if (ent->targetingPlayer) {
+				if (mPlayer.coveredIn == guts && ent->name == "Zombie") { ent->targetingPlayer = false; }
+				if (path.size() > 1) { ent->coords = path[1]; }
+				else { ent->coords = path[0]; }
 				moved = true;
 				break;
 			}
 			//otherwise, if they are enemies go towards them
 			else if (entPath.size() > 2 && isEnemies != 0) {
-				ent->coords = entPath[1];
+				if (entPath.size() > 1) { ent->coords = entPath[1]; }
+				else { ent->coords = entPath[0]; }
 				moved = true;
 				break;
 			}
 			//if theyre close enough, attack them
 			else if (entPath.size() <= 2) {
-				mainMap.AttackEntity(ent->target, ent->damage, &actionLog);
+				mainMap.AttackEntity(ent->target, ent->damage, &actionLog, chunkInUse);
 				if (ent->target->health <= 0) {
 					ent->target = nullptr;
 				}
@@ -305,6 +308,9 @@ void GameManager::DoBehaviour(Entity* ent)
 		ent->ticksUntilDry = Math::RandInt(10, 30);
 	}
 	else if(ent->coveredIn != nothing) {
+		if (ent->coveredIn == fire) {
+			ent->health -= 5;
+		}
 		tile->SetLiquid(ent->coveredIn);
 	}
 
@@ -506,6 +512,7 @@ void GameManager::UpdateTick() {
 
 	if (tickCount >= tickRate)
 	{
+		float curTime = glfwGetTime();
 		if (mainMap.UpdateWeather()) {
 			switch (mainMap.currentWeather) {
 			case rainy:
@@ -602,6 +609,7 @@ void GameManager::UpdateTick() {
 			darkTime = 4.f;
 		}
 
+
 		//Update surrounding chunks in separate threads for "super speed" >:)
 		/*std::vector<std::thread> threads;
 		for (int i = -1; i < 2; ++i) {
@@ -611,15 +619,18 @@ void GameManager::UpdateTick() {
 		threads.push_back(std::thread(T_UpdateChunk, this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y + 1 }));
 		threads.push_back(std::thread(T_UpdateChunk, this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y - 1}));
 		for (auto& th : threads) {
-			th.join();
+			th.detach();
 		}*/
 
 		//hardcoded version of updating surrounding chunks
-		//T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x + 1,  mainMap.c_glCoords.y });
-		//T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x - 1,  mainMap.c_glCoords.y });
 		T_UpdateChunk(this, mainMap.c_glCoords);
-		//T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y + 1 });
-		//T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y - 1 });
+		if (!mainMap.isUnderground) {
+			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x + 1,  mainMap.c_glCoords.y });
+			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x - 1,  mainMap.c_glCoords.y });
+			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y + 1 });
+			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y - 1 });
+		}
+		testTime = (glfwGetTime() - curTime) * 1000;
 
 		//Utilities::Lerp("playertemp", &mPlayer.visualTemp, mPlayer.bodyTemp, 0.5f);
 	}
@@ -637,7 +648,7 @@ void GameManager::UpdateEntities(Vector2_I chunkCoords) {
 	std::shared_ptr<Chunk> usedChunk = mainMap.GetProperChunk(chunkCoords);
 
 	mainMap.ClearLine();
-	mainMap.ClearEntities(oldLocations, usedChunk);
+	mainMap.ClearEntities(usedChunk);
 	for (int i = 0; i < usedChunk->entities.size(); i++)
 	{
 		if (i >= usedChunk->entities.size()) { break; }
@@ -650,18 +661,13 @@ void GameManager::UpdateEntities(Vector2_I chunkCoords) {
 
 		if (Math::RandInt(1, 10) >= 4 && !usedChunk->entities[i]->targeting()) { continue; }
 
-		DoBehaviour(usedChunk->entities[i]);
-		mainMap.CheckBounds(usedChunk->entities[i], usedChunk);
-		
+		DoBehaviour(usedChunk->entities[i], usedChunk);
+		if (mainMap.CheckBounds(usedChunk->entities[i], usedChunk)) {
+			i--;
+		}
 	}
 
 	mainMap.PlaceEntities(usedChunk);
-
-	oldLocations.clear();
-	for (int i = 0; i < usedChunk->entities.size(); i++)
-	{
-		oldLocations.push_back(usedChunk->entities[i]->coords);
-	}
 }
 
 void GameManager::AttemptAttack(Entity* ent)
@@ -673,8 +679,9 @@ void GameManager::AttemptAttack(Entity* ent)
 	{
 		if (std::count(mainMap.CurrentChunk()->entities.begin(), mainMap.CurrentChunk()->entities.end(), ent))
 		{
-			Math::PushBackLog(&actionLog, "Zombie bites you for 10 damage!");
-			mPlayer.TakeDamage(pierceDamage, 10);
+			std::string attackmsg = " hits you for ";
+			Math::PushBackLog(&actionLog, ent->name + attackmsg + std::to_string(ent->damage) + " damage!");
+			mPlayer.TakeDamage(pierceDamage, ent->damage);
 			bgColor = { 0.5f,0,0 };
 			Utilities::Lerp("bgColor", &bgColor, mainBGcolor, 0.5f);
 		}

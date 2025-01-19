@@ -60,10 +60,10 @@ public:
 	biome GetBiome(Vector2_I coords);
 	biome GetBiome(Vector2_I coords, Vector2_I global_coords);
 	void MakeNewChunk(Vector2_I coords);
-	void AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog);
+	void AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog, std::shared_ptr<Chunk> chunk);
 	void MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLog, Inventory& pInv);
 	void CheckBounds(Player* p);
-	void CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk);
+	bool CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk);
 	void BuildChunk(std::shared_ptr<Chunk> chunk);
 	void PlaceBuilding(std::shared_ptr<Chunk> chunk);
 	void GenerateTomb(std::shared_ptr<Chunk> chunk);
@@ -74,7 +74,7 @@ public:
 	std::vector<Vector2_I> GetCircleEdge(Vector2_I centerPoint, int size);
 	void DrawLine(std::vector<Vector2_I> list);
 	void ClearLine();
-	void ClearEntities(std::vector<Vector2_I> positions, std::shared_ptr<Chunk> chunk);
+	void ClearEntities(std::shared_ptr<Chunk> chunk);
 	void ClearChunkOfEnts(std::shared_ptr<Chunk> chunk);
 	void ClearEffects();
 	void PlaceEntities(std::shared_ptr<Chunk> chunk);
@@ -412,7 +412,7 @@ biome Map::GetBiome(Vector2_I coords)
 	return GetBiome(coords, c_glCoords);
 }
 
-void Map::AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog) {
+void Map::AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog, std::shared_ptr<Chunk> chunk) {
 	curEnt->health -= damage;
 
 	std::string damageText = "";
@@ -427,21 +427,21 @@ void Map::AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* act
 	Vector2_I coords = curEnt->coords;
 
 	Math::PushBackLog(actionLog, damageText);
-	CurrentChunk()->localCoords[coords.x][coords.y].SetLiquid(blood);
+	chunk->localCoords[coords.x][coords.y].SetLiquid(blood);
 
 	int bleedChance = Math::RandInt(1, 8);
 	switch (bleedChance) {
 	case 1:
-		CurrentChunk()->localCoords[coords.x + 1][coords.y].SetLiquid(blood);
+		chunk->localCoords[coords.x + 1][coords.y].SetLiquid(blood);
 		break;
 	case 2:
-		CurrentChunk()->localCoords[coords.x][coords.y + 1].SetLiquid(blood);
+		chunk->localCoords[coords.x][coords.y + 1].SetLiquid(blood);
 		break;
 	case 3:
-		CurrentChunk()->localCoords[coords.x - 1][coords.y].SetLiquid(blood);
+		chunk->localCoords[coords.x - 1][coords.y].SetLiquid(blood);
 		break;
 	case 4:
-		CurrentChunk()->localCoords[coords.x][coords.y - 1].SetLiquid(blood);
+		chunk->localCoords[coords.x][coords.y - 1].SetLiquid(blood);
 		break;
 	default:
 		break;
@@ -457,7 +457,8 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 			//check if they have a weapon equipped
 			if (curEnt->health > 0 && pInv.CurrentEquipExists(weapon)){
 				//attack entity
-				AttackEntity(curEnt, pInv.equippedItems[weapon].mod, actionLog);
+				AttackEntity(curEnt, pInv.equippedItems[weapon].mod, actionLog, CurrentChunk());
+				if (curEnt->b == Protective) { curEnt->aggressive = true; curEnt->b = Aggressive; }
 
 				//if it has durability
 				if (pInv.equippedItems[weapon].maxDurability != -1) {
@@ -476,6 +477,7 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 				curEnt->coords += newCoords;
 				GetTileFromThisOrNeighbor({ x,y })->entity = nullptr;
 				GetTileFromThisOrNeighbor(curEnt->coords)->entity = curEnt;
+				CheckBounds(curEnt, CurrentChunk());
 				chunkUpdateFlag = true;
 			}
 			return;
@@ -553,53 +555,85 @@ offscreen:
 
 
 //check if entity moves to next chunk
-void Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
+bool Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 	bool changed = false;
 	int oldIndex = p->index;
 	if (p->coords.x > CHUNK_WIDTH - 1) { //check if they left the chunk
-		//if (c_glCoords.x + 1 >= CHUNK_WIDTH) { p->coords.x = CHUNK_WIDTH - 1; return; } //dont let them leave world bounds
-		changed = true;
-		p->coords.x = 0; //move them to the other side of the screen
-		world.chunks[{chunk->globalChunkCoord.x + 1,
-			chunk->globalChunkCoord.y}]->entities.push_back(p); //put them in the vector of the next chunk over
+		if (c_glCoords.x + 1 >= 500) { p->coords.x = CHUNK_WIDTH - 1; return false; } //dont let them leave world bounds
+		
 
-		//p->index = world.chunks[{chunk->globalChunkCoord.x + 1,
-		//	chunk->globalChunkCoord.y}]->entities.size() - 1; //change their index in the list
+		//if they attempt to enter a chunk that isnt loaded, then delete them.
+		if(!(chunk->globalChunkCoord.x + 1 >= c_glCoords.x + 2)) {
+			changed = true;
+			p->coords.x = 0; //move them to the other side of the screen
+			world.chunks[{chunk->globalChunkCoord.x + 1,
+				chunk->globalChunkCoord.y}]->entities.push_back(p); //put them in the vector of the next chunk over
+		}
+		else { //prevent the error of them being on the outer bounds and not exiting the chunk,
+			   // leaving them at an x or y value of 30 which is invalid bcus the chunks are 0-29
+			p->coords.x = CHUNK_WIDTH - 1;
+		}
+
 	}
 	else if (p->coords.x < 0) {
-		if (c_glCoords.x - 1 < 0) { p->coords.x = 0; return; }
-		changed = true;
-		p->coords.x = CHUNK_WIDTH - 1;
-		world.chunks[{chunk->globalChunkCoord.x - 1,
-			chunk->globalChunkCoord.y}]->entities.push_back(p);
+		if (c_glCoords.x - 1 < 0) { p->coords.x = 0; return false; }
 
-		//p->index = world.chunks[{chunk->globalChunkCoord.x - 1,
-		//	chunk->globalChunkCoord.y}]->entities.size() - 1;
+		//if they attempt to enter a chunk that isnt loaded, then dont let them.
+		if (!(chunk->globalChunkCoord.x - 1 <= c_glCoords.x - 2)) {
+			changed = true;
+			p->coords.x = CHUNK_WIDTH - 1;
+			world.chunks[{chunk->globalChunkCoord.x - 1,
+				chunk->globalChunkCoord.y}]->entities.push_back(p);
+		}
+		else {
+			p->coords.x = 0;
+		}
 	}
 	else if (p->coords.y > CHUNK_HEIGHT - 1) {
-		if (chunk->globalChunkCoord.y + 1 >= CHUNK_HEIGHT) { p->coords.y = CHUNK_HEIGHT - 1; return; }
-		changed = true;
-		p->coords.y = 0;
-		world.chunks[{chunk->globalChunkCoord.x,
-			chunk->globalChunkCoord.y + 1}]->entities.push_back(p);
+		if (chunk->globalChunkCoord.y + 1 >= 500) { p->coords.y = CHUNK_HEIGHT - 1; return false; }
 
-		//p->index = world.chunks[{chunk->globalChunkCoord.x,
-		//	chunk->globalChunkCoord.y + 1}]->entities.size() - 1;
+		//if they attempt to enter a chunk that isnt loaded, then delete them.
+		if (!(chunk->globalChunkCoord.y + 1 >= c_glCoords.y + 2)) {
+			changed = true;
+			p->coords.y = 0;
+			world.chunks[{chunk->globalChunkCoord.x,
+				chunk->globalChunkCoord.y + 1}]->entities.push_back(p);
+		}
+		else {
+			p->coords.y = CHUNK_HEIGHT - 1;
+		}
 	}
 	else if (p->coords.y < 0) {
-		if (chunk->globalChunkCoord.y - 1 < 0) { p->coords.y = 0; return; }
-		changed = true;
-		p->coords.y = CHUNK_HEIGHT - 1;
-		world.chunks[{chunk->globalChunkCoord.x,
-			chunk->globalChunkCoord.y - 1}]->entities.push_back(p);
+		if (chunk->globalChunkCoord.y - 1 < 0) { p->coords.y = 0; return false; }
 
-		//p->index = world.chunks[{chunk->globalChunkCoord.x,
-		//	chunk->globalChunkCoord.y - 1}]->entities.size() - 1;
+		//if they attempt to enter a chunk that isnt loaded, then delete them.
+		if (!(chunk->globalChunkCoord.y - 1 <= c_glCoords.y - 2)) {
+			changed = true;
+			p->coords.y = CHUNK_HEIGHT - 1;
+			world.chunks[{chunk->globalChunkCoord.x,
+				chunk->globalChunkCoord.y - 1}]->entities.push_back(p);
+		}
+		else {
+			p->coords.y = 0;
+		}
 	}
+
+	
 	if (changed) {
-		chunk->entities.erase(chunk->entities.begin() + oldIndex);
+		int indexOfEnt = -1;
+
+		for (size_t i = 0; i < chunk->entities.size(); i++)
+		{
+			if (chunk->entities[i] == p) {
+				indexOfEnt = i;
+				break;
+			}
+		}
+		chunk->entities.erase(chunk->entities.begin() + indexOfEnt);
 		FixEntityIndex(chunk);
+		return true;
 	}
+	return false;
 }
 
 void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
@@ -963,12 +997,12 @@ void Map::ClearLine()
 	line.clear();
 }
 
-void Map::ClearEntities(std::vector<Vector2_I> positions, std::shared_ptr<Chunk> chunk)
+void Map::ClearEntities(std::shared_ptr<Chunk> chunk)
 {
 	//go to the player and all entities and replace the original tile
-	for (int i = 0; i < positions.size(); i++)
+	for (int i = 0; i < chunk->entities.size(); i++)
 	{
-		chunk->localCoords[positions[i].x][positions[i].y].entity = nullptr;
+		chunk->localCoords[chunk->entities[i]->coords.x][chunk->entities[i]->coords.y].entity = nullptr;
 	}
 }
 

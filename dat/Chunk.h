@@ -114,6 +114,9 @@ public:
 		for (auto const& cont : containers) {
 			delete cont;
 		}
+		for (auto const& ent : entities) {
+			delete ent;
+		}
 		outFile.close();
 	}
 };

@@ -1,32 +1,16 @@
 BANDAGE {
 count : 1;
-coveredIn : 0;
-ticksUntilDry : 0;
-initialTickTime : 85;
-durability : -1;
-heldLiquid : 0;
-}
-GUTS {
-count : 1;
 coveredIn : 2;
-ticksUntilDry : 53;
-initialTickTime : 56;
+ticksUntilDry : 29;
+initialTickTime : 36;
 durability : -1;
 heldLiquid : 0;
 }
 MATCH {
 count : 2;
 coveredIn : 2;
-ticksUntilDry : 88;
-initialTickTime : 94;
-durability : -1;
-heldLiquid : 0;
-}
-OLD_CLOTH {
-count : 1;
-coveredIn : 0;
-ticksUntilDry : 0;
-initialTickTime : 0;
+ticksUntilDry : 66;
+initialTickTime : 75;
 durability : -1;
 heldLiquid : 0;
 }
@@ -38,29 +22,25 @@ sfxSound : 0.000000;
 musicSound : 1.000000;
 }
 STATS {
-x_pos : 14;
-y_pos : 15;
-biomes : 764;
-seed : 26733;
+x_pos : 3;
+y_pos : 13;
+biomes : 20033;
+seed : 31212;
 global_x : 250;
 global_y : 250;
 weather : 0;
 color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
-health : 100.000000;
-thirst : 93.325272;
-hunger : 95.549728;
-time : 10.450017;
-items : [BANDAGE,MATCH,OLD_CLOTH,GUTS];
+health : 90.000000;
+thirst : 96.250153;
+hunger : 97.499847;
+time : 8.500010;
+items : [BANDAGE,MATCH];
 savedRecipes : [];
-}
-shirt {
-durability : 25;
-name : "RAINCOAT";
 }
 weapon {
 durability : -1;
-name : "SCRAP";
+name : "ROCK";
 }
 

@@ -15,11 +15,18 @@
 
  - Fixed body temperature, being near fire now warms up the player.
 
+ - Protective NPCs will become aggressive when attacked
+
  - Settings for visuals, saving game
+
+ - Fixes for surrounding chunk loading + entity bugs
 
  - Performance enhancements
 
  - Engine Bug Fixes
+
+ 
+ - There may have been new random crashes introduced with the new entity update. Sorry. Working on it.
 
 
 --v0.2.0 Changes--

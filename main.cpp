@@ -1178,6 +1178,8 @@ public:
 			ImGui::Text(("High: " + std::to_string(frame.highest)).c_str());
 			ImGui::Text(("Low: " + std::to_string(frame.lowest)).c_str());
 			ImGui::Text(("Average: " + std::to_string(lastFPS)).c_str());
+
+			ImGui::Text(("Tested Function Runtime: " + std::to_string(game.testTime)).c_str());
 			//ImGui::PlotLines("Frame Times", frame.frames.c_arr(), frame.frames.length);
 			//ms left until next tick
 			ImGui::Text(("Time until next update:"));
