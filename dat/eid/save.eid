@@ -1,32 +1,16 @@
 BANDAGE {
 count : 1;
-coveredIn : 2;
-ticksUntilDry : 2;
-initialTickTime : 54;
-durability : -1;
-heldLiquid : 0;
-}
-GUTS {
-count : 1;
-coveredIn : 2;
-ticksUntilDry : 25;
-initialTickTime : 88;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 0;
 durability : -1;
 heldLiquid : 0;
 }
 MATCH {
 count : 2;
-coveredIn : 2;
-ticksUntilDry : 48;
-initialTickTime : 96;
-durability : -1;
-heldLiquid : 0;
-}
-OLD_CLOTH {
-count : 1;
-coveredIn : 2;
-ticksUntilDry : 4;
-initialTickTime : 60;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 0;
 durability : -1;
 heldLiquid : 0;
 }
@@ -38,25 +22,21 @@ sfxSound : 0.000000;
 musicSound : 1.000000;
 }
 STATS {
-x_pos : 18;
-y_pos : 21;
-biomes : 9924;
-seed : 5283;
-global_x : 251;
-global_y : 252;
+x_pos : 10;
+y_pos : 24;
+biomes : 16865;
+seed : 22430;
+global_x : 250;
+global_y : 250;
 weather : 0;
 color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
-health : 60.000000;
-thirst : 81.475754;
-hunger : 87.649246;
-time : 18.350002;
-items : [BANDAGE,MATCH,OLD_CLOTH,GUTS];
+health : 100.000000;
+thirst : 96.775131;
+hunger : 97.849869;
+time : 8.150008;
+items : [BANDAGE,MATCH];
 savedRecipes : [];
-}
-weapon {
-durability : -1;
-name : "ROCK";
 }
 
