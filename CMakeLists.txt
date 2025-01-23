@@ -1,8 +1,8 @@
-cmake_minimum_required(VERSION 3.16.0 FATAL_ERROR)
+﻿cmake_minimum_required(VERSION 3.16.0 FATAL_ERROR)
 
 set(CMAKE_SYSTEM_VERSION 10.0 CACHE STRING "" FORCE)
 
-project(runicdepths C CXX)
+project(antibox_cmake C CXX)
 
 ################################################################################
 # Set target arch type if empty. Visual studio solution generator provides it.
@@ -38,6 +38,7 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "")
     set(CMAKE_CXX_FLAGS_DEBUG "")
     set(CMAKE_CXX_FLAGS_RELEASE "")
+    set(CMAKE_CXX_STANDARD 20)
 endif()
 
 ################################################################################
@@ -91,46 +92,14 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-set(PROJECT_NAME runicdepths)
+set(PROJECT_NAME antibox_cmake)
 
 ################################################################################
 # Source groups
 ################################################################################
 set(no_group_source_files
-    "dat/eid/dialogue.eid"
-    "dat/eid/factions.eid"
-    "dat/eid/ground_items.eid"
-    "dat/eid/item_data.eid"
-    "dat/eid/items.eid"
-    "dat/eid/items/crafting_recipes.eid"
-    "dat/eid/items/nature_items.eid"
-    "dat/eid/tiles.eid"
     "Libraries/include/antibox/core/default.frag"
     "Libraries/include/antibox/core/default.vert"
-    "list.txt"
-    "other.txt"
 )
 source_group("" FILES ${no_group_source_files})
 
@@ -153,8 +122,6 @@ set(Header_Files
     "Libraries/include/antibox/core/log.h"
     "Libraries/include/antibox/core/mathlib.h"
     "Libraries/include/antibox/core/window.h"
-    "Libraries/include/antibox/external/glad.h"
-    "Libraries/include/antibox/glad.h"
     "Libraries/include/antibox/graphics/3d/camera.h"
     "Libraries/include/antibox/graphics/framebuffer.h"
     "Libraries/include/antibox/graphics/helpers.h"
@@ -602,50 +569,7 @@ set(Header_Files
     "Libraries/include/imgui/imstb_truetype.h"
     "Libraries/include/KHR/khrplatform.h"
     "Libraries/include/miniaudio/miniaudio.h"
-    "Libraries/include/noise/basictypes.h"
-    "Libraries/include/noise/exception.h"
-    "Libraries/include/noise/interp.h"
-    "Libraries/include/noise/latlon.h"
-    "Libraries/include/noise/mathconsts.h"
-    "Libraries/include/noise/misc.h"
-    "Libraries/include/noise/model/cylinder.h"
-    "Libraries/include/noise/model/line.h"
-    "Libraries/include/noise/model/model.h"
-    "Libraries/include/noise/model/plane.h"
-    "Libraries/include/noise/model/sphere.h"
-    "Libraries/include/noise/module/abs.h"
-    "Libraries/include/noise/module/add.h"
-    "Libraries/include/noise/module/billow.h"
-    "Libraries/include/noise/module/blend.h"
-    "Libraries/include/noise/module/cache.h"
-    "Libraries/include/noise/module/checkerboard.h"
-    "Libraries/include/noise/module/clamp.h"
-    "Libraries/include/noise/module/const.h"
-    "Libraries/include/noise/module/curve.h"
-    "Libraries/include/noise/module/cylinders.h"
-    "Libraries/include/noise/module/displace.h"
-    "Libraries/include/noise/module/exponent.h"
-    "Libraries/include/noise/module/invert.h"
-    "Libraries/include/noise/module/max.h"
-    "Libraries/include/noise/module/min.h"
-    "Libraries/include/noise/module/module.h"
-    "Libraries/include/noise/module/modulebase.h"
-    "Libraries/include/noise/module/multiply.h"
-    "Libraries/include/noise/module/perlin.h"
-    "Libraries/include/noise/module/power.h"
-    "Libraries/include/noise/module/ridgedmulti.h"
-    "Libraries/include/noise/module/rotatepoint.h"
-    "Libraries/include/noise/module/scalebias.h"
-    "Libraries/include/noise/module/scalepoint.h"
-    "Libraries/include/noise/module/select.h"
-    "Libraries/include/noise/module/spheres.h"
-    "Libraries/include/noise/module/terrace.h"
-    "Libraries/include/noise/module/translatepoint.h"
-    "Libraries/include/noise/module/turbulence.h"
-    "Libraries/include/noise/module/voronoi.h"
-    "Libraries/include/noise/noise.h"
-    "Libraries/include/noise/noisegen.h"
-    "Libraries/include/noise/vectortable.h"
+    "Libraries/include/fastnoiselite/FastNoiseLite.h"
     "Libraries/include/stb/stb_image.h"
 )
 source_group("Header Files" FILES ${Header_Files})
@@ -708,25 +632,35 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 ################################################################################
 # Output directory
 ################################################################################
-if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+
+if(WIN32)
+    if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+        set_target_properties(${PROJECT_NAME} PROPERTIES
+            OUTPUT_DIRECTORY_DEBUG   "${CMAKE_SOURCE_DIR}/$<CONFIG>/"
+            OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/$<CONFIG>/"
+        )
+    endif()
+    if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM")
+        set_target_properties(${PROJECT_NAME} PROPERTIES
+            INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
+        )
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+        set_target_properties(${PROJECT_NAME} PROPERTIES
+            INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
+        )
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
+        set_target_properties(${PROJECT_NAME} PROPERTIES
+            INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
+        )
+    endif()
+elseif(UNIX)
+    # Set output directories for Linux
     set_target_properties(${PROJECT_NAME} PROPERTIES
-        OUTPUT_DIRECTORY_DEBUG   "${CMAKE_SOURCE_DIR}/$<CONFIG>/"
-        OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/$<CONFIG>/"
-    )
+            OUTPUT_DIRECTORY_DEBUG   "${CMAKE_SOURCE_DIR}"
+            OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}"
+        )
 endif()
-if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM")
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
-    )
-elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
-    )
-elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        INTERPROCEDURAL_OPTIMIZATION_RELEASE "TRUE"
-    )
-endif()
+
 ################################################################################
 # MSVC runtime library
 ################################################################################
@@ -751,19 +685,28 @@ set_target_properties(${PROJECT_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY ${MSVC_RUN
 ################################################################################
 # Include directories
 ################################################################################
-if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM")
+if(WIN32)
+    if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM")
+        target_include_directories(${PROJECT_NAME} PUBLIC
+            "${CMAKE_CURRENT_SOURCE_DIR}/Libraries/include"
+        )
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+        target_include_directories(${PROJECT_NAME} PUBLIC
+            "${CMAKE_CURRENT_SOURCE_DIR}/Libraries/include"
+        )
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
+        target_include_directories(${PROJECT_NAME} PUBLIC
+            "${CMAKE_CURRENT_SOURCE_DIR}/Libraries/include"
+        )
+    endif()
+elseif(UNIX)
     target_include_directories(${PROJECT_NAME} PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}/Libraries/include"
     )
-elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
-    target_include_directories(${PROJECT_NAME} PUBLIC
-        "${CMAKE_CURRENT_SOURCE_DIR}/Libraries/include"
-    )
-elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
-    target_include_directories(${PROJECT_NAME} PUBLIC
-        "${CMAKE_CURRENT_SOURCE_DIR}/Libraries/include"
-    )
+    find_package(OpenGL REQUIRED)
+    find_package(glfw3 REQUIRED)
 endif()
+
 
 ################################################################################
 # Compile definitions
@@ -830,7 +773,7 @@ if(MSVC)
                 /Gy
             >
             /permissive-;
-            /std:c++17;
+            /std:c++20;
             /sdl;
             /W3;
             ${DEFAULT_CXX_DEBUG_INFORMATION_FORMAT};
@@ -889,27 +832,61 @@ if(MSVC)
             /SUBSYSTEM:CONSOLE
         )
     endif()
+elseif(UNIX)  # This block is for Linux (e.g., WSL or native Linux)
+    # GCC/Clang-specific compile options for WSL or Linux
+    target_compile_options(${PROJECT_NAME} PRIVATE
+        $<$<CONFIG:Release>:
+            -O2;         # Optimization for Release
+            -DNDEBUG;    # Define NDEBUG for Release
+        >
+        $<$<CONFIG:Debug>:
+            -O0;         # No optimization for Debug
+            -g;          # Enable debug symbols
+        >
+
+        # Common flags for Linux
+        -std=c++20;     # Use C++20 standard
+        -Wall;          # Enable most warnings
+        -Wextra;        # Enable additional warnings
+        -fcf-protection=none;
+    )
 endif()
 
 ################################################################################
 # Dependencies
 ################################################################################
-if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM")
+if(WIN32)
+    if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM")
+        set(ADDITIONAL_LIBRARY_DEPENDENCIES
+            "glfw3;"
+            "opengl32"
+        )
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
+        set(ADDITIONAL_LIBRARY_DEPENDENCIES
+            "glfw3;"
+            "opengl32"
+        )
+    elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
+        set(ADDITIONAL_LIBRARY_DEPENDENCIES
+            "glfw3;"
+            "opengl32"
+        )
+    endif()
+elseif(UNIX)
+    find_package(OpenGL REQUIRED)
+    find_package(glfw3 REQUIRED)
+
     set(ADDITIONAL_LIBRARY_DEPENDENCIES
-        "glfw3;"
-        "opengl32"
-    )
-elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
-    set(ADDITIONAL_LIBRARY_DEPENDENCIES
-        "glfw3;"
-        "opengl32"
-    )
-elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
-    set(ADDITIONAL_LIBRARY_DEPENDENCIES
-        "glfw3;"
-        "opengl32"
+        glfw
+        OpenGL::GL
+        X11
+        pthread
+        Xrandr
+        Xi
     )
 endif()
+
+# Apply the dependencies
 target_link_libraries(${PROJECT_NAME} PRIVATE "${ADDITIONAL_LIBRARY_DEPENDENCIES}")
 
 if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM")
@@ -926,3 +903,4 @@ elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
     )
 endif()
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")

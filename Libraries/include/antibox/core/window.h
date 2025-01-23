@@ -43,7 +43,7 @@ namespace antibox {
 		inline void UseFramebuffer(bool tf) { showFramebuffer = tf; }
 
 	private:
-		bool showFramebuffer;
+		bool showFramebuffer = false;
 		GLFWwindow* win;
 		unsigned int width;
 		unsigned int height;

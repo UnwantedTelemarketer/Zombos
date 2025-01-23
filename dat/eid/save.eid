@@ -22,10 +22,10 @@ sfxSound : 0.000000;
 musicSound : 1.000000;
 }
 STATS {
-x_pos : 10;
-y_pos : 24;
-biomes : 16865;
-seed : 22430;
+x_pos : 16;
+y_pos : 15;
+biomes : 18964;
+seed : 17452;
 global_x : 250;
 global_y : 250;
 weather : 0;
@@ -33,9 +33,9 @@ color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
 health : 100.000000;
-thirst : 96.775131;
-hunger : 97.849869;
-time : 8.150008;
+thirst : 98.800049;
+hunger : 99.199951;
+time : 6.800003;
 items : [BANDAGE,MATCH];
 savedRecipes : [];
 }

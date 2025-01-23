@@ -1,4 +1,4 @@
-﻿#include "dat/game.h"
+﻿#include "dat/Game.h"
 #include "dat/uiscreen.h"
 #include <algorithm>
 #include <thread>
@@ -972,14 +972,14 @@ public:
 				}
 
 				std::string saveButton = "Save ";
-				if (game.Crafter.savedRecipes.contains(recipeSelectedName)) {
+				if (game.Crafter.savedRecipes.count(recipeSelectedName) != 0) {
 					saveButton = "Unsave ";
 				}
 				saveButton += recipeSelectedName;
 				saveButton += " Recipe";
 				if (ImGui::Button(saveButton.c_str())) {
 					Audio::Play(sfxs["ui_select"]);
-					if (game.Crafter.savedRecipes.contains(recipeSelectedName)) {
+					if (game.Crafter.savedRecipes.count(recipeSelectedName) != 0) {
 						game.Crafter.UnsaveRecipe(recipeSelectedName);
 					}
 					else {

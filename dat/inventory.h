@@ -39,7 +39,7 @@ public:
 	void EquipItem(int index) {
 		Item tempItem = items[index];
 		tempItem.count = 1;
-		if (equippedItems.contains(tempItem.eType)) {
+		if (equippedItems.count(tempItem.eType) != 0) {
 			Item oldEquipped = equippedItems[tempItem.eType];
 			equippedItems[tempItem.eType] = tempItem;
 			RemoveItem(items[index].section);
@@ -55,7 +55,7 @@ public:
 
 	//Add new item straight to the equip slot
 	void EquipItem(Item item) {
-		if (equippedItems.contains(item.eType)) {
+		if (equippedItems.count(item.eType) != 0) {
 			//Item oldEquipped = equippedItems[item.eType];
 			equippedItems[item.eType] = item;
 			//AddItem(oldEquipped);
@@ -74,7 +74,7 @@ public:
 	}
 
 	bool CurrentEquipMatches(equipType t, std::string itemName) {
-		if (!equippedItems.contains(t)) {
+		if (!equippedItems.count(t) != 0) {
 			return false;
 		}
 		else {
@@ -82,7 +82,7 @@ public:
 		}
 	}
 	bool CurrentEquipExists(equipType t) {
-		if (!equippedItems.contains(t)) {
+		if (!equippedItems.count(t) != 0) {
 			return false;
 		}
 		else {

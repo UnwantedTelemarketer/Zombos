@@ -3,7 +3,7 @@
 
 class ImVec4;
 
-static class Cosmetic {
+class Cosmetic {
 public:
 	static ImVec4 CoveredColor(int liquid);
 	static ImVec4 FireColor();

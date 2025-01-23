@@ -62,7 +62,7 @@ namespace antibox {
 		if (win == NULL)
 		{
 			std::cout << "Failed to create GLFW window" << std::endl;
-			return -1;
+			return false;
 		}
 		// Introduce the window into the current context
 		glfwMakeContextCurrent(Window::win);
@@ -82,6 +82,8 @@ namespace antibox {
 
 		mImguiWindow.Create(props.imguiProps);
 		showFramebuffer = props.framebuffer_display;
+
+		std::cout << showFramebuffer << std::endl;
 		
 		//glEnable(GL_STENCIL_TEST);
 	}

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gameobject.h"
+#include <vector>
 
 namespace antibox {
 	class Scene {

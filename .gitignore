@@ -223,7 +223,11 @@ _pkginfo.txt
 *.appxbundle
 *.appxupload
 
+
+# Antibox specific stuff
 *.chunk
+save.eid
+output_log.txt
 
 # Visual Studio cache files
 # files ending in .cache can be ignored

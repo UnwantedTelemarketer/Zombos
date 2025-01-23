@@ -82,7 +82,7 @@ namespace antibox {
 
 		render::RenderManager mRenderManager; //RenderManager takes in Render Commands for rendering
 
-		std::chrono::steady_clock::time_point prevtime; //delta time stuff
+		double prevtime; //delta time stuff
 		double timePassed;
 		double fps;
 		double ms;

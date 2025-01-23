@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <algorithm>
 #include <filesystem>
 //#include <boost/algorithm/string.hpp>
 
@@ -158,7 +159,7 @@ struct SaveData {
 };
 
 
-static class Tokenizer {
+class Tokenizer {
 public:
 
 	static std::vector<std::string> getTokens(std::string input)
@@ -254,7 +255,7 @@ public:
 	}
 };
 
-static class ItemReader{
+class ItemReader{
 public:
 
 	static bool GetDataFromFile(std::string filepath, std::string section, OpenedData* data, bool defaultPath = true) {

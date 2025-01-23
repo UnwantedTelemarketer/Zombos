@@ -490,7 +490,7 @@ public:
 
 	std::vector<std::string> getRecipesByItem(std::string itemName) {
 		bool isRecipe = false;
-		if (recipes.contains(itemName)) { isRecipe = true; }
+		if (recipes.count(itemName) != 0) { isRecipe = true; }
 		else if (recipes_by_item.count(itemName) == 0 && !isRecipe) { return { }; }
 
 		std::vector<std::string> recipeList = recipes_by_item[itemName];

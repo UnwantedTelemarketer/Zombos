@@ -3,6 +3,7 @@
 #include "../graphics/shader.h"
 #include <iostream>
 #include <fstream>  
+#include <chrono>
 
 namespace antibox
 {
@@ -38,7 +39,7 @@ namespace antibox
 		mRenderManager.Init();
 		mApp->Init();
 		Console::Log(mAudio->init(), text::red, __LINE__);
-		prevtime = std::chrono::high_resolution_clock::now();
+		prevtime = glfwGetTime();
 	}
 
 	void Engine::InitializeApp(App* app) {
@@ -136,9 +137,9 @@ namespace antibox
 	void Engine::Update() {
 		window->BeginRender(); //Start the rendering from window
 
-		auto crntTime = std::chrono::high_resolution_clock::now();
-		std::chrono::duration<float> elapsed = crntTime - prevtime;
-		ms = elapsed.count() * 1000.f;
+		auto crntTime = glfwGetTime();
+		double elapsed = crntTime - prevtime;
+		ms = elapsed * 1000.f;
 		prevtime = crntTime;
 		timePassed += ms;
 		counter++;
