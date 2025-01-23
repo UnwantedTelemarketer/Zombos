@@ -1,8 +1,8 @@
-# Install script for directory: C:/dev/C++/antibox_cmake/antibox_cmake
+# Install script for directory: C:/dev/C++/antibox_cmake
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/dev/C++/antibox_cmake/antibox_cmake/out/install/x64-debug")
+  set(CMAKE_INSTALL_PREFIX "C:/dev/C++/antibox_cmake/out/install/x64-debug")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/dev/C++/antibox_cmake/antibox_cmake/out/build/x64-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/dev/C++/antibox_cmake/out/build/x64-Debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
