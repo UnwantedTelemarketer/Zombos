@@ -33,32 +33,32 @@ private:
 		return props;
 	}
 
-	float tickRateVisual, lastFPS;
+	float tickRateVisual = 0.f, lastFPS = 0.f;
 	int counter = 0;
 	GameState currentState;
-	vec3 clothes;
-	std::string printIcon;
-	ImVec4 iconColor;
+	vec3 clothes = {1,0,0};
+	std::string printIcon = "";
+	ImVec4 iconColor = {1,0,0,0};
 	std::vector<Tile*> itemTiles;
 	std::vector<std::string> itemIcons;
 	std::vector<ImVec2> itemPositions;
 	std::vector<std::string> mobIcons;
 	std::vector<ImVec2> mobPositions;
 	std::vector<ImVec4> mobColors;
-	vec2_i view_distance;
+	vec2_i view_distance = {15,15};
 public:
 	//UI stuff
 	GameUI gameScreen;
 	Tile* selectedTile = nullptr;
 	int currentItemIndex = 0;
 	int ySeparator = 2;
-	std::string openClose;
+	std::string openClose = "";
 	antibox::framerate frame;
 	std::vector<float> frametimes;
 	float colChangeTime = 0.f;
 	float sfxvolume = 1.f;
 	float musicvolume = 1.f;
-	bool interacting, flashlightActive;
+	bool interacting = false, flashlightActive = false;
 	int xMin, xMax, yMin, yMax;
 	int xViewDist, yViewDist;
 	char recipe_search[128] = "";
@@ -387,7 +387,7 @@ public:
 		//ImGui::PushStyleColor(ImGuiCol_TitleBg, { customTabColor.x - 0.4f,customTabColor.y - 0.4f,customTabColor.z - 0.4f,1 });
 
 		ImGui::PushFont(Engine::Instance().getFont("ui"));
-		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport()->ID);
 
 		if (gameScreen.console_showing) {
 			ImGui::Begin("Console");
@@ -1295,8 +1295,10 @@ public:
 	void Init() override {
 
 		test_chunk = std::make_shared<Chunk>();
-		std::thread itemLoading = Items::LoadItemsFromFiles(&game.item_icons);
-		std::thread tileLoading = Tiles::LoadTilesFromFiles(&game.tile_colors);
+		Items::LoadItems(&game.item_icons);
+		Tiles::LoadTiles(&game.tile_colors);
+		//std::thread itemLoading = Items::LoadItemsFromFiles(&game.item_icons);
+		//std::thread tileLoading = Tiles::LoadTilesFromFiles(&game.tile_colors);
 
 		Engine::Instance().AddScene(&main);
 		main.CreateObject("Box", { 0,0 }, { 1,1 }, "res/plank.png");
@@ -1306,14 +1308,10 @@ public:
 		frame.frames.length = 360;
 		currentState = menu;
 		health = 100.0f;
-		gameScreen.statsOpen = true;
 		openClose = "Close Stats";
-		gameScreen.containerOpen = false;
-		gameScreen.navInv = false;
+		gameScreen.statsOpen = true;
 		gameScreen.showDialogue = true;
-		gameScreen.console_showing = false;
 		gameScreen.helpMenu = true;
-		gameScreen.equipmentScreenOpen = false;
 		game.freeView = true;
 		game.LoadData();
 		xViewDist = 15;
@@ -1321,12 +1319,13 @@ public:
 
 		sfxvolume = Audio::GetVolume();
 
-		itemLoading.join();
-		tileLoading.join();
+		//itemLoading.join();
+		//tileLoading.join();
 		Console::Log("Done!", text::green, __LINE__);
 	}
 
-	void Update() override{
+	void Update() override
+	{
 		bool moved = false;
 		colChangeTime += Utilities::deltaTime() / 1000;
 		if (colChangeTime >= 1.f) {

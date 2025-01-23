@@ -86,10 +86,14 @@ namespace Tiles {
 		ItemReader::GetDataFromFile("tiles/tile_lists.eid", "LISTS", &data);
 		for (auto const& x : data.tokens) {
 
+			std::string fixedPath = x.first;
+			//damn new lines
+			if (fixedPath[0] == '\r') { fixedPath.erase(fixedPath.begin()); }
+
 			OpenedData sectionsData;
-			ItemReader::GetDataFromFile("tiles/" + x.first, "SECTIONS", &sectionsData);
+			ItemReader::GetDataFromFile("tiles/" + fixedPath, "SECTIONS", &sectionsData);
 			for (auto const& tileSection : sectionsData.getArray("sections")) {
-				list[tileSection] = EID::MakeTile("tiles/" + x.first, tileSection);
+				list[tileSection] = EID::MakeTile("tiles/" + fixedPath, tileSection);
 				nameByID[list[tileSection].id] = tileSection;
 				tileColors->insert({ list[tileSection].id,list[tileSection].tileColor });
 			}
@@ -161,7 +165,14 @@ namespace Items {
 			//Console::Log(x.first, text::blue, __LINE__);
 
 			OpenedData sectionsData;
-			ItemReader::GetDataFromFile("items/" + x.first, "SECTIONS", &sectionsData);
+			std::string fixedName = x.first;
+			std::string fixedPath = "items/";
+
+			//damn new lines
+			if (fixedName[0] == '\r') { fixedName.erase(fixedName.begin()); }
+			fixedPath.append(fixedName);
+
+			ItemReader::GetDataFromFile(fixedPath, "SECTIONS", & sectionsData);
 			for (auto const& itemName : sectionsData.getArray("sections")) {
 				list[itemName] = EID::MakeItem("items/" + x.first, itemName);
 				colors[itemName] = list[itemName].spriteColor;

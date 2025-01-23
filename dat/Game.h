@@ -374,7 +374,7 @@ void GameManager::MovePlayer(int dir) {
 	if (playerTile->liquid == mud || 
 		(playerTile->liquid == water && playerTile->liquidTime == -1)) {
 		//hardcoding being able to walk through mud in leather boots lol
-		if (Math::RandInt(0, 4) == 3 && pInv.CurrentEquipMatches(boots, "LEATHER_BOOTS")) {
+		if (Math::RandInt(0, 4) == 3 && !pInv.CurrentEquipMatches(boots, "LEATHER_BOOTS")) {
 			Math::PushBackLog(&actionLog, "You get stuck in the liquid.");
 			return;
 		}

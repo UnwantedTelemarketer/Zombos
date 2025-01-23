@@ -32,6 +32,7 @@ bool to_bool(std::string str) {
 #ifndef antibox_console
 		std::cout << "error on line " << __LINE__ << std::endl;
 #endif
+		return false;
 	}
 }
 
@@ -260,10 +261,11 @@ public:
 
 	static bool GetDataFromFile(std::string filepath, std::string section, OpenedData* data, bool defaultPath = true) {
 
-		std::string new_filepath;
-		if (defaultPath) { new_filepath = "dat/eid/" + filepath; }
-		else { new_filepath = filepath; }
+		std::string new_filepath = "";
+		if (defaultPath) { new_filepath.append("dat/eid/"); }
+		new_filepath.append(filepath);
 
+		std::cout << new_filepath << std::endl;
 		if (!std::filesystem::exists(new_filepath)) {
 			Console::Log("Attempting to read from file '" + new_filepath + "', but can't find file.", ERROR, __LINE__);
 			return false;
@@ -274,6 +276,11 @@ public:
 		std::string contents;
 		std::string line; //read from file
 		bool shouldWrite = false;
+
+		if (!file.is_open()) {
+			Console::Log("Failed to open file.", ERROR, __LINE__);
+			return false;
+		}
 
 		//write only the section we want to a string
 		while (std::getline(file, line)) {
@@ -286,8 +293,13 @@ public:
 			//when we find the closing bracket, stop reading the file
 			if (lineNoSpace == "}" && shouldWrite) { shouldWrite = false; break; }
 
+			std::string fixedLine = line;
+
+			//erase those damn things
+			if (fixedLine[fixedLine.size() - 1] == '\r') { fixedLine.erase(fixedLine.begin() + fixedLine.size() - 1); }
+
 			//write if we should
-			if (shouldWrite) { contents += line; }
+			if (shouldWrite) { contents.append(fixedLine); }
 		}
 		//std::string properSection = Tokenizer::getSection(contents, section);
 

@@ -3,7 +3,7 @@
 namespace antibox {
 	void CheckGLError() {
 		GLenum error = glGetError(); 
-		while (error != GL_NO_ERROR)
+		if (error != GL_NO_ERROR)
 		{
 			std::string errorstr;
 			switch (error) {
@@ -19,4 +19,5 @@ namespace antibox {
 
 			error = glGetError();
 		}
-	}}
+	}
+}

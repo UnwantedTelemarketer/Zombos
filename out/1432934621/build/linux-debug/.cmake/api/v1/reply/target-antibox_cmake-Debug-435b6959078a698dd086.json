@@ -33,25 +33,25 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 624,
+				"line" : 651,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 897,
+				"line" : 924,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 890,
+				"line" : 917,
 				"parent" : 0
 			},
 			{
 				"command" : 4,
 				"file" : 0,
-				"line" : 706,
+				"line" : 733,
 				"parent" : 0
 			},
 			{
@@ -73,19 +73,19 @@
 			{
 				"command" : 6,
 				"file" : 0,
-				"line" : 837,
+				"line" : 864,
 				"parent" : 0
 			},
 			{
 				"command" : 7,
 				"file" : 0,
-				"line" : 727,
+				"line" : 754,
 				"parent" : 0
 			},
 			{
 				"command" : 8,
 				"file" : 0,
-				"line" : 703,
+				"line" : 730,
 				"parent" : 0
 			}
 		]
@@ -96,7 +96,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g"
+					"fragment" : "-DNDEBUG -O2 -std=gnu++20 -flto=auto -fno-fat-lto-objects"
 				},
 				{
 					"backtrace" : 8,
@@ -150,18 +150,16 @@
 				}
 			],
 			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "20"
+			},
 			"sourceIndexes" : 
 			[
-				469,
-				470,
-				471,
-				472,
-				473,
-				474,
-				475,
-				476,
-				477,
-				478,
 				479,
 				480,
 				481,
@@ -175,6 +173,7 @@
 				489,
 				490,
 				491,
+				492,
 				493,
 				494,
 				495,
@@ -184,14 +183,23 @@
 				499,
 				500,
 				501,
-				502
+				503,
+				504,
+				505,
+				506,
+				507,
+				508,
+				509,
+				510,
+				511,
+				512
 			]
 		},
 		{
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g"
+					"fragment" : "-DNDEBUG -O2 -flto=auto -fno-fat-lto-objects"
 				},
 				{
 					"backtrace" : 8,
@@ -247,7 +255,7 @@
 			"language" : "C",
 			"sourceIndexes" : 
 			[
-				492
+				502
 			]
 		}
 	],
@@ -257,7 +265,7 @@
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "-g",
+				"fragment" : "-DNDEBUG -O2 -flto=auto -fno-fat-lto-objects",
 				"role" : "flags"
 			},
 			{
@@ -309,7 +317,8 @@
 				"role" : "libraries"
 			}
 		],
-		"language" : "CXX"
+		"language" : "CXX",
+		"lto" : true
 	},
 	"name" : "antibox_cmake",
 	"nameOnDisk" : "antibox_cmake",
@@ -798,13 +807,7 @@
 				465,
 				466,
 				467,
-				468
-			]
-		},
-		{
-			"name" : "Source Files",
-			"sourceIndexes" : 
-			[
+				468,
 				469,
 				470,
 				471,
@@ -814,7 +817,13 @@
 				475,
 				476,
 				477,
-				478,
+				478
+			]
+		},
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
 				479,
 				480,
 				481,
@@ -838,7 +847,17 @@
 				499,
 				500,
 				501,
-				502
+				502,
+				503,
+				504,
+				505,
+				506,
+				507,
+				508,
+				509,
+				510,
+				511,
+				512
 			]
 		}
 	],
@@ -1026,7 +1045,52 @@
 		},
 		{
 			"backtrace" : 1,
+			"path" : "Libraries/include/EGL/eglplatform.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
 			"path" : "Libraries/include/glad/glad.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/egl.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/gles1.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/gles2.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/glsc2.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/glx.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/vulkan.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/vulkansc.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/wgl.h",
 			"sourceGroupIndex" : 1
 		},
 		{
@@ -3172,6 +3236,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "Libraries/include/KHR/khrplatform.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/vk_platform.h",
 			"sourceGroupIndex" : 1
 		},
 		{

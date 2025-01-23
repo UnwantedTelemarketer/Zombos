@@ -21,7 +21,18 @@ namespace antibox {
 
 	Window::Window(const unsigned int width, const unsigned int height, const char* windowName)
 	{
-		glfwInit();
+	
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+		glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_WIN32);
+#elif __linux__
+		// Default to X11 if not running Wayland
+		glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11); 
+#elif __unix__
+		glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
+#endif
+		if (!glfwInit()) {
+			std::cout << "Error initializing GLFW." << std::endl;
+		}
 		Window::width = width;
 		Window::height = height;
 		Window::windowName = windowName;
@@ -45,7 +56,7 @@ namespace antibox {
 
 		if (showFramebuffer) {
 			ImGui::Begin("Framebuffer");
-			ImGui::Image((void*)GetFramebuffer()->GetTextureID(), { ImGui::GetWindowSize().x - 40, ImGui::GetWindowSize().y - 40 });
+			//ImGui::Image((void*)GetFramebuffer()->GetTextureID(), { ImGui::GetWindowSize().x - 40, ImGui::GetWindowSize().y - 40 });
 			ImGui::End();
 		}
 
@@ -64,16 +75,21 @@ namespace antibox {
 			std::cout << "Failed to create GLFW window" << std::endl;
 			return false;
 		}
+
 		// Introduce the window into the current context
-		glfwMakeContextCurrent(Window::win);
+		glfwMakeContextCurrent(Window::win); 
 
-		glfwSwapInterval(props.vsync);
 
-		//Load GLAD so it configures OpenGL
-		gladLoadGL();
+		glfwSwapInterval(props.vsync); 
+
+
+		if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){ 
+			std::cout << "Failed to initialize GLAD" << std::endl;
+			return false;
+		}
 		// Specify the viewport of OpenGL in the Window
 		// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
-		glViewport(0, 0, width, height);
+		glViewport(0, 0, width, height); ANTIBOX_CHECK_GL_ERROR;
 
 		Engine::Instance().GetRenderManager().SetClearColor(props.cc);
 
@@ -82,9 +98,7 @@ namespace antibox {
 
 		mImguiWindow.Create(props.imguiProps);
 		showFramebuffer = props.framebuffer_display;
-
-		std::cout << showFramebuffer << std::endl;
-		
+		return true;
 		//glEnable(GL_STENCIL_TEST);
 	}
 

@@ -111,13 +111,16 @@ public:
 			}
 		}
 		delete sChunk;
+		outFile.close();
+	}
+
+	~Chunk() {
 		for (auto const& cont : containers) {
 			delete cont;
 		}
 		for (auto const& ent : entities) {
 			delete ent;
 		}
-		outFile.close();
 	}
 };
 

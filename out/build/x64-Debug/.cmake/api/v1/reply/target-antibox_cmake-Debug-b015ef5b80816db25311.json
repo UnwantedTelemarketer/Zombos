@@ -2,10 +2,10 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "C:/dev/C++/antibox_cmake/antibox_cmake/Release/antibox_cmake.exe"
+			"path" : "C:/dev/C++/antibox_cmake/antibox_cmake/antibox_cmake.exe"
 		},
 		{
-			"path" : "C:/dev/C++/antibox_cmake/antibox_cmake/Release/antibox_cmake.pdb"
+			"path" : "C:/dev/C++/antibox_cmake/antibox_cmake/antibox_cmake.pdb"
 		}
 	],
 	"backtrace" : 1,
@@ -33,43 +33,43 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 624,
+				"line" : 651,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 809,
+				"line" : 836,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 897,
+				"line" : 925,
 				"parent" : 0
 			},
 			{
 				"command" : 3,
 				"file" : 0,
-				"line" : 890,
+				"line" : 918,
 				"parent" : 0
 			},
 			{
 				"command" : 4,
 				"file" : 0,
-				"line" : 770,
+				"line" : 797,
 				"parent" : 0
 			},
 			{
 				"command" : 5,
 				"file" : 0,
-				"line" : 727,
+				"line" : 754,
 				"parent" : 0
 			},
 			{
 				"command" : 6,
 				"file" : 0,
-				"line" : 694,
+				"line" : 721,
 				"parent" : 0
 			}
 		]
@@ -80,15 +80,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-MD /GL"
-				},
-				{
-					"backtrace" : 5,
-					"fragment" : "/Oi"
-				},
-				{
-					"backtrace" : 5,
-					"fragment" : "/Gy"
+					"fragment" : "-DNDEBUG -Og -O1 -MDd"
 				},
 				{
 					"backtrace" : 5,
@@ -122,15 +114,15 @@
 			[
 				{
 					"backtrace" : 6,
-					"define" : "NDEBUG"
-				},
-				{
-					"backtrace" : 6,
 					"define" : "UNICODE"
 				},
 				{
 					"backtrace" : 6,
 					"define" : "_CONSOLE"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "_DEBUG"
 				},
 				{
 					"backtrace" : 6,
@@ -155,16 +147,6 @@
 			},
 			"sourceIndexes" : 
 			[
-				469,
-				470,
-				471,
-				472,
-				473,
-				474,
-				475,
-				476,
-				477,
-				478,
 				479,
 				480,
 				481,
@@ -178,6 +160,7 @@
 				489,
 				490,
 				491,
+				492,
 				493,
 				494,
 				495,
@@ -187,22 +170,23 @@
 				499,
 				500,
 				501,
-				502
+				503,
+				504,
+				505,
+				506,
+				507,
+				508,
+				509,
+				510,
+				511,
+				512
 			]
 		},
 		{
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-MD /GL"
-				},
-				{
-					"backtrace" : 5,
-					"fragment" : "/Oi"
-				},
-				{
-					"backtrace" : 5,
-					"fragment" : "/Gy"
+					"fragment" : "-DNDEBUG -Og -O1 -MDd"
 				},
 				{
 					"backtrace" : 5,
@@ -233,15 +217,15 @@
 			[
 				{
 					"backtrace" : 6,
-					"define" : "NDEBUG"
-				},
-				{
-					"backtrace" : 6,
 					"define" : "UNICODE"
 				},
 				{
 					"backtrace" : 6,
 					"define" : "_CONSOLE"
+				},
+				{
+					"backtrace" : 6,
+					"define" : "_DEBUG"
 				},
 				{
 					"backtrace" : 6,
@@ -258,7 +242,7 @@
 			"language" : "C",
 			"sourceIndexes" : 
 			[
-				492
+				502
 			]
 		}
 	],
@@ -268,7 +252,7 @@
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "-MD /GL",
+				"fragment" : "-DNDEBUG -Og -O1 -MDd",
 				"role" : "flags"
 			},
 			{
@@ -277,17 +261,7 @@
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/OPT:REF",
-				"role" : "flags"
-			},
-			{
-				"backtrace" : 2,
-				"fragment" : "/OPT:ICF",
-				"role" : "flags"
-			},
-			{
-				"backtrace" : 2,
-				"fragment" : "/INCREMENTAL:NO",
+				"fragment" : "/INCREMENTAL",
 				"role" : "flags"
 			},
 			{
@@ -298,10 +272,6 @@
 			{
 				"backtrace" : 2,
 				"fragment" : "/SUBSYSTEM:CONSOLE",
-				"role" : "flags"
-			},
-			{
-				"fragment" : "/INCREMENTAL:NO /LTCG",
 				"role" : "flags"
 			},
 			{
@@ -324,8 +294,7 @@
 				"role" : "libraries"
 			}
 		],
-		"language" : "CXX",
-		"lto" : true
+		"language" : "CXX"
 	},
 	"name" : "antibox_cmake",
 	"nameOnDisk" : "antibox_cmake.exe",
@@ -814,13 +783,7 @@
 				465,
 				466,
 				467,
-				468
-			]
-		},
-		{
-			"name" : "Source Files",
-			"sourceIndexes" : 
-			[
+				468,
 				469,
 				470,
 				471,
@@ -830,7 +793,13 @@
 				475,
 				476,
 				477,
-				478,
+				478
+			]
+		},
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
 				479,
 				480,
 				481,
@@ -854,7 +823,17 @@
 				499,
 				500,
 				501,
-				502
+				502,
+				503,
+				504,
+				505,
+				506,
+				507,
+				508,
+				509,
+				510,
+				511,
+				512
 			]
 		}
 	],
@@ -1042,7 +1021,52 @@
 		},
 		{
 			"backtrace" : 1,
+			"path" : "Libraries/include/EGL/eglplatform.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
 			"path" : "Libraries/include/glad/glad.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/egl.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/gles1.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/gles2.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/glsc2.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/glx.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/vulkan.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/vulkansc.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/wgl.h",
 			"sourceGroupIndex" : 1
 		},
 		{
@@ -3188,6 +3212,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "Libraries/include/KHR/khrplatform.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/vk_platform.h",
 			"sourceGroupIndex" : 1
 		},
 		{

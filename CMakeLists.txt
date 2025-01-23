@@ -32,13 +32,27 @@ set(CMAKE_CONFIGURATION_TYPES
 ################################################################################
 if(MSVC)
     # remove default flags provided with CMake for MSVC
-    set(CMAKE_C_FLAGS "")
-    set(CMAKE_C_FLAGS_DEBUG "")
-    set(CMAKE_C_FLAGS_RELEASE "")
-    set(CMAKE_CXX_FLAGS "")
-    set(CMAKE_CXX_FLAGS_DEBUG "")
-    set(CMAKE_CXX_FLAGS_RELEASE "")
+    set(CMAKE_C_FLAGS "-Og")
+    set(CMAKE_C_FLAGS_DEBUG "-O1")
+    set(CMAKE_C_FLAGS_RELEASE "-DNDEBUG -O2")
+    set(CMAKE_CXX_FLAGS "-Og")
+    set(CMAKE_CXX_FLAGS_DEBUG "-O1")
+    set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O2")
     set(CMAKE_CXX_STANDARD 20)
+elseif(UNIX)
+    # Set default flags for GCC/Clang on Linux
+    set(CMAKE_C_FLAGS "-DNDEBUG -O2")
+    set(CMAKE_C_FLAGS_DEBUG "")       # Debugging symbols for debug builds
+    set(CMAKE_C_FLAGS_RELEASE "-O2")    # Optimization for release builds
+
+    set(CMAKE_CXX_FLAGS "-DNDEBUG -O2")
+    set(CMAKE_CXX_FLAGS_DEBUG "")     # Debugging symbols for debug builds
+    set(CMAKE_CXX_FLAGS_RELEASE "-O2")  # Optimization for release builds
+
+    set(CMAKE_CXX_STANDARD 20)          # Enable C++20 standard
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 endif()
 
 ################################################################################
@@ -138,7 +152,16 @@ set(Header_Files
     "Libraries/include/antibox/objects/scene.h"
     "Libraries/include/antibox/objects/tokenizer.h"
     "Libraries/include/antibox/tools/noise.h"
+    "Libraries/include/EGL/eglplatform.h"
     "Libraries/include/glad/glad.h"
+    "Libraries/include/glad/egl.h"
+    "Libraries/include/glad/gles1.h"
+    "Libraries/include/glad/gles2.h"
+    "Libraries/include/glad/glsc2.h"
+    "Libraries/include/glad/glx.h"
+    "Libraries/include/glad/vulkan.h"
+    "Libraries/include/glad/vulkansc.h"
+    "Libraries/include/glad/wgl.h"
     "Libraries/include/glm/common.hpp"
     "Libraries/include/glm/detail/_features.hpp"
     "Libraries/include/glm/detail/_fixes.hpp"
@@ -567,7 +590,10 @@ set(Header_Files
     "Libraries/include/imgui/imstb_rectpack.h"
     "Libraries/include/imgui/imstb_textedit.h"
     "Libraries/include/imgui/imstb_truetype.h"
+    "Libraries/include/imgui/imgui_internal.h"
+    "Libraries/include/imgui/imgui_impl_glfw.h"
     "Libraries/include/KHR/khrplatform.h"
+    "Libraries/include/vk_platform.h"
     "Libraries/include/miniaudio/miniaudio.h"
     "Libraries/include/fastnoiselite/FastNoiseLite.h"
     "Libraries/include/stb/stb_image.h"
@@ -608,6 +634,7 @@ set(Source_Files
     "Libraries/include/imgui/imgui_stdlib.cpp"
     "Libraries/include/imgui/imgui_tables.cpp"
     "Libraries/include/imgui/imgui_widgets.cpp"
+    "Libraries/include/imgui/imgui_impl_opengl3.h"
     "main.cpp"
 )
 source_group("Source Files" FILES ${Source_Files})
@@ -636,8 +663,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 if(WIN32)
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         set_target_properties(${PROJECT_NAME} PROPERTIES
-            OUTPUT_DIRECTORY_DEBUG   "${CMAKE_SOURCE_DIR}/$<CONFIG>/"
-            OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/$<CONFIG>/"
+            OUTPUT_DIRECTORY_DEBUG   "${CMAKE_SOURCE_DIR}"
+            OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}"
         )
     endif()
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "ARM")
@@ -874,6 +901,7 @@ if(WIN32)
     endif()
 elseif(UNIX)
     find_package(OpenGL REQUIRED)
+    set(GLFW_STATIC ON)
     find_package(glfw3 REQUIRED)
 
     set(ADDITIONAL_LIBRARY_DEPENDENCIES

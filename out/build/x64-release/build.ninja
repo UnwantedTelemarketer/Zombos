@@ -51,309 +51,309 @@ build cmake_object_order_depends_target_antibox_cmake: phony || CMakeFiles\antib
 
 build CMakeFiles\antibox_cmake.dir\dat\cosmetic.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\dat\cosmetic.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\dat
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\dat\crafting.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\dat\crafting.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\dat
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\dat\entities.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\dat\entities.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\dat
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\dat\game.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\dat\game.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\dat
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\audio.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\core\audio.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\engine.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\core\engine.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\imguiwindow.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\core\imguiwindow.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\log.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\core\log.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\window.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\core\window.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\3d\camera.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\graphics\3d\camera.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\3d
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\framebuffer.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\graphics\framebuffer.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\helpers.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\graphics\helpers.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\mesh.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\graphics\mesh.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\rendercommands.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\graphics\rendercommands.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\shader.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\graphics\shader.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\sprite.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\graphics\sprite.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\texture.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\graphics\texture.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\vertex.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\graphics\vertex.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\managers\rendermanager.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\managers\rendermanager.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\managers
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\objects\3d\model.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\objects\3d\model.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\objects\3d
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\objects\gameobject.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\objects\gameobject.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\objects
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\objects\scene.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\objects\scene.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\objects
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\tools\noise.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\antibox\tools\noise.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\tools
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\glad\glad.c.obj: C_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\glad\glad.c || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\glad
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\glm\detail\glm.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\glm\detail\glm.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\glm\detail
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\imgui\imgui.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\imgui
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_demo.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\imgui\imgui_demo.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\imgui
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_draw.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\imgui\imgui_draw.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\imgui
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_impl_glfw.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\imgui\imgui_impl_glfw.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\imgui
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_impl_opengl3.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\imgui\imgui_impl_opengl3.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\imgui
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_stdlib.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\imgui\imgui_stdlib.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\imgui
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_tables.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\imgui\imgui_tables.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\imgui
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_widgets.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include\imgui\imgui_widgets.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir\Libraries\include\imgui
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 build CMakeFiles\antibox_cmake.dir\main.cpp.obj: CXX_COMPILER__antibox_cmake_Release C$:\dev\C++\antibox_cmake\antibox_cmake\main.cpp || cmake_object_order_depends_target_antibox_cmake
   DEFINES = -DNDEBUG -DUNICODE -D_CONSOLE -D_UNICODE
-  FLAGS = -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL /Oi /Gy /permissive- /std:c++20 /sdl /W3 /Zi /EHsc -std:c++20
   INCLUDES = -IC:\dev\C++\antibox_cmake\antibox_cmake\Libraries\include
   OBJECT_DIR = CMakeFiles\antibox_cmake.dir
   OBJECT_FILE_DIR = CMakeFiles\antibox_cmake.dir
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 
 # =============================================================================
@@ -361,10 +361,10 @@ build CMakeFiles\antibox_cmake.dir\main.cpp.obj: CXX_COMPILER__antibox_cmake_Rel
 
 
 #############################################
-# Link the executable ..\..\..\Release\antibox_cmake.exe
+# Link the executable ..\..\..\antibox_cmake.exe
 
-build ..\..\..\Release\antibox_cmake.exe: CXX_EXECUTABLE_LINKER__antibox_cmake_Release CMakeFiles\antibox_cmake.dir\dat\cosmetic.cpp.obj CMakeFiles\antibox_cmake.dir\dat\crafting.cpp.obj CMakeFiles\antibox_cmake.dir\dat\entities.cpp.obj CMakeFiles\antibox_cmake.dir\dat\game.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\audio.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\engine.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\imguiwindow.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\log.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\window.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\3d\camera.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\framebuffer.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\helpers.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\mesh.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\rendercommands.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\shader.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\sprite.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\texture.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\vertex.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\managers\rendermanager.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\objects\3d\model.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\objects\gameobject.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\objects\scene.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\tools\noise.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\glad\glad.c.obj CMakeFiles\antibox_cmake.dir\Libraries\include\glm\detail\glm.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_demo.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_draw.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_impl_glfw.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_impl_opengl3.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_stdlib.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_tables.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_widgets.cpp.obj CMakeFiles\antibox_cmake.dir\main.cpp.obj
-  FLAGS = -MD /GL
+build ..\..\..\antibox_cmake.exe: CXX_EXECUTABLE_LINKER__antibox_cmake_Release CMakeFiles\antibox_cmake.dir\dat\cosmetic.cpp.obj CMakeFiles\antibox_cmake.dir\dat\crafting.cpp.obj CMakeFiles\antibox_cmake.dir\dat\entities.cpp.obj CMakeFiles\antibox_cmake.dir\dat\game.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\audio.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\engine.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\imguiwindow.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\log.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\core\window.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\3d\camera.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\framebuffer.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\helpers.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\mesh.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\rendercommands.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\shader.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\sprite.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\texture.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\graphics\vertex.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\managers\rendermanager.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\objects\3d\model.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\objects\gameobject.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\objects\scene.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\antibox\tools\noise.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\glad\glad.c.obj CMakeFiles\antibox_cmake.dir\Libraries\include\glm\detail\glm.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_demo.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_draw.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_impl_glfw.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_impl_opengl3.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_stdlib.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_tables.cpp.obj CMakeFiles\antibox_cmake.dir\Libraries\include\imgui\imgui_widgets.cpp.obj CMakeFiles\antibox_cmake.dir\main.cpp.obj
+  FLAGS = -Og -DNDEBUG -O2 -MD /GL
   LINK_FLAGS = /subsystem:console  /OPT:REF /OPT:ICF /INCREMENTAL:NO /DEBUG /SUBSYSTEM:CONSOLE /INCREMENTAL:NO /LTCG
   LINK_LIBRARIES = glfw3.lib  opengl32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
   LINK_PATH = -LIBPATH:C:\dev\C++\antibox_cmake\antibox_cmake\Libraries\lib
@@ -372,9 +372,9 @@ build ..\..\..\Release\antibox_cmake.exe: CXX_EXECUTABLE_LINKER__antibox_cmake_R
   POST_BUILD = cd .
   PRE_LINK = cd .
   TARGET_COMPILE_PDB = CMakeFiles\antibox_cmake.dir\
-  TARGET_FILE = ..\..\..\Release\antibox_cmake.exe
-  TARGET_IMPLIB = ..\..\..\Release\antibox_cmake.lib
-  TARGET_PDB = ..\..\..\Release\antibox_cmake.pdb
+  TARGET_FILE = ..\..\..\antibox_cmake.exe
+  TARGET_IMPLIB = ..\..\..\antibox_cmake.lib
+  TARGET_PDB = ..\..\..\antibox_cmake.pdb
 
 
 #############################################
@@ -402,9 +402,9 @@ build rebuild_cache: phony CMakeFiles\rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
-build antibox_cmake: phony ..\..\..\Release\antibox_cmake.exe
+build antibox_cmake: phony ..\..\..\antibox_cmake.exe
 
-build antibox_cmake.exe: phony ..\..\..\Release\antibox_cmake.exe
+build antibox_cmake.exe: phony ..\..\..\antibox_cmake.exe
 
 # =============================================================================
 # Folder targets.
@@ -414,7 +414,7 @@ build antibox_cmake.exe: phony ..\..\..\Release\antibox_cmake.exe
 #############################################
 # Folder: C:/dev/C++/antibox_cmake/antibox_cmake/out/build/x64-release
 
-build all: phony ..\..\..\Release\antibox_cmake.exe
+build all: phony ..\..\..\antibox_cmake.exe
 
 # =============================================================================
 # Built-in targets

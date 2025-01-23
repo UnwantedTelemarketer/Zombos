@@ -15,7 +15,7 @@ namespace antibox
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigWindowsMoveFromTitleBarOnly = props.MoveTitleBarOnly;
-		if(props.DockingEnabled) {
+		if (props.DockingEnabled) {
 			io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		}
 		if (props.IsViewportEnabled) {
@@ -43,6 +43,11 @@ namespace antibox
 		io.Fonts->Build();
 
 		ImGui::StyleColorsDark();
+
+		if (Engine::Instance().GetWindow()->glfwin() == nullptr) {
+			std::cout << "GLFW window is not valid!" << std::endl;
+			return;
+		}
 
 		ImGui_ImplGlfw_InitForOpenGL(Engine::Instance().GetWindow()->glfwin(), true);
 		ImGui_ImplOpenGL3_Init("#version 330");

@@ -6,7 +6,7 @@
 			[
 				{
 					"build" : ".",
-					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"jsonFile" : "directory-.-Release-d0094a50bb2071803777.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.16.0"
@@ -19,7 +19,7 @@
 					]
 				}
 			],
-			"name" : "Debug",
+			"name" : "Release",
 			"projects" : 
 			[
 				{
@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "antibox_cmake::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-antibox_cmake-Debug-9fd360ae5d53447cec1a.json",
+					"jsonFile" : "target-antibox_cmake-Release-45df7c60539f611644f4.json",
 					"name" : "antibox_cmake",
 					"projectIndex" : 0
 				}
@@ -49,7 +49,7 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "C:/dev/C++/antibox_cmake/antibox_cmake/out/build/x64-debug",
+		"build" : "C:/dev/C++/antibox_cmake/antibox_cmake/out/build/x64-release",
 		"source" : "C:/dev/C++/antibox_cmake/antibox_cmake"
 	},
 	"version" : 

@@ -129,7 +129,7 @@ class VisualEditor : public antibox::App {
 		props.cc = { 0.22f, 0.2f, 0.2f, 1.f };
 		props.framebuffer_display = true;
 		props.vsync = 1;
-		props.imguiProps = { true, true, false, {"Libraries\\include\\antibox\\font\\VGA437.ttf"}, {"vga"}, 16.f };
+		props.imguiProps = { true, true, false, {"Libraries/include/antibox/font/VGA437.ttf"}, {"vga"}, 16.f };
 		return props;
 	}
 

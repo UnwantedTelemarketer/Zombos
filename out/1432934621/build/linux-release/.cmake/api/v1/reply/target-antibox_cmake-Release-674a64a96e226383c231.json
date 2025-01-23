@@ -2,10 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "C:/dev/C++/antibox_cmake/antibox_cmake/Debug/antibox_cmake.exe"
-		},
-		{
-			"path" : "C:/dev/C++/antibox_cmake/antibox_cmake/Debug/antibox_cmake.pdb"
+			"path" : "/home/user/.vs/antibox_cmake/antibox_cmake"
 		}
 	],
 	"backtrace" : 1,
@@ -14,16 +11,19 @@
 		"commands" : 
 		[
 			"add_executable",
-			"target_link_options",
 			"target_link_directories",
 			"target_link_libraries",
+			"set_property",
+			"find_package",
+			"set_target_properties",
 			"target_compile_options",
 			"target_compile_definitions",
 			"target_include_directories"
 		],
 		"files" : 
 		[
-			"CMakeLists.txt"
+			"CMakeLists.txt",
+			"/usr/share/cmake-3.28/Modules/FindOpenGL.cmake"
 		],
 		"nodes" : 
 		[
@@ -33,43 +33,59 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 624,
+				"line" : 651,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 790,
+				"line" : 925,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 844,
-				"parent" : 0
-			},
-			{
-				"command" : 3,
-				"file" : 0,
-				"line" : 837,
+				"line" : 918,
 				"parent" : 0
 			},
 			{
 				"command" : 4,
 				"file" : 0,
-				"line" : 751,
+				"line" : 733,
 				"parent" : 0
 			},
 			{
+				"file" : 1,
+				"parent" : 4
+			},
+			{
+				"command" : 3,
+				"file" : 1,
+				"line" : 673,
+				"parent" : 5
+			},
+			{
 				"command" : 5,
-				"file" : 0,
-				"line" : 708,
-				"parent" : 0
+				"file" : 1,
+				"line" : 671,
+				"parent" : 5
 			},
 			{
 				"command" : 6,
 				"file" : 0,
-				"line" : 683,
+				"line" : 864,
+				"parent" : 0
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 754,
+				"parent" : 0
+			},
+			{
+				"command" : 8,
+				"file" : 0,
+				"line" : 730,
 				"parent" : 0
 			}
 		]
@@ -80,60 +96,57 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-MDd"
+					"fragment" : "-DNDEBUG -O2 -O2 -std=gnu++20 -flto=auto -fno-fat-lto-objects"
 				},
 				{
-					"backtrace" : 5,
-					"fragment" : "/permissive-"
+					"backtrace" : 8,
+					"fragment" : "-O2"
 				},
 				{
-					"backtrace" : 5,
-					"fragment" : "/std:c++17"
+					"backtrace" : 8,
+					"fragment" : "-DNDEBUG"
 				},
 				{
-					"backtrace" : 5,
-					"fragment" : "/sdl"
+					"backtrace" : 8,
+					"fragment" : "-std=c++20"
 				},
 				{
-					"backtrace" : 5,
-					"fragment" : "/W3"
+					"backtrace" : 8,
+					"fragment" : "-Wall"
 				},
 				{
-					"backtrace" : 5,
-					"fragment" : "/Zi"
+					"backtrace" : 8,
+					"fragment" : "-Wextra"
 				},
 				{
-					"backtrace" : 5,
-					"fragment" : "/EHsc"
-				},
-				{
-					"fragment" : "-std:c++20"
+					"backtrace" : 8,
+					"fragment" : "-fcf-protection=none"
 				}
 			],
 			"defines" : 
 			[
 				{
-					"backtrace" : 6,
+					"backtrace" : 9,
+					"define" : "NDEBUG"
+				},
+				{
+					"backtrace" : 9,
 					"define" : "UNICODE"
 				},
 				{
-					"backtrace" : 6,
+					"backtrace" : 9,
 					"define" : "_CONSOLE"
 				},
 				{
-					"backtrace" : 6,
-					"define" : "_DEBUG"
-				},
-				{
-					"backtrace" : 6,
+					"backtrace" : 9,
 					"define" : "_UNICODE"
 				}
 			],
 			"includes" : 
 			[
 				{
-					"backtrace" : 7,
-					"path" : "C:/dev/C++/antibox_cmake/antibox_cmake/Libraries/include"
+					"backtrace" : 10,
+					"path" : "/home/user/.vs/antibox_cmake/Libraries/include"
 				}
 			],
 			"language" : "CXX",
@@ -147,16 +160,6 @@
 			},
 			"sourceIndexes" : 
 			[
-				469,
-				470,
-				471,
-				472,
-				473,
-				474,
-				475,
-				476,
-				477,
-				478,
 				479,
 				480,
 				481,
@@ -170,6 +173,7 @@
 				489,
 				490,
 				491,
+				492,
 				493,
 				494,
 				495,
@@ -179,70 +183,79 @@
 				499,
 				500,
 				501,
-				502
+				503,
+				504,
+				505,
+				506,
+				507,
+				508,
+				509,
+				510,
+				511,
+				512
 			]
 		},
 		{
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-MDd"
+					"fragment" : "-DNDEBUG -O2 -O2 -flto=auto -fno-fat-lto-objects"
 				},
 				{
-					"backtrace" : 5,
-					"fragment" : "/permissive-"
+					"backtrace" : 8,
+					"fragment" : "-O2"
 				},
 				{
-					"backtrace" : 5,
-					"fragment" : "/std:c++17"
+					"backtrace" : 8,
+					"fragment" : "-DNDEBUG"
 				},
 				{
-					"backtrace" : 5,
-					"fragment" : "/sdl"
+					"backtrace" : 8,
+					"fragment" : "-std=c++20"
 				},
 				{
-					"backtrace" : 5,
-					"fragment" : "/W3"
+					"backtrace" : 8,
+					"fragment" : "-Wall"
 				},
 				{
-					"backtrace" : 5,
-					"fragment" : "/Zi"
+					"backtrace" : 8,
+					"fragment" : "-Wextra"
 				},
 				{
-					"backtrace" : 5,
-					"fragment" : "/EHsc"
+					"backtrace" : 8,
+					"fragment" : "-fcf-protection=none"
 				}
 			],
 			"defines" : 
 			[
 				{
-					"backtrace" : 6,
+					"backtrace" : 9,
+					"define" : "NDEBUG"
+				},
+				{
+					"backtrace" : 9,
 					"define" : "UNICODE"
 				},
 				{
-					"backtrace" : 6,
+					"backtrace" : 9,
 					"define" : "_CONSOLE"
 				},
 				{
-					"backtrace" : 6,
-					"define" : "_DEBUG"
-				},
-				{
-					"backtrace" : 6,
+					"backtrace" : 9,
 					"define" : "_UNICODE"
 				}
 			],
 			"includes" : 
 			[
 				{
-					"backtrace" : 7,
-					"path" : "C:/dev/C++/antibox_cmake/antibox_cmake/Libraries/include"
+					"backtrace" : 10,
+					"path" : "/home/user/.vs/antibox_cmake/Libraries/include"
 				}
 			],
 			"language" : "C",
 			"sourceIndexes" : 
 			[
-				492
+				502
 			]
 		}
 	],
@@ -252,52 +265,63 @@
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "-MDd",
+				"fragment" : "-DNDEBUG -O2 -O2 -flto=auto -fno-fat-lto-objects",
 				"role" : "flags"
 			},
 			{
-				"fragment" : "/subsystem:console",
-				"role" : "flags"
-			},
-			{
-				"backtrace" : 2,
-				"fragment" : "/INCREMENTAL",
+				"fragment" : "",
 				"role" : "flags"
 			},
 			{
 				"backtrace" : 2,
-				"fragment" : "/DEBUG",
-				"role" : "flags"
-			},
-			{
-				"backtrace" : 2,
-				"fragment" : "/SUBSYSTEM:CONSOLE",
-				"role" : "flags"
-			},
-			{
-				"backtrace" : 3,
-				"fragment" : "-LIBPATH:C:\\dev\\C++\\antibox_cmake\\antibox_cmake\\Libraries\\lib",
+				"fragment" : "-L/home/user/.vs/antibox_cmake/Libraries/lib",
 				"role" : "libraryPath"
 			},
 			{
-				"backtrace" : 4,
-				"fragment" : "glfw3.lib",
+				"fragment" : "-Wl,-rpath,/home/user/.vs/antibox_cmake/Libraries/lib",
 				"role" : "libraries"
 			},
 			{
-				"backtrace" : 4,
-				"fragment" : "opengl32.lib",
+				"backtrace" : 3,
+				"fragment" : "/usr/lib/x86_64-linux-gnu/libglfw.so.3.3",
 				"role" : "libraries"
 			},
 			{
-				"fragment" : "kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib",
+				"backtrace" : 3,
+				"fragment" : "-lX11",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "-lpthread",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "-lXrandr",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "-lXi",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 6,
+				"fragment" : "/usr/lib/x86_64-linux-gnu/libGLX.so",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "/usr/lib/x86_64-linux-gnu/libOpenGL.so",
 				"role" : "libraries"
 			}
 		],
-		"language" : "CXX"
+		"language" : "CXX",
+		"lto" : true
 	},
 	"name" : "antibox_cmake",
-	"nameOnDisk" : "antibox_cmake.exe",
+	"nameOnDisk" : "antibox_cmake",
 	"paths" : 
 	{
 		"build" : ".",
@@ -783,13 +807,7 @@
 				465,
 				466,
 				467,
-				468
-			]
-		},
-		{
-			"name" : "Source Files",
-			"sourceIndexes" : 
-			[
+				468,
 				469,
 				470,
 				471,
@@ -799,7 +817,13 @@
 				475,
 				476,
 				477,
-				478,
+				478
+			]
+		},
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
 				479,
 				480,
 				481,
@@ -823,7 +847,17 @@
 				499,
 				500,
 				501,
-				502
+				502,
+				503,
+				504,
+				505,
+				506,
+				507,
+				508,
+				509,
+				510,
+				511,
+				512
 			]
 		}
 	],
@@ -1011,7 +1045,52 @@
 		},
 		{
 			"backtrace" : 1,
+			"path" : "Libraries/include/EGL/eglplatform.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
 			"path" : "Libraries/include/glad/glad.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/egl.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/gles1.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/gles2.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/glsc2.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/glx.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/vulkan.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/vulkansc.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/glad/wgl.h",
 			"sourceGroupIndex" : 1
 		},
 		{
@@ -3157,6 +3236,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "Libraries/include/KHR/khrplatform.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "Libraries/include/vk_platform.h",
 			"sourceGroupIndex" : 1
 		},
 		{

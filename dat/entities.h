@@ -88,9 +88,14 @@ struct Item {
 		catch (std::exception e) { emissionDist = 0; }
 
 		try {
-			spriteColor.x = stof(item.getArray("spriteColor")[0]);
-			spriteColor.y = stof(item.getArray("spriteColor")[1]);
-			spriteColor.z = stof(item.getArray("spriteColor")[2]);
+			if (item.getArray("spriteColor").size() <= 0) {
+				spriteColor = { 1,0,0 };
+			}
+			else {
+				spriteColor.x = stof(item.getArray("spriteColor")[0]);
+				spriteColor.y = stof(item.getArray("spriteColor")[1]);
+				spriteColor.z = stof(item.getArray("spriteColor")[2]);
+			}
 		}
 		catch (std::exception e) {
 			Console::Log("ERROR: Couldn't find spriteColor parameter for item '" + name + "'.", text::red, __LINE__);
@@ -395,9 +400,14 @@ struct Tile {
 		timedReplacement = data.getString("timedReplacement");
 		double_size = data.getBool("double_size");
 
-		tileColor.x = stof(data.getArray("color")[0]);
-		tileColor.y = stof(data.getArray("color")[1]);
-		tileColor.z = stof(data.getArray("color")[2]);
+		if (data.getArray("color").size() <= 0) {
+			tileColor = { 1,0,0 };
+		}
+		else {
+			tileColor.x = stof(data.getArray("color")[0]);
+			tileColor.y = stof(data.getArray("color")[1]);
+			tileColor.z = stof(data.getArray("color")[2]);
+		}
 		try { //not everything is collectible, dont require it
 			collectibleName = data.getString("collectibleName");
 		} catch (std::exception e) { }
