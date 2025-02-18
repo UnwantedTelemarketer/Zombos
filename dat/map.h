@@ -47,6 +47,7 @@ public:
 	
 	
 	void CreateMap(int seed, int b_seed);
+	bool DoesChunkExistsOrMakeNew(Vector2_I coords);
 	void UpdateMemoryZone(Vector2_I coords);
 	void ReadChunk(Vector2_I curChunk, std::string path);
 	void SpawnChunkEntities(std::shared_ptr<Chunk> chunk);
@@ -54,6 +55,7 @@ public:
 	Tile* TileAtPos(Vector2_I coords);
 	Tile* GetTileFromThisOrNeighbor(Vector2_I tilecoords, Vector2_I global_coords);
 	Tile* GetTileFromThisOrNeighbor(Vector2_I tilecoords);
+	Vector2_I GetNeighborChunkCoords(Vector2_I tilecoords, Vector2_I global_coords);
 	int EffectAtPos(Vector2_I coords);
 	int GetEffectFromThisOrNeighbor(Vector2_I tilecoords);
 	void SetEffectInThisOrNeighbor(Vector2_I tilecoords, int effect);
@@ -65,7 +67,9 @@ public:
 	void CheckBounds(Player* p);
 	bool CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk);
 	void BuildChunk(std::shared_ptr<Chunk> chunk);
-	void PlaceBuilding(std::shared_ptr<Chunk> chunk);
+	void PlaceBuilding(Vector2_I startingChunk);
+	void PickStructure(Vector2_I startingChunk);
+	void PlaceCampsite(Vector2_I startingChunk);
 	void GenerateTomb(std::shared_ptr<Chunk> chunk);
 	std::vector<Vector2_I> GetLine(Vector2_I startTile, Vector2_I endTile, int limit);
 	std::vector<Vector2_I> GetSquare(Vector2_I centerTile, int size);
@@ -139,6 +143,22 @@ static void T_SaveChunks(std::shared_ptr<Chunk> chunk) {
 	chunk->SaveChunk();
 }
 
+bool Map::DoesChunkExistsOrMakeNew(Vector2_I coords) {
+	std::string filename = "dat/map/" + std::to_string(coords.x) + std::to_string(coords.y) + ".chunk";
+
+	//Check if theres a saved chunk. if so, load it
+	if (world.chunks[coords] == nullptr) {
+		if (fileExists(filename.c_str())) {
+			ReadChunk(coords, filename);
+			return true;
+		}
+		else {
+			MakeNewChunk(coords);
+			return false;
+		}
+	}
+}
+
 //Change which chunks are in memory at one time
 void Map::UpdateMemoryZone(Vector2_I coords) {
 
@@ -148,16 +168,19 @@ void Map::UpdateMemoryZone(Vector2_I coords) {
 		for (int x = -1; x <= 1; x++)
 		{
 			vec2_i curChunk = { c_glCoords.x + x, c_glCoords.y + y };
-			std::string filename = "dat/map/" + std::to_string(curChunk.x) + std::to_string(curChunk.y) + ".chunk";
+			
+			DoesChunkExistsOrMakeNew(curChunk);
+		}
+	}
 
-			//Check if theres a saved chunk. if so, load it
-			if (world.chunks[curChunk] == nullptr) {
-				if (fileExists(filename.c_str())) {
-					ReadChunk(curChunk, filename);
-				}
-				else {
-					MakeNewChunk(curChunk);
-				}
+	for (int y = -1; y <= 1; y++)
+	{
+		for (int x = -1; x <= 1; x++)
+		{
+			vec2_i curChunk = { c_glCoords.x + x, c_glCoords.y + y };
+			if (!world.chunks[curChunk]->hadBuilding) {
+				if (Math::RandInt(1, 4) == 2) { PickStructure(world.chunks[curChunk]->globalChunkCoord); }
+				world.chunks[curChunk]->hadBuilding = true;
 			}
 		}
 	}
@@ -247,6 +270,7 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 		int num = Math::RandInt(1, 10);
 		if (num >= 9) {
 			zomb = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human, 10, 10, true, spawnCoords.x, spawnCoords.y, true };
+			zomb->inv.push_back(Items::GetItem("BITS"));
 		}
 		else if (num >= 5) {
 			zomb = new Entity{ 15, "Zombie", ID_ZOMBIE, Aggressive, true, Zombie, 7, 8, false, spawnCoords.x, spawnCoords.y };
@@ -366,24 +390,47 @@ Tile* Map::GetTileFromThisOrNeighbor(Vector2_I tilecoords, Vector2_I global_coor
 		tilecoords.y -= 30;
 		globalCoords.y += 1;
 	}
-	if (tilecoords.y < 0) {
+	else if (tilecoords.y < 0) {
 		tilecoords.y += 30;
 		globalCoords.y -= 1;
 	}
 
-	if (!isUnderground) {
-		curTile = world.chunks[globalCoords]->GetTileAtCoords(tilecoords);
+	if (world.chunks.contains(globalCoords)) {
+		if (!isUnderground) {
+			curTile = world.chunks[globalCoords]->GetTileAtCoords(tilecoords);
+		}
+		else {
+			curTile = underground.chunks[globalCoords]->GetTileAtCoords(tilecoords);
+		}
+		return curTile;
 	}
 	else {
-		curTile = underground.chunks[globalCoords]->GetTileAtCoords(tilecoords);
+		return nullptr;
 	}
-	return curTile;
 }
 
 Tile* Map::GetTileFromThisOrNeighbor(Vector2_I tilecoords)
 {
 	return GetTileFromThisOrNeighbor(tilecoords, c_glCoords);
 }
+
+Vector2_I Map::GetNeighborChunkCoords(Vector2_I coords, Vector2_I global_coords) {
+	vec2_i globalCoords = global_coords;
+	if (coords.x >= 30) {
+		globalCoords.x += 1;
+	}
+	else if (coords.x < 0) {
+		globalCoords.x -= 1;
+	}
+	if (coords.y >= 30) {
+		globalCoords.y += 1;
+	}
+	else if (coords.y < 0) {
+		globalCoords.y -= 1;
+	}
+	return globalCoords;
+}
+
 
 biome Map::GetBiome(Vector2_I coords, Vector2_I global_coords)
 {
@@ -622,7 +669,7 @@ bool Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 	if (changed) {
 		int indexOfEnt = -1;
 
-		for (size_t i = 0; i < chunk->entities.size(); i++)
+		for (int i = 0; i < chunk->entities.size(); i++)
 		{
 			if (chunk->entities[i] == p) {
 				indexOfEnt = i;
@@ -670,9 +717,8 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 			switch (currentBiome) {
 			case desert:
 				if (Math::RandInt(0, 500) == 25 && !entrance) {
-				chunk->localCoords[i][j] = Tiles::GetTile("TILE_STONE");
+				chunk->localCoords[i][j] = Tiles::GetTile("TILE_CAVE_ENTRANCE");
 				entrance = true;
-				chunk->localCoords[i][j].walkable = true;
 				chunk->localCoords[i][j].coords = { i, j };
 				continue;
 				}
@@ -793,13 +839,47 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 		}
 	}
 	//if(Math::RandInt(0, 15) == 14) {Place}
-	if (Math::RandInt(1,4) == 2) { PlaceBuilding(chunk); }
 	chunk->beenBuilt = true;
 }
 
 
-void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
-	Vector2_I cornerstone = { Math::RandInt(9, CHUNK_WIDTH - 9), Math::RandInt(9, CHUNK_HEIGHT - 9) };
+void Map::PickStructure(Vector2_I startingChunk) {
+	int randInt = Math::RandInt(0, 4);
+	switch (randInt) {
+	case 0:
+	case 1:
+	case 2:
+		PlaceBuilding(startingChunk);
+		break;
+	case 3:
+	case 4:
+		PlaceCampsite(startingChunk);
+		break;
+	}
+}
+
+void Map::PlaceCampsite(Vector2_I startingChunk) {
+	Vector2_I cornerstone = { Math::RandInt(0, CHUNK_WIDTH - 1), Math::RandInt(0, CHUNK_HEIGHT - 1) };
+	std::vector<Vector2_I> buildingBlocks = GetSquare(cornerstone, 4);
+
+
+	Entity* human = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human, 10, 10, true, 
+		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].x, 
+		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].y, true };
+
+	world.chunks[startingChunk]->entities.push_back(human);
+
+
+	//GetTileFromThisOrNeighbor(buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)], startingChunk)->hasItem = true;
+	//GetTileFromThisOrNeighbor(buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)], startingChunk)->itemName = "TABLE";
+	GetTileFromThisOrNeighbor(cornerstone, startingChunk)->hasItem = true;
+	GetTileFromThisOrNeighbor(cornerstone, startingChunk)->itemName = "CAMPFIRE";
+	GetTileFromThisOrNeighbor(cornerstone, startingChunk)->SetLiquid(fire);
+
+}
+
+void Map::PlaceBuilding(Vector2_I startingChunk) {
+	Vector2_I cornerstone = { Math::RandInt(0, CHUNK_WIDTH - 1), Math::RandInt(0, CHUNK_HEIGHT - 1) };
 	Vector2_I corner = cornerstone;
 
 	//pick some corners to draw to
@@ -811,13 +891,29 @@ void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
 	int itemCounter = 0;
 	int itemMax = 3;
 
+	//use this for if we create a new chunk to place a building
+	Vector2_I newChunkCoords = { -1,-1 };
+
 	//draw the floors
 	for (int i = 0; i < buildingBlocks.size(); i++)
 	{
-		chunk->localCoords[buildingBlocks[i].x][buildingBlocks[i].y] = Tiles::GetTile("TILE_STONE_FLOOR");
+
+		Tile* curTile = GetTileFromThisOrNeighbor({ buildingBlocks[i].x,buildingBlocks[i].y }, startingChunk);
+
+		//if the chunk we are trying to place the building in doesnt exists, create it anew and place
+		//the building in there, then save it and close it
+		if (curTile == nullptr) {
+			Vector2_I chunk_Coords = GetNeighborChunkCoords({ buildingBlocks[i].x, buildingBlocks[i].y }, startingChunk);
+			if (!DoesChunkExistsOrMakeNew(chunk_Coords)) {
+				newChunkCoords = chunk_Coords;
+				curTile = GetTileFromThisOrNeighbor({ buildingBlocks[i].x,buildingBlocks[i].y }, startingChunk);
+			}
+		}
+		
+		*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
 		if (itemCounter <= itemMax && Math::RandInt(0, 15) == 12) {
-			chunk->GetTileAtCoords(buildingBlocks[i])->itemName = Items::GetRandomItemFromPool("house.eid");
-			chunk->GetTileAtCoords(buildingBlocks[i])->hasItem = true;
+			GetTileFromThisOrNeighbor(buildingBlocks[i], startingChunk)->itemName = Items::GetRandomItemFromPool("house.eid");
+			GetTileFromThisOrNeighbor(buildingBlocks[i], startingChunk)->hasItem = true;
 			itemCounter++;
 		}
 	}
@@ -829,7 +925,7 @@ void Map::PlaceBuilding(std::shared_ptr<Chunk> chunk) {
 	{
 		door--;
 		if (door <= 0 && (i + 1) % wallLength == 0 && !doorSpawned) { doorSpawned = true; continue; }
-		chunk->localCoords[wallBlocks[i].x][wallBlocks[i].y] = Tiles::GetTile("TILE_STONE");
+		*GetTileFromThisOrNeighbor({wallBlocks[i].x, wallBlocks[i].y}, startingChunk) = Tiles::GetTile("TILE_STONE");
 	}
 }
 
@@ -1002,7 +1098,8 @@ void Map::ClearEntities(std::shared_ptr<Chunk> chunk)
 	//go to the player and all entities and replace the original tile
 	for (int i = 0; i < chunk->entities.size(); i++)
 	{
-		chunk->localCoords[chunk->entities[i]->coords.x][chunk->entities[i]->coords.y].entity = nullptr;
+		Vector2_I coord = chunk->entities[i]->coords;
+		chunk->localCoords[coord.x][coord.y].entity = nullptr;
 	}
 }
 

@@ -11,7 +11,7 @@ struct Chunk {
 private:
 	std::vector<Container*> containers;
 public:
-	bool beenBuilt = false;
+	bool beenBuilt = false, hadBuilding = false;
 	Vector2_I globalChunkCoord;
 	Tile localCoords[CHUNK_WIDTH][CHUNK_HEIGHT];
 	std::vector<Entity*> entities;

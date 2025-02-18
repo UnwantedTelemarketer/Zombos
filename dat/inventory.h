@@ -164,7 +164,7 @@ public:
 		bool covered = false;
 		if (tile->hasItem) {
 			Item item = GetItemFromFile("items.eid", tile->itemName);
-			if (covered) { 
+			if (tile->liquid != nothing) { 
 				if (item.holdsLiquid) {
 					item.heldLiquid = tile->liquid;
 					item.liquidAmount = 100;

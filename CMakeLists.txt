@@ -32,10 +32,10 @@ set(CMAKE_CONFIGURATION_TYPES
 ################################################################################
 if(MSVC)
     # remove default flags provided with CMake for MSVC
-    set(CMAKE_C_FLAGS "-Og")
+    set(CMAKE_C_FLAGS "-O1")
     set(CMAKE_C_FLAGS_DEBUG "-O1")
     set(CMAKE_C_FLAGS_RELEASE "-DNDEBUG -O2")
-    set(CMAKE_CXX_FLAGS "-Og")
+    set(CMAKE_CXX_FLAGS "-O1")
     set(CMAKE_CXX_FLAGS_DEBUG "-O1")
     set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O2")
     set(CMAKE_CXX_STANDARD 20)

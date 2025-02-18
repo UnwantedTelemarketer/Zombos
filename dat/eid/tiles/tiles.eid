@@ -12,7 +12,8 @@ sections : [TILE_GRASS,
 			TILE_SNOW,
 			TILE_MUD,
 			TILE_MUD_EMPTY,
-			TILE_CATTAIL]
+			TILE_CATTAIL,
+			TILE_CAVE_ENTRANCE]
 }
 
 TILE_GRASS {
@@ -137,22 +138,6 @@ double_size : true;
 color : [0, 0.65, 0];
 }
 
-TILE_CATTAIL {
-id : 18;
-direction : 0;
-liquid : 0;
-collectible : true;
-collectibleName : "GRASS";
-replacement : "TILE_MUD";
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : false;
-timedReplacement : 0;
-double_size : true;
-color : [0.8, 0.7, 0.5];
-}
-
 TILE_STONE_FLOOR {
 id : 13;
 direction : 0;
@@ -229,4 +214,35 @@ changesOverTime : true;
 timedReplacement : "TILE_MUD";
 double_size : false;
 color : [0.95,0.75,0.65];
+}
+
+TILE_CATTAIL {
+id : 18;
+direction : 0;
+liquid : 0;
+collectible : true;
+collectibleName : "GRASS";
+replacement : "TILE_MUD";
+itemName : "NULL";
+hasItem : false;
+walkable : true;
+changesOverTime : false;
+timedReplacement : 0;
+double_size : true;
+color : [0.8, 0.7, 0.5];
+}
+
+TILE_CAVE_ENTRANCE {
+id : 19;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : "NULL";
+itemName : "NULL";
+hasItem : false;
+walkable : true;
+changesOverTime : false;
+timedReplacement : "NULL";
+double_size : false;
+color : [0.5,0.5,0.5];
 }

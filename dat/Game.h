@@ -395,8 +395,8 @@ void GameManager::MovePlayer(int dir) {
 	default:
 		break;
 	}
-
-	if (mainMap.TileAtPos(mPlayer.coords)->id == ID_STONE) {
+			//entering a cave
+	if (mainMap.TileAtPos(mPlayer.coords)->id == 19) {
 		if (EnterCave()) {
 			freeView = false;
 			//Audio::LerpMusic("ambient_day", "dat/sounds/wet-pizza-rat.mp3", "ambient_cave");
@@ -632,12 +632,12 @@ void GameManager::UpdateTick() {
 
 		//hardcoded version of updating surrounding chunks
 		T_UpdateChunk(this, mainMap.c_glCoords);
-		if (!mainMap.isUnderground) {
+		/*if (!mainMap.isUnderground) {
 			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x + 1,  mainMap.c_glCoords.y });
 			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x - 1,  mainMap.c_glCoords.y });
 			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y + 1 });
 			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y - 1 });
-		}
+		}*/
 		testTime = (glfwGetTime() - curTime) * 1000;
 
 		//Utilities::Lerp("playertemp", &mPlayer.visualTemp, mPlayer.bodyTemp, 0.5f);
@@ -762,7 +762,7 @@ std::string GameManager::GetTileChar(Tile* tile) {
 		//return item_icons[tile.itemName];
 	//}
 	if (tile->liquid == water && tile->liquidTime == -1) {
-		return "?";
+		return "A";
 	}
 	return tile_icons[tile->id];
 }

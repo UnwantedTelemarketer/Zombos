@@ -5,7 +5,7 @@
 
 #include <chrono>
 
-#define DOSFONT  "dat/fonts/symbolic/symbolic_cattail_extended.ttf"
+#define DOSFONT  "dat/fonts/symbolic/symbolic_cave_extended.ttf"
 #define ITEMFONT "dat/fonts/symbolic/symbolic_items_extended.ttf"
 #define MOBFONT "dat/fonts/symbolic/symbolic_mobs_extended.ttf"
 #define VGAFONT  "dat/fonts/VGA437.ttf"
@@ -487,7 +487,7 @@ public:
 					else if (map.GetEffectFromThisOrNeighbor(curCoords) == 1)
 					{
 						effectShowing = true;
-						printIcon = "?";
+						printIcon = "A";
 						iconColor = Cosmetic::SmokeColor();
 					}
 					else if (map.GetEffectFromThisOrNeighbor(curCoords) == 2)
@@ -579,18 +579,17 @@ public:
 				}
 				//ImGui::TextColored(batchColor, batchedString.c_str());
 				//batchedString.clear();
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - ySeparator);
 				ImGui::Text("");
 			}
 
 			//print items with separate font
 			if (item) {
-				SWAP_FONT("items")
-					for (size_t i = 0; i < itemIcons.size(); i++)
-					{
-						ImGui::SetCursorPos(itemPositions[i]);
-						ImGui::TextColored(game.GetItemColor(itemTiles[i]), itemIcons[i].c_str());
-					}
+				SWAP_FONT("items");
+				for (size_t i = 0; i < itemIcons.size(); i++)
+				{
+					ImGui::SetCursorPos(itemPositions[i]);
+					ImGui::TextColored(game.GetItemColor(itemTiles[i]), itemIcons[i].c_str());
+				}
 				itemTiles.clear();
 				itemIcons.clear();
 				itemPositions.clear();
@@ -598,13 +597,13 @@ public:
 
 			//print mobs with separate font
 			if (mobPositions.size() > 0) {
-				SWAP_FONT("mobs")
-					for (size_t i = 0; i < mobPositions.size(); i++)
-					{
-						ImGui::SetCursorPos(mobPositions[i]);
+				SWAP_FONT("mobs");
+				for (size_t i = 0; i < mobPositions.size(); i++)
+				{
+					ImGui::SetCursorPos(mobPositions[i]);
 
-						ImGui::TextColored(mobColors[i], mobIcons[i].c_str());
-					}
+					ImGui::TextColored(mobColors[i], mobIcons[i].c_str());
+				}
 				mobIcons.clear();
 				mobPositions.clear();
 				mobColors.clear();
