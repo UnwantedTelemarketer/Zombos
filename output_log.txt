@@ -84,12 +84,29 @@
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
 [ Line 1323 ]: [1;32mDone![0m
 [ Line 41 ]: [1;31m0[0m
-[ Line 92 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 92 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 92 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 92 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 92 ]: [1;31mError: getInt requires the value to be an int.[0m
-[ Line 92 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line -1 ]: [0;37mNow saving...[0m
 [ Line 371 ]: [1;32mWrote to file dat/eid/save.eid[0m
-[ Line 176 ]: [1;32mSave complete in 18.788252ms.[0m
+[ Line 176 ]: [1;32mSave complete in 32.831532ms.[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/251250.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/251251.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/248250.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/248251.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/248252.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/248249.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/249249.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/250249.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/248252.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/249252.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/250252.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/251250.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/251251.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/251252.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/248250.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/248251.chunk[0m
+[ Line 246 ]: [1;32mReading Chunk from dat/map/248252.chunk[0m
+[ Line -1 ]: [0;37mNow saving...[0m
+[ Line 371 ]: [1;32mWrote to file dat/eid/save.eid[0m
+[ Line 176 ]: [1;32mSave complete in 29.839018ms.[0m
+[ Line -1 ]: [0;37mNow saving...[0m
+[ Line 371 ]: [1;32mWrote to file dat/eid/save.eid[0m
+[ Line 176 ]: [1;32mSave complete in 31.356796ms.[0m

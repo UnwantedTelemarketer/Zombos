@@ -34,3 +34,6 @@
 31	4805	7599889788010785	CMakeFiles/antibox_cmake.dir/Libraries/include/antibox/core/audio.cpp.obj	4a97a9b286f68333
 1181	5274	7599889792745783	CMakeFiles/antibox_cmake.dir/Libraries/include/imgui/imgui_demo.cpp.obj	ee87eaf1d885c1d8
 4718	5436	7615670960834527	../../../antibox_cmake.exe	9c5d98fd5b2b7c46
+3	2597	7618964155612362	CMakeFiles/antibox_cmake.dir/Libraries/include/antibox/core/engine.cpp.obj	93f8a2a493414ca2
+19	4711	7618964176722350	CMakeFiles/antibox_cmake.dir/main.cpp.obj	129bacddc43ebe31
+4712	5295	7618964181913811	../../../antibox_cmake.exe	9c5d98fd5b2b7c46

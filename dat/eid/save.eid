@@ -1,42 +1,104 @@
 BANDAGE {
 count : 1;
-coveredIn : 5;
-ticksUntilDry : 42;
-initialTickTime : 52;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 40;
+durability : -1;
+heldLiquid : 0;
+}
+CAMPFIRE {
+count : 1;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 55;
+durability : -1;
+heldLiquid : 0;
+count : 1;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 37;
+durability : -1;
+heldLiquid : 0;
+}
+FLAT_MUSHROOM {
+count : 2;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 82;
+durability : -1;
+heldLiquid : 0;
+}
+GRASS {
+count : 1;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 31;
+durability : -1;
+heldLiquid : 0;
+}
+GUTS {
+count : 3;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 115;
 durability : -1;
 heldLiquid : 0;
 }
 MATCH {
-count : 2;
-coveredIn : 5;
-ticksUntilDry : 72;
-initialTickTime : 83;
+count : 1;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 97;
+durability : -1;
+heldLiquid : 0;
+}
+OLD_CLOTH {
+count : 3;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 38;
+durability : -1;
+heldLiquid : 0;
+}
+ROCK {
+count : 5;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 30;
+durability : -1;
+heldLiquid : 0;
+}
+SCRAP {
+count : 1;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 0;
 durability : -1;
 heldLiquid : 0;
 }
 SETTINGS {
 ySep : 2;
-xDist : 15;
+xDist : 17;
 yDist : 15;
-sfxSound : 0.207000;
-musicSound : 0.194000;
+sfxSound : 0.000000;
+musicSound : 0.078000;
 }
 STATS {
-x_pos : 6;
-y_pos : 4;
-biomes : 328;
-seed : 5902;
-global_x : 250;
-global_y : 250;
+x_pos : 25;
+y_pos : 20;
+biomes : 2147;
+seed : 2998;
+global_x : 249;
+global_y : 251;
 weather : 0;
 color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
-health : 100.000000;
-thirst : 85.600586;
-hunger : 90.399414;
-time : 15.600037;
-items : [BANDAGE,MATCH];
+health : 65.000000;
+thirst : 69.176254;
+hunger : 79.448746;
+time : 2.499999;
+items : [BANDAGE,MATCH,OLD_CLOTH,GUTS,FLAT_MUSHROOM,ROCK,GRASS,CAMPFIRE,CAMPFIRE,SCRAP];
 savedRecipes : [];
 }
 
