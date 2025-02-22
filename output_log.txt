@@ -84,12 +84,12 @@
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
 [ Line 1323 ]: [1;32mDone![0m
 [ Line 41 ]: [1;31m0[0m
-[ Line 51 ]: [0;33mbgColor1 already on lerp stack. Overwritting...[0m
-[ Line 51 ]: [0;33mbgColor2 already on lerp stack. Overwritting...[0m
-[ Line 51 ]: [0;33mbgColor3 already on lerp stack. Overwritting...[0m
+[ Line 92 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 92 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 92 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 92 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 92 ]: [1;31mError: getInt requires the value to be an int.[0m
+[ Line 92 ]: [1;31mError: getInt requires the value to be an int.[0m
 [ Line -1 ]: [0;37mNow saving...[0m
 [ Line 371 ]: [1;32mWrote to file dat/eid/save.eid[0m
-[ Line 176 ]: [1;32mSave complete in 33.189480ms.[0m
-[ Line -1 ]: [0;37mNow saving...[0m
-[ Line 371 ]: [1;32mWrote to file dat/eid/save.eid[0m
-[ Line 176 ]: [1;32mSave complete in 31.311516ms.[0m
+[ Line 176 ]: [1;32mSave complete in 18.788252ms.[0m

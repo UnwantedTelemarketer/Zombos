@@ -1,3 +1,8 @@
+--v0.2.2 Changes--
+ - Fixed indoor rain
+ 
+ - Linux build now available (Mac in progress)
+
 --v0.2.1 Changes--
  - New equippable items with emmissive lighting (Lamp, Mushroom Jar, etc.)
 

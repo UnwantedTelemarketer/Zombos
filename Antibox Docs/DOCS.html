@@ -21,7 +21,7 @@
     <span style="color:lightgreen">//To create a new project, you'll need to create your own class that derives from antibox::App</span>
     class _NAME_ : public App {   
     
-        <span style="color:lightgreen">//To edit window properties, use the method GetWindowProperties():</span>
+    <span style="color:lightgreen">//To edit window properties, use the method GetWindowProperties():</span>
         WindowProperties GetWindowProperties() {
             WindowProperties props;
     
@@ -36,19 +36,19 @@
     
         <span style="color:lightgreen">//A project required four methods:</span>
     
-        void Init() override{} <span style="color:lightgreen">//This will be called before the first frame.</span>
+        void Init() override {} <span style="color:lightgreen">//This will be called before the first frame.</span>
         void Update() override {} <span style="color:lightgreen">//This is called before each frame is rendered.</span>
-        void Render() override {} <span style="color:lightgreen">//This is the calls to render each frame.</span>
+        void Render() override {} <span style="color:lightgreen">//This is called during the render step.</span>
         void Shutdown() override {} <span style="color:lightgreen">//This is called when the user closes the window.</span>
     
         <span style="color:lightgreen">//And one optional one:</span>
     
-        void ImguiRender() override {} <span style="color:lightgreen">//This is called to render ImGui.</span>
+        void ImguiRender() override {} <span style="color:lightgreen">//This for ImGui code.</span>
     
     };
     
     <span style="color:lightgreen">//To run your custom window, you need to create a new method called CreateApp and return a new list of windows</span>
-    std::vector<antibox::App*> CreateApp() {
+    std::vector&lt;antibox::App*&gt; CreateApp() {
         return { new _NAME_ };
     }
 </pre>
@@ -84,7 +84,7 @@
     Input::<span style="color:palegoldenrod">KeyDown</span>(int keycode)         - Return true on the FIRST frame a key is pressed
     Input::<span style="color:palegoldenrod">KeyHeldDown</span>(int keycode)     - Return true on EACH frame a key is pressed
     
-    -Keycode macros all start with <span style="color:orange">"KEY_"</span>
+    -Keycode macros all start with <span style="color:plum">"KEY_"</span>
     
     Input::<span style="color:palegoldenrod">MouseButtonDown</span>(int keycode) - Return true on FIRST frame a mouse button is pressed
     Input::<span style="color:palegoldenrod">MouseButtonHeld</span>(int keycode) - Return true on EACH frame a mouse button is pressed
@@ -101,7 +101,7 @@
     <span style="color:palegoldenrod">PlayLoop</span>(std::string path_to_soundfile, std::string id) - Plays a sound file that loops, with specific ID
     
     <span style="color:palegoldenrod">Stop</span>(std::string path_to_soundfile) - Does nothing for now
-    <span style="color:palegoldenrod">StopLoop</span>(std::string soundID) - Does nothing for now
+    <span style="color:palegoldenrod">StopLoop</span>(std::string soundID) - Stops a looping sound with ID
     
     <span style="color:palegoldenrod">SetVolume</span>(float newVolume) - Sets the engine's volume
     <span style="color:palegoldenrod">SetVolumeLoop</span>(float newVolume, std::string ID) - Sets the sound's volume
@@ -111,8 +111,16 @@
     <h3>---UTILITIES----</h3>
     <span style="color:palegoldenrod">getFPS</span>() - Returns the current Frames per Second
     <span style="color:palegoldenrod">deltaTime</span>() - Returns the time between the last frame and this one
-    <span style="color:palegoldenrod">getFont</span>() - Returns the custom IMGUI font set in WindowProperties
     
+    --The Lerp functions add a value specified by an ID to the engine, and the engine handles the lerping--
+
+        Supported Types:
+            - float
+            - Vector3
+            - Vector2
+
+        <span style="color:palegoldenrod">Lerp</span>(std::string lerpID, T* valueToChange, T endValue, float time) 
+            - Lerp a value from whatever the starting value is to "endValue" over "time" seconds
     
     <h3>-----EDITOR-----</h3>
     AddScene(Scene* scene) - Adds a scene to the game loop to have objects updated
@@ -132,9 +140,9 @@
     Vector3(x,y,z) - also "vec3" or "Color"
     Vector4(x,y,z,w) - also "vec4"
     Vector4_I(x,y,z,w) - also "vec4_i"
-    Vector26()
+    Vector26(a,b,c,d...)
     
-    maybe - returns either true or false, randomly.
+    <span style="color:plum">maybe</span> - returns either true or false, randomly.
     
     <h3>-----CONSOLE-----</h3>
     
@@ -142,16 +150,16 @@
     
     All console logs will require (T message, textColor color, int lineNum).
     Types supported:
-    -string
-    -const char*
-    -uint32_t
-    -int
-    -double
-    -bool
-    -void* (for pointer addresses)
-    -vector<string>
-    -Vector2
-    -Vector2_I
+        -string
+        -const char*
+        -uint32_t
+        -int
+        -double
+        -bool
+        -void* (for pointer addresses)
+        -vector<string>
+        -Vector2
+        -Vector2_I
     
     If desired type isnt there, you can use:
     GenericConsoleOut<T>(T obj, textColor color) - Will try to log your type

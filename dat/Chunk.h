@@ -115,12 +115,20 @@ public:
 	}
 
 	~Chunk() {
-		for (auto const& cont : containers) {
-			delete cont;
+		if (containers.size() != 0) {
+			for (int i = 0; i < containers.size() - 1; i++) {
+				delete containers[i];
+				
+			}
 		}
-		for (auto const& ent : entities) {
-			delete ent;
+		if (entities.size() != 0) {
+			for (int i = 0; i < entities.size() - 1; i++) {
+				delete entities[i];
+				
+			}
 		}
+		containers.clear();
+		entities.clear();
 	}
 };
 

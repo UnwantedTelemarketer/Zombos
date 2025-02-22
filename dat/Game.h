@@ -558,7 +558,7 @@ void GameManager::UpdateTick() {
 		if (mainMap.currentWeather == rainy || mainMap.currentWeather == thunder) {
 			if (Math::RandInt(1, 7) == 2)  //random check
 			{
-				if (!pInv.CurrentEquipMatches(shirt, "RAINCOAT")) {
+				if (!pInv.CurrentEquipMatches(shirt, "RAINCOAT") && mainMap.TileAtPos(mPlayer.coords)->id != 13) {
 					mPlayer.CoverIn(water, 15); //cover the player in it
 				}
 			}
@@ -619,16 +619,15 @@ void GameManager::UpdateTick() {
 
 
 		//Update surrounding chunks in separate threads for "super speed" >:)
-		/*std::vector<std::thread> threads;
-		for (int i = -1; i < 2; ++i) {
-			if (i == 0) { continue; }
-			threads.push_back(std::thread(T_UpdateChunk, this, Vector2_I{ mainMap.c_glCoords.x + i,  mainMap.c_glCoords.y }));
-		}
-		threads.push_back(std::thread(T_UpdateChunk, this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y + 1 }));
-		threads.push_back(std::thread(T_UpdateChunk, this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y - 1}));
-		for (auto& th : threads) {
-			th.detach();
-		}*/
+		/*std::thread c1 = std::thread(T_UpdateChunk, this, Vector2_I{mainMap.c_glCoords.x + 1,  mainMap.c_glCoords.y});
+		std::thread c2 = std::thread(T_UpdateChunk, this, Vector2_I{ mainMap.c_glCoords.x - 1,  mainMap.c_glCoords.y });
+		std::thread c3 = std::thread(T_UpdateChunk, this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y + 1 });
+		std::thread c4 = std::thread(T_UpdateChunk, this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y - 1 });
+
+		c1.join();
+		c2.join();
+		c3.join();
+		c4.join();*/
 
 		//hardcoded version of updating surrounding chunks
 		T_UpdateChunk(this, mainMap.c_glCoords);

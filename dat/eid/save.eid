@@ -1,46 +1,16 @@
 BANDAGE {
 count : 1;
-coveredIn : 0;
-ticksUntilDry : 0;
-initialTickTime : 0;
+coveredIn : 5;
+ticksUntilDry : 42;
+initialTickTime : 52;
 durability : -1;
-heldLiquid : 0;
-}
-CHAIR {
-count : 1;
-coveredIn : 0;
-ticksUntilDry : 0;
-initialTickTime : 0;
-durability : -1;
-heldLiquid : 0;
-}
-LIGHTER {
-count : 1;
-coveredIn : 0;
-ticksUntilDry : 0;
-initialTickTime : 0;
-durability : -1;
-heldLiquid : 0;
-count : 1;
-coveredIn : 0;
-ticksUntilDry : 0;
-initialTickTime : 0;
-durability : -1;
-heldLiquid : 0;
-}
-MACHETE {
-count : 1;
-coveredIn : 0;
-ticksUntilDry : 0;
-initialTickTime : 0;
-durability : 10;
 heldLiquid : 0;
 }
 MATCH {
 count : 2;
-coveredIn : 0;
-ticksUntilDry : 0;
-initialTickTime : 0;
+coveredIn : 5;
+ticksUntilDry : 72;
+initialTickTime : 83;
 durability : -1;
 heldLiquid : 0;
 }
@@ -48,25 +18,25 @@ SETTINGS {
 ySep : 2;
 xDist : 15;
 yDist : 15;
-sfxSound : 0.418000;
-musicSound : 0.214000;
+sfxSound : 0.207000;
+musicSound : 0.194000;
 }
 STATS {
-x_pos : 1;
-y_pos : 2;
-biomes : 20792;
-seed : 3226;
+x_pos : 6;
+y_pos : 4;
+biomes : 328;
+seed : 5902;
 global_x : 250;
-global_y : 251;
+global_y : 250;
 weather : 0;
 color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
 health : 100.000000;
-thirst : 91.750336;
-hunger : 94.499664;
-time : 11.500021;
-items : [BANDAGE,MATCH,MACHETE,LIGHTER,LIGHTER,CHAIR];
+thirst : 85.600586;
+hunger : 90.399414;
+time : 15.600037;
+items : [BANDAGE,MATCH];
 savedRecipes : [];
 }
 

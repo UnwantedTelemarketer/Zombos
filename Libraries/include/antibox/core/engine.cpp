@@ -48,7 +48,7 @@ namespace antibox
 
 	void Engine::LerpFloat(std::string lerpID, float* val, float endVal, float time) {
 		if (floatsToLerp.count(lerpID) == 0) {
-			Console::Log(lerpID + " already on lerp stack. Overwritting...", WARNING, __LINE__);
+			//Console::Log(lerpID + " already on lerp stack. Overwritting...", WARNING, __LINE__);
 			floatsToLerp.erase(lerpID);
 		}
 		floatsToLerp.insert({ lerpID, { val, time, *val, endVal, 0 } });
