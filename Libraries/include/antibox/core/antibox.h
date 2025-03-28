@@ -4,7 +4,7 @@
 #include <iostream>
 
 //PRINTSCREEN creates an auto reference to the current window (screen) and displays the framebuffer that it gets onto an ImGui Image tab.
-#define PRINTSCREEN auto& window = *Engine::Instance().GetWindow(); ImGui::Image((void*)window.GetFramebuffer()->GetTextureID(), { ImGui::GetWindowSize().x , ImGui::GetWindowSize().y });
+#define PRINTSCREEN auto& window = *Engine::Instance().GetWindow(); ImGui::Image(window.GetFramebuffer()->GetTextureID(), { ImGui::GetWindowSize().x , ImGui::GetWindowSize().y });
 
 #define TO_CHARARR(number) std::to_string(number).c_str()
 
@@ -62,6 +62,8 @@ namespace antibox {
 		void SetWireframeMode(bool wireframe) { Engine::Instance().GetRenderManager().SetWireframeMode(wireframe); }
 		//Changes whether to render to the screen directly or to a framebuffer.
 		void SetFramebufferMode(bool fb) { Engine::Instance().GetWindow()->UseFramebuffer(fb); }
+		//Changes whether to render to the screen directly or to a framebuffer.
+		void SetBackgroundColor(glm::vec4 color) { Engine::Instance().GetWindow()->UpdateCC(color); }
 	}
 	
 	namespace Editor {

@@ -56,7 +56,7 @@ namespace antibox {
 
 		if (showFramebuffer) {
 			ImGui::Begin("Framebuffer");
-			//ImGui::Image((void*)GetFramebuffer()->GetTextureID(), { ImGui::GetWindowSize().x - 40, ImGui::GetWindowSize().y - 40 });
+			ImGui::Image(GetFramebuffer()->GetTextureID(), { ImGui::GetWindowSize().x - 40, ImGui::GetWindowSize().y - 40 });
 			ImGui::End();
 		}
 

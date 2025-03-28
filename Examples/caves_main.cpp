@@ -1,4 +1,4 @@
-﻿#include "dat/Game.h"
+#include "dat/Game.h"
 #include "dat/uiscreen.h"
 #include <algorithm>
 #include <thread>
