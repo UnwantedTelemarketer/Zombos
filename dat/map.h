@@ -267,17 +267,24 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 	{
 		Entity* zomb;
 		Vector2_I spawnCoords = { Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };
-		int num = Math::RandInt(1, 10);
-		if (num >= 9) {
-			zomb = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human, 10, 10, true, spawnCoords.x, spawnCoords.y, true };
+		int num = Math::RandInt(1, 20);
+		if (num >= 20) {
+			zomb = new Entity{ 15, "Zombie", ID_FINDER, Protective, true, Takers, 3, 90, true, spawnCoords.x, spawnCoords.y };
+
+			zomb->inv.push_back(Items::GetItem("OLD_CLOTH"));
+			zomb->inv.push_back(Items::GetItem("GUTS"));
+		}
+		else if (num >= 15) {
+			zomb = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human_W, 10, 10, true, spawnCoords.x, spawnCoords.y, true };
 			zomb->inv.push_back(Items::GetItem("BITS"));
 		}
-		else if (num >= 5) {
+		else if (num >= 10) {
 			zomb = new Entity{ 15, "Zombie", ID_ZOMBIE, Aggressive, true, Zombie, 7, 8, false, spawnCoords.x, spawnCoords.y };
 
 			zomb->inv.push_back(Items::GetItem("OLD_CLOTH"));
 			zomb->inv.push_back(Items::GetItem("GUTS"));
 		}
+		
 		else {
 			switch (GetBiome(spawnCoords, chunk->globalChunkCoord)) {
 			case swamp:
@@ -863,7 +870,7 @@ void Map::PlaceCampsite(Vector2_I startingChunk) {
 	std::vector<Vector2_I> buildingBlocks = GetSquare(cornerstone, 4);
 
 
-	Entity* human = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human, 10, 10, true, 
+	Entity* human = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human_W, 10, 10, true, 
 		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].x, 
 		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].y, true };
 
@@ -903,11 +910,12 @@ void Map::PlaceBuilding(Vector2_I startingChunk) {
 		//if the chunk we are trying to place the building in doesnt exists, create it anew and place
 		//the building in there, then save it and close it
 		if (curTile == nullptr) {
-			Vector2_I chunk_Coords = GetNeighborChunkCoords({ buildingBlocks[i].x, buildingBlocks[i].y }, startingChunk);
+			continue;
+			/*Vector2_I chunk_Coords = GetNeighborChunkCoords({buildingBlocks[i].x, buildingBlocks[i].y}, startingChunk);
 			if (!DoesChunkExistsOrMakeNew(chunk_Coords)) {
 				newChunkCoords = chunk_Coords;
 				curTile = GetTileFromThisOrNeighbor({ buildingBlocks[i].x,buildingBlocks[i].y }, startingChunk);
-			}
+			}*/
 		}
 		
 		*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
@@ -923,9 +931,13 @@ void Map::PlaceBuilding(Vector2_I startingChunk) {
 	//draw walls
 	for (int i = 0; i < wallBlocks.size(); i++)
 	{
+		Tile* curTile = GetTileFromThisOrNeighbor({ wallBlocks[i].x, wallBlocks[i].y }, startingChunk);
+		if (curTile == nullptr) {
+			continue;
+		}
 		door--;
 		if (door <= 0 && (i + 1) % wallLength == 0 && !doorSpawned) { doorSpawned = true; continue; }
-		*GetTileFromThisOrNeighbor({wallBlocks[i].x, wallBlocks[i].y}, startingChunk) = Tiles::GetTile("TILE_STONE");
+		*curTile = Tiles::GetTile("TILE_STONE");
 	}
 }
 

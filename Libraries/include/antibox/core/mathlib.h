@@ -14,7 +14,7 @@ namespace antibox {
 		//Input the max number, and this will return an int between 1 and your max (inclusive).
 		inline float RandNum(int max) { return (rand() % max + 1); }
 
-		//Input the max number, and this will return an int between min and max (exclusive).
+		//Input the max number, and this will return an int between min and max (inclusive).
 		inline int RandInt(int min, int max) { return min + rand() % (max - min + 1); }
 
 		//Returns a random string from a vector of strings.

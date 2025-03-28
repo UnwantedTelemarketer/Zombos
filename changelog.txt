@@ -3,6 +3,10 @@
  
  - Linux build now available (Mac in progress)
 
+ - Takers faction added
+
+ - NPC Chatting now available
+
 --v0.2.1 Changes--
  - New equippable items with emmissive lighting (Lamp, Mushroom Jar, etc.)
 

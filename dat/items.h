@@ -80,7 +80,7 @@ namespace Tiles {
 	}
 
 	static void LoadTiles(std::map<int, vec3>* tileColors) {
-		Console::Log("Loading Items from files...", text::white, __LINE__);
+		Console::Log("Loading Tiles from files...", WARNING, __LINE__);
 		std::vector<std::string> sections;
 		OpenedData data;
 		ItemReader::GetDataFromFile("tiles/tile_lists.eid", "LISTS", &data);
@@ -89,6 +89,7 @@ namespace Tiles {
 			std::string fixedPath = x.first;
 			//damn new lines
 			if (fixedPath[0] == '\r') { fixedPath.erase(fixedPath.begin()); }
+			Console::Log(fixedPath, text::white, __LINE__);
 
 			OpenedData sectionsData;
 			ItemReader::GetDataFromFile("tiles/" + fixedPath, "SECTIONS", &sectionsData);
@@ -98,7 +99,7 @@ namespace Tiles {
 				tileColors->insert({ list[tileSection].id,list[tileSection].tileColor });
 			}
 		}
-		Console::Log("Loaded Items!", text::white, __LINE__);
+		Console::Log("Loaded Tiles!", SUCCESS, __LINE__);
 	}
 
 	static std::thread LoadTilesFromFiles(std::map<int, vec3>* tileColors) {
@@ -157,7 +158,7 @@ namespace Items {
 	}
 
 	static void LoadItems(std::map<std::string, std::string>* icons) {
-		Console::Log("Loading Tiles from files...", text::white, __LINE__);
+		Console::Log("Loading Items from files...", WARNING, __LINE__);
 		std::vector<std::string> sections;
 		OpenedData data;
 		ItemReader::GetDataFromFile("items/item_lists.eid", "LISTS", &data);
@@ -172,6 +173,8 @@ namespace Items {
 			if (fixedName[0] == '\r') { fixedName.erase(fixedName.begin()); }
 			fixedPath.append(fixedName);
 
+			Console::Log(fixedPath, text::white, __LINE__);
+
 			ItemReader::GetDataFromFile(fixedPath, "SECTIONS", & sectionsData);
 			for (auto const& itemName : sectionsData.getArray("sections")) {
 				list[itemName] = EID::MakeItem("items/" + x.first, itemName);
@@ -179,7 +182,7 @@ namespace Items {
 				icons->insert({ list[itemName].section , list[itemName].sprite });
 			}
 		}
-		Console::Log("Loaded Tiles!", text::white, __LINE__);
+		Console::Log("Loaded Items!", SUCCESS, __LINE__);
 	}
 
 	static std::thread LoadItemsFromFiles(std::map<std::string, std::string>* icons) {

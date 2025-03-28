@@ -89,7 +89,7 @@ struct OpenedData {
 		}
 
 		catch (std::exception e) {
-			Console::Log("Error: getInt requires the value to be an int.", text::red, __LINE__);
+			//Console::Log("Error: getInt requires the value to be an int.", text::red, __LINE__);
 			return -1;
 		}
 	}
@@ -101,7 +101,7 @@ struct OpenedData {
 		}
 
 		catch (std::exception e) {
-			Console::Log("Error: getFloat requires the value to be a float.", text::red, __LINE__);
+			//Console::Log("Error: getFloat requires the value to be a float.", text::red, __LINE__);
 			return -1;
 		}
 	}
@@ -265,7 +265,6 @@ public:
 		if (defaultPath) { new_filepath.append("dat/eid/"); }
 		new_filepath.append(filepath);
 
-		std::cout << new_filepath << std::endl;
 		if (!std::filesystem::exists(new_filepath)) {
 			Console::Log("Attempting to read from file '" + new_filepath + "', but can't find file.", ERROR, __LINE__);
 			return false;

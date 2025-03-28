@@ -18,7 +18,7 @@ private:
 	double effectTickCount;
 	bool forwardTime = true;
 	std::vector<std::string> missMessages = { "blank", "You swing at nothing and almost fall over.", "You miss.", "You don't hit anything." };
-	std::vector<std::string> npcMessages;
+	std::map<std::string, std::vector<std::string>> npcMessages;
 public:
 	bool freeView = false;
 	CraftingSystem Crafter;
@@ -88,6 +88,7 @@ public:
 	ImVec4 GetTileColor(Tile* tile, float intensity);
 	ImVec4 GetTileColor(Vector2_I tile, float intensity);
 	ImVec4 GetPlayerColor();
+	Tile* SelectTile(Vector2_I coords);
 };
 
 
@@ -100,10 +101,11 @@ static void T_UpdateChunk(GameManager* gm, Vector2_I coords)
 
 void GameManager::LoadData() {
 	OpenedData data;
-	ItemReader::GetDataFromFile("dialogue.eid", "RANDOM", &data);
-	for (size_t i = 1; i < 6; i++)
+	ItemReader::GetDataFromFile("dialogue.eid", "WANDERER_CALM", &data);
+	npcMessages.insert({ "wanderer_calm", {} });
+	for (size_t i = 1; i < data.getInt("size"); i++)
 	{
-		npcMessages.push_back(data.getString(std::to_string(i)));
+		npcMessages["wanderer_calm"].push_back(data.getString(std::to_string(i)));
 	}
 
 	OpenedData tileData;
@@ -136,8 +138,8 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 
 	//Faction, Enemies
 	factionEnemies = {
-		{Human, {Zombie}},
-		{Zombie, {Human, Wildlife}},
+		{Human_W, {Zombie}},
+		{Zombie, {Human_W, Wildlife}},
 		{Wildlife, {}}
 	};
 	
@@ -261,7 +263,6 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		}
 		else {
 			ent->talking = false;
-			ent->message = npcMessages[Math::RandInt(0, 4)];
 		}
 
 		//run out of liquid
@@ -359,6 +360,14 @@ bool GameManager::PlayerNearby(Vector2_I coords) {
 	}
 	return nullptr;
 }*/
+
+Tile* GameManager::SelectTile(Vector2_I coords) {
+	Tile* selTile = mainMap.GetTileFromThisOrNeighbor(coords);
+	if (selTile->entity != nullptr && selTile->entity->canTalk) {
+		selTile->entity->message = npcMessages["wanderer_calm"][Math::RandInt(0, 7)];
+	}
+	return mainMap.GetTileFromThisOrNeighbor(coords);
+}
 
 void GameManager::SpawnEntity(Entity* ent) {
 	ent->health = Math::RandNum(100);
@@ -755,6 +764,10 @@ std::string GameManager::GetTileChar(Tile* tile) {
 			return ENT_CAT;
 		case ID_COW:
 			return ENT_COW;
+		case ID_FINDER:
+			return ENT_FINDER;
+		case ID_TAKER:
+			return ENT_TAKER;
 		}
 	}
 	//if (tile.hasItem) {
@@ -975,6 +988,15 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 					game->mainMap.SetWeather(thunder);
 				}
 			}
+		}
+		else if (tokens[i] == "help") {
+			std::string helpstring =
+						  "\ngive {item name} {amount} - gives item\n";
+			helpstring += "set weather {clear / rain / thunder} - sets the weather\n";
+			helpstring += "set {health / hunger / thirst} {number} - sets attribute\n";
+			helpstring += "help - this\n";
+
+			Console::Log(helpstring, text::white, -1);
 		}
 	}
 	if (previous_commands.size() > 5) {

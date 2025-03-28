@@ -1,7 +1,11 @@
-RANDOM {
-1 : "Hello friend.";
-2 : "Look under the sands, you may be rewarded.";
-3 : "The chicken beckons me by name.";
-4 : "Got anything to say?";
-5 : "This world is dark, but we still see.";
+WANDERER_CALM {
+size : 8;
+1 :	"Hello friend. Staying alive I hope?";
+2 :	"Have anything to trade?";
+3 :	"Where are you headed? I may be able to help.";
+4 :	"Trust me, a lamp at night is much worth it. Just get a lighter and some resin from the trees.";
+5 :	"Have you seen the glowing mushrooms in the swamps?";
+6 :	"Watch out for finders. They're just marking the way.";
+7 :	"Don't get caught in the rain without a jacket.";
+8 :	"The mud isn't so bad with some boots.";
 };

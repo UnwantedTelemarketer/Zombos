@@ -9,7 +9,8 @@ enum biome { desert, ocean, forest, swamp, taiga, grassland, urban, jungle };
 enum Liquid { nothing = 0, water = 1, blood = 2, fire = 3, guts = 4, mud = 5 , snow = 6};
 enum Action { use, consume, combine };
 enum Behaviour { Wander, Protective, Stationary, Aggressive };
-enum Faction { Human, Zombie, Wildlife };
+		//	  wanderer | tribal
+enum Faction { Human_W, Human_T, Dweller, Zombie, Wildlife, Takers };
 enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6};
 
 
@@ -139,7 +140,7 @@ struct Container {
 	}
 };
 
-//Health, Name, ID, Behaviour, Aggressive
+//Health, Name, ID, Behaviour, Aggressive, Faction, View Distance, Damage, Can Talk
 struct Entity {
 	float health;
 	const char* name;
@@ -546,6 +547,12 @@ private:
 
 #define ENT_COW "a"
 #define ID_COW 6
+
+#define ENT_FINDER "H"
+#define ID_FINDER 7
+
+#define ENT_TAKER "I"
+#define ID_TAKER 8
 
 
 #ifdef REGULAR_FONT
