@@ -46,6 +46,8 @@ private:
 	std::vector<ImVec2> mobPositions;
 	std::vector<ImVec4> mobColors;
 	vec2_i view_distance = { 15,15 };
+
+	std::shared_ptr<Chunk> customBuilding;
 public:
 	//UI stuff
 	GameUI gameScreen;
@@ -74,6 +76,10 @@ public:
 	float& health = game.mPlayer.health;
 	Map& map = game.mainMap;
 	std::vector<Vector2_I> item_positions;
+	Vector2_I cursorPos = { 15, 15 };
+	std::string customTileSelect = "TILE_STONE";
+
+	char customMapBuffer[512] = "";
 
 	//Crafting Stuff
 	int recipeSelected, itemSelected = 0;
@@ -288,6 +294,60 @@ public:
 	}
 
 	void MapTool() {
+
+		ImGui::PushFont(Engine::Instance().getFont("main"));
+		ImGui::Begin("Custom Building Tool");
+
+		for (int i = 0; i < 30; i++) {
+			for (int j = 0; j < 30; j++) {
+				Vector2_I curPos = { i, j };
+				Tile* curTile = customBuilding->GetTileAtCoords(curPos);
+
+				if (cursorPos == curPos) {
+					printIcon = 'X';
+					iconColor = { 1,0,0,1 };
+				}
+				else{
+
+					printIcon = game.GetTileChar(curTile);
+					iconColor = game.GetTileColor(curTile, 0.f);
+				}
+
+				ImGui::TextColored(iconColor, printIcon.c_str());
+				ImGui::SameLine();
+			}
+			ImGui::Text("");
+		}
+
+
+		if (ImGui::Button("Export Custom Structure")) {
+			std::string mapExport = "";
+			mapExport += "3030";
+			for (int i = 0; i < 30; i++) {
+				for (int j = 0; j < 30; j++) {
+					Vector2_I curPos = { i, j };
+					switch (customBuilding->GetTileAtCoords(curPos)->id) {
+					case ID_SAND:
+						mapExport += "?";
+						break;
+					case ID_STONE:
+						mapExport += "w";
+						break;
+					case 13:
+						mapExport += "f";
+						break;
+					}
+				}
+			}
+			SaveData structure;
+			structure.sections.insert({ "STRUCTURES", {} });
+			structure.addString("STRUCTURES", "monkey_bar", mapExport);
+
+			ItemReader::SaveDataToFile("newStructure", structure, true);
+		}
+		ImGui::End();
+		ImGui::PopFont();
+
 		ImGui::Begin("Settings");
 		ImGui::InputInt("Biome Seed", &map.biomeSeed);
 		ImGui::InputInt("Land Seed", &map.landSeed);
@@ -300,8 +360,8 @@ public:
 
 		ImGui::Begin("Map Generator");
 		bool item = false;
-		ImGui::PushFont(Engine::Instance().getFont("main"));
-		for (int i = -CHUNK_WIDTH; i < CHUNK_WIDTH * 2; i++) {
+		//ImGui::PushFont(Engine::Instance().getFont("main"));
+		/*for (int i = -CHUNK_WIDTH; i < CHUNK_WIDTH * 2; i++) {
 			for (int j = -CHUNK_HEIGHT; j < CHUNK_HEIGHT * 2; j++) {
 
 				Tile* curTile = map.GetTileFromThisOrNeighbor({ i, j });
@@ -361,8 +421,8 @@ public:
 			itemIcons.clear();
 			itemPositions.clear();
 		}
-
-		ImGui::PopFont();
+		*/
+		//ImGui::PopFont();
 
 		ImGui::End();
 	}
@@ -1300,8 +1360,11 @@ public:
 	void Init() override {
 
 		test_chunk = std::make_shared<Chunk>();
+		customBuilding = std::make_shared<Chunk>();
 		Items::LoadItems(&game.item_icons);
 		Tiles::LoadTiles(&game.tile_colors);
+
+		map.EmptyChunk(customBuilding);
 		//std::thread itemLoading = Items::LoadItemsFromFiles(&game.item_icons);
 		//std::thread tileLoading = Tiles::LoadTilesFromFiles(&game.tile_colors);
 
@@ -1342,8 +1405,35 @@ public:
 			currentState = map_gen_test;
 			map.CreateMap(map.landSeed, map.biomeSeed);
 		}
+
 		//the rest of the update is game logic so we stop here in the menu
-		if (currentState != playing) { return; }
+		if (currentState == map_gen_test) {
+			if (Input::KeyDown(KEY_UP)) {
+				cursorPos.x -= 1;
+			}
+			if (Input::KeyDown(KEY_DOWN)) {
+				cursorPos.x += 1;
+			}
+			if (Input::KeyDown(KEY_LEFT)) {
+				cursorPos.y -= 1;
+			}
+			if (Input::KeyDown(KEY_RIGHT)) {
+				cursorPos.y += 1;
+			}
+			if (Input::KeyHeldDown(KEY_SPACE)) {
+				if (Input::KeyHeldDown(KEY_LEFT_SHIFT)) {
+					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_SAND");
+				}
+				else if (Input::KeyHeldDown(KEY_F)) {
+					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_STONE_FLOOR");
+				}
+				else {
+					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile(customTileSelect);
+				}
+			}
+			return;
+		}
+		else if (currentState != playing) { return; }
 
 		//-=================================================================
 

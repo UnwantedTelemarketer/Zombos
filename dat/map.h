@@ -67,10 +67,12 @@ public:
 	void MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLog, Inventory& pInv);
 	void CheckBounds(Player* p);
 	bool CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk);
+	void EmptyChunk(std::shared_ptr<Chunk> chunk);
 	void BuildChunk(std::shared_ptr<Chunk> chunk);
 	void PlaceBuilding(Vector2_I startingChunk);
 	void PickStructure(Vector2_I startingChunk);
 	void PlaceCampsite(Vector2_I startingChunk);
+	void PlaceStructure(Vector2_I startingChunk, std::string structure);
 	void GenerateTomb(std::shared_ptr<Chunk> chunk);
 	std::vector<Vector2_I> GetLine(Vector2_I startTile, Vector2_I endTile, int limit);
 	std::vector<Vector2_I> GetSquare(Vector2_I centerTile, int size);
@@ -695,6 +697,15 @@ bool Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 	return false;
 }
 
+void Map::EmptyChunk(std::shared_ptr<Chunk> chunk) {
+
+	for (int i = 0; i < CHUNK_WIDTH; i++) {
+		for (int j = 0; j < CHUNK_HEIGHT; j++) {
+			chunk->localCoords[i][j] = Tiles::GetTile("TILE_SAND");
+		}
+	}
+}
+
 void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 	
 	bool entrance = false;
@@ -857,6 +868,8 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 
 void Map::PickStructure(Vector2_I startingChunk) {
 	int randInt = Math::RandInt(0, 4);
+
+
 	switch (randInt) {
 	case 0:
 	case 1:
@@ -867,6 +880,11 @@ void Map::PickStructure(Vector2_I startingChunk) {
 	case 4:
 		PlaceCampsite(startingChunk);
 		break;
+	}
+	if (Math::RandInt(0, 40) == 35) {
+		OpenedData dat;
+		ItemReader::GetDataFromFile("structures/newStructure", "STRUCTURES", &dat);
+		PlaceStructure(startingChunk, dat.getString("monkey_bar"));
 	}
 }
 
@@ -888,6 +906,57 @@ void Map::PlaceCampsite(Vector2_I startingChunk) {
 	GetTileFromThisOrNeighbor(cornerstone, startingChunk)->itemName = "CAMPFIRE";
 	GetTileFromThisOrNeighbor(cornerstone, startingChunk)->SetLiquid(fire);
 
+}
+
+void Map::PlaceStructure(Vector2_I startingChunk, std::string structure) {
+	Vector2_I cornerstone = { Math::RandInt(0, CHUNK_WIDTH - 1), Math::RandInt(0, CHUNK_HEIGHT - 1) };
+
+	std::string w = "";
+	w += structure[0];
+	w += structure[1];
+
+	std::string h = "";
+	h += structure[2];
+	h += structure[3];
+
+	int width = stoi(w);
+	int height = stoi(h);
+
+	bool newChunk = false;
+	std::vector<Vector2_I> chunksCoordsToDelete;
+
+
+	for (int i = 0; i < height; i++)
+	{
+		for (int x = 0; x < width; x++)
+		{
+			Tile* curTile = GetTileFromThisOrNeighbor({i,x}, startingChunk);
+			if (curTile == nullptr) {
+				//continue;
+				Vector2_I chunk_Coords = GetNeighborChunkCoords({i,x}, startingChunk);
+				if (!DoesChunkExistsOrMakeNew(chunk_Coords)) {
+					newChunk = true;
+					curTile = GetTileFromThisOrNeighbor({i,x}, startingChunk);
+					chunksCoordsToDelete.push_back(chunk_Coords);
+				}
+			}
+			//								  --convert 1d coords into 2d--
+			switch (structure[(x + (i * height)) + 4]) {
+			case '?':
+				break;
+			case 'w':
+				*curTile = Tiles::GetTile("TILE_STONE");
+				break;
+			case 'f':
+				*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
+				break;
+			}
+		}
+	}
+
+	if (newChunk) {
+		UnloadChunks(chunksCoordsToDelete);
+	}
 }
 
 void Map::PlaceBuilding(Vector2_I startingChunk) {
