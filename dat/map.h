@@ -49,6 +49,7 @@ public:
 	void CreateMap(int seed, int b_seed);
 	bool DoesChunkExistsOrMakeNew(Vector2_I coords);
 	void UpdateMemoryZone(Vector2_I coords);
+	void UnloadChunks(std::vector<Vector2_I> chunksToDelete);
 	void ReadChunk(Vector2_I curChunk, std::string path);
 	void SpawnChunkEntities(std::shared_ptr<Chunk> chunk);
 	std::shared_ptr<Chunk> CurrentChunk();
@@ -194,6 +195,11 @@ void Map::UpdateMemoryZone(Vector2_I coords) {
 		}
 	}
 
+	UnloadChunks(chunksToDelete);
+	
+}
+
+void Map::UnloadChunks(std::vector<Vector2_I> chunksToDelete) {
 	if (chunksToDelete.size() > 0) {
 		//Save all three chunks to file across 3 threads
 		std::vector<std::thread> threads;
@@ -211,7 +217,6 @@ void Map::UpdateMemoryZone(Vector2_I coords) {
 		//world.chunks[vec]->SaveChunk();
 		world.chunks.erase(vec);
 	}
-	
 }
 
 bool Map::UpdateWeather() {
@@ -887,10 +892,11 @@ void Map::PlaceCampsite(Vector2_I startingChunk) {
 
 void Map::PlaceBuilding(Vector2_I startingChunk) {
 	Vector2_I cornerstone = { Math::RandInt(0, CHUNK_WIDTH - 1), Math::RandInt(0, CHUNK_HEIGHT - 1) };
-	Vector2_I corner = cornerstone;
 
 	//pick some corners to draw to
 	int wallLength = Math::RandInt(4, 9);
+	bool newChunk = false;
+	std::vector<Vector2_I> chunksCoordsToDelete;
 
 	std::vector<Vector2_I> buildingBlocks = GetSquare(cornerstone, wallLength);
 	std::vector<Vector2_I> wallBlocks = GetSquareEdge(cornerstone, wallLength);
@@ -910,18 +916,20 @@ void Map::PlaceBuilding(Vector2_I startingChunk) {
 		//if the chunk we are trying to place the building in doesnt exists, create it anew and place
 		//the building in there, then save it and close it
 		if (curTile == nullptr) {
-			continue;
-			/*Vector2_I chunk_Coords = GetNeighborChunkCoords({buildingBlocks[i].x, buildingBlocks[i].y}, startingChunk);
+			//continue;
+			Vector2_I chunk_Coords = GetNeighborChunkCoords({buildingBlocks[i].x, buildingBlocks[i].y}, startingChunk);
 			if (!DoesChunkExistsOrMakeNew(chunk_Coords)) {
+				newChunk = true;
 				newChunkCoords = chunk_Coords;
-				curTile = GetTileFromThisOrNeighbor({ buildingBlocks[i].x,buildingBlocks[i].y }, startingChunk);
-			}*/
+				curTile = GetTileFromThisOrNeighbor(buildingBlocks[i], startingChunk);
+				chunksCoordsToDelete.push_back(newChunkCoords);
+			}
 		}
 		
 		*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
 		if (itemCounter <= itemMax && Math::RandInt(0, 15) == 12) {
-			GetTileFromThisOrNeighbor(buildingBlocks[i], startingChunk)->itemName = Items::GetRandomItemFromPool("house.eid");
-			GetTileFromThisOrNeighbor(buildingBlocks[i], startingChunk)->hasItem = true;
+			curTile->itemName = Items::GetRandomItemFromPool("house.eid");
+			curTile->hasItem = true;
 			itemCounter++;
 		}
 	}
@@ -931,13 +939,26 @@ void Map::PlaceBuilding(Vector2_I startingChunk) {
 	//draw walls
 	for (int i = 0; i < wallBlocks.size(); i++)
 	{
-		Tile* curTile = GetTileFromThisOrNeighbor({ wallBlocks[i].x, wallBlocks[i].y }, startingChunk);
+		Tile* curTile = GetTileFromThisOrNeighbor(wallBlocks[i], startingChunk);
+		
+		//If the wall crosses to a new chunk, load/generate it, place blocks, then unload it at the end
 		if (curTile == nullptr) {
-			continue;
+			Vector2_I chunk_Coords = GetNeighborChunkCoords( wallBlocks[i], startingChunk);
+			if (!DoesChunkExistsOrMakeNew(chunk_Coords)) {
+				newChunk = true;
+				newChunkCoords = chunk_Coords;
+				curTile = GetTileFromThisOrNeighbor(buildingBlocks[i], startingChunk);
+				chunksCoordsToDelete.push_back(newChunkCoords);
+			}
 		}
+
 		door--;
 		if (door <= 0 && (i + 1) % wallLength == 0 && !doorSpawned) { doorSpawned = true; continue; }
 		*curTile = Tiles::GetTile("TILE_STONE");
+	}
+
+	if (newChunk) {
+		UnloadChunks(chunksCoordsToDelete);
 	}
 }
 

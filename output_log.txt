@@ -19,29 +19,6 @@
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
 [ Line 1329 ]: [1;32mDone![0m
 [ Line 41 ]: [1;31m0[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/249251.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/250251.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/251251.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/249249.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/249250.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/249251.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/252249.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/252250.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/252251.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/250248.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/251248.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/250249.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/251249.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/252249.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/250246.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/251246.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/252246.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/250249.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/251249.chunk[0m
-[ Line 246 ]: [1;32mReading Chunk from dat/map/252249.chunk[0m
 [ Line -1 ]: [0;37mNow saving...[0m
 [ Line 370 ]: [1;32mWrote to file dat/eid/save.eid[0m
-[ Line 176 ]: [1;32mSave complete in 11.665664ms.[0m
-[ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/eid/save.eid[0m
-[ Line 176 ]: [1;32mSave complete in 10.002913ms.[0m
+[ Line 176 ]: [1;32mSave complete in 29.079412ms.[0m
