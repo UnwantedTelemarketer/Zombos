@@ -2,6 +2,38 @@ BANDAGE {
 count : 1;
 coveredIn : 0;
 ticksUntilDry : 0;
+initialTickTime : 47;
+durability : -1;
+heldLiquid : 0;
+}
+CHAIR {
+count : 1;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 0;
+durability : -1;
+heldLiquid : 0;
+}
+FLAT_MUSHROOM {
+count : 5;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 31;
+durability : -1;
+heldLiquid : 0;
+}
+GLASS_SHARDS {
+count : 3;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 76;
+durability : -1;
+heldLiquid : 0;
+}
+GLOWING_MUSHROOM_JAR {
+count : 1;
+coveredIn : 0;
+ticksUntilDry : 0;
 initialTickTime : 0;
 durability : -1;
 heldLiquid : 0;
@@ -10,7 +42,31 @@ MATCH {
 count : 2;
 coveredIn : 0;
 ticksUntilDry : 0;
-initialTickTime : 0;
+initialTickTime : 77;
+durability : -1;
+heldLiquid : 0;
+}
+RESIN {
+count : 1;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 103;
+durability : -1;
+heldLiquid : 0;
+}
+ROCK {
+count : 8;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 52;
+durability : -1;
+heldLiquid : 0;
+}
+SCRAP {
+count : 1;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 105;
 durability : -1;
 heldLiquid : 0;
 }
@@ -18,25 +74,33 @@ SETTINGS {
 ySep : 2;
 xDist : 15;
 yDist : 15;
-sfxSound : 0.034000;
-musicSound : 0.000000;
+sfxSound : 0.000000;
+musicSound : 1.000000;
 }
 STATS {
-x_pos : 6;
-y_pos : 7;
-biomes : 8196;
-seed : 16362;
-global_x : 250;
-global_y : 250;
+x_pos : 1;
+y_pos : 2;
+biomes : 1807;
+seed : 1448;
+global_x : 251;
+global_y : 248;
 weather : 1;
 color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
 health : 100.000000;
-thirst : 98.725052;
-hunger : 99.149948;
-time : 6.850003;
-items : [BANDAGE,MATCH];
+thirst : 72.401123;
+hunger : 81.598877;
+time : 0.350000;
+items : [BANDAGE,MATCH,ROCK,FLAT_MUSHROOM,SCRAP,RESIN,GLASS_SHARDS,STICK,CHAIR,GLOWING_MUSHROOM_JAR];
 savedRecipes : [];
+}
+STICK {
+count : 4;
+coveredIn : 0;
+ticksUntilDry : 0;
+initialTickTime : 70;
+durability : -1;
+heldLiquid : 0;
 }
 

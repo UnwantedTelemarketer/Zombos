@@ -1025,26 +1025,31 @@ public:
 			Container* curCont = selectedTile->tileContainer;
 
 			//Both Lists for the entity and for the chest
-			if (selectedTile->entity != nullptr && selectedTile->entity->health <= 0) {
-				if (ImGui::CollapsingHeader("Corpse")) {
-					ImGui::BeginListBox("Items");
-					std::vector<std::string> containerList = selectedTile->entity->getItemNames();
-					for (int n = 0; n < containerList.size(); n++)
-					{
-						const bool is_selected = (itemSelected == n);
-						if (ImGui::Selectable(containerList[n].c_str(), is_selected)) {
-							itemSelectedName = containerList[n];
-							itemSelected = n;
+			if (selectedTile->entity != nullptr) {
+				if (selectedTile->entity->health <= 0) {
+					if (ImGui::CollapsingHeader("Corpse")) {
+						ImGui::BeginListBox("Items");
+						std::vector<std::string> containerList = selectedTile->entity->getItemNames();
+						for (int n = 0; n < containerList.size(); n++)
+						{
+							const bool is_selected = (itemSelected == n);
+							if (ImGui::Selectable(containerList[n].c_str(), is_selected)) {
+								itemSelectedName = containerList[n];
+								itemSelected = n;
+							}
 						}
-					}
-					ImGui::EndListBox();
+						ImGui::EndListBox();
 
-					if (containerList.size() > 0) {
-						if (ImGui::Button("Take Item")) {
-							pInv.AddItem(selectedTile->entity->inv[itemSelected]);
-							selectedTile->entity->inv.erase(selectedTile->entity->inv.begin() + itemSelected);
+						if (containerList.size() > 0) {
+							if (ImGui::Button("Take Item")) {
+								pInv.AddItem(selectedTile->entity->inv[itemSelected]);
+								selectedTile->entity->inv.erase(selectedTile->entity->inv.begin() + itemSelected);
+							}
 						}
 					}
+				}
+				else if (selectedTile->entity->canTalk) {
+					ImGui::TextWrapped(("\"" + selectedTile->entity->message + "\"").c_str());
 				}
 			}
 			else if (curCont != nullptr) {
@@ -1073,6 +1078,7 @@ public:
 					}
 				}
 			}
+
 
 			SWAP_FONT("main");
 			/*if (curCont != nullptr) {
@@ -1372,7 +1378,7 @@ public:
 		if (Input::KeyDown(KEY_UP) || Input::KeyDown(KEY_W)) {
 			if (interacting)
 			{
-				selectedTile = { map.GetTileFromThisOrNeighbor({ player.coords.x - 1, player.coords.y }) };
+				selectedTile = game.SelectTile({ player.coords.x - 1, player.coords.y });
 				interacting = false;
 				return;
 			}
@@ -1390,7 +1396,7 @@ public:
 		else if (Input::KeyDown(KEY_DOWN) || Input::KeyDown(KEY_S)) {
 			if (interacting)
 			{
-				selectedTile = map.GetTileFromThisOrNeighbor({ player.coords.x + 1, player.coords.y });
+				selectedTile = game.SelectTile({ player.coords.x + 1, player.coords.y });
 				interacting = false;
 				return;
 			}
@@ -1408,7 +1414,7 @@ public:
 		else if (Input::KeyDown(KEY_LEFT) || Input::KeyDown(KEY_A)) {
 			if (interacting)
 			{
-				selectedTile = { map.GetTileFromThisOrNeighbor({ player.coords.x, player.coords.y - 1}) };
+				selectedTile = { game.SelectTile({ player.coords.x, player.coords.y - 1}) };
 				interacting = false;
 				return;
 			}
@@ -1426,7 +1432,7 @@ public:
 		else if (Input::KeyDown(KEY_RIGHT) || Input::KeyDown(KEY_D)) {
 			if (interacting)
 			{
-				selectedTile = { map.GetTileFromThisOrNeighbor({ player.coords.x, player.coords.y + 1}) };
+				selectedTile = { game.SelectTile({ player.coords.x, player.coords.y + 1}) };
 				interacting = false;
 				return;
 			}

@@ -1048,7 +1048,7 @@ public:
 						}
 					}
 				}
-				else if(selectedTile->entity->canTalk) {
+				else if (selectedTile->entity->canTalk) {
 					ImGui::TextWrapped(("\"" + selectedTile->entity->message + "\"").c_str());
 				}
 			}
