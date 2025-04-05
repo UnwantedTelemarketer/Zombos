@@ -72,7 +72,7 @@ public:
 	void PlaceBuilding(Vector2_I startingChunk);
 	void PickStructure(Vector2_I startingChunk);
 	void PlaceCampsite(Vector2_I startingChunk);
-	void PlaceStructure(Vector2_I startingChunk, std::string structure);
+	void PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2_I dimensions);
 	void GenerateTomb(std::shared_ptr<Chunk> chunk);
 	std::vector<Vector2_I> GetLine(Vector2_I startTile, Vector2_I endTile, int limit);
 	std::vector<Vector2_I> GetSquare(Vector2_I centerTile, int size);
@@ -881,15 +881,15 @@ void Map::PickStructure(Vector2_I startingChunk) {
 		PlaceCampsite(startingChunk);
 		break;
 	}
-	if (Math::RandInt(0, 40) == 35) {
+	if (Math::RandInt(0,50) == 35) {
 		OpenedData dat;
-		ItemReader::GetDataFromFile("structures/newStructure", "STRUCTURES", &dat);
-		PlaceStructure(startingChunk, dat.getString("monkey_bar"));
+		ItemReader::GetDataFromFile("structures/newStructure", "MONKEY_BAR", &dat);
+		PlaceStructure(startingChunk, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") });
 	}
 }
 
 void Map::PlaceCampsite(Vector2_I startingChunk) {
-	Vector2_I cornerstone = { Math::RandInt(0, CHUNK_WIDTH - 1), Math::RandInt(0, CHUNK_HEIGHT - 1) };
+	Vector2_I cornerstone = { Math::RandInt(0, CHUNK_WIDTH - 5), Math::RandInt(0, CHUNK_HEIGHT - 5) };
 	std::vector<Vector2_I> buildingBlocks = GetSquare(cornerstone, 4);
 
 
@@ -908,40 +908,30 @@ void Map::PlaceCampsite(Vector2_I startingChunk) {
 
 }
 
-void Map::PlaceStructure(Vector2_I startingChunk, std::string structure) {
-	Vector2_I cornerstone = { Math::RandInt(0, CHUNK_WIDTH - 1), Math::RandInt(0, CHUNK_HEIGHT - 1) };
-
-	std::string w = "";
-	w += structure[0];
-	w += structure[1];
-
-	std::string h = "";
-	h += structure[2];
-	h += structure[3];
-
-	int width = stoi(w);
-	int height = stoi(h);
+void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2_I dimensions) {
+	Vector2_I cornerstone = { Math::RandInt(0, CHUNK_WIDTH - 5), Math::RandInt(0, CHUNK_HEIGHT - 5) };
 
 	bool newChunk = false;
 	std::vector<Vector2_I> chunksCoordsToDelete;
 
 
-	for (int i = 0; i < height; i++)
+	for (int i = 0; i < dimensions.y; i++)
 	{
-		for (int x = 0; x < width; x++)
+		for (int x = 0; x < dimensions.x; x++)
 		{
-			Tile* curTile = GetTileFromThisOrNeighbor({i,x}, startingChunk);
+			Vector2_I curCoordsModified = { i + cornerstone.y,x + cornerstone.x };
+			Tile* curTile = GetTileFromThisOrNeighbor(curCoordsModified, startingChunk);
 			if (curTile == nullptr) {
 				//continue;
-				Vector2_I chunk_Coords = GetNeighborChunkCoords({i,x}, startingChunk);
+				Vector2_I chunk_Coords = GetNeighborChunkCoords(curCoordsModified, startingChunk);
 				if (!DoesChunkExistsOrMakeNew(chunk_Coords)) {
 					newChunk = true;
-					curTile = GetTileFromThisOrNeighbor({i,x}, startingChunk);
+					curTile = GetTileFromThisOrNeighbor(curCoordsModified, startingChunk);
 					chunksCoordsToDelete.push_back(chunk_Coords);
 				}
 			}
 			//								  --convert 1d coords into 2d--
-			switch (structure[(x + (i * height)) + 4]) {
+			switch (structure[(x + (i * dimensions.x))]) {
 			case '?':
 				break;
 			case 'w':

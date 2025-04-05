@@ -64,6 +64,8 @@ public:
 	int xMin, xMax, yMin, yMax;
 	int xViewDist, yViewDist;
 	char recipe_search[128] = "";
+	int customStructHeight = 1;
+	int customStructWidth = 1;
 	Vector4 customTabColor;
 
 	//Game Stuff
@@ -295,9 +297,9 @@ public:
 
 	void MapTool() {
 
-		ImGui::PushFont(Engine::Instance().getFont("main"));
 		ImGui::Begin("Custom Building Tool");
 
+		ImGui::PushFont(Engine::Instance().getFont("main"));
 		for (int i = 0; i < 30; i++) {
 			for (int j = 0; j < 30; j++) {
 				Vector2_I curPos = { i, j };
@@ -318,17 +320,20 @@ public:
 			}
 			ImGui::Text("");
 		}
+		ImGui::PopFont();
 
-
+		ImGui::InputInt("Width", &customStructWidth);
+		ImGui::InputInt("Height", &customStructHeight);
 		if (ImGui::Button("Export Custom Structure")) {
 			std::string mapExport = "";
-			mapExport += "3030";
 			for (int i = 0; i < 30; i++) {
 				for (int j = 0; j < 30; j++) {
 					Vector2_I curPos = { i, j };
 					switch (customBuilding->GetTileAtCoords(curPos)->id) {
-					case ID_SAND:
+					case ID_GRASS:
 						mapExport += "?";
+						break;
+					case ID_SAND:
 						break;
 					case ID_STONE:
 						mapExport += "w";
@@ -340,13 +345,14 @@ public:
 				}
 			}
 			SaveData structure;
-			structure.sections.insert({ "STRUCTURES", {} });
-			structure.addString("STRUCTURES", "monkey_bar", mapExport);
+			structure.sections.insert({ "MONKEY_BAR", {} });
+			structure.addString("MONKEY_BAR", "tiles", mapExport);
+			structure.addInt("MONKEY_BAR", "width", customStructWidth);
+			structure.addInt("MONKEY_BAR", "height", customStructHeight);
 
 			ItemReader::SaveDataToFile("newStructure", structure, true);
 		}
 		ImGui::End();
-		ImGui::PopFont();
 
 		ImGui::Begin("Settings");
 		ImGui::InputInt("Biome Seed", &map.biomeSeed);
@@ -1426,6 +1432,9 @@ public:
 				}
 				else if (Input::KeyHeldDown(KEY_F)) {
 					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_STONE_FLOOR");
+				}
+				else if (Input::KeyHeldDown(KEY_A)) {
+					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_GRASS");
 				}
 				else {
 					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile(customTileSelect);
