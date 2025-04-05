@@ -1,16 +1,24 @@
 BANDAGE {
 count : 1;
-coveredIn : 0;
-ticksUntilDry : 0;
-initialTickTime : 0;
+coveredIn : 1;
+ticksUntilDry : 12;
+initialTickTime : 34;
+durability : -1;
+heldLiquid : 0;
+}
+CHAIR {
+count : 1;
+coveredIn : 1;
+ticksUntilDry : 59;
+initialTickTime : 75;
 durability : -1;
 heldLiquid : 0;
 }
 MATCH {
 count : 2;
-coveredIn : 0;
-ticksUntilDry : 0;
-initialTickTime : 0;
+coveredIn : 1;
+ticksUntilDry : 26;
+initialTickTime : 36;
 durability : -1;
 heldLiquid : 0;
 }
@@ -22,21 +30,21 @@ sfxSound : 0.000000;
 musicSound : 1.000000;
 }
 STATS {
-x_pos : 23;
-y_pos : 16;
-biomes : 7436;
-seed : 21953;
-global_x : 249;
-global_y : 248;
+x_pos : 0;
+y_pos : 20;
+biomes : 25658;
+seed : 2954;
+global_x : 230;
+global_y : 241;
 weather : 0;
 color_r : 1.000000;
 color_g : 1.000000;
 color_b : 1.000000;
 health : 100.000000;
-thirst : 97.450104;
-hunger : 98.299896;
-time : 7.700006;
-items : [BANDAGE,MATCH];
+thirst : 75.925980;
+hunger : 83.949020;
+time : 22.049946;
+items : [BANDAGE,MATCH,CHAIR];
 savedRecipes : [];
 }
 
