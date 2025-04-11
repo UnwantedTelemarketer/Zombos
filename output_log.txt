@@ -1,25 +1,15 @@
-[ Line 161 ]: [0;33mLoading Items from files...[0m
-[ Line 176 ]: [0;37mitems/clothing.eid[0m
-[ Line 176 ]: [0;37mitems/crafted_materials.eid[0m
-[ Line 176 ]: [0;37mitems/custom_items.eid[0m
-[ Line 176 ]: [0;37mitems/decoration.eid[0m
-[ Line 176 ]: [0;37mitems/droppable.eid[0m
-[ Line 176 ]: [0;37mitems/food.eid[0m
-[ Line 176 ]: [0;37mitems/materials.eid[0m
-[ Line 176 ]: [0;37mitems/misc.eid[0m
-[ Line 176 ]: [0;37mitems/nature_items.eid[0m
-[ Line 176 ]: [0;37mitems/survival_items.eid[0m
-[ Line 176 ]: [0;37mitems/weapons.eid[0m
-[ Line 185 ]: [1;32mLoaded Items![0m
-[ Line 83 ]: [0;33mLoading Tiles from files...[0m
-[ Line 92 ]: [0;37mtiles.eid[0m
-[ Line 102 ]: [1;32mLoaded Tiles![0m
-[ Line 226 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
-[ Line 79 ]: [1;32mLoaded texture from res/plank.png.[0m
-[ Line 10 ]: [1;32mSuccesfully created object Box[0m
-[ Line 1398 ]: [1;32mDone![0m
+[ Line 226 ]: [1;32mSuccesfully added scene named 'Sprites' to engine.[0m
+[ Line 79 ]: [1;32mLoaded texture from res/TTRPG.png.[0m
+[ Line 10 ]: [1;32mSuccesfully created object logo[0m
 [ Line 41 ]: [1;31m0[0m
-[ Line 253 ]: [1;32mReading Chunk from dat/map/245245.chunk[0m
-[ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/eid/save.eid[0m
-[ Line 184 ]: [1;32mSave complete in 12.048583ms.[0m
+[ Line 370 ]: [1;32mWrote to file zyzzyx.save[0m
+[ Line 370 ]: [1;32mWrote to file zyzzyx.save[0m
+[ Line -1 ]: [0;37mAutosaved.[0m
+[ Line 370 ]: [1;32mWrote to file zyzzyx.save[0m
+[ Line -1 ]: [0;37mAutosaved.[0m
+[ Line 370 ]: [1;32mWrote to file zyzzyx.save[0m
+[ Line 370 ]: [1;32mWrote to file zyzzyx.save[0m
+[ Line -1 ]: [0;37mAutosaved.[0m
+[ Line 370 ]: [1;32mWrote to file zyzzyx.save[0m
+[ Line -1 ]: [0;37mAutosaved.[0m
+[ Line 370 ]: [1;32mWrote to file zyzzyx.save[0m

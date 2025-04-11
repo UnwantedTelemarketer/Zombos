@@ -1,0 +1,19 @@
+SETTINGS {
+notepadWidth : 330;
+notepadHeight : 200;
+maxHealth : 84;
+currentHealth : 56;
+tempHealth : 0;
+notepad : "i am going to die!
+
+left - 1
+middle - 5
+right - 2
+
+top - 3";
+bgColorR : 0.179859;
+bgColorG : 0.482296;
+bgColorB : 0.685976;
+statistics : [charisma,20,constitution,16,dexterity,14,intelligence,11,strength,3,wisdom,8,];
+}
+
