@@ -3,13 +3,3 @@
 [ Line 10 ]: [1;32mSuccesfully created object logo[0m
 [ Line 41 ]: [1;31m0[0m
 [ Line 370 ]: [1;32mWrote to file zyzzyx.save[0m
-[ Line 370 ]: [1;32mWrote to file zyzzyx.save[0m
-[ Line -1 ]: [0;37mAutosaved.[0m
-[ Line 370 ]: [1;32mWrote to file zyzzyx.save[0m
-[ Line -1 ]: [0;37mAutosaved.[0m
-[ Line 370 ]: [1;32mWrote to file zyzzyx.save[0m
-[ Line 370 ]: [1;32mWrote to file zyzzyx.save[0m
-[ Line -1 ]: [0;37mAutosaved.[0m
-[ Line 370 ]: [1;32mWrote to file zyzzyx.save[0m
-[ Line -1 ]: [0;37mAutosaved.[0m
-[ Line 370 ]: [1;32mWrote to file zyzzyx.save[0m
