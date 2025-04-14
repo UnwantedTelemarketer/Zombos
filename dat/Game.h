@@ -129,7 +129,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	mainMap.SetWeather(clear);
 	mainMap.ticksUntilWeatherUpdate = Math::RandInt(15, 600);
 
-	if(seed == -1) deleteAllFilesInDirectory();
+	//if(seed == -1) deleteAllFilesInDirectory();
 	SetTick(tick);
 	mPlayer.coords.x = x;
 	mPlayer.coords.y = y;
@@ -567,7 +567,7 @@ void GameManager::UpdateTick() {
 		if (mainMap.currentWeather == rainy || mainMap.currentWeather == thunder) {
 			if (Math::RandInt(1, 7) == 2)  //random check
 			{
-				if (!pInv.CurrentEquipMatches(shirt, "RAINCOAT") && mainMap.TileAtPos(mPlayer.coords)->id != 13) {
+				if (!pInv.equippedItems[shirt].waterproof && mainMap.TileAtPos(mPlayer.coords)->id != 13) {
 					mPlayer.CoverIn(water, 15); //cover the player in it
 				}
 			}

@@ -64,6 +64,8 @@ class DND : public App {
 	bool menuOpen = false;
 	bool settingsOpen = false;
 	bool makeNewMessage = false;
+	float autosaveTime = 3600;
+	int autosaveMinute = 5;
 
 
 	void ResetStats() {
@@ -79,12 +81,6 @@ class DND : public App {
 		nat1Color[0] = 1;
 		nat1Color[1] = 0;
 		nat1Color[2] = 0;
-		statistics.insert({ "strength", 1 });
-		statistics.insert({ "dexterity", 1 });
-		statistics.insert({ "constitution", 1 });
-		statistics.insert({ "intelligence", 1 });
-		statistics.insert({ "wisdom", 1 });
-		statistics.insert({ "charisma", 1 });
 
 		noteBox[0] = '\0';
 		display_time = 3;
@@ -98,6 +94,16 @@ class DND : public App {
 		healthModification = 0;
 		notepadWidth = 200;
 		notepadHeight = 200;
+		DNDTemplate();
+	}
+
+	void DNDTemplate() {
+		statistics.insert({ "strength", 1 });
+		statistics.insert({ "dexterity", 1 });
+		statistics.insert({ "constitution", 1 });
+		statistics.insert({ "intelligence", 1 });
+		statistics.insert({ "wisdom", 1 });
+		statistics.insert({ "charisma", 1 });
 	}
 
 	void Init() override {
@@ -115,6 +121,16 @@ class DND : public App {
 	}
 
 	void Update() override {
+		if (loaded) {
+			autosaveTime -= 1;
+			if (autosaveTime <= 0) {
+				SaveUserData(saveFileName);
+				Console::Log("Autosaved.", text::white, -1);
+				//			   frms  secs		minutes
+				autosaveTime = ((60 * 60) * autosaveMinute);
+			}
+		}
+
 		rainbowHue += 0.05f;
 		if (rainbowHue > 1.f) {
 			rainbowHue = 0.f;
@@ -161,6 +177,12 @@ class DND : public App {
 					arrBGcolor[1] = dat.getFloat("bgColorG");
 					arrBGcolor[2] = dat.getFloat("bgColorB");
 					currentBGColor = { arrBGcolor[0], arrBGcolor[1], arrBGcolor[2] };
+					std::vector<std::string> statString = dat.getArray("statistics");
+					for (size_t i = 0; i < statString.size(); i++)
+					{
+						statistics[statString[i]] = stoi(statString[i + 1]);
+						i++;
+					}
 					loaded = true;
 				}
 				else {
@@ -235,6 +257,13 @@ class DND : public App {
 				healthCurrent = healthMax;
 			}
 
+		}
+		ImGui::End();
+
+		ImGui::Begin("Stat Modifiers");
+		for (auto& stat : statistics)
+		{
+			ImGui::InputInt(stat.first.c_str(), &stat.second);
 		}
 		ImGui::End();
 
@@ -370,6 +399,9 @@ class DND : public App {
 				ImGui::Text("--Notepad Height--");
 				ImGui::DragInt("##nHeight", &notepadHeight);
 
+				ImGui::Text("--Autosave Time (Minutes)--");
+				ImGui::DragInt("##aMin", &autosaveMinute);
+
 				if (ImGui::CollapsingHeader("Color Settings")) {
 					ImGui::Text("--Background Color--");
 					if (ImGui::ColorPicker3("##bg_color", &arrBGcolor[0])) {
@@ -417,6 +449,13 @@ class DND : public App {
 		dat.addFloat("SETTINGS", "bgColorR", arrBGcolor[0]);
 		dat.addFloat("SETTINGS", "bgColorG", arrBGcolor[1]);
 		dat.addFloat("SETTINGS", "bgColorB", arrBGcolor[2]);
+
+		std::string statString = "";
+		for (auto& stat : statistics)
+		{
+			statString += stat.first + "," + std::to_string(stat.second) + ",";
+		}
+		dat.sections["SETTINGS"].lists.insert({ "statistics", {statString} });
 
 		ItemReader::SaveDataToFile(filename, dat, true);
 	}

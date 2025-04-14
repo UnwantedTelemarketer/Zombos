@@ -20,6 +20,7 @@ equipModifier : 15;
 durability : 100;
 sprite : "G";
 spriteColor : [1.0, 0.1, 0.2];
+waterproof : true;
 }
 
 RAINCOAT{
@@ -37,4 +38,5 @@ equipModifier : 15;
 durability : 25;
 sprite : "K";
 spriteColor : [1.0, 1.0, 0.2];
+waterproof : true;
 }

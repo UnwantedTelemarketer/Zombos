@@ -39,6 +39,7 @@ public:
 	std::vector<Vector2_I> line;
 	weather currentWeather;
 	int ticksUntilWeatherUpdate = 0;
+	std::string currentSaveName;
 
 	int landSeed = 0, biomeSeed = 0;
 	float tempMin = 0.5f, moistureMin = 0.5f;
@@ -96,6 +97,7 @@ public:
 	void SetupNoise(int l_seed, int b_seed);
 	std::shared_ptr<Chunk> GetProperChunk(Vector2_I coords);
 	void TempCheck(Player* p, Vector2_I coords);
+	std::string GetCurrentSavePath() const { return "dat/saves/" + currentSaveName + "/"; }
 
 	~Map();
 
@@ -142,12 +144,17 @@ void Map::CreateMap(int l_seed, int b_seed)
 
 }
 
-static void T_SaveChunks(std::shared_ptr<Chunk> chunk) {
-	chunk->SaveChunk();
+static void T_SaveChunks(std::shared_ptr<Chunk> chunk, std::string currentSaveName) {
+	chunk->SaveChunk(currentSaveName);
 }
 
 bool Map::DoesChunkExistsOrMakeNew(Vector2_I coords) {
-	std::string filename = "dat/map/" + std::to_string(coords.x) + std::to_string(coords.y) + ".chunk";
+	std::string filename = "dat/saves/";
+	filename += currentSaveName;
+	filename += "/map/";
+	filename += std::to_string(coords.x);
+	filename += std::to_string(coords.y);
+	filename += ".chunk";
 
 	//Check if theres a saved chunk. if so, load it
 	if (world.chunks[coords] == nullptr) {
@@ -206,7 +213,7 @@ void Map::UnloadChunks(std::vector<Vector2_I> chunksToDelete) {
 		//Save all three chunks to file across 3 threads
 		std::vector<std::thread> threads;
 		for (int i = 0; i < chunksToDelete.size(); ++i) {
-			threads.push_back(std::thread(T_SaveChunks, world.chunks[chunksToDelete[i]]));
+			threads.push_back(std::thread(T_SaveChunks, world.chunks[chunksToDelete[i]], currentSaveName));
 		}
 
 		for (auto& th : threads) {
@@ -253,7 +260,7 @@ void Map::ReadChunk(Vector2_I curChunk, std::string path) {
 	Console::Log("Reading Chunk from " + path, text::green, __LINE__);
 	std::shared_ptr<Chunk> tempChunk = std::make_shared<Chunk>();
 	tempChunk->globalChunkCoord = curChunk;
-	tempChunk->LoadChunk(curChunk);
+	tempChunk->LoadChunk(curChunk, currentSaveName);
 	SpawnChunkEntities(tempChunk);
 	world.chunks[curChunk] = tempChunk;
 }
@@ -564,7 +571,7 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 
 	if (l != nothing && Math::RandInt(1, 5) >= 3)  //random check
 	{ 
-		if (!pInv.CurrentEquipMatches(boots, "LEATHER_BOOTS")) {
+		if (!pInv.equippedItems[boots].waterproof) {
 			p->CoverIn(l, 10); //cover the player in it
 		}
 	}

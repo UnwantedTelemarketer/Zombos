@@ -1,5 +1,8 @@
 #pragma once
-
+struct UIPopup {
+	std::string title;
+	std::string message;
+};
 struct GameUI {
 	bool statsOpen = false;
 	bool debugOpen = false;
@@ -15,6 +18,7 @@ struct GameUI {
 	bool console_showing = false;
 	bool equipmentScreenOpen = false;
 	bool settingsOpen = false;
+	std::map<std::string, UIPopup> popups;
 
 	void FlipScreens() {
 		if (Input::KeyDown(KEY_GRAVE_ACCENT)) {
@@ -41,5 +45,24 @@ struct GameUI {
 		{
 			settingsOpen = !settingsOpen;
 		}
+	}
+
+	void ShowPopups() {
+		for (const auto& element : popups) {
+			ImGui::Begin(element.second.title.c_str());
+			ImGui::Text(element.second.message.c_str());
+			if (ImGui::Button("Close")) {
+				DeletePopup(element.second.title);
+			}
+			ImGui::End();
+		}
+	}
+
+	void CreatePopup(std::string title, std::string message) {
+		popups.insert({ title, {title, message} });
+	}
+
+	void DeletePopup(std::string title) {
+		popups.erase(title);
 	}
 };

@@ -27,4 +27,20 @@ namespace antibox {
 			std::cerr << "Error deleting files: " << e.what() << std::endl;
 		}
 	}
+
+	bool CreateNewDirectory(const std::string& directory) {
+		fs::path fullPath = getCurrentWorkingDirectory() / directory;
+
+		if (!fs::create_directory(fullPath)) {
+			std::cerr << "Error: directory either exists or cannot create." << std::endl;
+			return false;
+		}
+
+		return true;
+	}
+
+	bool DoesDirectoryExist(std::string directory) {
+		return (fs::exists(directory) && fs::is_directory(directory));
+	}
+
 }

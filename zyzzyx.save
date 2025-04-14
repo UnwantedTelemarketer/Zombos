@@ -4,13 +4,7 @@ notepadHeight : 200;
 maxHealth : 84;
 currentHealth : 56;
 tempHealth : 0;
-notepad : "i am going to die!
-
-left - 1
-middle - 5
-right - 2
-
-top - 3";
+notepad : "i am going to die!left - 1middle - 5right - 2top - 3";
 bgColorR : 0.179859;
 bgColorG : 0.482296;
 bgColorB : 0.685976;

@@ -30,10 +30,15 @@ public:
 		return &localCoords[pos.x][pos.y];
 	}
 
-	void LoadChunk(Vector2_I coords) {
+	void LoadChunk(Vector2_I coords, std::string currentSaveName) {
 
 		Saved_Chunk sChunk;
-		std::string filePath = ("dat/map/" + std::to_string(coords.x) + std::to_string(coords.y) + ".chunk");
+		std::string filePath = ("dat/saves/"
+			+ currentSaveName
+			+ "/map/"
+			+ std::to_string(globalChunkCoord.x)
+			+ std::to_string(globalChunkCoord.y)
+			+ ".chunk");
 
 		std::ifstream inFile(filePath, std::ios::binary);
 		if (inFile.is_open()) {
@@ -43,7 +48,6 @@ public:
 				for (size_t j = 0; j < CHUNK_HEIGHT; j++)
 				{
 					sChunk.tiles[i][j].Deserialize(inFile);
-
 				}
 			}
 
@@ -90,8 +94,15 @@ public:
 		}
 	}
 
-	void SaveChunk() {
-		std::string filePath = ("dat/map/" + std::to_string(globalChunkCoord.x) + std::to_string(globalChunkCoord.y) + ".chunk");
+	void SaveChunk(std::string currentSaveName) {
+		std::string filePath = (
+			"dat/saves/"
+			+ currentSaveName
+			+ "/map/"
+			+ std::to_string(globalChunkCoord.x)
+			+ std::to_string(globalChunkCoord.y)
+			+ ".chunk");
+
 		std::ofstream outFile(filePath, std::ios::binary);
 
 		Saved_Chunk *sChunk = new Saved_Chunk();

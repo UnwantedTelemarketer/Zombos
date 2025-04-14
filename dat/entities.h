@@ -49,6 +49,7 @@ struct Item {
 	Vector3 spriteColor = {1,1,1};
 	float maxDurability = -1.f;
 	float durability = 0.f;
+	bool waterproof = false;
 
 	void CoverIn(Liquid l, int ticks) {
 		coveredIn = l;
@@ -76,6 +77,11 @@ struct Item {
 			durability = maxDurability;
 		}//this is fine if it doesnt work, not all items are cookable and shouldnt need to specify
 		catch (std::exception e) { maxDurability = -1.f; }
+
+		try {
+			waterproof = item.getBool("waterproof");
+		}//this is fine if it doesnt work, not all items are waterproof and shouldnt need to specify
+		catch (std::exception e) { waterproof = false; }
 
 		try {
 			cookable = item.getBool("cookable");
