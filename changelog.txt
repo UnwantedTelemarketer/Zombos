@@ -3,6 +3,8 @@
  
  - Linux build now available (Mac in progress)
 
+ - Multiple saves now supported
+
  - Takers faction added
 
  - NPC Chatting now available

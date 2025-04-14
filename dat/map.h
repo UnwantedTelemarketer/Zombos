@@ -571,7 +571,7 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 
 	if (l != nothing && Math::RandInt(1, 5) >= 3)  //random check
 	{ 
-		if (!pInv.equippedItems[boots].waterproof) {
+		if (!pInv.Waterproof(boots)) {
 			p->CoverIn(l, 10); //cover the player in it
 		}
 	}

@@ -558,8 +558,8 @@ void GameManager::UpdateTick() {
 
 		//if player stands in liquid, soak em.
 		Liquid tileLiquid = mainMap.CurrentChunk()->GetTileAtCoords(mPlayer.coords)->liquid;
-		if (tileLiquid != nothing) {
-			if (!pInv.CurrentEquipMatches(boots, "LEATHER_BOOTS") && tileLiquid != fire) {
+		if (tileLiquid != nothing && tileLiquid != fire) {
+			if (!pInv.Waterproof(boots)) {
 				mPlayer.CoverIn(tileLiquid, Math::RandInt(10, 30));
 			}
 		}
@@ -567,7 +567,7 @@ void GameManager::UpdateTick() {
 		if (mainMap.currentWeather == rainy || mainMap.currentWeather == thunder) {
 			if (Math::RandInt(1, 7) == 2)  //random check
 			{
-				if (!pInv.equippedItems[shirt].waterproof && mainMap.TileAtPos(mPlayer.coords)->id != 13) {
+				if (!pInv.Waterproof(shirt) && mainMap.TileAtPos(mPlayer.coords)->id != 13) {
 					mPlayer.CoverIn(water, 15); //cover the player in it
 				}
 			}

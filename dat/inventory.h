@@ -74,7 +74,7 @@ public:
 	}
 
 	bool CurrentEquipMatches(equipType t, std::string itemName) {
-		if (!equippedItems.count(t) != 0) {
+		if (equippedItems.count(t) == 0) {
 			return false;
 		}
 		else {
@@ -82,11 +82,19 @@ public:
 		}
 	}
 	bool CurrentEquipExists(equipType t) {
-		if (!equippedItems.count(t) != 0) {
+		if (equippedItems.count(t) == 0) {
 			return false;
 		}
 		else {
 			return true;
+		}
+	}
+	bool Waterproof(equipType t) {
+		if (equippedItems.count(t) == 0) {
+			return false;
+		}
+		else {
+			return equippedItems[t].waterproof;
 		}
 	}
 
