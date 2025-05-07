@@ -265,23 +265,15 @@ void Map::MakeNewChunk(Vector2_I coords) {
 	world.chunks[tempChunk->globalChunkCoord] = tempChunk;
 
 	//place old roads
-	int randInt = Math::RandInt(0, 4);
 	if (Math::RandInt(0, 2) == 1) {
 		OpenedData dat;
+		ItemReader::GetDataFromFile("structures/oldroads.eid", "NAMES", &dat);
 
-		switch (randInt) {
-		case 0:
-		case 1:
-			ItemReader::GetDataFromFile("structures/oldroads.eid", "L_ROAD_1", &dat);
-			PlaceStructure(coords, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") });
-			break;
-		case 2:
-		case 3:
-		case 4:
-			ItemReader::GetDataFromFile("structures/oldroads.eid", "STRAIGHT_ROAD_1", &dat);
-			PlaceStructure(coords, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") });
-			break;
-		}
+		int leng = dat.getArray("names").size();
+		Console::Log(leng, ERROR, __LINE__);
+		OpenedData roadDat;
+		ItemReader::GetDataFromFile("structures/oldroads.eid", dat.getArray("names")[Math::RandInt(0,leng-1)], &roadDat);
+		PlaceStructure(coords, roadDat.getString("tiles"), { roadDat.getInt("width"), roadDat.getInt("height") });
 	}
 
 	//place structures
@@ -312,6 +304,7 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 		else if (num >= 15) {
 			zomb = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human_W, 10, 10, true, spawnCoords.x, spawnCoords.y, true };
 			zomb->inv.push_back(Items::GetItem("BITS"));
+			if(Math::RandInt(0,2) == 1) zomb->GenerateTrades();
 		}
 		else if (num >= 10) {
 			zomb = new Entity{ 15, "Zombie", ID_ZOMBIE, Aggressive, true, Zombie, 7, 8, false, spawnCoords.x, spawnCoords.y };
@@ -943,12 +936,16 @@ void Map::PlaceCampsite(Vector2_I startingChunk) {
 	Entity* human = new Entity{ 35, "Human", ID_HUMAN, Protective_Stationary, false, Human_W, 10, 10, true,
 		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].x, 
 		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].y, true };
+	//Possibly has trades
+	if (Math::RandInt(0, 2) == 1) human->GenerateTrades();
 
 	if (Math::RandInt(0, 10) == 5) {
 		Entity* human2 = new Entity{ 35, "Human", ID_HUMAN, Protective_Stationary, false, Human_W, 10, 10, true,
 		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].x,
 		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].y, true };
 		world.chunks[startingChunk]->entities.push_back(human2);
+		//Possibly has trades
+		if (Math::RandInt(0, 2) == 1) human2->GenerateTrades();
 	}
 
 	world.chunks[startingChunk]->entities.push_back(human);
@@ -1013,7 +1010,8 @@ void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2
 					curCoordsModified.x,
 					curCoordsModified.y,
 					true };
-				human2->aggressive = false;
+				//Possibly has trades
+				if (Math::RandInt(0, 2) == 1) human2->GenerateTrades();
 
 				world.chunks[startingChunk]->entities.push_back(human2);
 				break;

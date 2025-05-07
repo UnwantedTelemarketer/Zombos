@@ -302,7 +302,7 @@ public:
 
 					pInv.clothes = { data.getFloat("color_r"), data.getFloat("color_g"), data.getFloat("color_b") };
 
-					pInv.LoadItemsFromData(&data);
+					pInv.LoadItemsFromData(&data, map.GetCurrentSavePath() + "save.eid");
 
 					for (int i = 0; i < data.getArray("savedRecipes").size(); i++)
 					{
@@ -580,7 +580,7 @@ public:
 			if (ImGui::Button("Start")) {
 				for (size_t i = 0; i < backgrounds[bgSelected].items.size(); i++)
 				{
-					pInv.AddItemFromFile(backgrounds[bgSelected].items[i], backgrounds[bgSelected].itemCounts[i]);
+					pInv.AddItemByID(backgrounds[bgSelected].items[i], backgrounds[bgSelected].itemCounts[i]);
 				}
 				Audio::StopLoop("menu");
 				Audio::PlayLoop("dat/sounds/music/ambient12.wav", "ambient_day");
@@ -1259,6 +1259,29 @@ public:
 				else if (selectedTile->entity->canTalk) {
 					ImGui::TextWrapped(("\"" + selectedTile->entity->message + "\"").c_str());
 				}
+
+				//--------TRADING---------
+				//If they have something for trade
+				if (selectedTile->entity->itemWant != "nothing") {
+					//generate message
+					std::string tradeMessage = "Hey, if you have a ";
+					tradeMessage += Items::GetItem_NoCopy(selectedTile->entity->itemWant)->name;
+					tradeMessage += " then I'll trade you a ";
+					tradeMessage += Items::GetItem_NoCopy(selectedTile->entity->itemGive)->name;
+					tradeMessage += ". Deal?";
+
+					//if player has item, then trade them
+					ImGui::TextWrapped(tradeMessage.c_str());
+					if (ImGui::Button("Trade?")) {
+						int _ = -1;
+						if (pInv.TryGetItem(selectedTile->entity->itemWant, false, &_)) {
+							pInv.RemoveItem(selectedTile->entity->itemWant);
+							pInv.AddItemByID(selectedTile->entity->itemGive);
+							selectedTile->entity->GenerateTrades();
+						}
+					}
+				}
+				//------------------------
 			}
 			else if (curCont != nullptr) {
 				if (ImGui::CollapsingHeader("Container")) {
@@ -1487,7 +1510,7 @@ public:
 					ImGui::Text(ent->inv[i].name.c_str());
 					ImGui::Text(ent->inv[i].description.c_str());
 					if (ImGui::Button("3", { 20, 20 })) {
-						pInv.AddItemFromFile("BAD_PISTOL");
+						pInv.AddItemByID("BAD_PISTOL");
 					}
 					ImGui::Text("--------------------");
 				}

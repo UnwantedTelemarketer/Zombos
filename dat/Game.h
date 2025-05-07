@@ -1014,7 +1014,7 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 				LAZY_LOG("Item \"" + tokens[i+1] + "\" cannot be found.")
 					return; 
 			}
-			game->pInv.AddItemFromFile(tokens[i + 1], stoi(tokens[i + 2]));
+			game->pInv.AddItemByID(tokens[i + 1], stoi(tokens[i + 2]));
 		}
 		else if (tokens[i] == "set")
 		{

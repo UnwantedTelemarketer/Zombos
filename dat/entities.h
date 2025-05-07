@@ -168,6 +168,8 @@ struct Entity {
 	bool targetingPlayer;
 	bool talking;
 	std::string message = "empty";
+	std::string itemWant = "nothing";
+	std::string itemGive = "nothing";
 	Entity* target = nullptr;
 	std::vector<Item> inv;
 
@@ -180,6 +182,17 @@ struct Entity {
 			names.push_back(inv[i].name);
 		}
 		return names;
+	}
+
+	void GenerateTrades() {
+		OpenedData wants;
+		ItemReader::GetDataFromFile("loot_tables/trade.eid", "WANTS", &wants);
+
+		OpenedData gives;
+		ItemReader::GetDataFromFile("loot_tables/trade.eid", "REWARDS", &gives);
+
+		itemWant = wants.getArray("items")[Math::RandInt(0, wants.getArray("items").size() - 1)];
+		itemGive = gives.getArray("items")[Math::RandInt(0, gives.getArray("items").size() - 1)];
 	}
 };
 

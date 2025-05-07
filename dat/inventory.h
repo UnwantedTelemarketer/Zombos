@@ -294,14 +294,14 @@ public:
 		return false;
 	}
 	
-	void LoadItemsFromData(OpenedData* dat) {
+	void LoadItemsFromData(OpenedData* dat, std::string path) {
 		std::vector<std::string> itemHeaders = dat->getArray("items");
 
 		for (size_t i = 0; i < itemHeaders.size(); i++)
 		{
 			Item newItem = Items::list[itemHeaders[i]];
 			OpenedData itemDat;
-			ItemReader::GetDataFromFile("save.eid", itemHeaders[i], &itemDat);
+			ItemReader::GetDataFromFile(path, itemHeaders[i], &itemDat, false);
 			newItem.count = itemDat.getInt("count");
 			newItem.coveredIn = (Liquid)itemDat.getInt("coveredIn");
 			newItem.ticksUntilDry = itemDat.getInt("ticksUntilDry");
@@ -316,10 +316,10 @@ public:
 		}
 	}
 
-	void AddItemFromFile(std::string header, int amount = 1) {
+	void AddItemByID(std::string ID, int amount = 1) {
 		for (size_t i = 0; i < amount; i++)
 		{
-			AddItem(GetItemFromFile("file", header));
+			AddItem(GetItemFromFile("file", ID));
 		}
 	}
 
