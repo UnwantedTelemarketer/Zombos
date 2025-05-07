@@ -9,7 +9,7 @@
 
   - New Items (Leather jacket, rations, etc)
 
-  - New Structures
+  - New Structures (Radio Shack, Roads)
 
 --v0.2.2 Changes--
   - Fixed indoor rain
