@@ -22,6 +22,8 @@
 [ Line 1541 ]: [1;32mDone![0m
 [ Line 41 ]: [1;31m0[0m
 [ Line 272 ]: [1;32mNew save created successfully![0m
+[ Line 248 ]: [1;32mReading Chunk from dat/saves/ASH/map/250251.chunk[0m
+[ Line 248 ]: [1;32mReading Chunk from dat/saves/ASH/map/247251.chunk[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/dddeee/save.eid[0m
-[ Line 212 ]: [1;32mSave complete in 11.786883ms.[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/ASH/save.eid[0m
+[ Line 212 ]: [1;32mSave complete in 21.758907ms.[0m

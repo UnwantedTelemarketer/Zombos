@@ -151,7 +151,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	};
 	
 	mainMap.isUnderground = false;
-	Math::PushBackLog(&actionLog, "Welcome to Zombos! Press H to open the help menu.");
+	Math::PushBackLog(&actionLog, "Press H to open the help menu.");
 }
 
 void GameManager::AddRecipes() {
@@ -174,6 +174,7 @@ void GameManager::AddRecipes() {
 
 void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 {
+	vec2_i oldCoords = ent->coords;
 	std::vector<Vector2_I> path = mainMap.GetLine(ent->coords, mPlayer.coords, 10);
 	std::vector<Vector2_I> entPath;
 	Entity* tempTarget = nullptr;
@@ -196,14 +197,11 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 
 
 
-	if (entPath.size() < ent->viewDistance) { //if theyre within view distance, target them
-		ent->target = tempTarget;
-	}
+	
 
 	//mainMap.DrawLine(entPath); //draw the path between entities (for debug)
 
 	int dir = Math::RandInt(1, 10);
-	vec2_i oldCoords = ent->coords;
 
 	Tile* tile = chunkInUse->GetTileAtCoords(ent->coords);
 
@@ -222,11 +220,11 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		}
 	case Protective:
 		//make sure theyre above health and nearby
-		if (ent->health > 5 && ent->targeting()) {
+		if (ent->health > 5 && (tempTarget != nullptr || ent->targetingPlayer)) {
 			int isEnemies = 0;
 
 			if (!ent->targetingPlayer) {
-				isEnemies = std::find(factionEnemies[ent->faction].begin(), factionEnemies[ent->faction].end(), ent->target->faction) != factionEnemies[ent->faction].end();
+				isEnemies = std::find(factionEnemies[ent->faction].begin(), factionEnemies[ent->faction].end(), tempTarget->faction) != factionEnemies[ent->faction].end();
 			}
 			//if the player is targeted
 			else if (ent->targetingPlayer) {
@@ -251,9 +249,14 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 				}
 				break;
 			}
+
 			//otherwise, if they are enemies go towards them
-			else if (entPath.size() > 2 && isEnemies != 0) {
-				if (entPath.size() > 1) {
+			if (isEnemies != 0) {
+				if (entPath.size() < ent->viewDistance) { //if theyre within view distance, target them
+					ent->target = tempTarget;
+				}
+
+				if (entPath.size() > 2) {
 					if (chunkInUse->GetTileAtCoords(entPath[1])->walkable) {
 						ent->coords = entPath[1];
 						moved = true;
@@ -261,24 +264,15 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 					else {
 						moved = false;
 					}
+					break;
 				}
-				else {
-					if (chunkInUse->GetTileAtCoords(path[0])->walkable) {
-						ent->coords = path[0];
-						moved = true;
+				//if theyre close enough, attack them
+				else if (entPath.size() <= 2) {
+					mainMap.AttackEntity(ent->target, ent->damage, &actionLog, chunkInUse);
+					if (ent->target->health <= 0) {
+						ent->target = nullptr;
+						ent->aggressive = false;
 					}
-					else {
-						moved = false;
-					}
-				}
-				break;
-			}
-			//if theyre close enough, attack them
-			else if (entPath.size() <= 2) {
-				mainMap.AttackEntity(ent->target, ent->damage, &actionLog, chunkInUse);
-				if (ent->target->health <= 0) {
-					ent->target = nullptr;
-					ent->aggressive = false;
 				}
 			}
 		}
@@ -346,7 +340,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 			mainMap.TileAtPos(ent->coords)->itemName = "BEAR_TRAP_2";
 		}
 	}
-	if (ent->coords == mPlayer.coords || tile->walkable == false) {
+	if (ent->coords == mPlayer.coords || mainMap.GetTileFromThisOrNeighbor(ent->coords)->walkable == false) {
 		ent->coords = oldCoords;
 		return;
 	}
