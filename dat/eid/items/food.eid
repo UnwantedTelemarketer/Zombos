@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [MEAT,COOKED_MEAT]
+sections : [MEAT,COOKED_MEAT,RATION]
 }
 
 MEAT {
@@ -34,4 +34,20 @@ effects : [3,35,0,0];
 equipType : 0;
 sprite : "H";
 spriteColor : [0.6, 0.1, 0.2];
+}
+
+RATION {
+name : "Ration";
+description : "Basic ration of food.";
+id : "ration";
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+amount : 1;
+consumeTxt : "You eat the ration. You feel a bit less hungry.";
+useTxt : "Does Nothig.";
+effects : [3,15,0,0];
+equipType : 0;
+sprite : "G";
+spriteColor : [1.0, 0.1, 0.2];
 }

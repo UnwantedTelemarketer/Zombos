@@ -5,6 +5,10 @@
 
 #include <chrono>
 
+//tales of travesty
+//tomb under the sands (TUTS)
+//asd
+
 #define DOSFONT  "dat/fonts/symbolic/symbolic_cave_extended.ttf"
 #define ITEMFONT "dat/fonts/symbolic/symbolic_items_extended.ttf"
 #define MOBFONT "dat/fonts/symbolic/symbolic_mobs_extended.ttf"
@@ -100,13 +104,32 @@ public:
 		{"splash", "dat/sounds/enter_water.wav"},
 		{"click", "dat/sounds/click.wav"},
 		{"crunch", "dat/sounds/eat.wav"},
-		{"drink", "dat/sounds/drink.wav"}
+		{"drink", "dat/sounds/drink.wav"},
+		{"crunchy_click", "dat/sounds/crunchy_click.mp3"}
 	};
 
 
 	//Sprites
 	Scene main = { "TEST" };
 	std::shared_ptr<GameObject> p;
+
+	//Character Creation
+	int bgSelected = -1;
+	std::vector<classes> backgrounds = 
+	{	{"Fighter",		{"MACHETE", "LEATHER_JACKET", "ROCK"}, {1, 1, 10}},
+		{"Survivalist", {"MATCH", "RAINCOAT", "BANDAGE"}, {5, 1, 2}},
+		{"Explorer",	{"RATION", "LEATHER_BOOTS", "BITS"}, {5, 1, 10}},
+		{"Vagrant",		{"ROCK", "STICK", "ROPE"}, {5, 5, 3}},
+		{"Amnesiac",	{"MUD"}, {1}},
+	};
+
+	//Yelling Text above NPCs
+
+	void ResetMenu() {
+		gameScreen.MainMenu();
+		bgSelected = -1;
+
+	}
 
 	void SaveCurrentGame() {
 		float curTime = glfwGetTime();
@@ -195,6 +218,9 @@ public:
 			if (ImGui::Button("Save Game")) {
 				SaveCurrentGame();
 			}
+			if (ImGui::Button("Exit to Menu")) {
+				ResetMenu();
+			}
 
 			ImGui::Text("\n--UI Settings--");
 			ImGui::SliderInt("Y Separator Value", &ySeparator, 0, 20);
@@ -230,7 +256,7 @@ public:
 		//ImGui::ShowDemoWindow();
 		ImGui::Begin("title");
 		ImGui::SetFontSize(48.f);
-		ImGui::Text("Zombox");
+		ImGui::Text("Tomb Under The Sands");
 		ImGui::SetFontSize(16.f);
 		ImGui::End();
 
@@ -238,6 +264,7 @@ public:
 			ImGui::Begin("New Game Menu");
 			ImGui::InputText("Save Name", &saveNameSlot[0], sizeof(char) * 128);
 			if (ImGui::Button("Create New Save")) {
+				Audio::Play(sfxs["crunchy_click"]);
 				map.currentSaveName = std::string(saveNameSlot);
 				if (CreateNewDirectory("dat/saves/" + map.currentSaveName)) {
 					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/map");
@@ -257,6 +284,7 @@ public:
 			ImGui::Begin("Load Game Menu");
 			ImGui::InputText("Save Name", &saveNameSlot[0], sizeof(char) * 128);
 			if (ImGui::Button("Load Save")) {
+				Audio::Play(sfxs["crunchy_click"]);
 				map.currentSaveName = std::string(saveNameSlot);
 
 				if (DoesDirectoryExist(map.GetCurrentSavePath())) {
@@ -282,6 +310,14 @@ public:
 					game.Setup(data.getInt("x_pos"), data.getInt("y_pos"), 0.5f, data.getInt("seed"), data.getInt("biomes"));
 					currentState = playing;
 					game.worldTime = data.getFloat("time");
+
+					if (game.worldTime > 20.f || game.worldTime < 6.f) {
+						Audio::PlayLoop("dat/sounds/music/night_zombos.wav", "night_music");
+					}
+					else {
+						Audio::PlayLoop("dat/sounds/music/ambient12.wav", "ambient_day");
+					}
+
 					game.lerpingTo = urban;
 					map.SetWeather((weather)data.getInt("weather"));
 
@@ -292,6 +328,7 @@ public:
 					sfxvolume = settings.getFloat("sfxSound");
 					Audio::SetVolume(sfxvolume);
 					musicvolume = settings.getFloat("musicSound");
+					Audio::StopLoop("menu");
 					Audio::SetVolumeLoop(musicvolume, "ambient_day");
 
 					for (auto const& eType : Items::EquipmentTypes)
@@ -323,11 +360,13 @@ public:
 		if (ImGui::Button("New Game"))
 		{
 			newGameScreen = true;
+			Audio::Play(sfxs["crunchy_click"]);
 		}
 
 		if (ImGui::Button("Continue Game"))
 		{
 			savedGamesScreen = true;
+			Audio::Play(sfxs["crunchy_click"]);
 		}
 
 		ImGui::End();
@@ -380,6 +419,9 @@ public:
 						break;
 					case 13:
 						mapExport += "f";
+						break;
+					case 14:
+						mapExport += "+";
 						break;
 					}
 				}
@@ -476,14 +518,62 @@ public:
 	void Create_Character() {
 		ImGui::Begin("Create your Character");
 
-		ImGui::ColorPicker3("Clothes Color", &clothes.x);
+		//ImGui::ColorPicker3("Clothes Color", &clothes.x);
+		//ImGui::RadioButton("")
+		if (ImGui::TreeNode("-:Choose your Background:-"))
+		{
+			for (int n = 0; n < backgrounds.size(); n++)
+			{
+				if (ImGui::Selectable(&backgrounds[n].name[0], bgSelected == n)) {
+					Audio::Play(sfxs["crunchy_click"]);
+					bgSelected = n;
+				}
+			}
+			ImGui::TreePop();
 
-		pInv.clothes = { clothes.x, clothes.y, clothes.z };
-		if (ImGui::Button("Start")) {
-			pInv.AddItemFromFile("BANDAGE");
-			pInv.AddItemFromFile("MATCH");
-			pInv.AddItemFromFile("MATCH");
-			currentState = playing;
+			if (bgSelected != -1) {
+				ImGui::Text("~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~");
+				switch (bgSelected) {
+				case 0:
+					ImGui::TextWrapped("You've always been one to get into tuffles, so when you went off on your own, you took what you needed.");
+					ImGui::Text("--Starting Inventory--");
+					ImGui::Text("1x Machete\n1x Leather Jacket\n10x Rock");
+					break;
+				case 1:
+					ImGui::TextWrapped("You've always been prepared for everything, so when you went off on your own, you took what you knew would keep you alive.");
+					ImGui::Text("--Starting Inventory--");
+					ImGui::Text("5x Matches\n1x Raincoat\n2x Sterile Bandages");
+					break;
+				case 2:
+					ImGui::TextWrapped("You've always been curious about exploring every part of the world, so when you went off on your own, you took whatever could help you journey as far as possible.");
+					ImGui::Text("--Starting Inventory--");
+					ImGui::Text("5x Rations\n1x Leather Boots\n10x Scrap Bits (Money)");
+					break;
+				case 3:
+					ImGui::TextWrapped("You've never really been one for staying around. You don't keep many things with you, and so you didn't bring much.");
+					ImGui::Text("5x Rocks\n5x Sticks\n3x Ropes");
+					break;
+				case 4:
+					ImGui::TextWrapped("You don't remember who you are after waking up in the middle of the forest. What is this stuff in your pockets?");
+					ImGui::Text("--Starting Inventory--");
+					ImGui::Text("???");
+					break;
+				}
+				ImGui::Text("~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~");
+			}
+		}
+
+		if (bgSelected != -1) {
+			pInv.clothes = { 1.f, 1.f, 1.f };
+			if (ImGui::Button("Start")) {
+				for (size_t i = 0; i < backgrounds[bgSelected].items.size(); i++)
+				{
+					pInv.AddItemFromFile(backgrounds[bgSelected].items[i], backgrounds[bgSelected].itemCounts[i]);
+				}
+				Audio::StopLoop("menu");
+				Audio::PlayLoop("dat/sounds/music/ambient12.wav", "ambient_day");
+				currentState = playing;
+			}
 		}
 		ImGui::End();
 	}
@@ -729,7 +819,7 @@ public:
 		if (game.mainMap.isUnderground) {
 			if (ImGui::Button("Leave Cave")) {
 				Audio::StopLoop("ambient_cave");
-				Audio::PlayLoop("dat/sounds/ambient12.wav", "ambient_day");
+				Audio::PlayLoop("dat/sounds/music/ambient12.wav", "ambient_day");
 				Audio::SetVolumeLoop(musicvolume, "ambient_day");
 				game.mainMap.isUnderground = !game.mainMap.isUnderground;
 				game.freeView = true;
@@ -1437,6 +1527,7 @@ public:
 		//itemLoading.join();
 		//tileLoading.join();
 		Console::Log("Done!", text::green, __LINE__);
+		Audio::PlayLoop("dat/sounds/music/night_zombos.wav", "menu");
 	}
 
 	void Update() override
@@ -1476,6 +1567,9 @@ public:
 				}
 				else if (Input::KeyHeldDown(KEY_A)) {
 					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_GRASS");
+				}
+				else if (Input::KeyHeldDown(KEY_S)) {
+					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_CRYSTAL");
 				}
 				else {
 					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile(customTileSelect);

@@ -103,6 +103,7 @@ const char* Cosmetic::WeatherName(int weather) {
 	else if (weather == 2) {
 		return "Thunder";
 	}
+	return "NULL";
 }
 const char* Cosmetic::EquipTypeName(int type) {
 	switch (type)

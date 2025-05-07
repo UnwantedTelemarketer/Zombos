@@ -482,6 +482,7 @@ biome Map::GetBiome(Vector2_I coords)
 
 void Map::AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog, std::shared_ptr<Chunk> chunk) {
 	curEnt->health -= damage;
+	Audio::Play("dat/sounds/hit_alive.mp3");
 
 	std::string damageText = "";
 
@@ -526,7 +527,7 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 			if (curEnt->health > 0 && pInv.CurrentEquipExists(weapon)){
 				//attack entity
 				AttackEntity(curEnt, pInv.equippedItems[weapon].mod, actionLog, CurrentChunk());
-				if (curEnt->b == Protective) { curEnt->aggressive = true; curEnt->b = Aggressive; }
+				if (curEnt->b == Protective || curEnt->b == Protective_Stationary) { curEnt->aggressive = true; curEnt->b = Aggressive; }
 
 				//if it has durability
 				if (pInv.equippedItems[weapon].maxDurability != -1) {
@@ -876,23 +877,26 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 void Map::PickStructure(Vector2_I startingChunk) {
 	int randInt = Math::RandInt(0, 4);
 
-
-	switch (randInt) {
-	case 0:
-	case 1:
-	case 2:
-		PlaceBuilding(startingChunk);
-		break;
-	case 3:
-	case 4:
-		PlaceCampsite(startingChunk);
-		break;
-	}
-	if (Math::RandInt(0,50) == 35) {
+	
+	if (Math::RandInt(0, 50) == 35) {
 		OpenedData dat;
-		ItemReader::GetDataFromFile("structures/newStructure", "MONKEY_BAR", &dat);
+		ItemReader::GetDataFromFile("structures/structs.eid", "MONKEY_BAR", &dat);
 		PlaceStructure(startingChunk, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") });
 	}
+	else {
+		switch (randInt) {
+		case 0:
+		case 1:
+		case 2:
+			PlaceBuilding(startingChunk);
+			break;
+		case 3:
+		case 4:
+			PlaceCampsite(startingChunk);
+			break;
+		}
+	}
+	
 }
 
 void Map::PlaceCampsite(Vector2_I startingChunk) {
@@ -900,9 +904,16 @@ void Map::PlaceCampsite(Vector2_I startingChunk) {
 	std::vector<Vector2_I> buildingBlocks = GetSquare(cornerstone, 4);
 
 
-	Entity* human = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human_W, 10, 10, true, 
+	Entity* human = new Entity{ 35, "Human", ID_HUMAN, Protective_Stationary, false, Human_W, 10, 10, true,
 		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].x, 
 		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].y, true };
+
+	if (Math::RandInt(0, 10) == 5) {
+		Entity* human2 = new Entity{ 35, "Human", ID_HUMAN, Protective_Stationary, false, Human_W, 10, 10, true,
+		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].x,
+		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].y, true };
+		world.chunks[startingChunk]->entities.push_back(human2);
+	}
 
 	world.chunks[startingChunk]->entities.push_back(human);
 
@@ -946,6 +957,17 @@ void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2
 				break;
 			case 'f':
 				*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
+				break;
+			case '+':
+				*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
+				Entity* human2 = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human_W, 10, 10,
+					true, 
+					curCoordsModified.x,
+					curCoordsModified.y,
+					true };
+				human2->aggressive = false;
+
+				world.chunks[startingChunk]->entities.push_back(human2);
 				break;
 			}
 		}

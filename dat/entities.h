@@ -8,7 +8,7 @@ enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage 
 enum biome { desert, ocean, forest, swamp, taiga, grassland, urban, jungle };
 enum Liquid { nothing = 0, water = 1, blood = 2, fire = 3, guts = 4, mud = 5 , snow = 6};
 enum Action { use, consume, combine };
-enum Behaviour { Wander, Protective, Stationary, Aggressive };
+enum Behaviour { Wander, Protective, Protective_Stationary, Stationary, Aggressive };
 		//	  wanderer | tribal
 enum Faction { Human_W, Human_T, Dweller, Zombie, Wildlife, Takers };
 enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6};
@@ -431,7 +431,7 @@ static void CreateSavedTile(Saved_Tile* sTile, Tile tile) {
 	sTile->ticksNeeded = tile.ticksNeeded;
 	sTile->liquidTicks = tile.liquidTime;
 	sTile->hasItem = tile.hasItem;
-	sTile->itemName = tile.itemName;
+	sTile->itemName = tile.itemName == "NULL" ? "_" : tile.itemName;
 	sTile->x = tile.coords.x;
 	sTile->y = tile.coords.y;
 	sTile->biomeID = tile.biomeID;

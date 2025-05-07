@@ -1,13 +1,28 @@
+--v0.2.3 Changes--
+  - Added spawnpoints for custom structures
+
+  - menu music, night music, new sfxs
+
+  - New Behaviour for npcs
+
+  - New starter background to choose items to start with
+
+  - New Items (Leather jacket, rations, etc)
+
+  - New Structures
+
 --v0.2.2 Changes--
- - Fixed indoor rain
- 
- - Linux build now available (Mac in progress)
+  - Fixed indoor rain
+  
+  - Multiple saves now supported
+  
+  - Takers faction added
+  
+  - NPC Chatting now available
 
- - Multiple saves now supported
+  - New Custom Structure editor + New Structures
 
- - Takers faction added
-
- - NPC Chatting now available
+  - Bug Fixes
 
 --v0.2.1 Changes--
  - New equippable items with emmissive lighting (Lamp, Mushroom Jar, etc.)

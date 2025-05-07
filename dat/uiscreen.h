@@ -16,7 +16,7 @@ struct GameUI {
 	bool containerOpen = false;
 	bool helpMenu = false;
 	bool console_showing = false;
-	bool equipmentScreenOpen = false;
+	bool equipmentScreenOpen = true;
 	bool settingsOpen = false;
 	std::map<std::string, UIPopup> popups;
 
@@ -56,6 +56,11 @@ struct GameUI {
 			}
 			ImGui::End();
 		}
+	}
+
+	void MainMenu() {
+		settingsOpen = false;
+		console_showing = false;
 	}
 
 	void CreatePopup(std::string title, std::string message) {

@@ -1,0 +1,6 @@
+MONKEY_BAR {
+width : 13;
+height : 12;
+tiles : "wwwwwwwwwwwwwwffffwffffffwwf+ffwffffffwwffffw+fff+fwwffffwffwfffwwffffwwfwfffwfff+ffffwfffwffffffffwwwwwwfffffffw????wf+fff+fw????wfff+fffw????wwwwwwwww????";
+}
+

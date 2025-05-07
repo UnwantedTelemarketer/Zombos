@@ -10,6 +10,12 @@
 
 using namespace antibox;
 
+struct classes {
+	std::string name;
+	std::vector<std::string> items; 
+	std::vector<int> itemCounts;
+};
+
 class GameManager {
 private:
 	float tickRate;
@@ -37,6 +43,7 @@ public:
 	vec3 bgColor;
 	biome currentBiome, lerpingTo;
 	float testTime;
+	bool startedMusicNight = false;
 
 	std::vector<std::string> sandWalk, grassWalk, rockWalk;
 
@@ -80,7 +87,7 @@ public:
 	std::string GetWalkSound();
 
 	std::string GetItemChar(Tile* tile);
-	ImVec4 GetItemColor(Tile* tile);
+	ImVec4 GetItemColor(Tile* tile, float intensity);
 	std::string GetTileChar(Tile* tile);
 
 	std::string GetTileChar(Vector2_I tile);
@@ -145,7 +152,6 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	
 	mainMap.isUnderground = false;
 	Math::PushBackLog(&actionLog, "Welcome to Zombos! Press H to open the help menu.");
-	Audio::PlayLoop("dat/sounds/ambient12.wav", "ambient_day");
 }
 
 void GameManager::AddRecipes() {
@@ -207,6 +213,9 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		//check if player is near
 		if (path.size() < ent->viewDistance) {
 			ent->targetingPlayer = true;
+			if (ent->name == "Zombie") {
+				Audio::Play("dat/sounds/zombie_angry.mp3");
+			}
 		}
 		else {
 			ent->targetingPlayer = false;
@@ -247,14 +256,15 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 				mainMap.AttackEntity(ent->target, ent->damage, &actionLog, chunkInUse);
 				if (ent->target->health <= 0) {
 					ent->target = nullptr;
+					ent->aggressive = false;
 				}
 			}
 		}
 		//if nothing else, drop the target
 		else {
 			ent->target = nullptr;
+			ent->aggressive = false;
 		}
-
 	case Wander:
 		//wander around, unless they can talk
 		if (PlayerNearby(oldCoords)) {
@@ -306,6 +316,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 			}
 		}
 	}
+
 	if (moved) { Audio::Play(GetWalkSound()); }
 	if (ent->coords == mPlayer.coords || tile->walkable == false) {
 		ent->coords = oldCoords;
@@ -410,7 +421,7 @@ void GameManager::MovePlayer(int dir) {
 			freeView = false;
 			//Audio::LerpMusic("ambient_day", "dat/sounds/wet-pizza-rat.mp3", "ambient_cave");
 			Audio::StopLoop("ambient_day");
-			Audio::PlayLoop("dat/sounds/wet-pizza-rat.mp3", "ambient_cave");
+			Audio::PlayLoop("dat/sounds/music/wet-pizza-rat.mp3", "ambient_cave");
 			Math::PushBackLog(&actionLog, "You enter a dark cave underground.");
 		}
 	}
@@ -610,12 +621,20 @@ void GameManager::UpdateTick() {
 
 		if (!mainMap.isUnderground) {
 			if (worldTime >= 20.f || worldTime < 6.f) {
+				if (!startedMusicNight) {
+					Audio::StopLoop("ambient_day");
+					Audio::PlayLoop("dat/sounds/music/night_zombos.wav", "night_music");
+					startedMusicNight = true;
+				}
 				if (forwardTime) { darkTime = std::min(10.f, darkTime + 0.45f); }
 				else { darkTime = std::max(1.f, darkTime - 0.5f); }
 				if (worldTime >= 4.f && worldTime <= 5.f) { forwardTime = false; }
 			}
-			else if (worldTime == 6.f) {
+			else if (worldTime > 6.f && worldTime < 6.2f) {
+				startedMusicNight = false;
 				mainMap.ResetLightValues();
+				Audio::StopLoop("night_music");
+				Audio::PlayLoop("dat/sounds/music/ambient12.wav", "ambient_day");
 			}
 			else {
 				forwardTime = true;
@@ -695,6 +714,7 @@ void GameManager::AttemptAttack(Entity* ent)
 	{
 		if (std::count(mainMap.CurrentChunk()->entities.begin(), mainMap.CurrentChunk()->entities.end(), ent))
 		{
+			Audio::Play("dat/sounds/human damaged.mp3");
 			std::string attackmsg = " hits you for ";
 			Math::PushBackLog(&actionLog, ent->name + attackmsg + std::to_string(ent->damage) + " damage!");
 			mPlayer.TakeDamage(pierceDamage, ent->damage);
@@ -734,16 +754,18 @@ std::string GameManager::GetItemChar(Tile* tile) {
 	return item_icons[tile->itemName];
 }
 
-ImVec4 GameManager::GetItemColor(Tile* tile) {
+ImVec4 GameManager::GetItemColor(Tile* tile, float intensity = -1.f) {
 	if (!tile->hasItem) {
-		return {1, 0,0,1};
+		return {1, 0, 0, 1};
 	}
+	if (intensity == -1.f) { intensity = tile->brightness; }
 	if (tile->liquid == fire) { return Cosmetic::FireColor(); }
 	vec3 color = Items::GetItemColor(tile->itemName);
-	color.x /= (darkTime * tile->brightness);
-	color.y /= (darkTime * tile->brightness);
-	color.z /= (darkTime * tile->brightness);
+	color.x /= (darkTime * intensity);
+	color.y /= (darkTime * intensity);
+	color.z /= (darkTime * intensity);
 	return {color.x, color.y, color.z, 1};
+
 }
 
 std::string GameManager::GetTileChar(Tile* tile) {
@@ -930,7 +952,7 @@ dimming:
 	//if its night time
 	if ((worldTime >= 20.f || worldTime < 6.f) || mainMap.isUnderground) {
 		if ((darkTime >= 10.f && intensity >= 1.f) || (mainMap.isUnderground && intensity >= 1.f)) {
-			color = { 0,0,0,1 };
+			color = { 0.05,0.05,0.05,1 };
 		}
 		else {
 			color.x /= (darkTime * intensity);

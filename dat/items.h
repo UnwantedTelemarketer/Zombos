@@ -114,7 +114,7 @@ namespace Tiles {
 		createdTile->ticksNeeded = tile.ticksNeeded;
 		createdTile->liquidTime = tile.liquidTicks;
 		createdTile->hasItem = tile.hasItem;
-		createdTile->itemName = tile.itemName;
+		createdTile->itemName = tile.itemName == "_" ? "NULL" : tile.itemName;
 		createdTile->coords = { tile.x, tile.y };
 		createdTile->biomeID = tile.biomeID;
 
