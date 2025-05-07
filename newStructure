@@ -1,6 +1,6 @@
 MONKEY_BAR {
-width : 13;
-height : 12;
-tiles : "wwwwwwwwwwwwwwffffwffffffwwf+ffwffffffwwffffw+fff+fwwffffwffwfffwwffffwwfwfffwfff+ffffwfffwffffffffwwwwwwfffffffw????wf+fff+fw????wfff+fffw????wwwwwwwww????";
+width : 3;
+height : 16;
+tiles : "??ffffff?ff?fff?ffff?ff??f??f+?fff+ffff?f?fffff?";
 }
 

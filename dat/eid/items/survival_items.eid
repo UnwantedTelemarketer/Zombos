@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [BANDAGE,LIGHTER,CANTEEN,GUTS,GLASS_JAR,GLOWING_MUSHROOM_JAR,LANTERN,MATCH];
+sections : [BANDAGE,LIGHTER,CANTEEN,GUTS,GLASS_JAR,GLOWING_MUSHROOM_JAR,LANTERN,MATCH,BEAR_TRAP,BEAR_TRAP_2];
 }
 
 BANDAGE {
@@ -118,7 +118,7 @@ GLOWING_MUSHROOM_JAR {
 name : "Glowing Mushroom Jar";
 description : "Glowing mushroom sealed in a glass jar. Small light source.";
 stackable : false;
-holdsLiquid : true;
+holdsLiquid : false;
 consumable : false;
 amount : 1;
 consumeTxt : "You take a sip from your canteen.";
@@ -129,4 +129,35 @@ equipModifier : 1;
 sprite : "!";
 spriteColor : [0.0, 0.50, 0.0];
 emissionDistance : 4;
+}
+
+BEAR_TRAP {
+name : "Bear Trap (Open)";
+description : "A perfect way for someone to lose a foot.";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "You take a sip from your canteen.";
+useTxt : "You pour liquid on yourself.";
+effects : [0,10,0,25];
+equipType : 0;
+sprite : "?";
+spriteColor : [0.5, 0.50, 0.5];
+}
+
+
+BEAR_TRAP_2 {
+name : "Bear Trap (Closed)";
+description : "Someone may have lost a foot.";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "You take a sip from your canteen.";
+useTxt : "You pour liquid on yourself.";
+effects : [0,10,0,25];
+equipType : 0;
+sprite : ".";
+spriteColor : [0.5, 0.50, 0.5];
 }

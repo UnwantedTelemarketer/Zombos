@@ -13,7 +13,8 @@ sections : [TILE_GRASS,
 			TILE_MUD,
 			TILE_MUD_EMPTY,
 			TILE_CATTAIL,
-			TILE_CAVE_ENTRANCE]
+			TILE_CAVE_ENTRANCE,
+			TILE_CHAIN_FENCE]
 }
 
 TILE_GRASS {
@@ -241,6 +242,21 @@ replacement : "NULL";
 itemName : "NULL";
 hasItem : false;
 walkable : true;
+changesOverTime : false;
+timedReplacement : "NULL";
+double_size : false;
+color : [0.5,0.5,0.5];
+}
+
+TILE_CHAIN_FENCE {
+id : 20;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : "NULL";
+itemName : "NULL";
+hasItem : false;
+walkable : false;
 changesOverTime : false;
 timedReplacement : "NULL";
 double_size : false;

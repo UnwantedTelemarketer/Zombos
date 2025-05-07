@@ -234,10 +234,21 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 				if (path.size() > 1) {
 					if (chunkInUse->GetTileAtCoords(path[1])->walkable) {
 						ent->coords = path[1];
+						moved = true;
+					}
+					else {
+						moved = false;
 					}
 				}
-				else { ent->coords = path[0]; }
-				moved = true;
+				else { 
+					if (chunkInUse->GetTileAtCoords(path[0])->walkable) {
+						ent->coords = path[0];
+						moved = true;
+					}
+					else {
+						moved = false;
+					}
+				}
 				break;
 			}
 			//otherwise, if they are enemies go towards them
@@ -245,10 +256,21 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 				if (entPath.size() > 1) {
 					if (chunkInUse->GetTileAtCoords(entPath[1])->walkable) {
 						ent->coords = entPath[1];
+						moved = true;
+					}
+					else {
+						moved = false;
 					}
 				}
-				else { ent->coords = entPath[0]; }
-				moved = true;
+				else {
+					if (chunkInUse->GetTileAtCoords(path[0])->walkable) {
+						ent->coords = path[0];
+						moved = true;
+					}
+					else {
+						moved = false;
+					}
+				}
 				break;
 			}
 			//if theyre close enough, attack them
@@ -317,7 +339,13 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		}
 	}
 
-	if (moved) { Audio::Play(GetWalkSound()); }
+	if (moved) { 
+		if (mainMap.TileAtPos(ent->coords)->itemName == "BEAR_TRAP") {
+			Audio::Play("dat/sounds/bear_trap.mp3");
+			ent->health -= 35;
+			mainMap.TileAtPos(ent->coords)->itemName = "BEAR_TRAP_2";
+		}
+	}
 	if (ent->coords == mPlayer.coords || tile->walkable == false) {
 		ent->coords = oldCoords;
 		return;
@@ -416,6 +444,11 @@ void GameManager::MovePlayer(int dir) {
 		break;
 	}
 			//entering a cave
+	if (mainMap.TileAtPos(mPlayer.coords)->itemName == "BEAR_TRAP") {
+		mPlayer.TakeDamage(pierceDamage, 35);
+		Audio::Play("dat/sounds/bear_trap.mp3");
+		mainMap.TileAtPos(mPlayer.coords)->itemName = "BEAR_TRAP_2";
+	}
 	if (mainMap.TileAtPos(mPlayer.coords)->id == 19) {
 		if (EnterCave()) {
 			freeView = false;

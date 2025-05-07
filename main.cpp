@@ -9,7 +9,7 @@
 //tomb under the sands (TUTS)
 //asd
 
-#define DOSFONT  "dat/fonts/symbolic/symbolic_cave_extended.ttf"
+#define DOSFONT  "dat/fonts/symbolic/symbolic_chainfence.ttf"
 #define ITEMFONT "dat/fonts/symbolic/symbolic_items_extended.ttf"
 #define MOBFONT "dat/fonts/symbolic/symbolic_mobs_extended.ttf"
 #define VGAFONT  "dat/fonts/VGA437.ttf"
@@ -118,6 +118,7 @@ public:
 	std::vector<classes> backgrounds = 
 	{	{"Fighter",		{"MACHETE", "LEATHER_JACKET", "ROCK"}, {1, 1, 10}},
 		{"Survivalist", {"MATCH", "RAINCOAT", "BANDAGE"}, {5, 1, 2}},
+		{"Hunter",		{"BEAR_TRAP", "LEATHER_BOOTS", "CAMPFIRE"}, {2, 1, 1}},
 		{"Explorer",	{"RATION", "LEATHER_BOOTS", "BITS"}, {5, 1, 10}},
 		{"Vagrant",		{"ROCK", "STICK", "ROPE"}, {5, 5, 3}},
 		{"Amnesiac",	{"MUD"}, {1}},
@@ -256,7 +257,7 @@ public:
 		//ImGui::ShowDemoWindow();
 		ImGui::Begin("title");
 		ImGui::SetFontSize(48.f);
-		ImGui::Text("Tomb Under The Sands");
+		ImGui::Text("By The Fire");
 		ImGui::SetFontSize(16.f);
 		ImGui::End();
 
@@ -423,6 +424,12 @@ public:
 					case 14:
 						mapExport += "+";
 						break;
+					case 16:
+						mapExport += "-";
+						break;
+					case 20:
+						mapExport += "c";
+						break;
 					}
 				}
 			}
@@ -545,15 +552,20 @@ public:
 					ImGui::Text("5x Matches\n1x Raincoat\n2x Sterile Bandages");
 					break;
 				case 2:
+					ImGui::TextWrapped("You were taught how to hunt growing up, so when you went off on your own, you took your hunting supplies to survive in the wild.");
+					ImGui::Text("--Starting Inventory--");
+					ImGui::Text("2x Bear Trap\n1x Leather Boots\n1x Campfire");
+					break;
+				case 3:
 					ImGui::TextWrapped("You've always been curious about exploring every part of the world, so when you went off on your own, you took whatever could help you journey as far as possible.");
 					ImGui::Text("--Starting Inventory--");
 					ImGui::Text("5x Rations\n1x Leather Boots\n10x Scrap Bits (Money)");
 					break;
-				case 3:
+				case 4:
 					ImGui::TextWrapped("You've never really been one for staying around. You don't keep many things with you, and so you didn't bring much.");
 					ImGui::Text("5x Rocks\n5x Sticks\n3x Ropes");
 					break;
-				case 4:
+				case 5:
 					ImGui::TextWrapped("You don't remember who you are after waking up in the middle of the forest. What is this stuff in your pockets?");
 					ImGui::Text("--Starting Inventory--");
 					ImGui::Text("???");
@@ -1570,6 +1582,12 @@ public:
 				}
 				else if (Input::KeyHeldDown(KEY_S)) {
 					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_CRYSTAL");
+				}
+				else if (Input::KeyHeldDown(KEY_C)) {
+					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_CHAIN_FENCE");
+				}
+				else if (Input::KeyHeldDown(KEY_D)) {
+					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_MUD");
 				}
 				else {
 					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile(customTileSelect);

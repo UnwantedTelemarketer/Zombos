@@ -183,18 +183,6 @@ void Map::UpdateMemoryZone(Vector2_I coords) {
 		}
 	}
 
-	for (int y = -1; y <= 1; y++)
-	{
-		for (int x = -1; x <= 1; x++)
-		{
-			vec2_i curChunk = { c_glCoords.x + x, c_glCoords.y + y };
-			if (!world.chunks[curChunk]->hadBuilding) {
-				if (Math::RandInt(1, 4) == 2) { PickStructure(world.chunks[curChunk]->globalChunkCoord); }
-				world.chunks[curChunk]->hadBuilding = true;
-			}
-		}
-	}
-
 	std::vector<Vector2_I> chunksToDelete;
 	//find ones too far away
 	for (const auto& pair : world.chunks) {
@@ -270,9 +258,41 @@ void Map::MakeNewChunk(Vector2_I coords) {
 	std::shared_ptr<Chunk> tempChunk = std::make_shared<Chunk>();
 	tempChunk->globalChunkCoord = coords;
 
+	//build land
 	BuildChunk(tempChunk);
-	SpawnChunkEntities(tempChunk);
+
+	//add to world map
 	world.chunks[tempChunk->globalChunkCoord] = tempChunk;
+
+	//place old roads
+	int randInt = Math::RandInt(0, 4);
+	if (Math::RandInt(0, 2) == 1) {
+		OpenedData dat;
+
+		switch (randInt) {
+		case 0:
+		case 1:
+			ItemReader::GetDataFromFile("structures/oldroads.eid", "L_ROAD_1", &dat);
+			PlaceStructure(coords, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") });
+			break;
+		case 2:
+		case 3:
+		case 4:
+			ItemReader::GetDataFromFile("structures/oldroads.eid", "STRAIGHT_ROAD_1", &dat);
+			PlaceStructure(coords, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") });
+			break;
+		}
+	}
+
+	//place structures
+	if (Math::RandInt(1, 4) == 2) { PickStructure(coords); }
+
+
+
+	//place entities
+	SpawnChunkEntities(tempChunk);
+
+
 }
 
 void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
@@ -283,9 +303,10 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 		Vector2_I spawnCoords = { Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };
 		int num = Math::RandInt(1, 20);
 		if (num >= 20) {
-			zomb = new Entity{ 15, "Zombie", ID_FINDER, Protective, true, Takers, 3, 90, true, spawnCoords.x, spawnCoords.y };
+			zomb = new Entity{ 15, "Finder", ID_FINDER, Protective, true, Takers, 3, 25, true, spawnCoords.x, spawnCoords.y };
 
-			zomb->inv.push_back(Items::GetItem("OLD_CLOTH"));
+			zomb->inv.push_back(Items::GetItem("CRYSTAL"));
+			zomb->inv.push_back(Items::GetItem("SCRAP"));
 			zomb->inv.push_back(Items::GetItem("GUTS"));
 		}
 		else if (num >= 15) {
@@ -877,12 +898,25 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 void Map::PickStructure(Vector2_I startingChunk) {
 	int randInt = Math::RandInt(0, 4);
 
-	
-	if (Math::RandInt(0, 50) == 35) {
+	//chance for rare structure
+	if (Math::RandInt(0, 35) == 2) {
 		OpenedData dat;
-		ItemReader::GetDataFromFile("structures/structs.eid", "MONKEY_BAR", &dat);
-		PlaceStructure(startingChunk, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") });
+
+		switch (randInt) {
+		case 0:
+		case 1:
+			ItemReader::GetDataFromFile("structures/structs.eid", "MONKEY_BAR", &dat);
+			PlaceStructure(startingChunk, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") });
+			break;
+		case 2:
+		case 3:
+		case 4:
+			ItemReader::GetDataFromFile("structures/structs.eid", "RADIO_SHACK", &dat);
+			PlaceStructure(startingChunk, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") });
+			break;
+		}
 	}
+	//otherwise set up camp or a random house
 	else {
 		switch (randInt) {
 		case 0:
@@ -896,6 +930,8 @@ void Map::PickStructure(Vector2_I startingChunk) {
 			break;
 		}
 	}
+
+	
 	
 }
 
@@ -948,6 +984,10 @@ void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2
 					chunksCoordsToDelete.push_back(chunk_Coords);
 				}
 			}
+			//if somehow its still null, just skip (it keeps crashing here)
+			if (curTile == nullptr) {
+				continue;
+			}
 			//								  --convert 1d coords into 2d--
 			switch (structure[(x + (i * dimensions.x))]) {
 			case '?':
@@ -957,6 +997,14 @@ void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2
 				break;
 			case 'f':
 				*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
+				break; 
+			case 'c':
+				*curTile = Tiles::GetTile("TILE_CHAIN_FENCE");
+				break;
+			case '-':
+				*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
+				curTile->hasItem = true;
+				curTile->itemName = "TABLE";
 				break;
 			case '+':
 				*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
@@ -1012,6 +1060,10 @@ void Map::PlaceBuilding(Vector2_I startingChunk) {
 				curTile = GetTileFromThisOrNeighbor(buildingBlocks[i], startingChunk);
 				chunksCoordsToDelete.push_back(newChunkCoords);
 			}
+		}
+		//if its somehow still nullptr, skip it
+		if (curTile == nullptr) {
+			continue;
 		}
 		
 		*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
