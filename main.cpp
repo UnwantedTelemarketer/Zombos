@@ -267,7 +267,7 @@ public:
 				map.currentSaveName = std::string(saveNameSlot);
 				if (CreateNewDirectory("dat/saves/" + map.currentSaveName)) {
 					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/map");
-					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/entitites");
+					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/entities");
 					Console::Log("New save created successfully!", SUCCESS, __LINE__);
 
 					game.Setup(10, 10, 0.5f);
@@ -1597,6 +1597,7 @@ public:
 		//tileLoading.join();
 		Console::Log("Done!", text::green, __LINE__);
 		Audio::PlayLoop("dat/sounds/music/night_zombos.wav", "menu");
+
 	}
 
 	void Update() override

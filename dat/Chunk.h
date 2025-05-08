@@ -111,7 +111,7 @@ public:
 		SaveData regEntDat;
 		std::vector<std::string> namesToSave;
 
-		//remove entities and save them
+		//save entities
 		if (entities.size() != 0) {
 			for (int i = 0; i < entities.size() - 1; i++) {
 				//if they have been interacted with, save them special to the side
@@ -140,14 +140,14 @@ public:
 					regEntDat.addFloat(entities[i]->name, "feeling", entities[i]->feelingTowardsPlayer);
 					regEntDat.addInt(entities[i]->name, "entID", entities[i]->entityID);
 				}
-
-				delete entities[i];
 			}
 
-			regEntDat.sections.insert({ "NAMES", {} });
-			regEntDat.sections["NAMES"].lists.insert({ "names", namesToSave });
+			if (regEntDat.sections.size() > 0) {
+				regEntDat.sections.insert({ "NAMES", {} });
+				regEntDat.sections["NAMES"].lists.insert({ "names", namesToSave });
 
-			ItemReader::SaveDataToFile(entFilePath, regEntDat, true);
+				ItemReader::SaveDataToFile(entFilePath, regEntDat, true);
+			}
 		}
 	}
 
@@ -192,6 +192,11 @@ public:
 			for (int i = 0; i < containers.size() - 1; i++) {
 				delete containers[i];
 				
+			}
+		}
+		if (entities.size() != 0) {
+			for (int i = 0; i < entities.size() - 1; i++) {
+				delete entities[i];
 			}
 		}
 		

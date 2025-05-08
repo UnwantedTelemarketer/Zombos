@@ -1,0 +1,12 @@
+NAMES {
+names : [Zombie];
+}
+Zombie {
+behaviour : 4;
+faction : 3;
+damage : 8;
+entID : 1;
+health : 15.000000;
+feeling : 0.000000;
+}
+

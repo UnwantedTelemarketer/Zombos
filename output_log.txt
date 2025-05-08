@@ -21,30 +21,66 @@
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
 [ Line 1598 ]: [1;32mDone![0m
 [ Line 41 ]: [1;31m0[0m
-[ Line 249 ]: [1;32mReading Chunk from dat/saves/house/map/249249.chunk[0m
-[ Line 249 ]: [1;32mReading Chunk from dat/saves/house/map/250249.chunk[0m
-[ Line 249 ]: [1;32mReading Chunk from dat/saves/house/map/251249.chunk[0m
-[ Line 249 ]: [1;32mReading Chunk from dat/saves/house/map/249250.chunk[0m
-[ Line 249 ]: [1;32mReading Chunk from dat/saves/house/map/250250.chunk[0m
-[ Line 249 ]: [1;32mReading Chunk from dat/saves/house/map/251250.chunk[0m
-[ Line 249 ]: [1;32mReading Chunk from dat/saves/house/map/249251.chunk[0m
-[ Line 249 ]: [1;32mReading Chunk from dat/saves/house/map/250251.chunk[0m
-[ Line 249 ]: [1;32mReading Chunk from dat/saves/house/map/251251.chunk[0m
+[ Line 271 ]: [1;32mNew save created successfully![0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/251250.eid[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/251251.eid[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/251250.eid[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/251249.eid[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/251251.eid[0m
+[ Line 249 ]: [1;32mReading Chunk from dat/saves/test/map/248252.chunk[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/248249.eid[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/249249.eid[0m
+[ Line 1658 ]: [1;32mgive MOLTEN_GLASS 1[0m
+[ Line 1658 ]: [1;32mgive LIGHTER 1[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/house/save.eid[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/save.eid[0m
 [ Line 155 ]: [0;33mSaving Chunk...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/house/entities/249249.eid[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/248250.eid[0m
 [ Line 155 ]: [0;33mSaving Chunk...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/house/entities/249250.eid[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/248251.eid[0m
 [ Line 155 ]: [0;33mSaving Chunk...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/house/entities/249251.eid[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/248252.eid[0m
 [ Line 155 ]: [0;33mSaving Chunk...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/house/entities/250249.eid[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/249250.eid[0m
 [ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/Human.eid[0m
 [ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/249252.eid[0m
 [ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/250250.eid[0m
 [ Line 155 ]: [0;33mSaving Chunk...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/house/entities/251250.eid[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/250251.eid[0m
 [ Line 155 ]: [0;33mSaving Chunk...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/house/entities/251251.eid[0m
-[ Line 208 ]: [1;32mSave complete in 23.272299ms.[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/250252.eid[0m
+[ Line 208 ]: [1;32mSave complete in 48.507267ms.[0m
+[ Line -1 ]: [0;37mNow saving...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/save.eid[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/248250.eid[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/248251.eid[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/248252.eid[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/249250.eid[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/Human.eid[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/249252.eid[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/250250.eid[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/250251.eid[0m
+[ Line 155 ]: [0;33mSaving Chunk...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test/entities/250252.eid[0m
+[ Line 208 ]: [1;32mSave complete in 45.925125ms.[0m
