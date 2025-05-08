@@ -21,8 +21,3 @@
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
 [ Line 1597 ]: [1;32mDone![0m
 [ Line 41 ]: [1;31m0[0m
-[ Line 270 ]: [1;32mNew save created successfully![0m
-[ Line 249 ]: [1;32mReading Chunk from dat/saves/final test/map/249250.chunk[0m
-[ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/final test/save.eid[0m
-[ Line 208 ]: [1;32mSave complete in 35.234024ms.[0m
