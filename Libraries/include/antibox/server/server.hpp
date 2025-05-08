@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <pthread.h>
 
 #include "utils.hpp"
 
