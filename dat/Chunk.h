@@ -93,8 +93,66 @@ public:
 			}
 		}
 	}
+	
+	void SaveEntities(std::string currentSaveName) {
+		std::string entFilePath = (
+			"dat/saves/"
+			+ currentSaveName
+			+ "/entities/"
+			+ std::to_string(globalChunkCoord.x)
+			+ std::to_string(globalChunkCoord.y)
+			+ ".eid");
+
+		std::string specialEntFilePath = (
+			"dat/saves/"
+			+ currentSaveName
+			+ "/entities/");
+
+		SaveData regEntDat;
+		std::vector<std::string> namesToSave;
+
+		//remove entities and save them
+		if (entities.size() != 0) {
+			for (int i = 0; i < entities.size() - 1; i++) {
+				//if they have been interacted with, save them special to the side
+				if (entities[i]->feelingTowardsPlayer != 0) {
+					SaveData specEntDat;
+					specEntDat.sections.insert({ entities[i]->name, {} });
+
+					specEntDat.addFloat(entities[i]->name, "health", entities[i]->health);
+					specEntDat.addInt(entities[i]->name, "behaviour", entities[i]->b);
+					specEntDat.addInt(entities[i]->name, "faction", entities[i]->faction);
+					specEntDat.addInt(entities[i]->name, "damage", entities[i]->damage);
+					specEntDat.addFloat(entities[i]->name, "feeling", entities[i]->feelingTowardsPlayer);
+					specEntDat.addInt(entities[i]->name, "entID", entities[i]->entityID);
+					std::string fileName = specialEntFilePath + entities[i]->name + ".eid";
+					ItemReader::SaveDataToFile(fileName, specEntDat, true);
+				}
+
+				//otherwise just save the entitites
+				else {
+					regEntDat.sections.insert({ entities[i]->name, {} });
+					namesToSave.push_back(entities[i]->name);
+					regEntDat.addFloat(entities[i]->name, "health", entities[i]->health);
+					regEntDat.addInt(entities[i]->name, "behaviour", entities[i]->b);
+					regEntDat.addInt(entities[i]->name, "faction", entities[i]->faction);
+					regEntDat.addInt(entities[i]->name, "damage", entities[i]->damage);
+					regEntDat.addFloat(entities[i]->name, "feeling", entities[i]->feelingTowardsPlayer);
+					regEntDat.addInt(entities[i]->name, "entID", entities[i]->entityID);
+				}
+
+				delete entities[i];
+			}
+
+			regEntDat.sections.insert({ "NAMES", {} });
+			regEntDat.sections["NAMES"].lists.insert({ "names", namesToSave });
+
+			ItemReader::SaveDataToFile(entFilePath, regEntDat, true);
+		}
+	}
 
 	void SaveChunk(std::string currentSaveName) {
+		Console::Log("Saving Chunk...", WARNING, __LINE__);
 		std::string filePath = (
 			"dat/saves/"
 			+ currentSaveName
@@ -102,6 +160,8 @@ public:
 			+ std::to_string(globalChunkCoord.x)
 			+ std::to_string(globalChunkCoord.y)
 			+ ".chunk");
+
+		SaveEntities(currentSaveName);
 
 		std::ofstream outFile(filePath, std::ios::binary);
 
@@ -121,23 +181,20 @@ public:
 				sChunk->tiles[i][j].Serialize(outFile);
 			}
 		}
+
 		delete sChunk;
 		outFile.close();
 	}
 
 	~Chunk() {
+
 		if (containers.size() != 0) {
 			for (int i = 0; i < containers.size() - 1; i++) {
 				delete containers[i];
 				
 			}
 		}
-		if (entities.size() != 0) {
-			for (int i = 0; i < entities.size() - 1; i++) {
-				delete entities[i];
-				
-			}
-		}
+		
 		containers.clear();
 		entities.clear();
 	}

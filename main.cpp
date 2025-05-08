@@ -267,6 +267,7 @@ public:
 				map.currentSaveName = std::string(saveNameSlot);
 				if (CreateNewDirectory("dat/saves/" + map.currentSaveName)) {
 					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/map");
+					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/entitites");
 					Console::Log("New save created successfully!", SUCCESS, __LINE__);
 
 					game.Setup(10, 10, 0.5f);
