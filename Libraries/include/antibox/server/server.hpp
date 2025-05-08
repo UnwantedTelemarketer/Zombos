@@ -1,6 +1,8 @@
 #ifdef __APPLE__ 
     #include <sys/socket.h>
     #include <netinet/in.h>
+    #include <arpa/inet.h>
+    #include <netinet/tcp.h>
 #endif
 
 #include <vector>
@@ -11,7 +13,7 @@
 
 #define DEFAULT_PORT 5023
 #define DEFAULT_ADDRESS "0.0.0.0"
-#define DEFAULT_TIMEOUT 60000
+#define DEFAULT_TIMEOUT 60
 #define DEFAULT_PROTOCOL IPPROTO_TCP
 
 class Server {
@@ -25,12 +27,12 @@ public:
     int start(int newPort);
     int stop();
 private:
-    int socket_fd;
+    unsigned int socket_fd;
     std::vector<int> client_sockets;
     std::string configPath;
-    int clientLimit;
-    int address;
+    unsigned int clientLimit;
+    unsigned int address;
     unsigned short port;
     unsigned char protocol;
-    int timeout;
+    unsigned int timeout;
 };  
