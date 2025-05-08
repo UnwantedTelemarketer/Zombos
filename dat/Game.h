@@ -110,7 +110,7 @@ void GameManager::LoadData() {
 	OpenedData data;
 	ItemReader::GetDataFromFile("dialogue.eid", "WANDERER_CALM", &data);
 	npcMessages.insert({ "wanderer_calm", {} });
-	for (size_t i = 1; i < data.getInt("size"); i++)
+	for (size_t i = 1; i <= data.getInt("size"); i++)
 	{
 		npcMessages["wanderer_calm"].push_back(data.getString(std::to_string(i)));
 	}
@@ -175,7 +175,7 @@ void GameManager::AddRecipes() {
 void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 {
 	vec2_i oldCoords = ent->coords;
-	std::vector<Vector2_I> path = mainMap.GetLine(ent->coords, mPlayer.coords, 10);
+	std::vector<Vector2_I> path = mainMap.GetLine(ent->coords, mPlayer.coords, 20);
 	std::vector<Vector2_I> entPath;
 	Entity* tempTarget = nullptr;
 	bool moved = false;
@@ -195,10 +195,6 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		}
 	}
 
-
-
-	
-
 	//mainMap.DrawLine(entPath); //draw the path between entities (for debug)
 
 	int dir = Math::RandInt(1, 10);
@@ -207,6 +203,15 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 
 	switch (ent->b) //check the entities behaviour
 	{
+	case Follow:
+		if (path.size() >= 3) {
+			ent->coords = path[1];
+			moved = true;
+		}
+		else {
+			//do nothing
+		}
+		break;
 	case Aggressive:
 		//check if player is near
 		if (path.size() < ent->viewDistance) {

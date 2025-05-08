@@ -5,10 +5,6 @@
 
 #include <chrono>
 
-//tales of travesty
-//tomb under the sands (TUTS)
-//asd
-
 #define DOSFONT  "dat/fonts/symbolic/symbolic_chainfence.ttf"
 #define ITEMFONT "dat/fonts/symbolic/symbolic_items_extended.ttf"
 #define MOBFONT "dat/fonts/symbolic/symbolic_mobs_extended.ttf"
@@ -261,6 +257,8 @@ public:
 		ImGui::SetFontSize(16.f);
 		ImGui::End();
 
+		
+
 		if (newGameScreen) {
 			ImGui::Begin("New Game Menu");
 			ImGui::InputText("Save Name", &saveNameSlot[0], sizeof(char) * 128);
@@ -370,6 +368,13 @@ public:
 			Audio::Play(sfxs["crunchy_click"]);
 		}
 
+		ImGui::End();
+
+		ImGui::Begin("Debug");
+		if (ImGui::Button("Open Custom Structure Editor")) {
+			currentState = map_gen_test;
+			map.CreateMap(map.landSeed, map.biomeSeed);
+		}
 		ImGui::End();
 
 		ImGui::PopFont();
@@ -1256,33 +1261,55 @@ public:
 						}
 					}
 				}
-				else if (selectedTile->entity->canTalk) {
-					ImGui::TextWrapped(("\"" + selectedTile->entity->message + "\"").c_str());
-				}
-
+				else {
 				//--------TRADING---------
 				//If they have something for trade
-				if (selectedTile->entity->itemWant != "nothing") {
-					//generate message
-					std::string tradeMessage = "Hey, if you have a ";
-					tradeMessage += Items::GetItem_NoCopy(selectedTile->entity->itemWant)->name;
-					tradeMessage += " then I'll trade you a ";
-					tradeMessage += Items::GetItem_NoCopy(selectedTile->entity->itemGive)->name;
-					tradeMessage += ". Deal?";
+					if (selectedTile->entity->itemWant != "nothing") {
+						//generate message
+						std::string tradeMessage = "Hey, if you have a ";
+						tradeMessage += Items::GetItem_NoCopy(selectedTile->entity->itemWant)->name;
+						tradeMessage += " then I'll trade you a ";
+						tradeMessage += Items::GetItem_NoCopy(selectedTile->entity->itemGive)->name;
+						tradeMessage += ". Deal?";
 
-					//if player has item, then trade them
-					ImGui::TextWrapped(tradeMessage.c_str());
-					if (ImGui::Button("Trade?")) {
-						int _ = -1;
-						if (pInv.TryGetItem(selectedTile->entity->itemWant, false, &_)) {
-							pInv.RemoveItem(selectedTile->entity->itemWant);
-							pInv.AddItemByID(selectedTile->entity->itemGive);
-							selectedTile->entity->GenerateTrades();
+						//if player has item, then trade them
+						ImGui::TextWrapped(tradeMessage.c_str());
+						if (ImGui::Button("Trade?")) {
+							int _ = -1;
+							if (pInv.TryGetItem(selectedTile->entity->itemWant, false, &_)) {
+								//success
+								selectedTile->entity->ChangePlayerStatus(0.5f);
+								pInv.RemoveItem(selectedTile->entity->itemWant);
+								pInv.AddItemByID(selectedTile->entity->itemGive);
+								selectedTile->entity->GenerateTrades();
+							}
 						}
 					}
+					//------------------------
+					//ImGui::Text(std::to_string(selectedTile->entity->feelingTowardsPlayer).c_str());
+
+					//Ask the human if they want to follow or unfollow, if they're favor is high enough
+					if (selectedTile->entity->feelingTowardsPlayer >= 1.f) {
+						if (selectedTile->entity->b != Follow) {
+							if (ImGui::Button("Follow me.")) {
+								gameScreen.CreatePopup("Response", "Alright, I'll follow you.");
+								selectedTile->entity->b = Follow;
+							}
+						}
+						else {
+							if (ImGui::Button("Stop following me.")) {
+								gameScreen.CreatePopup("Response", "Alright, we'll split up.");
+								selectedTile->entity->b = Protective;
+							}
+						}
+					}
+					if (selectedTile->entity->canTalk) {
+						ImGui::TextWrapped(("\"" + selectedTile->entity->message + "\"").c_str());
+						//ImGui::TextColored({ 1,0,0,1 }, "RAAAHHH!!");
+					}
 				}
-				//------------------------
 			}
+
 			else if (curCont != nullptr) {
 				if (ImGui::CollapsingHeader("Container")) {
 					ImGui::BeginListBox("Items");
@@ -1559,6 +1586,12 @@ public:
 
 		sfxvolume = Audio::GetVolume();
 
+
+		if (!DoesDirectoryExist("dat/saves")) {
+			Console::Log("Save folder does not exist. Creating new...", text::white, __LINE__);
+			CreateNewDirectory("dat/saves/");
+		}
+
 		//itemLoading.join();
 		//tileLoading.join();
 		Console::Log("Done!", text::green, __LINE__);
@@ -1571,12 +1604,6 @@ public:
 		colChangeTime += Utilities::deltaTime() / 1000;
 		if (colChangeTime >= 1.f) {
 			colChangeTime = 0;
-		}
-
-
-		if (Input::KeyDown(KEY_M) && currentState != playing) {
-			currentState = map_gen_test;
-			map.CreateMap(map.landSeed, map.biomeSeed);
 		}
 
 		//the rest of the update is game logic so we stop here in the menu

@@ -167,6 +167,7 @@ bool Map::DoesChunkExistsOrMakeNew(Vector2_I coords) {
 			return false;
 		}
 	}
+	return true;
 }
 
 //Change which chunks are in memory at one time
@@ -270,7 +271,6 @@ void Map::MakeNewChunk(Vector2_I coords) {
 		ItemReader::GetDataFromFile("structures/oldroads.eid", "NAMES", &dat);
 
 		int leng = dat.getArray("names").size();
-		Console::Log(leng, ERROR, __LINE__);
 		OpenedData roadDat;
 		ItemReader::GetDataFromFile("structures/oldroads.eid", dat.getArray("names")[Math::RandInt(0,leng-1)], &roadDat);
 		PlaceStructure(coords, roadDat.getString("tiles"), { roadDat.getInt("width"), roadDat.getInt("height") });

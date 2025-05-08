@@ -8,8 +8,7 @@ enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage 
 enum biome { desert, ocean, forest, swamp, taiga, grassland, urban, jungle };
 enum Liquid { nothing = 0, water = 1, blood = 2, fire = 3, guts = 4, mud = 5 , snow = 6};
 enum Action { use, consume, combine };
-enum Behaviour { Wander, Protective, Protective_Stationary, Stationary, Aggressive };
-		//	  wanderer | tribal
+enum Behaviour { Wander, Protective, Protective_Stationary, Stationary, Aggressive, Follow };
 enum Faction { Human_W, Human_T, Dweller, Zombie, Wildlife, Takers };
 enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6};
 
@@ -164,6 +163,7 @@ struct Entity {
 	Liquid coveredIn = nothing;
 	int ticksUntilDry = 0;
 	int tempViewDistance;
+	float feelingTowardsPlayer = 0;
 
 	bool targetingPlayer;
 	bool talking;
@@ -182,6 +182,21 @@ struct Entity {
 			names.push_back(inv[i].name);
 		}
 		return names;
+	}
+
+	// If theyre status to the player changes, they will be saved on unloading.
+	// When the player enters that chunk again, it will choose one of the chunks
+	// around that chunk or the original to respawn the entity in.
+	void ChangePlayerStatus(float changeBy) {
+		feelingTowardsPlayer += changeBy;
+
+		if (feelingTowardsPlayer <= -1) {
+			b = Aggressive;
+		}
+
+		if (feelingTowardsPlayer >= 1) {
+			//do ally stuff
+		}
 	}
 
 	void GenerateTrades() {

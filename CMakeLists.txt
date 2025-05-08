@@ -107,6 +107,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 
 set(PROJECT_NAME antibox_cmake)
+#set_target_properties(antibox_cmake OUTPUT_NAME "btf_game")
 
 ################################################################################
 # Source groups

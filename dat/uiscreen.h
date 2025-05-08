@@ -49,12 +49,14 @@ struct GameUI {
 
 	void ShowPopups() {
 		for (const auto& element : popups) {
+			bool deleteme = false;
 			ImGui::Begin(element.second.title.c_str());
 			ImGui::Text(element.second.message.c_str());
 			if (ImGui::Button("Close")) {
-				DeletePopup(element.second.title);
+				deleteme = true;
 			}
 			ImGui::End();
+			if(deleteme) DeletePopup(element.second.title);
 		}
 	}
 
