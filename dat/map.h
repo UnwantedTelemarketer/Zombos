@@ -295,7 +295,7 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 		Vector2_I spawnCoords = { Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };
 		int num = Math::RandInt(1, 20);
 		if (num >= 20) {
-			zomb = new Entity{ 15, "Finder", ID_FINDER, Protective, true, Takers, 3, 25, true, spawnCoords.x, spawnCoords.y };
+			zomb = new Entity{ 15, "Finder", ID_FINDER, Protective, true, Takers, 3, 25, true, spawnCoords.x, spawnCoords.y};
 
 			zomb->inv.push_back(Items::GetItem("CRYSTAL"));
 			zomb->inv.push_back(Items::GetItem("SCRAP"));

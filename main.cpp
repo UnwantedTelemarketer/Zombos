@@ -58,8 +58,6 @@ public:
 	antibox::framerate frame;
 	std::vector<float> frametimes;
 	float colChangeTime = 0.f;
-	float sfxvolume = 1.f;
-	float musicvolume = 1.f;
 	bool interacting = false, flashlightActive = false;
 	int xMin, xMax, yMin, yMax;
 	int xViewDist, yViewDist;
@@ -153,8 +151,8 @@ public:
 		dat.addInt("SETTINGS", "ySep", ySeparator);
 		dat.addInt("SETTINGS", "xDist", xViewDist);
 		dat.addInt("SETTINGS", "yDist", yViewDist);
-		dat.addFloat("SETTINGS", "sfxSound", sfxvolume);
-		dat.addFloat("SETTINGS", "musicSound", musicvolume);
+		dat.addFloat("SETTINGS", "sfxSound", game.sfxvolume);
+		dat.addFloat("SETTINGS", "musicSound", game.musicvolume);
 
 		std::vector<std::string> listString;
 		std::vector<std::string> itemList;
@@ -226,13 +224,15 @@ public:
 
 
 			ImGui::Text("\n--Sound Settings--");
-			if (ImGui::SliderFloat("SFX Volume Level", &sfxvolume, 0.f, 1.f)) {
-				Audio::SetVolume(sfxvolume);
-				Audio::SetVolumeLoop(sfxvolume / 2, "rain");
+			if (ImGui::SliderFloat("SFX Volume Level", &game.sfxvolume, 0.f, 1.f)) {
+				Audio::SetVolume(game.sfxvolume);
+				Audio::SetVolumeLoop(game.sfxvolume, "rain");
+				Audio::SetVolumeLoop(game.sfxvolume, "crickets");
 			}
-			if (ImGui::SliderFloat("Music Volume Level", &musicvolume, 0.f, 1.f)) {
-				Audio::SetVolumeLoop(musicvolume, "ambient_day");
-				Audio::SetVolumeLoop(musicvolume, "ambient_cave");
+			if (ImGui::SliderFloat("Music Volume Level", &game.musicvolume, 0.f, 1.f)) {
+				Audio::SetVolumeLoop(game.musicvolume, "ambient_day");
+				Audio::SetVolumeLoop(game.musicvolume, "night_music");
+				Audio::SetVolumeLoop(game.musicvolume, "ambient_cave");
 			}
 
 			ImGui::Text("\n--Additional Settings--");
@@ -325,11 +325,11 @@ public:
 					ySeparator = settings.getInt("ySep");
 					xViewDist = settings.getInt("xDist");
 					yViewDist = settings.getInt("yDist");
-					sfxvolume = settings.getFloat("sfxSound");
-					Audio::SetVolume(sfxvolume);
-					musicvolume = settings.getFloat("musicSound");
+					game.sfxvolume = settings.getFloat("sfxSound");
+					Audio::SetVolume(game.sfxvolume);
+					game.musicvolume = settings.getFloat("musicSound");
 					Audio::StopLoop("menu");
-					Audio::SetVolumeLoop(musicvolume, "ambient_day");
+					Audio::SetVolumeLoop(game.musicvolume, "ambient_day");
 
 					for (auto const& eType : Items::EquipmentTypes)
 					{
@@ -838,7 +838,7 @@ public:
 			if (ImGui::Button("Leave Cave")) {
 				Audio::StopLoop("ambient_cave");
 				Audio::PlayLoop("dat/sounds/music/ambient12.wav", "ambient_day");
-				Audio::SetVolumeLoop(musicvolume, "ambient_day");
+				Audio::SetVolumeLoop(game.musicvolume, "ambient_day");
 				game.mainMap.isUnderground = !game.mainMap.isUnderground;
 				game.freeView = true;
 			}
@@ -1585,7 +1585,7 @@ public:
 		xViewDist = 15;
 		yViewDist = 15;
 
-		sfxvolume = Audio::GetVolume();
+		game.sfxvolume = Audio::GetVolume();
 
 
 		if (!DoesDirectoryExist("dat/saves")) {

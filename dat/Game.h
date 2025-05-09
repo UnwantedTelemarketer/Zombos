@@ -16,6 +16,8 @@ struct classes {
 	std::vector<int> itemCounts;
 };
 
+enum timeOfDay {day, night};
+
 class GameManager {
 private:
 	float tickRate;
@@ -26,7 +28,11 @@ private:
 	std::vector<std::string> missMessages = { "blank", "You swing at nothing and almost fall over.", "You miss.", "You don't hit anything." };
 	std::map<std::string, std::vector<std::string>> npcMessages;
 public:
+	timeOfDay time;
+	float sfxvolume = 1.f;
+	float musicvolume = 1.f;
 	bool freeView = false;
+	bool dormantMoon = false;
 	CraftingSystem Crafter;
 	Map mainMap;
 	Player mPlayer;
@@ -547,6 +553,7 @@ void GameManager::UpdateEffects() {
 }
 
 void GameManager::UpdateTick() {
+
 	if (paused) { return; }
 	tickCount += antibox::Engine::Instance().deltaTime();
 	effectTickCount += antibox::Engine::Instance().deltaTime();
@@ -653,20 +660,25 @@ void GameManager::UpdateTick() {
 
 		if (!mainMap.isUnderground) {
 			if (worldTime >= 20.f || worldTime < 6.f) {
+				time = night;
 				if (!startedMusicNight) {
 					Audio::StopLoop("ambient_day");
 					Audio::PlayLoop("dat/sounds/music/night_zombos.wav", "night_music");
+					Audio::PlayLoop("dat/sounds/crickets.mp3", "crickets");
 					startedMusicNight = true;
 				}
 				if (forwardTime) { darkTime = std::min(10.f, darkTime + 0.45f); }
 				else { darkTime = std::max(1.f, darkTime - 0.5f); }
 				if (worldTime >= 4.f && worldTime <= 5.f) { forwardTime = false; }
 			}
-			else if (worldTime > 6.f && worldTime < 6.2f) {
+			else if (worldTime > 6.f && worldTime < 6.05f) {
+				time = day;
 				startedMusicNight = false;
 				mainMap.ResetLightValues();
 				Audio::StopLoop("night_music");
+				Audio::StopLoop("crickets");
 				Audio::PlayLoop("dat/sounds/music/ambient12.wav", "ambient_day");
+				Audio::SetVolumeLoop(musicvolume, "ambient_day");
 			}
 			else {
 				forwardTime = true;
@@ -984,7 +996,8 @@ dimming:
 	//if its night time
 	if ((worldTime >= 20.f || worldTime < 6.f) || mainMap.isUnderground) {
 		if ((darkTime >= 10.f && intensity >= 1.f) || (mainMap.isUnderground && intensity >= 1.f)) {
-			color = { 0.05,0.05,0.05,1 };
+			if(dormantMoon) color = { 0.075f,0.075f,0.075f,1 };
+			else color = { 0.f,0.f,0.f,1 };
 		}
 		else {
 			color.x /= (darkTime * intensity);

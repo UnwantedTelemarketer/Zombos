@@ -1,4 +1,5 @@
 #include "items.h"
+#include <mutex>
 
 #define CHUNK_WIDTH 30
 #define CHUNK_HEIGHT 30
@@ -11,6 +12,7 @@ struct Chunk {
 private:
 	std::vector<Container*> containers;
 public:
+	std::mutex mutex;
 	bool beenBuilt = false, hadBuilding = false;
 	Vector2_I globalChunkCoord;
 	Tile localCoords[CHUNK_WIDTH][CHUNK_HEIGHT];
@@ -39,6 +41,13 @@ public:
 			+ std::to_string(globalChunkCoord.x)
 			+ std::to_string(globalChunkCoord.y)
 			+ ".chunk");
+
+		std::string entFilePath = ("dat/saves/"
+			+ currentSaveName
+			+ "/entities/"
+			+ std::to_string(globalChunkCoord.x)
+			+ std::to_string(globalChunkCoord.y)
+			+ ".eid");
 
 		std::ifstream inFile(filePath, std::ios::binary);
 		if (inFile.is_open()) {
@@ -92,24 +101,46 @@ public:
 				}
 			}
 		}
+
+		//Check if the entity file exists
+		std::ifstream f(entFilePath);
+		if (!f.good()) { return; }
+
+		//Lets load the entities back in from the files
+		OpenedData entNames;
+		ItemReader::GetDataFromFile(entFilePath, "NAMES", &entNames, false);
+		
+		std::vector<std::string> nameList = entNames.getArray("names");
+		//read in the entities
+		if (nameList.size() > 0) {
+			for (int i = 0; i < nameList.size() - 1; i++) {
+				OpenedData tempEnt;
+				ItemReader::GetDataFromFile(entFilePath, nameList[i], &tempEnt, false);
+
+				Entity* loadedEntity = new Entity{
+					tempEnt.getFloat("health"),
+					nameList[i].c_str(),
+					tempEnt.getInt("entID"),
+					(Behaviour)tempEnt.getInt("behaviour"),
+					false,				 //aggressive
+					(Faction)tempEnt.getInt("faction"),
+					10,					 //view distance
+					tempEnt.getInt("damage"),
+					true,				 //can talk
+					Math::RandInt(2,29), //x coord
+					Math::RandInt(2,29), //y coord
+					true };
+
+				entities.push_back(loadedEntity);
+			}
+		}
 	}
 	
 	void SaveEntities(std::string currentSaveName) {
-		std::string entFilePath = (
-			"dat/saves/"
-			+ currentSaveName
-			+ "/entities/"
-			+ std::to_string(globalChunkCoord.x)
-			+ std::to_string(globalChunkCoord.y)
-			+ ".eid");
-
 		std::string specialEntFilePath = (
 			"dat/saves/"
 			+ currentSaveName
 			+ "/entities/");
-
-		SaveData regEntDat;
-		std::vector<std::string> namesToSave;
 
 		//save entities
 		if (entities.size() != 0) {
@@ -128,25 +159,6 @@ public:
 					std::string fileName = specialEntFilePath + entities[i]->name + ".eid";
 					ItemReader::SaveDataToFile(fileName, specEntDat, true);
 				}
-
-				//otherwise just save the entitites
-				else {
-					regEntDat.sections.insert({ entities[i]->name, {} });
-					namesToSave.push_back(entities[i]->name);
-					regEntDat.addFloat(entities[i]->name, "health", entities[i]->health);
-					regEntDat.addInt(entities[i]->name, "behaviour", entities[i]->b);
-					regEntDat.addInt(entities[i]->name, "faction", entities[i]->faction);
-					regEntDat.addInt(entities[i]->name, "damage", entities[i]->damage);
-					regEntDat.addFloat(entities[i]->name, "feeling", entities[i]->feelingTowardsPlayer);
-					regEntDat.addInt(entities[i]->name, "entID", entities[i]->entityID);
-				}
-			}
-
-			if (regEntDat.sections.size() > 0) {
-				regEntDat.sections.insert({ "NAMES", {} });
-				regEntDat.sections["NAMES"].lists.insert({ "names", namesToSave });
-
-				ItemReader::SaveDataToFile(entFilePath, regEntDat, true);
 			}
 		}
 	}
