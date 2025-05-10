@@ -142,6 +142,11 @@ public:
 			+ currentSaveName
 			+ "/entities/");
 
+		OpenedData specialEnts;
+		ItemReader::GetDataFromFile(specialEntFilePath + "names.eid", "NAMES", &specialEnts, false);
+
+		std::vector<std::string> entNames = specialEnts.getArray("names");
+
 		//save entities
 		if (entities.size() != 0) {
 			for (int i = 0; i < entities.size() - 1; i++) {
@@ -158,13 +163,23 @@ public:
 					specEntDat.addInt(entities[i]->name, "entID", entities[i]->entityID);
 					std::string fileName = specialEntFilePath + entities[i]->name + ".eid";
 					ItemReader::SaveDataToFile(fileName, specEntDat, true);
+
+					//if the name is already in the list, dont add it
+					if (std::find(entNames.begin(), entNames.end(), entities[i]->name) == entNames.end())
+					{ 
+						entNames.push_back(entities[i]->name); 
+					}
 				}
 			}
 		}
+		SaveData specialSave;
+		specialSave.sections.insert({ "NAMES", {} });
+		specialSave.sections["NAMES"].lists.insert({ "names", entNames });
+		
+		ItemReader::SaveDataToFile(specialEntFilePath + "names.eid", specialSave, false);
 	}
 
 	void SaveChunk(std::string currentSaveName) {
-		Console::Log("Saving Chunk...", WARNING, __LINE__);
 		std::string filePath = (
 			"dat/saves/"
 			+ currentSaveName

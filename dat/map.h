@@ -5,6 +5,7 @@
 #include "antibox/managers/factory.h"
 
 #include "items.h"
+#include "nameGenerate.cpp"
 #include "inventory.h"
 #include "antibox/objects/tokenizer.h"
 #include <algorithm>
@@ -98,6 +99,8 @@ public:
 	std::shared_ptr<Chunk> GetProperChunk(Vector2_I coords);
 	void TempCheck(Player* p, Vector2_I coords);
 	std::string GetCurrentSavePath() const { return "dat/saves/" + currentSaveName + "/"; }
+
+	Entity* SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f);
 
 	~Map();
 
@@ -202,11 +205,14 @@ void Map::UnloadChunks(std::vector<Vector2_I> chunksToDelete) {
 		//Save all three chunks to file across 3 threads
 		std::vector<std::thread> threads;
 		for (int i = 0; i < chunksToDelete.size(); ++i) {
-			threads.push_back(std::thread(T_SaveChunks, world.chunks[chunksToDelete[i]], currentSaveName));
+			auto it = world.chunks.find(chunksToDelete[i]);
+			if (it != world.chunks.end()) {
+				threads.emplace_back(T_SaveChunks, it->second, currentSaveName);
+			}
 		}
 
 		for (auto& th : threads) {
-			th.detach();
+			th.join();
 		}
 	}
 
@@ -214,6 +220,11 @@ void Map::UnloadChunks(std::vector<Vector2_I> chunksToDelete) {
 	for (auto& vec : chunksToDelete) {
 		//world.chunks[vec]->SaveChunk();
 		world.chunks.erase(vec);
+
+		auto it = world.chunks.find(vec);
+		if (it != world.chunks.end()) {
+			std::cout << "Use count: " << it->second.use_count() << "\n";
+		}
 	}
 }
 
@@ -287,6 +298,46 @@ void Map::MakeNewChunk(Vector2_I coords) {
 
 }
 
+Entity* Map::SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f) {
+	Entity* zomb = new Entity{ 35, "Human", ID_HUMAN, b, false, f, 10, 10, true, spawnCoords.x, spawnCoords.y, true };
+
+	//Random chance to spawn previous npc
+	if (Math::RandInt(0, 5) == 2) {
+		std::string specialEntFilePath = (
+			"dat/saves/"
+			+ currentSaveName
+			+ "/entities/");
+
+		//read the list in
+		OpenedData specialEnts;
+		ItemReader::GetDataFromFile(specialEntFilePath + "names.eid", "NAMES", &specialEnts, false);
+
+		//if theres any
+		if (specialEnts.getArray("names").size() > 0) {
+			//choose one from the list
+			std::string nameChosen = specialEnts.getArray("names")[Math::RandInt(0, specialEnts.getArray("names").size() - 1)];
+
+			//load all their data
+			OpenedData entData;
+			ItemReader::GetDataFromFile(specialEntFilePath + nameChosen + ".eid", nameChosen, &entData, false);
+			if (entData.getInt("health") > 0) {
+				zomb->name = nameChosen.c_str();
+				zomb->health = entData.getInt("health");
+				zomb->b = (Behaviour)entData.getInt("behaviour");
+				zomb->faction = (Faction)entData.getInt("faction");
+				zomb->damage = entData.getInt("damage");
+				zomb->feelingTowardsPlayer = entData.getFloat("feeling");
+			}
+		}
+	}
+
+	zomb->inv.push_back(Items::GetItem("BITS"));
+	zomb->target = nullptr;
+	if (Math::RandInt(0, 2) == 1) zomb->GenerateTrades();
+
+	return zomb;
+}
+
 void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 {
 	for (int i = 0; i < Math::RandInt(0, 4); i++) //CHANGE THIS TO SPAWN ENTITIES
@@ -302,9 +353,9 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 			zomb->inv.push_back(Items::GetItem("GUTS"));
 		}
 		else if (num >= 15) {
-			zomb = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human_W, 10, 10, true, spawnCoords.x, spawnCoords.y, true };
-			zomb->inv.push_back(Items::GetItem("BITS"));
-			if(Math::RandInt(0,2) == 1) zomb->GenerateTrades();
+			//humans have a lot more logic than the rest
+			chunk->entities.push_back(SpawnHuman(spawnCoords, Protective, Human_W));
+			continue;
 		}
 		else if (num >= 10) {
 			zomb = new Entity{ 15, "Zombie", ID_ZOMBIE, Aggressive, true, Zombie, 7, 8, false, spawnCoords.x, spawnCoords.y };
@@ -542,6 +593,9 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 				//attack entity
 				AttackEntity(curEnt, pInv.equippedItems[weapon].mod, actionLog, CurrentChunk());
 				if (curEnt->b == Protective || curEnt->b == Protective_Stationary) { curEnt->aggressive = true; curEnt->b = Aggressive; }
+
+				//drop their reputation with player
+				if (curEnt->entityID == ID_HUMAN) { curEnt->feelingTowardsPlayer -= 0.5f; }
 
 				//if it has durability
 				if (pInv.equippedItems[weapon].maxDurability != -1) {
@@ -933,22 +987,20 @@ void Map::PlaceCampsite(Vector2_I startingChunk) {
 	std::vector<Vector2_I> buildingBlocks = GetSquare(cornerstone, 4);
 
 
-	Entity* human = new Entity{ 35, "Human", ID_HUMAN, Protective_Stationary, false, Human_W, 10, 10, true,
-		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].x, 
-		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].y, true };
-	//Possibly has trades
-	if (Math::RandInt(0, 2) == 1) human->GenerateTrades();
+	Vector2_I randomCoords1 = {
+		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].x,
+		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].y };
+
+	world.chunks[startingChunk]->entities.push_back(SpawnHuman(randomCoords1, Protective_Stationary, Human_W));
 
 	if (Math::RandInt(0, 10) == 5) {
-		Entity* human2 = new Entity{ 35, "Human", ID_HUMAN, Protective_Stationary, false, Human_W, 10, 10, true,
-		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].x,
-		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].y, true };
-		world.chunks[startingChunk]->entities.push_back(human2);
-		//Possibly has trades
-		if (Math::RandInt(0, 2) == 1) human2->GenerateTrades();
+		Vector2_I randomCoords2 = {
+			buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].x,
+			buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].y };
+
+		world.chunks[startingChunk]->entities.push_back(SpawnHuman(randomCoords2, Protective_Stationary, Human_W));
 	}
 
-	world.chunks[startingChunk]->entities.push_back(human);
 
 
 	//GetTileFromThisOrNeighbor(buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)], startingChunk)->hasItem = true;
@@ -1005,15 +1057,8 @@ void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2
 				break;
 			case '+':
 				*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
-				Entity* human2 = new Entity{ 35, "Human", ID_HUMAN, Protective, false, Human_W, 10, 10,
-					true, 
-					curCoordsModified.x,
-					curCoordsModified.y,
-					true };
-				//Possibly has trades
-				if (Math::RandInt(0, 2) == 1) human2->GenerateTrades();
 
-				world.chunks[startingChunk]->entities.push_back(human2);
+				world.chunks[startingChunk]->entities.push_back(SpawnHuman(curCoordsModified, Protective, Human_W));
 				break;
 			}
 		}

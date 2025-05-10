@@ -148,7 +148,7 @@ struct Container {
 //Health, Name, ID, Behaviour, Aggressive, Faction, View Distance, Damage, Can Talk
 struct Entity {
 	float health;
-	const char* name;
+	std::string name;
 	int entityID;
 	Behaviour b;
 	bool aggressive;

@@ -3,13 +3,17 @@
 
   - menu music, night music, new sfxs
 
-  - New Behaviour for npcs
+  - Humans now have names
 
   - New starter background to choose items to start with
 
   - New Items (Leather jacket, rations, etc)
 
   - New Structures (Radio Shack, Roads)
+
+  - NPCs can now like you more or less, and can follow if they like you.
+
+  - Chance to run into old NPCs you've had a positive or negative interaction with
 
 --v0.2.2 Changes--
   - Fixed indoor rain

@@ -603,6 +603,7 @@ source_group("Header Files" FILES ${Header_Files})
 
 set(Source_Files
     "dat/cosmetic.cpp"
+    "dat/nameGenerate.cpp"
     "dat/crafting.cpp"
     "dat/entities.cpp"
     "dat/game.cpp"

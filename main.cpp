@@ -1240,6 +1240,20 @@ public:
 
 			//Both Lists for the entity and for the chest
 			if (selectedTile->entity != nullptr) {
+
+				if (selectedTile->entity->name == "Human") {
+					//give them a new name when we chat
+					selectedTile->entity->name = Generation::GenerateName();
+				}
+
+				//show their name
+				if (selectedTile->entity->faction == Human_W) {
+					ImGui::TextColored({ 0,0.5,1,1 }, "Name :"); ImGui::SameLine();
+					ImGui::TextColored({ 0,0.5,1,1 }, selectedTile->entity->name.c_str());
+					ImGui::TextColored({ 0,0.5,1,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer).c_str());
+				}
+
+
 				if (selectedTile->entity->health <= 0) {
 					if (ImGui::CollapsingHeader("Corpse")) {
 						ImGui::BeginListBox("Items");
@@ -1468,7 +1482,7 @@ public:
 			ImGui::Text(CHAR_ARRAY(map.CurrentChunk()->entities.size()));
 			for (size_t i = 0; i < map.CurrentChunk()->entities.size(); i++)
 			{
-				ImGui::Text(map.CurrentChunk()->entities[i]->name); ImGui::SameLine();
+				ImGui::Text(map.CurrentChunk()->entities[i]->name.c_str()); ImGui::SameLine();
 				ImGui::Text(CHAR_ARRAY(map.CurrentChunk()->entities[i]->coords.x)); ImGui::SameLine();
 				ImGui::Text(CHAR_ARRAY(map.CurrentChunk()->entities[i]->coords.y));
 			}
@@ -1586,6 +1600,7 @@ public:
 		yViewDist = 15;
 
 		game.sfxvolume = Audio::GetVolume();
+
 
 
 		if (!DoesDirectoryExist("dat/saves")) {

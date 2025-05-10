@@ -303,9 +303,11 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		}
 
 		//run out of liquid
-		if (tile->liquid == water) {
-			ent->coords.x--;
-			break;
+		if (tile != nullptr) {
+			if (tile->liquid == water) {
+				ent->coords.x--;
+				break;
+			}
 		}
 		else {
 			moved = true;
@@ -356,15 +358,17 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		return;
 	}
 	//cover entities in liquid if they step in it
-	if (tile->liquid != nothing) {
-		ent->coveredIn = tile->liquid;
-		ent->ticksUntilDry = Math::RandInt(10, 30);
-	}
-	else if(ent->coveredIn != nothing) {
-		if (ent->coveredIn == fire) {
-			ent->health -= 5;
+	if (tile != nullptr) {
+		if (tile->liquid != nothing) {
+			ent->coveredIn = tile->liquid;
+			ent->ticksUntilDry = Math::RandInt(10, 30);
 		}
-		tile->SetLiquid(ent->coveredIn);
+		else if (ent->coveredIn != nothing) {
+			if (ent->coveredIn == fire) {
+				ent->health -= 5;
+			}
+			tile->SetLiquid(ent->coveredIn);
+		}
 	}
 
 	if (ent->ticksUntilDry > 0) {
