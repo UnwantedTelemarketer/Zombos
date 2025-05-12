@@ -1,14 +1,33 @@
-/*#ifdef __APPLE__ 
+#ifdef __APPLE__ 
     #include <sys/socket.h>
     #include <netinet/in.h>
     #include <arpa/inet.h>
     #include <netinet/tcp.h>
+    #include <pthread.h>
+#endif
+#ifdef _WIN32
+    #ifndef WIN32_LEAN_AND_MEAN
+        #define WIN32_LEAN_AND_MEAN
+    #endif
+
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+    #pragma comment(lib, "Ws2_32.lib")
+
+    WSADATA wsaData;
+    int iResult;
+
+    // Initialize Winsock
+    iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+    if (iResult != 0) {
+        printf("WSAStartup failed: %d\n", iResult);
+        return 1;
+    }
 #endif
 
 #include <vector>
 #include <string>
 #include <iostream>
-#include <pthread.h>
 
 #include "utils.hpp"
 
@@ -28,6 +47,8 @@ public:
     int start(int newPort);
     int stop();
 private:
+    void * server_listener(void * args);
+
     unsigned int socket_fd;
     std::vector<int> client_sockets;
     std::string configPath;
@@ -36,4 +57,4 @@ private:
     unsigned short port;
     unsigned char protocol;
     unsigned int timeout;
-};  */
+}; 
