@@ -1,7 +1,30 @@
 #include "server.hpp"
 
-#ifndef _WIN32
-    Server::Server() {
+Server::Server() {
+    #ifdef _WIN32
+        struct addrinfo * result = NULL, * ptr = NULL, socket_arguments;
+
+        ZeroMemory(&socket_arguments, sizeof(socket_arguments));
+        socket_arguments.ai_family = AF_INET;
+        socket_arguments.ai_socktype = SOCK_STREAM;
+        socket_arguments.ai_protocol = IPPROTO_TCP;
+        socket_arguments.ai_flags = AI_PASSIVE;
+
+        if (getaddrinfo(NULL, DEFAULT_PORT, &socket_arguments, &result) != 0) {
+            Console::Log("Failure to retrieve address info. Exiting.", "ERROR", Console::allLogs.size());
+            WSACleanup();
+            exit(EXIT_FAILURE);
+        }
+
+        this -> socket_fd = socket(result->ai_family, result->ai_socktype, result->ai_protocol);
+
+        if (this -> socket_fd == INVALID_SOCKET) {
+            Console::Log("Failure to create server socket. Exiting.", "ERROR", Console::allLogs.size());
+            freeaddrinfo(result);
+            WSACleanup();
+            exit(EXIT_FAILURE);
+        }
+    #else
         this -> socket_fd = socket(AF_INET, SOCK_STREAM, 0);
         if (socket_fd < 0) {
             std::cout << "Failure to open socket. Please verify permissions are correct to open sockets. Exiting." << std::endl;
@@ -51,22 +74,24 @@
             exit(EXIT_FAILURE);
         }
 
-        // we now have a live socket, but it's not listening for any connections yet. We do that in start!
-    }
+    #endif
+    // we now have a live socket, but it's not listening for any connections yet. We do that in start!
+}
 
-    int Server::start() {
-        // will implement multithreading to create asynchronous behavior and not hang game loop. 
-        // HOWEVER: important to note. By DEFAULT, multithreaded behavior is enabled, which means that every client 
-        // will be handled by a separate thread. This may (probably will) create a lot of contention between threads 
-        // when a significant number of clients join, so the current plan is to implement just multithreading, 
-        // THEN basically detect the number of CPU cores on the system and distribute the threads accordingly
-        // by changing their CPU affinities. THEN, to impose a safeguard, I'll see if I can delegate new clients to already existing
-        // threads. 
+int Server::start() {
+    // will implement multithreading to create asynchronous behavior and not hang game loop. 
+    // HOWEVER: important to note. By DEFAULT, multithreaded behavior is enabled, which means that every client 
+    // will be handled by a separate thread. This may (probably will) create a lot of contention between threads 
+    // when a significant number of clients join, so the current plan is to implement just multithreading, 
+    // THEN basically detect the number of CPU cores on the system and distribute the threads accordingly
+    // by changing their CPU affinities. THEN, to impose a safeguard, I'll see if I can delegate new clients to already existing
+    // threads. 
 
-    }
+}
 
-    /// ------------------- PRIVATE METHODS --------------------------
-    void * Server::server_listener(void * args) {
-        
-    }
-#endif
+/// ------------------- PRIVATE METHODS --------------------------
+void * Server::server_listener(void * args) {
+    listener_arguments * args = (listener_arguments *)args;
+
+
+}

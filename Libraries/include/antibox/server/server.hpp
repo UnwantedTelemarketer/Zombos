@@ -12,6 +12,7 @@
 
     #include <winsock2.h>
     #include <ws2tcpip.h>
+    #include <windows.h>
     #pragma comment(lib, "Ws2_32.lib")
 
     WSADATA wsaData;
@@ -29,6 +30,7 @@
 #include <string>
 #include <iostream>
 
+#include "../core/log.h"
 #include "utils.hpp"
 
 #define DEFAULT_PORT 5023
@@ -49,7 +51,12 @@ public:
 private:
     void * server_listener(void * args);
 
-    unsigned int socket_fd;
+    /// -------------------------------- PRIVATE MEMBER VARIABLES --------------------------------
+    #ifndef _WIN32
+        unsigned int socket_fd;
+    #else
+        SOCKET socket_fd;
+    #endif
     std::vector<int> client_sockets;
     std::string configPath;
     unsigned int clientLimit;
