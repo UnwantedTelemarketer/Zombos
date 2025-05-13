@@ -1,4 +1,4 @@
-#ifdef __APPLE__ 
+#ifdef __APPLE__
     #include <sys/socket.h>
     #include <netinet/in.h>
     #include <arpa/inet.h>
@@ -64,4 +64,4 @@ private:
     unsigned short port;
     unsigned char protocol;
     unsigned int timeout;
-}; 
+};
