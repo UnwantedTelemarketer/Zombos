@@ -145,6 +145,18 @@ struct Container {
 	}
 };
 
+struct Feeling{
+float trust = 0.f;
+float fear = 0.f;
+float happy = 0.f;
+};
+
+struct Memory {
+std::string event;
+std::string who;
+int ticksPassed;
+};
+
 //Health, Name, ID, Behaviour, Aggressive, Faction, View Distance, Damage, Can Talk
 struct Entity {
 	float health;
@@ -164,6 +176,7 @@ struct Entity {
 	int ticksUntilDry = 0;
 	int tempViewDistance;
 	float feelingTowardsPlayer = 0;
+ //Feeling feelingTowardsPlayer;
 
 	bool targetingPlayer;
 	bool talking;
@@ -172,6 +185,7 @@ struct Entity {
 	std::string itemGive = "nothing";
 	Entity* target = nullptr;
 	std::vector<Item> inv;
+ std::vector<Memory> memories;
 
 	bool targeting() { return target != nullptr || targetingPlayer; }
 
