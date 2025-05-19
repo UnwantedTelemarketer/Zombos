@@ -21,31 +21,3 @@
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
 [ Line 1613 ]: [1;32mDone![0m
 [ Line 41 ]: [1;31m0[0m
-[ Line 271 ]: [1;32mNew save created successfully![0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/causeway/entities/names.eid', but can't find file.[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/causeway/entities/names.eid', but can't find file.[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/causeway/entities/names.eid', but can't find file.[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/causeway/entities/names.eid', but can't find file.[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/causeway/entities/names.eid', but can't find file.[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/251249.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/251250.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/251251.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/249250.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/249251.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/249252.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/250250.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/250251.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/250252.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/247250.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/247251.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/247252.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/246250.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/246251.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/246252.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/causeway/map/248249.chunk[0m
-[ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/causeway/save.eid[0m
-[ Line 206 ]: [1;32mSave complete in 39.402164ms.[0m
-[ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/causeway/save.eid[0m
-[ Line 206 ]: [1;32mSave complete in 40.436035ms.[0m
