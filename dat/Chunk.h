@@ -151,7 +151,7 @@ public:
 		if (entities.size() != 0) {
 			for (int i = 0; i < entities.size() - 1; i++) {
 				//if they have been interacted with, save them special to the side
-				if (entities[i]->feelingTowardsPlayer != 0) {
+				if (entities[i]->feelingTowardsPlayer.overall() != 0) {
 					SaveData specEntDat;
 					specEntDat.sections.insert({ entities[i]->name, {} });
 
@@ -159,7 +159,10 @@ public:
 					specEntDat.addInt(entities[i]->name, "behaviour", entities[i]->b);
 					specEntDat.addInt(entities[i]->name, "faction", entities[i]->faction);
 					specEntDat.addInt(entities[i]->name, "damage", entities[i]->damage);
-					specEntDat.addFloat(entities[i]->name, "feeling", entities[i]->feelingTowardsPlayer);
+					specEntDat.addFloat(entities[i]->name, "happy", entities[i]->feelingTowardsPlayer.happy);
+					specEntDat.addFloat(entities[i]->name, "anger", entities[i]->feelingTowardsPlayer.anger);
+					specEntDat.addFloat(entities[i]->name, "fear", entities[i]->feelingTowardsPlayer.fear);
+					specEntDat.addFloat(entities[i]->name, "trust", entities[i]->feelingTowardsPlayer.trust);
 					specEntDat.addInt(entities[i]->name, "entID", entities[i]->entityID);
 					std::string fileName = specialEntFilePath + entities[i]->name + ".eid";
 					ItemReader::SaveDataToFile(fileName, specEntDat, true);

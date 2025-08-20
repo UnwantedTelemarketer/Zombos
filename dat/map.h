@@ -33,7 +33,7 @@ class Map {
 public:
 	bool chunkUpdateFlag = false;
 	Vector2_I c_glCoords{ 250, 250 };
-	T_Chunk effectLayer; //is the original chunk with visual effects on it (lines, fire, liquid)
+	T_Chunk effectLayer; //is the visual effects (lines, fire, smoke, etc)
 	World world; //keeps the original generated map so that tiles walked over wont be erased
 	World underground; //map but underground, different map entirely
 	bool isUnderground;
@@ -307,26 +307,30 @@ Entity* Map::SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f) {
 			"dat/saves/"
 			+ currentSaveName
 			+ "/entities/");
+		if (fileExists(specialEntFilePath.c_str())) {
+			//read the list in
+			OpenedData specialEnts;
+			ItemReader::GetDataFromFile(specialEntFilePath + "names.eid", "NAMES", &specialEnts, false);
 
-		//read the list in
-		OpenedData specialEnts;
-		ItemReader::GetDataFromFile(specialEntFilePath + "names.eid", "NAMES", &specialEnts, false);
+			//if theres any
+			if (specialEnts.getArray("names").size() > 0) {
+				//choose one from the list
+				std::string nameChosen = specialEnts.getArray("names")[Math::RandInt(0, specialEnts.getArray("names").size() - 1)];
 
-		//if theres any
-		if (specialEnts.getArray("names").size() > 0) {
-			//choose one from the list
-			std::string nameChosen = specialEnts.getArray("names")[Math::RandInt(0, specialEnts.getArray("names").size() - 1)];
-
-			//load all their data
-			OpenedData entData;
-			ItemReader::GetDataFromFile(specialEntFilePath + nameChosen + ".eid", nameChosen, &entData, false);
-			if (entData.getInt("health") > 0) {
-				zomb->name = nameChosen.c_str();
-				zomb->health = entData.getInt("health");
-				zomb->b = (Behaviour)entData.getInt("behaviour");
-				zomb->faction = (Faction)entData.getInt("faction");
-				zomb->damage = entData.getInt("damage");
-				zomb->feelingTowardsPlayer = entData.getFloat("feeling");
+				//load all their data
+				OpenedData entData;
+				ItemReader::GetDataFromFile(specialEntFilePath + nameChosen + ".eid", nameChosen, &entData, false);
+				if (entData.getInt("health") > 0) {
+					zomb->name = nameChosen.c_str();
+					zomb->health = entData.getInt("health");
+					zomb->b = (Behaviour)entData.getInt("behaviour");
+					zomb->faction = (Faction)entData.getInt("faction");
+					zomb->damage = entData.getInt("damage");
+					zomb->feelingTowardsPlayer.anger = entData.getFloat("anger");
+					zomb->feelingTowardsPlayer.fear = entData.getFloat("fear");
+					zomb->feelingTowardsPlayer.trust = entData.getFloat("trust");
+					zomb->feelingTowardsPlayer.happy = entData.getFloat("happy");
+				}
 			}
 		}
 	}
@@ -595,7 +599,7 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 				if (curEnt->b == Protective || curEnt->b == Protective_Stationary) { curEnt->aggressive = true; curEnt->b = Aggressive; }
 
 				//drop their reputation with player
-				if (curEnt->entityID == ID_HUMAN) { curEnt->feelingTowardsPlayer -= 0.5f; }
+				if (curEnt->entityID == ID_HUMAN) { curEnt->feelingTowardsPlayer.anger += 0.5f; }
 
 				//if it has durability
 				if (pInv.equippedItems[weapon].maxDurability != -1) {

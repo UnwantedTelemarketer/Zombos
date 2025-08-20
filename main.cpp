@@ -1250,7 +1250,11 @@ public:
 				if (selectedTile->entity->faction == Human_W) {
 					ImGui::TextColored({ 0,0.5,1,1 }, "Name :"); ImGui::SameLine();
 					ImGui::TextColored({ 0,0.5,1,1 }, selectedTile->entity->name.c_str());
-					ImGui::TextColored({ 0,0.5,1,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer).c_str());
+					ImGui::TextColored({ 0,0.5,0,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.happy).c_str());
+					ImGui::TextColored({ 1,0.5,0,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.trust).c_str());
+					ImGui::TextColored({ 0,0.5,1,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.fear).c_str());
+					ImGui::TextColored({ 1,0,0,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.anger).c_str());
+					ImGui::TextColored({ 1,0,0,1 }, std::to_string(selectedTile->entity->b).c_str());
 				}
 
 
@@ -1293,7 +1297,8 @@ public:
 							int _ = -1;
 							if (pInv.TryGetItem(selectedTile->entity->itemWant, false, &_)) {
 								//success
-								selectedTile->entity->ChangePlayerStatus(0.5f);
+								selectedTile->entity->ChangePlayerStatus(1, 0.5f);
+								selectedTile->entity->ChangePlayerStatus(3, 0.5f);
 								pInv.RemoveItem(selectedTile->entity->itemWant);
 								pInv.AddItemByID(selectedTile->entity->itemGive);
 								selectedTile->entity->GenerateTrades();
@@ -1303,8 +1308,8 @@ public:
 					//------------------------
 					//ImGui::Text(std::to_string(selectedTile->entity->feelingTowardsPlayer).c_str());
 
-					//Ask the human if they want to follow or unfollow, if they're favor is high enough
-					if (selectedTile->entity->feelingTowardsPlayer >= 1.f) {
+					//Ask the human if they want to follow or unfollow, if they trust the player
+					if (selectedTile->entity->feelingTowardsPlayer.trust >= 1.f) {
 						if (selectedTile->entity->b != Follow) {
 							if (ImGui::Button("Follow me.")) {
 								gameScreen.CreatePopup("Response", "Alright, I'll follow you.");

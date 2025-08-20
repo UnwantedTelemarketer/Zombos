@@ -1,0 +1,12 @@
+Jilhjn {
+behaviour : 4;
+faction : 0;
+damage : 10;
+entID : 3;
+health : 0.000000;
+happy : 0.000000;
+anger : 3.500000;
+fear : 0.000000;
+trust : 0.000000;
+}
+

@@ -74,18 +74,18 @@ struct Item {
 		try {
 			maxDurability = item.getFloat("durability");
 			durability = maxDurability;
-		}//this is fine if it doesnt work, not all items are cookable and shouldnt need to specify
+		}//this is fine if it doesnt work, not all items have durability and shouldnt need to specify
 		catch (std::exception e) { maxDurability = -1.f; }
 
 		try {
 			waterproof = item.getBool("waterproof");
-		}//this is fine if it doesnt work, not all items are waterproof and shouldnt need to specify
+		}//this is fine if it doesnt work, not all items are waterproof
 		catch (std::exception e) { waterproof = false; }
 
 		try {
 			cookable = item.getBool("cookable");
 			cooks_into = item.getString("cooksInto");
-		}//this is fine if it doesnt work, not all items are cookable and shouldnt need to specify
+		}//this is fine if it doesnt work, not all items are cookable
 		catch (std::exception e) { cookable = false; }
 
 		try {
@@ -145,16 +145,26 @@ struct Container {
 	}
 };
 
+enum class MemoryType { Trade, Conversation, Observation, Helped, Attacked };
+
 struct Feeling{
-float trust = 0.f;
-float fear = 0.f;
-float happy = 0.f;
+	float trust = 0.f;
+	float fear = 0.f;
+	float happy = 0.f;
+	float anger = 0.f;
+
+	float overall() const {
+		return trust + fear + happy + anger;
+	}
 };
 
 struct Memory {
-std::string event;
-std::string who;
-int ticksPassed;
+	MemoryType type;
+	Feeling emotion;
+	std::string event;
+	int who;
+	int ticksPassed;
+	bool persistent;
 };
 
 //Health, Name, ID, Behaviour, Aggressive, Faction, View Distance, Damage, Can Talk
@@ -175,9 +185,10 @@ struct Entity {
 	Liquid coveredIn = nothing;
 	int ticksUntilDry = 0;
 	int tempViewDistance;
-	float feelingTowardsPlayer = 0;
- //Feeling feelingTowardsPlayer;
+	Feeling feelingTowardsPlayer = { 0,0,0 };
+	std::unordered_map<int, Feeling> feelingTowardsOthers;
 
+	int uID;
 	bool targetingPlayer;
 	bool talking;
 	std::string message = "empty";
@@ -185,7 +196,7 @@ struct Entity {
 	std::string itemGive = "nothing";
 	Entity* target = nullptr;
 	std::vector<Item> inv;
- std::vector<Memory> memories;
+	std::vector<Memory> memories;
 
 	bool targeting() { return target != nullptr || targetingPlayer; }
 
@@ -198,19 +209,37 @@ struct Entity {
 		return names;
 	}
 
-	// If theyre status to the player changes, they will be saved on unloading.
-	// When the player enters that chunk again, it will choose one of the chunks
-	// around that chunk or the original to respawn the entity in.
-	void ChangePlayerStatus(float changeBy) {
-		feelingTowardsPlayer += changeBy;
 
-		if (feelingTowardsPlayer <= -1) {
+	//1 - Happy
+	//2 - Fear
+	//3 - Trust
+	//4 - Anger
+	void ChangePlayerStatus(int type, float changeBy) {
+		switch (type) {
+		case 1:
+			feelingTowardsPlayer.happy += changeBy;
+			break;
+		case 2:
+			feelingTowardsPlayer.fear += changeBy;
+			break;
+		case 3:
+			feelingTowardsPlayer.trust += changeBy;
+			break;
+		case 4:
+			feelingTowardsPlayer.anger += changeBy;
+			break;
+		default:
+			return;
+		}
+		
+
+		if (feelingTowardsPlayer.anger >= 1) {
 			b = Aggressive;
 		}
+	}
 
-		if (feelingTowardsPlayer >= 1) {
-			//do ally stuff
-		}
+	void SetupNPC() {
+
 	}
 
 	void GenerateTrades() {
@@ -223,6 +252,10 @@ struct Entity {
 		itemWant = wants.getArray("items")[Math::RandInt(0, wants.getArray("items").size() - 1)];
 		itemGive = gives.getArray("items")[Math::RandInt(0, gives.getArray("items").size() - 1)];
 	}
+
+	// If theyre status to the player changes, they will be saved on unloading.
+	// When the player enters that chunk again, it will choose one of the chunks
+	// around that chunk or the original to respawn the entity in.
 };
 
 struct Player {
