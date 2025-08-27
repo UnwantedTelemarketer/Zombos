@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [MEAT,COOKED_MEAT,RATION]
+sections : [MEAT,COOKED_MEAT,OVERCOOKED_MEAT,BURNT_MEAT,RATION]
 }
 
 MEAT {
@@ -27,10 +27,46 @@ id : "cookedmeat";
 stackable : true;
 holdsLiquid : false;
 consumable : true;
+cookable : true;
+cooksInto : "OVERCOOKED_MEAT";
 amount : 1;
 consumeTxt : "You eat the meat. You feel much less hungry.";
 useTxt : "Does Nothig.";
 effects : [3,35,0,0];
+equipType : 0;
+sprite : "H";
+spriteColor : [0.6, 0.1, 0.2];
+}
+
+OVERCOOKED_MEAT {
+name : "Slightly Overcooked Meat";
+description : "Overcooked meat. Still tastes good.";
+id : "overcookedmeat";
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+cookable : true;
+cooksInto : "BURNT_MEAT";
+amount : 1;
+consumeTxt : "You eat the meat. You feel much less hungry.";
+useTxt : "Does Nothig.";
+effects : [3,30,0,0];
+equipType : 0;
+sprite : "H";
+spriteColor : [0.6, 0.1, 0.2];
+}
+
+BURNT_MEAT {
+name : "Burnt Meat";
+description : "Burnt meat. Way overcooked.";
+id : "burntmeat";
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+amount : 1;
+consumeTxt : "You eat the meat. It's charred and doesn't taste very good.";
+useTxt : "Does Nothig.";
+effects : [3,5,0,0];
 equipType : 0;
 sprite : "H";
 spriteColor : [0.6, 0.1, 0.2];

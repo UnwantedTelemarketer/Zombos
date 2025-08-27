@@ -1422,6 +1422,7 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 								int amount = curCont->items[i].count;
 								curCont->AddItem(Items::GetItem(curCont->items[i].cooks_into), amount);
 								curCont->items.erase(curCont->items.begin() + i);
+								Audio::Play("dat/sounds/cooked.mp3");
 								i--;
 							}
 						}

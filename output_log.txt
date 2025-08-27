@@ -19,23 +19,29 @@
 [ Line 10 ]: [1;32mSuccesfully created object BG[0m
 [ Line 79 ]: [1;32mLoaded texture from res/plank.png.[0m
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
-[ Line 1634 ]: [1;32mDone![0m
+[ Line 1637 ]: [1;32mDone![0m
 [ Line 41 ]: [1;31m0[0m
-[ Line 277 ]: [1;31mFailed to create save or save exists![0m
-[ Line 271 ]: [1;32mNew save created successfully![0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/fffffff/entities/names.eid', but can't find file.[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/fffffff/map/251249.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/fffffff/map/250250.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/fffffff/map/251250.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/fffffff/map/249251.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/fffffff/map/250251.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/fffffff/map/251251.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/fffffff/map/249248.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/fffffff/map/250248.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/fffffff/map/251248.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/fffffff/map/249251.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/fffffff/map/250251.chunk[0m
-[ Line 260 ]: [1;32mReading Chunk from dat/saves/fffffff/map/251251.chunk[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/251249.chunk[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/252249.chunk[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/253249.chunk[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/251250.chunk[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/252250.chunk[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/253250.chunk[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/251251.chunk[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/252251.chunk[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/253251.chunk[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/251248.chunk[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/252248.chunk[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/253248.chunk[0m
+[ Line 1697 ]: [1;32mgive RAINCOAT 1[0m
+[ Line 1697 ]: [1;32mgive LEATHER_BOOTS 1[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/251251.chunk[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/252251.chunk[0m
+[ Line 260 ]: [1;32mReading Chunk from dat/saves/test_world/map/253251.chunk[0m
+[ Line 1697 ]: [1;32mgive GLASS_JAR 1[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/fffffff/save.eid[0m
-[ Line 206 ]: [1;32mSave complete in 17.374435ms.[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test_world/save.eid[0m
+[ Line 206 ]: [1;32mSave complete in 16.706455ms.[0m
+[ Line -1 ]: [0;37mNow saving...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/test_world/save.eid[0m
+[ Line 206 ]: [1;32mSave complete in 15.913836ms.[0m

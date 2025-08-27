@@ -342,6 +342,8 @@ public:
 							pInv.EquipItem(equippedItem);
 						}
 					}
+
+					pInv.ResetItemNames();
 				}
 				else {
 					gameScreen.CreatePopup("Error", "No save found.");
@@ -1440,6 +1442,7 @@ public:
 			if (pInv.CurrentEquipMatches(weapon, "LIGHTER") || pInv.CurrentEquipMatches(weapon, "MATCH")) {
 				if (ImGui::Button("Burn")) {
 					selectedTile->liquid = fire;
+					Audio::Play("dat/sounds/start_fire.mp3");
 					map.floodFill(selectedTile->coords, 5, false);
 
 					if (pInv.CurrentEquipMatches(weapon, "MATCH")) {

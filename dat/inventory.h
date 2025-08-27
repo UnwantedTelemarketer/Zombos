@@ -21,7 +21,7 @@ public:
 				if (items[i].section == it.section)
 				{
 					items[i].count += it.count * count;
-					if (items[i].count != 0) itemNames[i] = items[i].name + " x " + std::to_string(items[i].count);
+					ResetItemNames();
 					return;
 				}
 			}
@@ -33,6 +33,7 @@ public:
 		{
 			AddItem(it);
 		}
+		ResetItemNames();
 	}
 
 	//Equip item from inventory
@@ -333,6 +334,16 @@ public:
 
 	std::vector<std::string>* GetItemNames() {
 		return &itemNames;
+	}
+
+	void ResetItemNames() {
+		for (int i = 0; i < items.size(); i++) {
+			itemNames[i] = items[i].name;
+			if (items[i].count > 1) {
+				itemNames[i] += " x ";
+				itemNames[i] += std::to_string(items[i].count);
+			}
+		}
 	}
 
 	void GetItems(std::vector<std::string>* idList, std::vector<std::string> validIds, int max) {
