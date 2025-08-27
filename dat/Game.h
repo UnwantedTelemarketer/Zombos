@@ -249,7 +249,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 						moved = false;
 					}
 				}
-				else { 
+				else {
 					if (chunkInUse->GetTileAtCoords(path[0])->walkable) {
 						ent->coords = path[0];
 						moved = true;
@@ -346,7 +346,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		}
 	}
 
-	if (moved) { 
+	if (moved) {
 		if (mainMap.TileAtPos(ent->coords)->itemName == "BEAR_TRAP") {
 			Audio::Play("dat/sounds/bear_trap.mp3");
 			ent->health -= 35;
