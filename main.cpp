@@ -1241,6 +1241,8 @@ public:
 			//Both Lists for the entity and for the chest
 			if (selectedTile->entity != nullptr) {
 
+				ImGui::TextColored({0,1.0f,0.5f,1.f},"-----ENTITY INFO-----");
+
 				if (selectedTile->entity->name == "Human") {
 					//give them a new name when we chat
 					selectedTile->entity->name = Generation::GenerateName();
@@ -1250,11 +1252,14 @@ public:
 				if (selectedTile->entity->faction == Human_W) {
 					ImGui::TextColored({ 0,0.5,1,1 }, "Name :"); ImGui::SameLine();
 					ImGui::TextColored({ 0,0.5,1,1 }, selectedTile->entity->name.c_str());
+					ImGui::Text("Happiness : "); ImGui::SameLine();
 					ImGui::TextColored({ 0,0.5,0,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.happy).c_str());
+					ImGui::Text("Trust : "); ImGui::SameLine();
 					ImGui::TextColored({ 1,0.5,0,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.trust).c_str());
+					ImGui::Text("Fear : "); ImGui::SameLine();
 					ImGui::TextColored({ 0,0.5,1,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.fear).c_str());
+					ImGui::Text("Anger : "); ImGui::SameLine();
 					ImGui::TextColored({ 1,0,0,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.anger).c_str());
-					ImGui::TextColored({ 1,0,0,1 }, std::to_string(selectedTile->entity->b).c_str());
 				}
 
 
@@ -1281,32 +1286,46 @@ public:
 					}
 				}
 				else {
-				//--------TRADING---------
-				//If they have something for trade
-					if (selectedTile->entity->itemWant != "nothing") {
-						//generate message
-						std::string tradeMessage = "Hey, if you have a ";
-						tradeMessage += Items::GetItem_NoCopy(selectedTile->entity->itemWant)->name;
-						tradeMessage += " then I'll trade you a ";
-						tradeMessage += Items::GetItem_NoCopy(selectedTile->entity->itemGive)->name;
-						tradeMessage += ". Deal?";
+					//--------TRADING---------
+					//If they have something for trade
 
-						//if player has item, then trade them
-						ImGui::TextWrapped(tradeMessage.c_str());
-						if (ImGui::Button("Trade?")) {
+					ImGui::Text("---Dialogue---");
+					if (gameScreen.tradeDialogue) {
+						if (selectedTile->entity->itemWant != "nthng") {
+							//generate message
+							std::string tradeMessage = "Hey, if you have a ";
+							tradeMessage += Items::GetItem_NoCopy(selectedTile->entity->itemWant)->name;
+							tradeMessage += " then I'll trade you a ";
+							tradeMessage += Items::GetItem_NoCopy(selectedTile->entity->itemGive)->name;
+							tradeMessage += ". Deal?";
+
+							//if player has item, then trade them
+							ImGui::TextWrapped(tradeMessage.c_str());
 							int _ = -1;
-							if (pInv.TryGetItem(selectedTile->entity->itemWant, false, &_)) {
-								//success
-								selectedTile->entity->ChangePlayerStatus(1, 0.5f);
-								selectedTile->entity->ChangePlayerStatus(3, 0.5f);
-								pInv.RemoveItem(selectedTile->entity->itemWant);
-								pInv.AddItemByID(selectedTile->entity->itemGive);
-								selectedTile->entity->GenerateTrades();
+							if (ImGui::Button("Confirm Trade")) {
+								if (pInv.TryGetItem(selectedTile->entity->itemWant, false, &_)) {
+									//success
+									selectedTile->entity->ChangePlayerStatus(1, 0.5f);
+									selectedTile->entity->ChangePlayerStatus(3, 0.5f);
+									pInv.RemoveItem(selectedTile->entity->itemWant);
+									pInv.AddItemByID(selectedTile->entity->itemGive);
+									selectedTile->entity->GenerateTrades();
+								}
 							}
 						}
+						else {
+							ImGui::TextWrapped("I've got nothing to trade right now.");
+						}
 					}
-					//------------------------
-					//ImGui::Text(std::to_string(selectedTile->entity->feelingTowardsPlayer).c_str());
+					else {
+						if (selectedTile->entity->canTalk) {
+							ImGui::TextWrapped(("\"" + selectedTile->entity->message + "\"").c_str());
+						}
+						if (ImGui::Button("Trade?")) {
+							gameScreen.tradeDialogue = true;
+						}
+					}
+
 
 					//Ask the human if they want to follow or unfollow, if they trust the player
 					if (selectedTile->entity->feelingTowardsPlayer.trust >= 1.f) {
@@ -1323,11 +1342,9 @@ public:
 							}
 						}
 					}
-					if (selectedTile->entity->canTalk) {
-						ImGui::TextWrapped(("\"" + selectedTile->entity->message + "\"").c_str());
-						//ImGui::TextColored({ 1,0,0,1 }, "RAAAHHH!!");
-					}
 				}
+
+				ImGui::TextColored({ 0,1.0f,0.5f,1.f }, "--------------------");
 			}
 
 			else if (curCont != nullptr) {
@@ -1572,7 +1589,6 @@ public:
 			gameScreen.showDialogue = !gameScreen.showDialogue;
 		}
 	}
-
 	//---------------------------------------------BASE FUNCTIONS---------------------------------------------
 
 	void Init() override {
@@ -1713,6 +1729,7 @@ public:
 			else {
 				moved = true;
 				selectedTile = nullptr;
+				gameScreen.tradeDialogue = false;
 				game.MovePlayer(MAP_UP);
 				playerDir = direction::up;
 			}
@@ -1731,6 +1748,7 @@ public:
 			else {
 				moved = true;
 				selectedTile = nullptr;
+				gameScreen.tradeDialogue = false;
 				game.MovePlayer(MAP_DOWN);
 				playerDir = direction::down;
 			}
@@ -1749,6 +1767,7 @@ public:
 			else {
 				moved = true;
 				selectedTile = nullptr;
+				gameScreen.tradeDialogue = false;
 				game.MovePlayer(MAP_LEFT);
 				playerDir = direction::left;
 			}
@@ -1767,6 +1786,7 @@ public:
 			else {
 				moved = true;
 				selectedTile = nullptr;
+				gameScreen.tradeDialogue = false;
 				game.MovePlayer(MAP_RIGHT);
 				playerDir = direction::right;
 			}

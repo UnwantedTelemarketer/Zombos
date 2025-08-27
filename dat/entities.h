@@ -192,8 +192,8 @@ struct Entity {
 	bool targetingPlayer;
 	bool talking;
 	std::string message = "empty";
-	std::string itemWant = "nothing";
-	std::string itemGive = "nothing";
+	std::string itemWant = "nthng";
+	std::string itemGive = "nthng";
 	Entity* target = nullptr;
 	std::vector<Item> inv;
 	std::vector<Memory> memories;
@@ -243,14 +243,20 @@ struct Entity {
 	}
 
 	void GenerateTrades() {
-		OpenedData wants;
-		ItemReader::GetDataFromFile("loot_tables/trade.eid", "WANTS", &wants);
+		if (Math::RandInt(0, 6) > 2) {
+			OpenedData wants;
+			ItemReader::GetDataFromFile("loot_tables/trade.eid", "WANTS", &wants);
 
-		OpenedData gives;
-		ItemReader::GetDataFromFile("loot_tables/trade.eid", "REWARDS", &gives);
+			OpenedData gives;
+			ItemReader::GetDataFromFile("loot_tables/trade.eid", "REWARDS", &gives);
 
-		itemWant = wants.getArray("items")[Math::RandInt(0, wants.getArray("items").size() - 1)];
-		itemGive = gives.getArray("items")[Math::RandInt(0, gives.getArray("items").size() - 1)];
+			itemWant = wants.getArray("items")[Math::RandInt(0, wants.getArray("items").size() - 1)];
+			itemGive = gives.getArray("items")[Math::RandInt(0, gives.getArray("items").size() - 1)];
+		}
+		else {
+			itemWant = "nthng";
+			itemGive = "nthng";
+		}
 	}
 
 	// If theyre status to the player changes, they will be saved on unloading.
@@ -392,7 +398,6 @@ struct Saved_Tile {
 		stream.read(&itemName[0], size);
 	}
 };
-
 enum direction{up, down, left, right, still};
 
 struct Tile {

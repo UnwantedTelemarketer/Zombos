@@ -178,6 +178,7 @@ void GameManager::AddRecipes() {
 	}
 }
 
+
 void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 {
 	vec2_i oldCoords = ent->coords;
@@ -308,40 +309,40 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 				ent->coords.x--;
 				break;
 			}
-		}
-		else {
-			moved = true;
-			//pr do random direction 
-			switch (dir)
-			{
-			case 1:
-				ent->coords.x++;
-				break;
-			case 2:
-				ent->coords.x--;
-				break;
-			case 3:
-				ent->coords.y++;
-				break;
-			case 4:
-				ent->coords.y--;
-				break;
-			case 5:
-				ent->coords.x++;
-				ent->coords.y++;
-				break;
-			case 6:
-				ent->coords.x--;
-				ent->coords.y++;
-				break;
-			case 7:
-				ent->coords.x++;
-				ent->coords.y--;
-				break;
-			case 8:
-				ent->coords.x--;
-				ent->coords.y--;
-				break;
+			else {
+				moved = true;
+				//pr do random direction 
+				switch (dir)
+				{
+				case 1:
+					ent->coords.x++;
+					break;
+				case 2:
+					ent->coords.x--;
+					break;
+				case 3:
+					ent->coords.y++;
+					break;
+				case 4:
+					ent->coords.y--;
+					break;
+				case 5:
+					ent->coords.x++;
+					ent->coords.y++;
+					break;
+				case 6:
+					ent->coords.x--;
+					ent->coords.y++;
+					break;
+				case 7:
+					ent->coords.x++;
+					ent->coords.y--;
+					break;
+				case 8:
+					ent->coords.x--;
+					ent->coords.y--;
+					break;
+				}
 			}
 		}
 	}
@@ -377,9 +378,8 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 	else {
 		ent->coveredIn = nothing;
 	}
-
-	//mainMap.CurrentChunk()->localCoords[oldCoords.x][oldCoords.y].entity = nullptr;
 }
+
 
 bool GameManager::PlayerNearby(Vector2_I coords) {
 	if (mPlayer.coords == vec2_i{coords.x + 1, coords.y} ||
@@ -581,9 +581,12 @@ void GameManager::UpdateTick() {
 		}
 	}
 
+	//Each tick
 	if (tickCount >= tickRate)
 	{
+		tickCount = 0;
 		float curTime = glfwGetTime();
+
 		if (mainMap.UpdateWeather()) {
 			switch (mainMap.currentWeather) {
 			case rainy:
@@ -598,9 +601,11 @@ void GameManager::UpdateTick() {
 			}
 		}
 
-		tickCount = 0;
 		//hunger and thirst
-		mPlayer.thirst -= 0.075f;
+		//get more thirsty if the player is extra hot / sick
+		if (mPlayer.bodyTemp >= 99.5f) { mPlayer.thirst -= 0.1f; }
+		else { mPlayer.thirst -= 0.075f; }
+
 		mPlayer.hunger -= 0.05f;
 		if (mPlayer.thirst < 0) { mPlayer.health -= 0.5f; mPlayer.thirst = 0; }
 		if (mPlayer.hunger < 0) { mPlayer.health -= 0.5f; mPlayer.hunger = 0; }
@@ -620,7 +625,7 @@ void GameManager::UpdateTick() {
 
 		if (mainMap.currentWeather == rainy || mainMap.currentWeather == thunder) {
 			if (Math::RandInt(1, 7) == 2)  //random check
-			{
+			{									//									id 13 is indoors
 				if (!pInv.Waterproof(shirt) && mainMap.TileAtPos(mPlayer.coords)->id != 13) {
 					mPlayer.CoverIn(water, 15); //cover the player in it
 				}
@@ -667,10 +672,13 @@ void GameManager::UpdateTick() {
 				time = night;
 				if (!startedMusicNight) {
 					Audio::StopLoop("ambient_day");
-					Audio::PlayLoop("dat/sounds/music/night_zombos.wav", "night_music");
 					Audio::PlayLoop("dat/sounds/crickets.mp3", "crickets");
+					Audio::PlayLoop("dat/sounds/music/night_zombos.wav", "night_music");
+					Audio::SetVolumeLoop(musicvolume, "night_music");
+					Audio::SetVolumeLoop(sfxvolume, "crickets");
 					startedMusicNight = true;
 				}
+
 				if (forwardTime) { darkTime = std::min(10.f, darkTime + 0.45f); }
 				else { darkTime = std::max(1.f, darkTime - 0.5f); }
 				if (worldTime >= 4.f && worldTime <= 5.f) { forwardTime = false; }

@@ -18,6 +18,7 @@ struct GameUI {
 	bool console_showing = false;
 	bool equipmentScreenOpen = true;
 	bool settingsOpen = false;
+	bool tradeDialogue = false;
 	std::map<std::string, UIPopup> popups;
 
 	void FlipScreens() {
