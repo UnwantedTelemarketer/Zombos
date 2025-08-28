@@ -1307,8 +1307,7 @@ public:
 							if (ImGui::Button("Confirm Trade")) {
 								if (pInv.TryGetItem(selectedTile->entity->itemWant, false, &_)) {
 									//success
-									selectedTile->entity->ChangePlayerStatus(1, 0.5f);
-									selectedTile->entity->ChangePlayerStatus(3, 0.5f);
+									selectedTile->entity->AddMemory(MemoryType::Trade, ID_PLAYER, { 0.1f,0.f,0.5f,0.f });
 									pInv.RemoveItem(selectedTile->entity->itemWant);
 									pInv.AddItemByID(selectedTile->entity->itemGive);
 									selectedTile->entity->GenerateTrades();

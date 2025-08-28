@@ -181,6 +181,9 @@ void GameManager::AddRecipes() {
 
 void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 {
+	ent->UpdateMemories();
+	ent->UpdateMood();
+
 	vec2_i oldCoords = ent->coords;
 	std::vector<Vector2_I> path = mainMap.GetLine(ent->coords, mPlayer.coords, 20);
 	std::vector<Vector2_I> entPath;

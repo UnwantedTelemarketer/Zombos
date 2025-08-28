@@ -12,6 +12,33 @@ enum Behaviour { Wander, Protective, Protective_Stationary, Stationary, Aggressi
 enum Faction { Human_W, Human_T, Dweller, Zombie, Wildlife, Takers };
 enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6};
 
+#define ENT_PLAYER "A"
+#define ID_PLAYER 0
+
+#define ENT_ZOMBIE "B"
+#define ID_ZOMBIE 1
+
+#define ENT_CHICKEN "D"
+#define ID_CHICKEN 2
+
+#define ENT_HUMAN "C"
+#define ID_HUMAN 3
+
+#define ENT_FROG "F"
+#define ID_FROG 4
+
+#define ENT_CAT "G"
+#define ID_CAT 5
+
+#define ENT_COW "a"
+#define ID_COW 6
+
+#define ENT_FINDER "H"
+#define ID_FINDER 7
+
+#define ENT_TAKER "I"
+#define ID_TAKER 8
+
 
 //What the effect is and how much it does.
 struct EffectAmount {
@@ -158,6 +185,8 @@ struct Feeling{
 	}
 };
 
+static Feeling Happy = { 0.f,0.f,1.f,0.f };
+
 struct Memory {
 	MemoryType type;
 	Feeling emotion;
@@ -209,37 +238,68 @@ struct Entity {
 		return names;
 	}
 
+	void UpdateMemories() {
+		for (auto it = memories.begin(); it != memories.end(); ) {
+			// Apply memory’s emotions to feelings
+			auto& mem = *it;
+			Feeling& towards = (mem.who == ID_PLAYER) ? feelingTowardsPlayer
+				: feelingTowardsOthers[mem.who];
+			//reinforce feeling with memory
+			towards.trust += mem.emotion.trust * 0.05f;   // small reinforcement
+			towards.fear  += mem.emotion.fear  * 0.05f;
+			towards.happy += mem.emotion.happy * 0.05f;
+			towards.anger += mem.emotion.anger * 0.05f;
 
-	//1 - Happy
-	//2 - Fear
-	//3 - Trust
-	//4 - Anger
-	void ChangePlayerStatus(int type, float changeBy) {
-		switch (type) {
-		case 1:
-			feelingTowardsPlayer.happy += changeBy;
-			break;
-		case 2:
-			feelingTowardsPlayer.fear += changeBy;
-			break;
-		case 3:
-			feelingTowardsPlayer.trust += changeBy;
-			break;
-		case 4:
-			feelingTowardsPlayer.anger += changeBy;
-			break;
-		default:
-			return;
-		}
-		
+			// Decay memory strength over time unless persistent
+			if (!mem.persistent) {
+				mem.emotion.trust *= 0.98f;
+				mem.emotion.fear  *= 0.98f;
+				mem.emotion.happy *= 0.98f;
+				mem.emotion.anger *= 0.98f;
+			}
+			mem.ticksPassed++;
 
-		if (feelingTowardsPlayer.anger >= 1) {
-			b = Aggressive;
+			if (!mem.persistent && mem.emotion.overall() < 0.01f) {
+				it = memories.erase(it);
+			}
+			else {
+				++it;
+			}
 		}
 	}
 
-	void SetupNPC() {
+	void AddMemory(MemoryType type, int who, Feeling f, bool persistent = false) {
+		Memory m;
+		m.type = type;
+		m.emotion = f;
+		m.who = who;
+		m.ticksPassed = 0;
+		m.persistent = persistent;
 
+		memories.push_back(m);
+
+		// Immediate effect on feelings
+		if (who == ID_PLAYER) {
+			feelingTowardsPlayer.trust += f.trust;
+			feelingTowardsPlayer.fear  += f.fear;
+			feelingTowardsPlayer.happy += f.happy;
+			feelingTowardsPlayer.anger += f.anger;
+		}
+		else {
+			feelingTowardsOthers[who].trust += f.trust;
+			feelingTowardsOthers[who].fear  += f.fear;
+			feelingTowardsOthers[who].happy += f.happy;
+			feelingTowardsOthers[who].anger += f.anger;
+		}
+	}
+
+	void UpdateMood() {
+		if (feelingTowardsPlayer.anger >= 1.f) {
+			b = Aggressive;
+		}
+		else if (feelingTowardsPlayer.anger <= 0.25f) {
+			b = Protective;
+		}
 	}
 
 	void GenerateTrades() {
@@ -613,32 +673,7 @@ private:
 };
 
 
-#define ENT_PLAYER "A"
-#define ID_PLAYER 0
 
-#define ENT_ZOMBIE "B"
-#define ID_ZOMBIE 1
-
-#define ENT_CHICKEN "D"
-#define ID_CHICKEN 2
-
-#define ENT_HUMAN "C"
-#define ID_HUMAN 3
-
-#define ENT_FROG "F"
-#define ID_FROG 4
-
-#define ENT_CAT "G"
-#define ID_CAT 5
-
-#define ENT_COW "a"
-#define ID_COW 6
-
-#define ENT_FINDER "H"
-#define ID_FINDER 7
-
-#define ENT_TAKER "I"
-#define ID_TAKER 8
 
 
 #ifdef REGULAR_FONT

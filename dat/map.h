@@ -599,7 +599,7 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 				if (curEnt->b == Protective || curEnt->b == Protective_Stationary) { curEnt->aggressive = true; curEnt->b = Aggressive; }
 
 				//drop their reputation with player
-				if (curEnt->entityID == ID_HUMAN) { curEnt->feelingTowardsPlayer.anger += 0.5f; }
+				if (curEnt->entityID == ID_HUMAN) { curEnt->AddMemory(MemoryType::Attacked, ID_PLAYER, { 0.f,0.f,0.f,0.5f }); }
 
 				//if it has durability
 				if (pInv.equippedItems[weapon].maxDurability != -1) {
