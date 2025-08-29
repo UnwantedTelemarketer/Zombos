@@ -144,10 +144,9 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 
 	//if(seed == -1) deleteAllFilesInDirectory();
 	SetTick(tick);
-	mPlayer.coords.x = x;
-	mPlayer.coords.y = y;
 	AddRecipes();
 	mainMap.CreateMap(seed, biome);
+	mPlayer.coords = mainMap.PlaceStartingBuilding();
 
 	//Faction, Enemies
 	factionEnemies = {

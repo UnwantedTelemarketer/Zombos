@@ -72,6 +72,7 @@ public:
 	void EmptyChunk(std::shared_ptr<Chunk> chunk);
 	void BuildChunk(std::shared_ptr<Chunk> chunk);
 	void PlaceBuilding(Vector2_I startingChunk);
+	Vector2_I PlaceStartingBuilding();
 	void PickStructure(Vector2_I startingChunk);
 	void PlaceCampsite(Vector2_I startingChunk);
 	void PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2_I dimensions);
@@ -1071,6 +1072,43 @@ void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2
 	if (newChunk) {
 		UnloadChunks(chunksCoordsToDelete);
 	}
+}
+
+Vector2_I Map::PlaceStartingBuilding() {
+	Vector2_I cornerstone = { CHUNK_WIDTH / 2, CHUNK_HEIGHT / 2 };
+
+	std::vector<Vector2_I> buildingBlocks = GetSquare(cornerstone, 5);
+	std::vector<Vector2_I> wallBlocks = GetSquareEdge(cornerstone, 5);
+
+	//draw the floors
+	for (int i = 0; i < buildingBlocks.size(); i++)
+	{
+
+		Tile* curTile = GetTileFromThisOrNeighbor({ buildingBlocks[i].x,buildingBlocks[i].y }, c_glCoords);
+
+		*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
+	}
+
+	int door = 6;
+	bool doorSpawned = false;
+	//draw walls
+	for (int i = 0; i < wallBlocks.size(); i++)
+	{
+		Tile* curTile = GetTileFromThisOrNeighbor(wallBlocks[i], c_glCoords);
+		door--;
+		if (door == 0) { continue; }
+
+		*curTile = Tiles::GetTile("TILE_STONE");
+	}
+
+	Vector2_I center = buildingBlocks[buildingBlocks.size() / 2];
+
+	//put down a campfire
+	GetTileFromThisOrNeighbor({center.x - 1, center.y - 1}, c_glCoords)->hasItem = true;
+	GetTileFromThisOrNeighbor({ center.x - 1, center.y - 1 }, c_glCoords)->itemName = "CAMPFIRE";
+	GetTileFromThisOrNeighbor({ center.x - 1, center.y - 1 }, c_glCoords)->tileContainer = new Container;
+
+	return center;
 }
 
 void Map::PlaceBuilding(Vector2_I startingChunk) {

@@ -164,7 +164,7 @@ spriteColor : [0.5, 0.50, 0.5];
 
 CLOTH_TORCH {
 name : "Cloth Torch";
-description : "Cloth wrapped around a stick. Flammable.;
+description : "Cloth wrapped around a stick. Flammable.";
 stackable : true;
 holdsLiquid : false;
 consumable : false;
