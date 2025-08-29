@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [BANDAGE,LIGHTER,CANTEEN,GUTS,GLASS_JAR,GLOWING_MUSHROOM_JAR,LANTERN,MATCH,BEAR_TRAP,BEAR_TRAP_2];
+sections : [BANDAGE,CLOTH_TORCH,LIGHTER,CANTEEN,GUTS,GLASS_JAR,GLOWING_MUSHROOM_JAR,LANTERN,MATCH,BEAR_TRAP,BEAR_TRAP_2];
 }
 
 BANDAGE {
@@ -160,4 +160,20 @@ effects : [0,10,0,25];
 equipType : 0;
 sprite : ".";
 spriteColor : [0.5, 0.50, 0.5];
+}
+
+CLOTH_TORCH {
+name : "Cloth Torch";
+description : "Cloth wrapped around a stick. Flammable.;
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "You eat a bandage.";
+useTxt : "You wrap a bandage around your wound.";
+effects : [0,0,0,0];
+emissionDistance : 4;
+equipType : 0;
+sprite : "J";
+spriteColor : [0.95, 0.95, 0.85];
 }
