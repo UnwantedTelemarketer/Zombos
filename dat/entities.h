@@ -4,13 +4,13 @@
 #include <fstream>
 #include <set>
 
-enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid = 6};
+enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid = 6, bandage = 7};
 enum biome { desert, ocean, forest, swamp, taiga, grassland, urban, jungle };
 enum Liquid { nothing = 0, water = 1, blood = 2, fire = 3, guts = 4, mud = 5 , snow = 6};
 enum Action { use, consume, combine };
 enum Behaviour { Wander, Protective, Protective_Stationary, Stationary, Aggressive, Follow };
 enum Faction { Human_W, Human_T, Dweller, Zombie, Wildlife, Takers };
-enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6};
+enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6, neck = 7 };
 
 #define ENT_PLAYER "A"
 #define ID_PLAYER 0
@@ -76,6 +76,8 @@ struct Item {
 	float maxDurability = -1.f;
 	float durability = 0.f;
 	bool waterproof = false;
+	std::string giveItemOnConsume = "nthng";
+	std::string customSound = "nthng";
 
 	void CoverIn(Liquid l, int ticks) {
 		coveredIn = l;
@@ -108,6 +110,16 @@ struct Item {
 			waterproof = item.getBool("waterproof");
 		}//this is fine if it doesnt work, not all items are waterproof
 		catch (std::exception e) { waterproof = false; }
+
+		try {
+			giveItemOnConsume = item.getString("giveItemOnConsume");
+		}//this is fine if it doesnt work, not all items are waterproof
+		catch (std::exception e) { giveItemOnConsume = "nthng"; }
+
+		try {
+			customSound = item.getString("soundOnUse");
+		}//this is fine if it doesnt work, not all items are waterproof
+		catch (std::exception e) { customSound = "nthng"; }
 
 		try {
 			cookable = item.getBool("cookable");
@@ -220,9 +232,11 @@ struct Entity {
 	int uID;
 	bool targetingPlayer;
 	bool talking;
+	bool smart = false;
 	std::string message = "empty";
 	std::string itemWant = "nthng";
 	std::string itemGive = "nthng";
+	std::vector<std::string> idleSounds;
 	Entity* target = nullptr;
 	std::vector<Item> inv;
 	std::vector<Memory> memories;
@@ -236,6 +250,10 @@ struct Entity {
 			names.push_back(inv[i].name);
 		}
 		return names;
+	}
+
+	std::string RandomIdleSound() {
+		return idleSounds[Math::RandInt(0, idleSounds.size() - 1)];
 	}
 
 	void UpdateMemories() {
@@ -329,6 +347,8 @@ struct Player {
 	float thirst = 100;
 	float hunger = 100;
 	int damage = 5;
+	int bleedingLevel = 0;
+	int sicknessLevel = 0;
 	int ticksCovered = 0;
 	int liquidLast = 50;
 	bool aiming = false;
@@ -337,12 +357,106 @@ struct Player {
 	Vector2_I crosshair;
 	Liquid coveredIn = nothing;
 	float visualTemp, bodyTemp = 98.5f;
+	int bleedTicks = 0;
+	int sickTicks = 0;
+	int healTick = 0;
+	int thirstTick = 0;
+	int hungerTick = 0;
+	int damageMode = 0;
 
 	void TakeDamage(ConsumeEffect type, int dmg) {
-		health -= dmg;
+		if (damageMode != 2) { health -= dmg; }
 		if (type == pierceDamage) {
 			CoverIn(blood, 20);
+			bleedingLevel++;
+			if (bleedingLevel > 3) {
+				bleedingLevel = 3;
+			}
 		}
+		if (damageMode == 1 && health <= 0) { health = 1; }
+	}
+
+	void CheckStatus() {
+		int prevHealth = health;
+		//hunger and thirst
+		//get more thirsty if the player is extra hot / sick
+		if (bodyTemp >= 99.5f) { thirstTick+=2; }
+		else { thirstTick++; }
+		hungerTick++;
+
+		//lose health if dehydrated
+		if (((thirstTick % 25) == 0) && thirst < 40) {
+			health -= 1;
+		}
+		if (thirstTick >= 50) {
+			thirstTick = 0;
+			thirst -= 1.f;
+		}
+
+		//lose health if starving
+		if (((hungerTick % 50) == 0) && hunger < 40) {
+			health -= 1;
+		}
+		if (hungerTick >= 100) {
+			hungerTick = 0;
+			hunger -= 1.f;
+
+			if (hunger < 40) {
+				health -= 1;
+			}
+		}
+
+
+		/*if(thirst < 0) { health -= 0.5f; thirst = 0; }
+		if (hunger < 0) { health -= 0.5f; hunger = 0; }*/
+		if (coveredIn == fire) { health -= 1.f; }
+
+		//Liquid spilling
+		if (coveredIn != nothing) { ticksCovered++; }
+		if (ticksCovered > liquidLast) { ticksCovered = 0; coveredIn = nothing; }
+
+		if (bleedingLevel > 0) {
+			bleedTicks++;
+			if (bleedingLevel == 1 && bleedTicks >= 40) {
+				bleedTicks = 0;
+				health -= 1;
+			}
+			else if (bleedingLevel == 2 && bleedTicks >= 20) {
+				bleedTicks = 0;
+				health -= 1;
+			}
+			else if (bleedingLevel == 3 && bleedTicks >= 2) {
+				bleedTicks = 0;
+				health -= 1;
+			}
+		}
+		healTick++;
+
+		//cant heal if youre too hungry
+		if (hunger >= 70) {
+			if (sicknessLevel < 2) {
+				if (healTick >= 100) {
+					health += 2;
+					healTick = 0;
+				}
+			}
+			else {
+				if (healTick >= 150) {
+					health += 2;
+					healTick = 0;
+				}
+			}
+		}
+
+		if (bleedingLevel > 3) {
+			bleedingLevel = 3;
+		}
+		if (sicknessLevel > 3) {
+			sicknessLevel = 3;
+		}
+
+		if (damageMode == 2) { health = prevHealth; }
+		else if (damageMode == 1 && health <= 0) { health = 1; }
 	}
 
 	//Covers them in but does some minor checks to clean you off and stuff
@@ -587,90 +701,6 @@ static void CreateSavedTile(Saved_Tile* sTile, Tile tile) {
 }
 
 class Inventory;
-
-class CraftingSystem {
-public:
-	void addRecipe(std::string output, std::map<std::string, int> inputs) {
-		for (auto const& input_item : inputs) {
-			if (recipes_by_item.count(input_item.first) == 0) { recipes_by_item[input_item.first] = {}; }
-			recipes_by_item[input_item.first].push_back(output);
-		}
-		recipes.insert({ output, inputs });
-	}
-
-	
-	std::string AttemptCraft(std::string output, std::vector<Item>* inventory) {
-		std::map<std::string, Item*> items;
-		std::map<std::string, int> itemsToRemove;
-		int componentsUsed = 0;
-		for (size_t i = 0; i < inventory->size(); i++)
-		{
-			items.insert({(*inventory)[i].section, &(*inventory)[i]});
-		}
-		for (const auto& component : recipes[output]) {
-			if (items.count(component.first) != 0) {
-				if (items[component.first]->count >= component.second) {
-					componentsUsed++;
-					itemsToRemove.insert({ component.first, component.second });
-				}
-			}
-		}
-
-		if (componentsUsed >= recipes[output].size()) {
-			for (const auto& item : itemsToRemove) {
-				items[item.first]->count -= item.second;
-			}
-			return output;
-		}
-		return "none";
-	}
-
-	std::vector<std::string> getRecipeNames() {
-		std::vector<std::string> recipeNames;
-
-		for (const auto& name : recipes) {
-			recipeNames.push_back(name.first);
-		}
-
-		return recipeNames;
-	}
-
-	std::vector<std::string> getRecipeComponents(std::string key) {
-		std::vector<std::string> recipeComps;
-
-		for (const auto& name : recipes[key]) {
-			recipeComps.push_back(name.first + " x " + std::to_string(name.second));
-		}
-
-		return recipeComps;
-	}
-
-	std::vector<std::string> getRecipesByItem(std::string itemName) {
-		bool isRecipe = false;
-		if (recipes.count(itemName) != 0) { isRecipe = true; }
-		else if (recipes_by_item.count(itemName) == 0 && !isRecipe) { return { }; }
-
-		std::vector<std::string> recipeList = recipes_by_item[itemName];
-		if (isRecipe) { recipeList.insert(recipeList.begin(), itemName); }
-
-		return recipeList;
-	}
-
-	void SaveRecipe(std::string recName) {
-		savedRecipes.insert(recName);
-	}
-	void UnsaveRecipe(std::string recName) {
-		savedRecipes.erase(recName);
-	}
-
-	std::set<std::string> savedRecipes;
-private:
-
-	std::unordered_map<std::string, std::map<std::string, int>> recipes;
-
-	//				  --item_name   --list of recipes using the item
-	std::unordered_map<std::string, std::vector<std::string>> recipes_by_item;
-};
 
 
 

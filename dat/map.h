@@ -302,6 +302,7 @@ void Map::MakeNewChunk(Vector2_I coords) {
 Entity* Map::SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f) {
 	Entity* zomb = new Entity{ 35, "Human", ID_HUMAN, b, false, f, 10, 10, true, spawnCoords.x, spawnCoords.y, true };
 
+	zomb->smart = true;
 	//Random chance to spawn previous npc
 	if (Math::RandInt(0, 5) == 2) {
 		std::string specialEntFilePath = (
@@ -367,6 +368,7 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 
 			zomb->inv.push_back(Items::GetItem("OLD_CLOTH"));
 			zomb->inv.push_back(Items::GetItem("GUTS"));
+			zomb->idleSounds = { "dat/sounds/zombie_idle_1.mp3", "dat/sounds/zombie_idle_2.mp3" };
 		}
 		
 		else {
@@ -374,6 +376,7 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 			case swamp:
 				zomb = new Entity{ 10, "Frog", ID_FROG, Wander, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
 				zomb->inv.push_back(Items::GetItem("LEATHER"));
+				zomb->idleSounds = { "dat/sounds/frog.mp3" };
 				break;
 			case taiga:
 				zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
@@ -385,6 +388,7 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 				break;
 			case desert:
 				zomb = new Entity{ 10, "Cat", ID_CAT, Wander, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				zomb->idleSounds = { "dat/sounds/cat.mp3" };
 				break;
 			default:
 				zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
@@ -835,10 +839,6 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				else
 				{
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_SAND");
-					if (Math::RandInt(1, 300) == 255) {
-						chunk->localCoords[i][j].hasItem = true;
-						chunk->localCoords[i][j].itemName = "GLASS_SHARDS";
-					}
 				}
 				break;
 			case taiga:
@@ -927,11 +927,6 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 			{ 
 				chunk->localCoords[i][j].hasItem = true;
 				chunk->localCoords[i][j].itemName = "ROCK";
-			}
-			else if (Math::RandInt(1, 350) == 124 && !chunk->localCoords[i][j].hasItem)
-			{
-				chunk->localCoords[i][j].hasItem = true;
-				chunk->localCoords[i][j].itemName = "SCRAP";
 			}
 
 			if (chunk->localCoords[i][j].ticksNeeded == 1) {
@@ -1131,8 +1126,14 @@ void Map::PlaceBuilding(Vector2_I startingChunk) {
 	//draw the floors
 	for (int i = 0; i < buildingBlocks.size(); i++)
 	{
-
+		
 		Tile* curTile = GetTileFromThisOrNeighbor({ buildingBlocks[i].x,buildingBlocks[i].y }, startingChunk);
+		if (Math::RandInt(0, 10) == 5) {
+			if (Math::RandInt(0, 10) == 5 && curTile->biomeID == forest) {
+				*curTile = Tiles::GetTile("TILE_TREE_BASE");
+			}
+			continue;
+		}
 
 		//if the chunk we are trying to place the building in doesnt exists, create it anew and place
 		//the building in there, then save it and close it
@@ -1157,6 +1158,10 @@ void Map::PlaceBuilding(Vector2_I startingChunk) {
 			curTile->hasItem = true;
 			itemCounter++;
 		}
+		else if (Math::RandInt(0, 7) == 2 && curTile->biomeID == forest) {
+			curTile->itemName = "MOSS";
+			curTile->hasItem = true;
+		}
 	}
 
 	int door = Math::RandInt(0, wallBlocks.size());
@@ -1164,6 +1169,9 @@ void Map::PlaceBuilding(Vector2_I startingChunk) {
 	//draw walls
 	for (int i = 0; i < wallBlocks.size(); i++)
 	{
+		if (Math::RandInt(0, 10) == 5) {
+			continue;
+		}
 		Tile* curTile = GetTileFromThisOrNeighbor(wallBlocks[i], startingChunk);
 		
 		//If the wall crosses to a new chunk, load/generate it, place blocks, then unload it at the end
@@ -1357,7 +1365,9 @@ void Map::ClearEntities(std::shared_ptr<Chunk> chunk)
 	for (int i = 0; i < chunk->entities.size(); i++)
 	{
 		Vector2_I coord = chunk->entities[i]->coords;
-		chunk->localCoords[coord.x][coord.y].entity = nullptr;
+		try {
+			chunk->localCoords[coord.x][coord.y].entity = nullptr;
+		} catch(std::exception e) { LAZY_LOG(e.what()) }
 	}
 }
 
@@ -1567,6 +1577,30 @@ void Map::DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y)
 				if (nextTile->id == 107) { nextTile->technical_dir = direction::up; }
 				if (nextTile->id == 105) { nextTile->technical_dir = direction::down; }
 				break;
+		}
+	}
+
+	//living moss spreads and eats items
+	if (curTile->itemName == "LIVING_MOSS") {
+		int movement = Math::RandInt(0, 100);
+		Tile* nextTile = nullptr;
+		switch (movement) {
+		case 0:
+			nextTile = GetTileFromThisOrNeighbor({ x,y + 1 });
+			break;
+		case 1:
+			nextTile = GetTileFromThisOrNeighbor({ x,y - 1 });
+			break;
+		case 2:
+			nextTile = GetTileFromThisOrNeighbor({ x + 1,y });
+			break;
+		case 3:
+			nextTile = GetTileFromThisOrNeighbor({ x - 1,y });
+			break;
+		}
+		if (nextTile != nullptr && nextTile->walkable && nextTile->liquid == nothing) {
+			nextTile->hasItem = true;
+			nextTile->itemName = "LIVING_MOSS";
 		}
 	}
 }

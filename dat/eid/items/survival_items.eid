@@ -1,17 +1,18 @@
 SECTIONS {
-sections : [BANDAGE,CLOTH_TORCH,LIGHTER,CANTEEN,GUTS,GLASS_JAR,GLOWING_MUSHROOM_JAR,LANTERN,MATCH,BEAR_TRAP,BEAR_TRAP_2];
+sections : [BANDAGE,CLOTH_TORCH,LIGHTER,CANTEEN,GUTS,GLASS_JAR,GLOWING_MUSHROOM_JAR,LANTERN,MATCH,BEAR_TRAP,BEAR_TRAP_C,LIGHTER_EMPTY];
 }
 
 BANDAGE {
 name : "Sterile Bandage";
-description : "Clean bandage that can be used to heal.";
+description : "Clean bandage that can be used to stop bleeding.";
 stackable : true;
 holdsLiquid : false;
 consumable : true;
 amount : 1;
 consumeTxt : "You eat a bandage.";
 useTxt : "You wrap a bandage around your wound.";
-effects : [0,0,1,5];
+effects : [0,0,7,1];
+soundOnUse : "dat/sounds/bandage.mp3";
 equipType : 0;
 sprite : "J";
 spriteColor : [0.95, 0.95, 0.85];
@@ -28,6 +29,23 @@ amount : 1;
 consumeTxt : "cant consume.";
 useTxt : "You light yourself on fire.";
 effects : [0,0,4,35];
+equipType : 1;
+equipModifier : 2;
+durability : 30;
+sprite : "X";
+spriteColor : [0.35, 0.35, 0.35];
+}
+
+LIGHTER_EMPTY {
+name : "Lighter (Empty)";
+description : "A lighter that can start fires. No fuel left.";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "cant consume.";
+useTxt : "You light yourself on fire.";
+effects : [0,0,0,0];
 equipType : 1;
 equipModifier : 2;
 sprite : "X";
@@ -59,7 +77,7 @@ consumable : false;
 amount : 1;
 consumeTxt : "You take a sip from your canteen.";
 useTxt : "You pour liquid on yourself.";
-effects : [2,10,2,25];
+effects : [2,4,2,25];
 equipType : 0;
 sprite : "F";
 spriteColor : [0.0, 0.50, 0.0];
@@ -68,7 +86,6 @@ spriteColor : [0.0, 0.50, 0.0];
 GUTS {
 name : "Zombie Guts";
 description : "Gross old zombie guts. Might be useful. Maybe.";
-id : "guts";
 stackable : true;
 holdsLiquid : false;
 consumable : true;
@@ -76,6 +93,7 @@ amount : 1;
 consumeTxt : "You feel awfully sick after eating the guts.";
 useTxt : "You smear the guts on yourself.";
 effects : [4,10,6,4];
+soundOnUse : "dat/sounds/squelch.mp3"
 equipType : 0;
 sprite : "W";
 spriteColor : [0.65, 0.0, 0.0];
@@ -90,7 +108,7 @@ consumable : false;
 amount : 1;
 consumeTxt : "You take a sip from the jar.";
 useTxt : "You pour liquid on yourself.";
-effects : [2,10,2,25];
+effects : [2,3,2,25];
 equipType : 1;
 equipMod : 2;
 sprite : "Z";
@@ -147,7 +165,7 @@ spriteColor : [0.5, 0.50, 0.5];
 }
 
 
-BEAR_TRAP_2 {
+BEAR_TRAP_C {
 name : "Bear Trap (Closed)";
 description : "Someone may have lost a foot.";
 stackable : false;
@@ -173,7 +191,9 @@ consumeTxt : "You eat a bandage.";
 useTxt : "You wrap a bandage around your wound.";
 effects : [0,0,0,0];
 emissionDistance : 4;
-equipType : 0;
+equipType : 1;
+equipModifier : 1;
 sprite : "J";
 spriteColor : [0.95, 0.95, 0.85];
 }
+

@@ -1,16 +1,18 @@
-[ Line 161 ]: [0;33mLoading Items from files...[0m
-[ Line 176 ]: [0;37mitems/clothing.eid[0m
-[ Line 176 ]: [0;37mitems/crafted_materials.eid[0m
-[ Line 176 ]: [0;37mitems/custom_items.eid[0m
-[ Line 176 ]: [0;37mitems/decoration.eid[0m
-[ Line 176 ]: [0;37mitems/droppable.eid[0m
-[ Line 176 ]: [0;37mitems/food.eid[0m
-[ Line 176 ]: [0;37mitems/materials.eid[0m
-[ Line 176 ]: [0;37mitems/misc.eid[0m
-[ Line 176 ]: [0;37mitems/nature_items.eid[0m
-[ Line 176 ]: [0;37mitems/survival_items.eid[0m
-[ Line 176 ]: [0;37mitems/weapons.eid[0m
-[ Line 185 ]: [1;32mLoaded Items![0m
+[ Line 165 ]: [0;33mLoading Items from files...[0m
+[ Line 180 ]: [0;37mitems/clothing.eid[0m
+[ Line 180 ]: [0;37mitems/cosmetic_tools.eid[0m
+[ Line 180 ]: [0;37mitems/crafted_materials.eid[0m
+[ Line 180 ]: [0;37mitems/custom_items.eid[0m
+[ Line 180 ]: [0;37mitems/decoration.eid[0m
+[ Line 180 ]: [0;37mitems/droppable.eid[0m
+[ Line 180 ]: [0;37mitems/food.eid[0m
+[ Line 180 ]: [0;37mitems/materials.eid[0m
+[ Line 180 ]: [0;37mitems/misc.eid[0m
+[ Line 180 ]: [0;37mitems/nature_items.eid[0m
+[ Line 180 ]: [0;37mitems/survival_items.eid[0m
+[ Line 180 ]: [0;37mitems/trade_valuables.eid[0m
+[ Line 180 ]: [0;37mitems/weapons.eid[0m
+[ Line 189 ]: [1;32mLoaded Items![0m
 [ Line 83 ]: [0;33mLoading Tiles from files...[0m
 [ Line 92 ]: [0;37mtiles.eid[0m
 [ Line 102 ]: [1;32mLoaded Tiles![0m
@@ -19,21 +21,63 @@
 [ Line 10 ]: [1;32mSuccesfully created object BG[0m
 [ Line 79 ]: [1;32mLoaded texture from res/plank.png.[0m
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
-[ Line 1636 ]: [1;32mDone![0m
+[ Line 1738 ]: [1;32mDone![0m
 [ Line 41 ]: [1;31m0[0m
-[ Line 271 ]: [1;32mNew save created successfully![0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/rett/entities/names.eid', but can't find file.[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/rett/map/250251.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/rett/map/249249.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/rett/map/249250.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/rett/map/249251.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/rett/map/252249.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/rett/map/252250.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/rett/map/252251.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/rett/map/249249.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/rett/map/249250.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/rett/map/249251.chunk[0m
-[ Line 1696 ]: [1;32mgive MATCH 2[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/248249.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/249249.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/250249.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/248250.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/249250.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/250250.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/248251.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/249251.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/250251.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/251249.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/251250.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/251251.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/251255.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/250252.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/251252.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253252.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254253.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255254.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255252.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255253.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255254.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253255.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254255.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255255.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/256255.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253253.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253254.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253255.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253256.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253253.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254253.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255253.chunk[0m
+[ Line 1798 ]: [1;32mgive MOLTEN_GLASS 1[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253252.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254252.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255252.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253255.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254255.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255255.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253252.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254252.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255252.chunk[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/rett/save.eid[0m
-[ Line 206 ]: [1;32mSave complete in 17.377085ms.[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/newestfinal/save.eid[0m
+[ Line 207 ]: [1;32mSave complete in 17.457273ms.[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253250.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253253.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254253.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255253.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253254.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254254.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255254.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253255.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254255.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255255.chunk[0m
+[ Line -1 ]: [0;37mNow saving...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/newestfinal/save.eid[0m
+[ Line 207 ]: [1;32mSave complete in 17.980490ms.[0m

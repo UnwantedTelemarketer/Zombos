@@ -14,7 +14,8 @@ sections : [CAMPFIRE,
 			LANTERN,
 			LEATHER_BOOTS,
 			BULL_KNIFE,
-			CLOTH_TORCH]
+			CLOTH_TORCH,
+			BEAR_TRAP]
 }
 
 CAMPFIRE {
@@ -50,10 +51,6 @@ BULL_KNIFE {
 recipe : [STICK,3,ROPE,2,BULL_HORN,2];
 }
 
-LIGHTER {
-recipe : [RESIN,3,ROPE,1,SCRAP,2];
-}
-
 CHEST {
 recipe : [WOOD_PLANK,3,HINGE,2];
 }
@@ -79,5 +76,13 @@ recipe : [LEATHER,5,SCRAP,2,ROPE,2,RESIN,4];
 }
 
 CLOTH_TORCH {
-recipe : [CLOTH,2,STICK,1];
+recipe : [OLD_CLOTH,2,STICK,1];
+}
+
+BEAR_TRAP {
+recipe : [BEAR_TRAP_C,1];
+}
+
+LIGHTER {
+recipe : [LIGHTER_EMPTY,1,RESIN,10];
 }

@@ -1,3 +1,22 @@
+v0.2.4 Changes
+  - Added Bleeding and Sickness instead of direct damage
+  
+  - New Items (Chalk, Moss, etc.)
+
+  - Added player spawnpoint house
+
+  - Added new Cooking Recipes
+
+  - Player now passively heals at different rates based on conditions
+
+  - reworked the day night cycle
+
+  -	New Status Indicators
+
+  - Rebalanced food and water for the new time
+
+  - More sfxs
+
 --v0.2.3 Changes--
   - Added spawnpoints for custom structures
 

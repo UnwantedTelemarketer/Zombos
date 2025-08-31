@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [LEATHER_BOOTS, RAINCOAT, LEATHER_JACKET];
+sections : [LEATHER_BOOTS, RAINCOAT, LEATHER_JACKET, TOOTH_NECKLACE];
 }
 
 
@@ -54,6 +54,24 @@ effects : [0,0,0,0];
 equipType : 3;
 equipModifier : 15;
 durability : 40;
+sprite : "K";
+spriteColor : [0.3, 0.3, 0.2];
+waterproof : true;
+}
+
+TOOTH_NECKLACE{
+name : "Necklace of Teeth";
+description : "A necklace made of wire with teeth all around the rim.";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "weatr bppts";
+useTxt : "Does Nothig.";
+effects : [0,0,0,0];
+equipType : 7;
+equipModifier : 1;
+durability : -1;
 sprite : "K";
 spriteColor : [0.3, 0.3, 0.2];
 waterproof : true;

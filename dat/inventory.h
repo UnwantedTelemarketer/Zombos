@@ -225,6 +225,12 @@ public:
 			amount = item->use.onBodyUse.amount;
 			switch (item->use.onBodyUse.effect)				//If we are using, check what effect this item has on use
 			{
+			case bandage:
+				p->bleedingLevel--;
+				if (amount == 0 || item->coveredIn == guts) {
+					p->sicknessLevel++;
+				}
+				break;
 			case heal:
 				p->health += amount;
 				if (p->coveredIn != nothing) { p->coveredIn = nothing; }
@@ -269,15 +275,15 @@ public:
 				{
 					item->liquidAmount -= 25.f;
 					p->thirst += amount;
-					p->thirst = std::min(100.f, p->thirst);
 					if (item->liquidAmount <= 0.f) {
 						item->coveredIn = nothing;
 					}
 				}
 				else 
 				{
-					return false;
+					p->thirst += amount;
 				}
+				p->thirst = std::min(100.f, p->thirst);
 				break;
 			case saturate:
 				p->hunger += amount;

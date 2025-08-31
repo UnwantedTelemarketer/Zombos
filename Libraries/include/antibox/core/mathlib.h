@@ -25,6 +25,10 @@ namespace antibox {
 			if (log->size() <= max) { log->push_back(message); }
 			else { log->erase(log->begin()); log->push_back(message); }
 		}
+		inline void PushFrontLog(std::vector<std::string>* log, std::string message, int max = 15) {
+			if (log->size() <= max) { log->insert(log->begin(), message); }
+			else { log->erase(log->end()); log->insert(log->begin(), message); }
+		}
 		inline float Lerp(float time, float startVal, float endVal) {
 			return (((endVal - startVal) * time) + startVal);
 		}

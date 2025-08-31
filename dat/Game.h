@@ -37,8 +37,9 @@ public:
 	Map mainMap;
 	Player mPlayer;
 	Inventory pInv;
-	std::vector<std::string> actionLog;
+	std::vector<std::string> actionLog, consoleLog;
 	std::vector<std::string> possibleNames = {"John", "Zombie"};
+	std::vector<std::string> quietWalkSounds = {"dat/sounds/movement/grass1_quiet.wav","dat/sounds/movement/grass2_quiet.wav" ,"dat/sounds/movement/grass3_quiet.wav" };
 	std::vector<Vector2_I> oldLocations;
 	std::map<Faction, std::vector<Faction>> factionEnemies;
 	std::map<int, std::string> tile_icons;
@@ -56,11 +57,12 @@ public:
 	vec3 BG_DESERT, BG_WATER, BG_FOREST, BG_TAIGA, BG_SWAMP;
 
 
-	float worldTime = 6.f;
+	int worldTimeTicks = 0;
 	float darkTime = 1.f;
 	bool paused = false;
 
-	bool isDark() { return ((worldTime >= 20.f || worldTime < 6.f) || mainMap.isUnderground); }
+	bool isDark() { return ((worldTimeTicks >= 2850 || worldTimeTicks < 900) || mainMap.isUnderground); }
+	bool isNight() { return (worldTimeTicks >= 2850 || worldTimeTicks < 900); }
 	double GetTick() { return (tickRate - tickCount); }
 	float TickRate() { return tickRate; }
 	void SetTick(float secs) { tickRate = secs * 1000; effectTickRate = tickRate / 10; }
@@ -141,12 +143,12 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	rockWalk = { "dat/sounds/movement/rock_walk1.wav","dat/sounds/movement/rock_walk2.wav", "dat/sounds/movement/rock_walk3.wav" };
 	mainMap.SetWeather(clear);
 	mainMap.ticksUntilWeatherUpdate = Math::RandInt(15, 600);
+	worldTimeTicks = 1950; // 1pm
 
 	//if(seed == -1) deleteAllFilesInDirectory();
 	SetTick(tick);
 	AddRecipes();
 	mainMap.CreateMap(seed, biome);
-	mPlayer.coords = mainMap.PlaceStartingBuilding();
 
 	//Faction, Enemies
 	factionEnemies = {
@@ -180,8 +182,10 @@ void GameManager::AddRecipes() {
 
 void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 {
-	ent->UpdateMemories();
-	ent->UpdateMood();
+	if (ent->smart) {
+		ent->UpdateMemories();
+		ent->UpdateMood();
+	}
 
 	vec2_i oldCoords = ent->coords;
 	std::vector<Vector2_I> path = mainMap.GetLine(ent->coords, mPlayer.coords, 20);
@@ -189,6 +193,11 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 	Entity* tempTarget = nullptr;
 	bool moved = false;
 	ent->tempViewDistance = isDark() ? ent->viewDistance * 2 : ent->viewDistance;
+	if (ent->idleSounds.size() > 0) {
+		if (Math::RandInt(0, 25) == 1) {
+			Audio::Play(ent->RandomIdleSound());
+		}
+	}
 
 	for (int i = 0; i < chunkInUse->entities.size(); i++) //loop through every entity
 	{
@@ -225,7 +234,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		//check if player is near
 		if (path.size() < ent->viewDistance) {
 			ent->targetingPlayer = true;
-			if (ent->name == "Zombie") {
+			if (ent->name == "Zombie" && Math::RandInt(0,20) == 1) {
 				Audio::Play("dat/sounds/zombie_angry.mp3");
 			}
 		}
@@ -353,8 +362,9 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		if (mainMap.TileAtPos(ent->coords)->itemName == "BEAR_TRAP") {
 			Audio::Play("dat/sounds/bear_trap.mp3");
 			ent->health -= 35;
-			mainMap.TileAtPos(ent->coords)->itemName = "BEAR_TRAP_2";
+			mainMap.TileAtPos(ent->coords)->itemName = "BEAR_TRAP_C";
 		}
+		Audio::Play(quietWalkSounds[Math::RandInt(0, 2)]);
 	}
 	if (ent->coords == mPlayer.coords || mainMap.GetTileFromThisOrNeighbor(ent->coords)->walkable == false) {
 		ent->coords = oldCoords;
@@ -458,7 +468,7 @@ void GameManager::MovePlayer(int dir) {
 	if (mainMap.TileAtPos(mPlayer.coords)->itemName == "BEAR_TRAP") {
 		mPlayer.TakeDamage(pierceDamage, 35);
 		Audio::Play("dat/sounds/bear_trap.mp3");
-		mainMap.TileAtPos(mPlayer.coords)->itemName = "BEAR_TRAP_2";
+		mainMap.TileAtPos(mPlayer.coords)->itemName = "BEAR_TRAP_C";
 	}
 	if (mainMap.TileAtPos(mPlayer.coords)->id == 19) {
 		if (EnterCave()) {
@@ -588,6 +598,7 @@ void GameManager::UpdateTick() {
 	{
 		tickCount = 0;
 		float curTime = glfwGetTime();
+		worldTimeTicks++;
 
 		if (mainMap.UpdateWeather()) {
 			switch (mainMap.currentWeather) {
@@ -603,19 +614,9 @@ void GameManager::UpdateTick() {
 			}
 		}
 
-		//hunger and thirst
-		//get more thirsty if the player is extra hot / sick
-		if (mPlayer.bodyTemp >= 99.5f) { mPlayer.thirst -= 0.1f; }
-		else { mPlayer.thirst -= 0.075f; }
 
-		mPlayer.hunger -= 0.05f;
-		if (mPlayer.thirst < 0) { mPlayer.health -= 0.5f; mPlayer.thirst = 0; }
-		if (mPlayer.hunger < 0) { mPlayer.health -= 0.5f; mPlayer.hunger = 0; }
-		if (mPlayer.coveredIn == fire) { mPlayer.health -= 1.f; }
-
-		//Liquid spilling
-		if (mPlayer.coveredIn != nothing) { mPlayer.ticksCovered++; }
-		if (mPlayer.ticksCovered > mPlayer.liquidLast) { mPlayer.ticksCovered = 0; mPlayer.coveredIn = nothing; }
+		//PlayerStatus (bleeding, sickness, hunger, thirst, drying off)
+		mPlayer.CheckStatus();
 
 		//if player stands in liquid, soak em.
 		Liquid tileLiquid = mainMap.CurrentChunk()->GetTileAtCoords(mPlayer.coords)->liquid;
@@ -666,11 +667,11 @@ void GameManager::UpdateTick() {
 		}
 
 		//time and brightness
-		worldTime += 0.05f;
-		if (worldTime > 24.f) { worldTime = 0.f; }
+		if (worldTimeTicks > 3600) { worldTimeTicks = 0; }
 
 		if (!mainMap.isUnderground) {
-			if (worldTime >= 20.f || worldTime < 6.f) {
+			//
+			if (worldTimeTicks >= 2850 || worldTimeTicks <= 900) {
 				time = night;
 				if (!startedMusicNight) {
 					Audio::StopLoop("ambient_day");
@@ -681,11 +682,11 @@ void GameManager::UpdateTick() {
 					startedMusicNight = true;
 				}
 
-				if (forwardTime) { darkTime = std::min(10.f, darkTime + 0.45f); }
-				else { darkTime = std::max(1.f, darkTime - 0.5f); }
-				if (worldTime >= 4.f && worldTime <= 5.f) { forwardTime = false; }
+				if (forwardTime) { darkTime = std::min(10.f, darkTime + 0.05f); }
+				else { darkTime = std::max(1.f, darkTime - 0.05f); }
+				if (worldTimeTicks > 600 && worldTimeTicks <= 750) { forwardTime = false; }
 			}
-			else if (worldTime > 6.f && worldTime < 6.05f) {
+			else if (worldTimeTicks == 900) {
 				time = day;
 				startedMusicNight = false;
 				mainMap.ResetLightValues();
@@ -1008,7 +1009,7 @@ ImVec4 GameManager::GetTileColor(Tile* tile, float intensity) {
 	*/
 dimming:
 	//if its night time
-	if ((worldTime >= 20.f || worldTime < 6.f) || mainMap.isUnderground) {
+	if (isDark()) {
 		if ((darkTime >= 10.f && intensity >= 1.f) || (mainMap.isUnderground && intensity >= 1.f)) {
 			if(dormantMoon) color = { 0.075f,0.075f,0.075f,1 };
 			else color = { 0.f,0.f,0.f,1 };
@@ -1043,10 +1044,28 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 		if (tokens[i] == "give") {
 			if (tokens.size() < 3) { return; }
 			if (Items::list.count(tokens[i + 1]) == 0) { 
-				LAZY_LOG("Item \"" + tokens[i+1] + "\" cannot be found.")
-					return; 
+				Math::PushFrontLog(&game->consoleLog, "- Item \"" + tokens[i + 1] + "\" cannot be found.");
+				return; 
 			}
+			Math::PushFrontLog(&game->consoleLog, "- Added " + tokens[i + 2] + " " + tokens[i + 1]);
 			game->pInv.AddItemByID(tokens[i + 1], stoi(tokens[i + 2]));
+		}
+		else if (tokens[i] == "god" || tokens[i] == "buddha") {
+			if (tokens.size() < 2) { return; }
+			if (tokens[i + 1] == "off") 
+			{
+				Math::PushFrontLog(&game->consoleLog, "- Buddha/God Mode Off");
+				game->mPlayer.damageMode = 0; }
+
+			else if (tokens[i] == "buddha") 
+			{
+				Math::PushFrontLog(&game->consoleLog, "- Buddha Mode On");
+				game->mPlayer.damageMode = 1; }
+
+			else if (tokens[i] == "god") 
+			{
+				Math::PushFrontLog(&game->consoleLog, "- God Mode On");
+				game->mPlayer.damageMode = 2; }
 		}
 		else if (tokens[i] == "set")
 		{
@@ -1060,6 +1079,15 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 			else if (tokens[i + 1] == "hunger") {
 				game->mPlayer.hunger = stoi(tokens[i + 2]);
 			}
+			else if (tokens[i + 1] == "sickness") {
+				game->mPlayer.sicknessLevel = stoi(tokens[i + 2]);
+			}
+			else if (tokens[i + 1] == "bleeding") {
+				game->mPlayer.bleedingLevel = stoi(tokens[i + 2]);
+			}
+			else if (tokens[i + 1] == "tickrate") {
+				game->SetTick(stof(tokens[i + 2]));
+			}
 			else if (tokens[i + 1] == "weather") {
 				if(tokens[i + 2] == "clear") {
 					game->mainMap.SetWeather(clear);
@@ -1069,15 +1097,29 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 					game->mainMap.SetWeather(thunder);
 				}
 			}
+			else if (tokens[i + 1] == "time") {
+				game->worldTimeTicks = stoi(tokens[i + 2]);
+			}
 		}
 		else if (tokens[i] == "help") {
 			std::string helpstring =
-						  "\ngive {item name} {amount} - gives item\n";
+						  "- give {item name} {amount} - gives item\n";
 			helpstring += "set weather {clear / rain / thunder} - sets the weather\n";
+			helpstring += "set time {time in ticks} - sets the time to a specific tick\n";
+			helpstring += "set tickrate {float} - sets time between ticks in seconds (default is 0.5)\n";
 			helpstring += "set {health / hunger / thirst} {number} - sets attribute\n";
+			helpstring += "set {bleeding / sickness} {number} - sets attribute (0 - 3)\n";
+			helpstring += "buddha {on / off} - toggles buddha mode\n";
+			helpstring += "god {on / off} - toggles god mode\n";
+			helpstring += "bring him forth - brings him forth\n";
 			helpstring += "help - this\n";
 
-			Console::Log(helpstring, text::white, -1);
+			Math::PushFrontLog(&game->consoleLog, helpstring);
+
+			//Console::Log(helpstring, text::white, -1);
+		}
+		else if (input == "bring him forth") {
+			Math::PushFrontLog(&game->actionLog, "He shall arrive.");
 		}
 	}
 	if (previous_commands.size() > 5) {

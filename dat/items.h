@@ -147,7 +147,11 @@ namespace Items {
 
 	static std::string GetRandomItemFromPool(std::string filename) {
 		OpenedData dat;
-		if (Math::RandInt(0, 4) == 3) {
+		int rarity = Math::RandInt(0, 100);
+		if (rarity >= 92) {
+			ItemReader::GetDataFromFile("loot_tables/" + filename, "VERY_RARE", &dat);
+		}
+		else if (rarity >= 72) {
 			ItemReader::GetDataFromFile("loot_tables/" + filename, "RARE", &dat);
 		}
 		else {
@@ -190,6 +194,90 @@ namespace Items {
 		return loadingItems;
 	}
 }
+
+class CraftingSystem {
+public:
+	void addRecipe(std::string output, std::map<std::string, int> inputs) {
+		for (auto const& input_item : inputs) {
+			if (recipes_by_item.count(input_item.first) == 0) { recipes_by_item[input_item.first] = {}; }
+			recipes_by_item[input_item.first].push_back(output);
+		}
+		recipes.insert({ output, inputs });
+	}
+
+
+	std::string AttemptCraft(std::string output, std::vector<Item>* inventory) {
+		std::map<std::string, Item*> items;
+		std::map<std::string, int> itemsToRemove;
+		int componentsUsed = 0;
+		for (size_t i = 0; i < inventory->size(); i++)
+		{
+			items.insert({ (*inventory)[i].section, &(*inventory)[i] });
+		}
+		for (const auto& component : recipes[output]) {
+			if (items.count(component.first) != 0) {
+				if (items[component.first]->count >= component.second) {
+					componentsUsed++;
+					itemsToRemove.insert({ component.first, component.second });
+				}
+			}
+		}
+
+		if (componentsUsed >= recipes[output].size()) {
+			for (const auto& item : itemsToRemove) {
+				items[item.first]->count -= item.second;
+			}
+			return output;
+		}
+		return "none";
+	}
+
+	std::vector<std::string> getRecipeNames() {
+		std::vector<std::string> recipeNames;
+
+		for (const auto& name : recipes) {
+			recipeNames.push_back(name.first);
+		}
+
+		return recipeNames;
+	}
+
+	std::vector<std::string> getRecipeComponents(std::string key) {
+		std::vector<std::string> recipeComps;
+
+		for (const auto& name : recipes[key]) {
+			recipeComps.push_back(Items::GetItem_NoCopy(name.first)->name + " x " + std::to_string(name.second));
+		}
+
+		return recipeComps;
+	}
+
+	std::vector<std::string> getRecipesByItem(std::string itemName) {
+		bool isRecipe = false;
+		if (recipes.count(itemName) != 0) { isRecipe = true; }
+		else if (recipes_by_item.count(itemName) == 0 && !isRecipe) { return { }; }
+
+		std::vector<std::string> recipeList = recipes_by_item[itemName];
+		if (isRecipe) { recipeList.insert(recipeList.begin(), itemName); }
+
+		return recipeList;
+	}
+
+	void SaveRecipe(std::string recName) {
+		savedRecipes.insert(recName);
+	}
+	void UnsaveRecipe(std::string recName) {
+		savedRecipes.erase(recName);
+	}
+
+	std::set<std::string> savedRecipes;
+private:
+
+	std::unordered_map<std::string, std::map<std::string, int>> recipes;
+
+	//				  --item_name   --list of recipes using the item
+	std::unordered_map<std::string, std::vector<std::string>> recipes_by_item;
+};
 
 
 

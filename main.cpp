@@ -52,6 +52,7 @@ public:
 	//UI stuff
 	GameUI gameScreen;
 	Tile* selectedTile = nullptr;
+	Item* selectedTileItem = nullptr;
 	int currentItemIndex = 0;
 	int ySeparator = 2;
 	std::string openClose = "";
@@ -146,7 +147,7 @@ public:
 		dat.addInt("STATS", "seed", map.landSeed);
 		dat.addInt("STATS", "global_x", map.CurrentChunk()->globalChunkCoord.x);
 		dat.addInt("STATS", "global_y", map.CurrentChunk()->globalChunkCoord.y);
-		dat.addFloat("STATS", "time", game.worldTime);
+		dat.addFloat("STATS", "time", game.worldTimeTicks);
 		dat.addInt("STATS", "weather", map.currentWeather);
 		dat.addInt("SETTINGS", "ySep", ySeparator);
 		dat.addInt("SETTINGS", "xDist", xViewDist);
@@ -271,6 +272,7 @@ public:
 					Console::Log("New save created successfully!", SUCCESS, __LINE__);
 
 					game.Setup(10, 10, 0.5f);
+					game.mPlayer.coords = game.mainMap.PlaceStartingBuilding();
 					gameScreen.createChar = true;
 				}
 				else {
@@ -309,9 +311,8 @@ public:
 					}
 					game.Setup(data.getInt("x_pos"), data.getInt("y_pos"), 0.5f, data.getInt("seed"), data.getInt("biomes"));
 					currentState = playing;
-					game.worldTime = data.getFloat("time");
 
-					if (game.worldTime > 20.f || game.worldTime < 6.f) {
+					if (game.isNight()) {
 						Audio::PlayLoop("dat/sounds/music/night_zombos.wav", "night_music");
 					}
 					else {
@@ -608,11 +609,15 @@ public:
 		if (gameScreen.console_showing) {
 			ImGui::Begin("Console");
 			ImGui::InputTextWithHint("console", "enter commands", console_commands, IM_ARRAYSIZE(console_commands));
+			for (size_t i = 0; i < game.consoleLog.size(); i++)
+			{
+				ImGui::TextWrapped(game.consoleLog[i].c_str());
+			}
 			ImGui::End();
 		}
 		//-------Map rendering-------
 
-		if (game.worldTime >= 20.f || game.worldTime < 6.f) { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.0,0.0,1 }); }
+		if (game.isNight()) { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.0,0.0,1 }); }
 		else { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ game.bgColor.x,game.bgColor.y,game.bgColor.z,1 }); }
 
 		//map drawing
@@ -870,6 +875,18 @@ public:
 			ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4{ 0,0.5,1,1 });
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0,0.25,0.5,1 });
 			ImGui::ProgressBar(game.mPlayer.thirst / 100, ImVec2(0.0f, 0.0f));
+			if (game.mPlayer.thirst <= 10) {
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4{ 1, 0, 0, 1 }, "!!!");
+			}
+			else if (game.mPlayer.thirst <= 40) {
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4{ 1, 0.5, 0, 1 }, "!!");
+			}
+			else if (game.mPlayer.thirst <= 60) { 
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4{ 1, 1, 0, 1 }, "!");
+			}
 			ImGui::PopStyleColor(2);
 
 
@@ -877,7 +894,57 @@ public:
 			ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4{ 0.8,0.5,0,1 });
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.4,0.25,0,1 });
 			ImGui::ProgressBar(game.mPlayer.hunger / 100, ImVec2(0.0f, 0.0f));
+			if (game.mPlayer.hunger <= 10) {
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4{ 1, 0, 0, 1 }, "!!!");
+			}
+			else if (game.mPlayer.hunger <= 40) {
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4{ 1, 0.5, 0, 1 }, "!!");
+			}
+			else if (game.mPlayer.hunger <= 60) {
+				ImGui::SameLine();
+				ImGui::TextColored(ImVec4{ 1, 1, 0, 1 }, "!");
+			}
 			ImGui::PopStyleColor(2);
+
+			if (player.bleedingLevel > 0) {
+				switch (player.bleedingLevel) {
+				case 1:
+					ImGui::TextColored({ 1.f,0.25f,0.25f, 1.f }, "Minor Bleeding");
+					break;
+				case 2:
+					ImGui::TextColored({ 1.f,0.f,0.f, 1.f }, "! Moderate Bleeding !");
+					break;
+				case 3:
+					ImGui::TextColored({ 0.75f,0.f,0.f, 1.f }, "!! Severe Bleeding !!");
+					break;
+				}
+			}
+			else {
+				ImGui::TextColored({ 0.8f,1.f,0.8f, 1.f }, "No active bleeding");
+			}
+
+			if (player.sicknessLevel > 0) {
+				switch (player.sicknessLevel) {
+				case 1:
+					ImGui::TextColored({ 0.75f,1.f,0.75f, 1.f }, "Mild Sickness");
+					break;
+				case 2:
+					ImGui::TextColored({ 0.25f,1.f,0.25f, 1.f }, "! Moderate Sickness !");
+					break;
+				case 3:
+					ImGui::TextColored({ 0.f,0.75f,0.f, 1.f }, "!! Severe Sickness !!");
+					break;
+				}
+			}
+			else {
+				ImGui::TextColored({ 0.8f,1.f,0.8f, 1.f }, "Feeling well");
+			}
+
+			ImGui::Text("Body Temperature :"); ImGui::SameLine();
+			ImGui::Text(std::to_string(round(player.bodyTemp * 10.0f) / 10.0f).c_str());
+			ImGui::Text("----------");
 
 			if (player.coveredIn != nothing) {
 				ImVec4 color = Cosmetic::CoveredColor((int)player.coveredIn);
@@ -886,9 +953,6 @@ public:
 				ImGui::TextColored(color, text.c_str());
 				ImGui::ProgressBar((float)(player.liquidLast - player.ticksCovered) / player.liquidLast, ImVec2(0.0f, 0.0f));
 			}
-
-			ImGui::Text("Body Temperature :"); ImGui::SameLine();
-			ImGui::Text(std::to_string(round(player.bodyTemp * 10.0f) / 10.0f).c_str());
 
 			ImGui::End();
 
@@ -905,6 +969,16 @@ public:
 					ImGui::ProgressBar(pInv.equippedItems[hat].durability / pInv.equippedItems[hat].maxDurability, ImVec2(0.0f, 0.0f));
 				if (ImGui::Button("Unequip Hat")) {
 					pInv.Unequip(hat);
+				}
+			}
+
+			if (pInv.CurrentEquipExists(neck)) {
+				ImGui::Text("Neck :"); ImGui::SameLine();
+				ImGui::Text(pInv.equippedItems[neck].name.c_str());
+				if (pInv.equippedItems[neck].maxDurability != -1)
+					ImGui::ProgressBar(pInv.equippedItems[neck].durability / pInv.equippedItems[neck].maxDurability, ImVec2(0.0f, 0.0f));
+				if (ImGui::Button("Unequip Neck")) {
+					pInv.Unequip(neck);
 				}
 			}
 
@@ -1088,6 +1162,9 @@ public:
 
 						//if its consumable, remove one. 
 						if (curItem.consumable) {
+							if (curItem.giveItemOnConsume != "nthng") {
+								pInv.AddItemByID(curItem.giveItemOnConsume);
+							}
 							//If its the last one, move the cursor so we dont get out of vector range
 							if (pInv.RemoveItem(curItem.section)) {
 								currentItemIndex--;
@@ -1101,12 +1178,18 @@ public:
 						Math::PushBackLog(&game.actionLog, "You can't consume " + curItem.name + ".");
 					}
 					gameScreen.useBool = !gameScreen.useBool;
+					pInv.ResetItemNames();
 				}
 				if (ImGui::Button("Body (Self)"))
 				{
 					if (pInv.AttemptAction(use, &curItem, &player))
 					{
-						if (curItem.consumable) { curItem.count--; }
+						if (curItem.customSound != "nthng") { Audio::Play(curItem.customSound); }
+						if (curItem.consumable) {
+							if (pInv.RemoveItem(curItem.section)) {
+								currentItemIndex--;
+							}
+						}
 						Math::PushBackLog(&game.actionLog, curItem.useTxt);
 					}
 					else
@@ -1114,6 +1197,7 @@ public:
 						Math::PushBackLog(&game.actionLog, "You can't use " + curItem.name + ".");
 					}
 					gameScreen.useBool = !gameScreen.useBool;
+					pInv.ResetItemNames();
 				}
 			}
 
@@ -1293,7 +1377,10 @@ public:
 
 					ImGui::Text("---Dialogue---");
 					if (gameScreen.tradeDialogue) {
-						if (selectedTile->entity->itemWant != "nthng") {
+						if (pInv.CurrentEquipMatches(neck, "TOOTH_NECKLACE")) {
+							ImGui::TextWrapped("\"...I don't want to trade with you.\"");
+						}
+						else if (selectedTile->entity->itemWant != "nthng") {
 							//generate message
 							std::string tradeMessage = "Hey, if you have a ";
 							tradeMessage += Items::GetItem_NoCopy(selectedTile->entity->itemWant)->name;
@@ -1385,7 +1472,7 @@ public:
 			//}
 			SWAP_FONT("ui");
 
-			if (selectedTile->hasItem) { ImGui::Text(("Item on tile: " + selectedTile->itemName).c_str()); }
+			if (selectedTile->hasItem) { ImGui::Text(("Item on tile: " + selectedTileItem->name).c_str()); }
 
 			if (ImGui::Button("Drop Selected Item")) {
 				if (invSelectedName != "" && !selectedTile->hasItem) {
@@ -1439,7 +1526,7 @@ public:
 
 			//only light fires if we are holding a lighter or match
 			if (pInv.CurrentEquipMatches(weapon, "LIGHTER") || pInv.CurrentEquipMatches(weapon, "MATCH")) {
-				if (ImGui::Button("Burn")) {
+				if (ImGui::Button("Burn Tile")) {
 					selectedTile->liquid = fire;
 					Audio::Play("dat/sounds/start_fire.mp3");
 					map.floodFill(selectedTile->coords, 5, false);
@@ -1447,6 +1534,29 @@ public:
 					if (pInv.CurrentEquipMatches(weapon, "MATCH")) {
 						pInv.Unequip(weapon);
 						pInv.RemoveItem("MATCH");
+					}
+
+					if (pInv.CurrentEquipMatches(weapon, "LIGHTER")) {
+						pInv.equippedItems[weapon].durability -= 1;
+						if (pInv.equippedItems[weapon].durability <= 0) {
+							pInv.Unequip(weapon);
+							pInv.RemoveItem("LIGHTER");
+							pInv.AddItemByID("LIGHTER_E");
+						}
+					}
+				}
+			}
+
+			//only mark tile if we are holding chalk
+			if (pInv.CurrentEquipMatches(weapon, "CHALK_W") || pInv.CurrentEquipMatches(weapon, "CHALK_B")) {
+				if (ImGui::Button("Mark Tile")) {
+					Audio::Play("dat/sounds/chalk.mp3");
+					selectedTile->tileColor = pInv.equippedItems[weapon].spriteColor;
+					pInv.equippedItems[weapon].durability -= 1;
+					if (pInv.equippedItems[weapon].durability <= 0) {
+						std::string name = pInv.equippedItems[weapon].name;
+						pInv.Unequip(weapon);
+						pInv.RemoveItem(name);
 					}
 				}
 			}
@@ -1471,8 +1581,7 @@ public:
 		if (gameScreen.debugOpen) {
 			ImGui::Begin("Debug Window");
 
-			ImGui::Text(("Current World Time: " + std::to_string(game.worldTime)).c_str());
-			ImGui::Text(("Dark Time: " + std::to_string(game.darkTime)).c_str());
+			ImGui::Text(("Current World Time: " + std::to_string(game.worldTimeTicks)).c_str());
 			//FPS
 
 			lastFPS = Utilities::getFPS();
@@ -1480,18 +1589,11 @@ public:
 			ImGui::Text(("High: " + std::to_string(frame.highest)).c_str());
 			ImGui::Text(("Low: " + std::to_string(frame.lowest)).c_str());
 			ImGui::Text(("Average: " + std::to_string(lastFPS)).c_str());
-
-			ImGui::Text(("Tested Function Runtime: " + std::to_string(game.testTime)).c_str());
 			//ImGui::PlotLines("Frame Times", frame.frames.c_arr(), frame.frames.length);
 			//ms left until next tick
 			ImGui::Text(("Time until next update:"));
 			//Display a bar until next tick
 			ImGui::ProgressBar(game.GetTick() / game.TickRate(), ImVec2(0.0f, 0.0f));
-			//set tickrate
-			ImGui::InputFloat("New Tickrate", &tickRateVisual, 0.1f, 10);
-			if (ImGui::Button("Change Tickrate")) {
-				game.SetTick(tickRateVisual);
-			}
 
 			ImGui::Text("Weather : "); ImGui::SameLine();
 			ImGui::Text(Cosmetic::WeatherName(game.mainMap.currentWeather));
@@ -1721,6 +1823,7 @@ public:
 			if (interacting)
 			{
 				selectedTile = game.SelectTile({ player.coords.x - 1, player.coords.y });
+				selectedTileItem = Items::GetItem_NoCopy(selectedTile->itemName);
 				interacting = false;
 				return;
 			}
@@ -1731,6 +1834,7 @@ public:
 			else {
 				moved = true;
 				selectedTile = nullptr;
+				selectedTileItem = nullptr;
 				gameScreen.tradeDialogue = false;
 				game.MovePlayer(MAP_UP);
 				playerDir = direction::up;
@@ -1740,6 +1844,7 @@ public:
 			if (interacting)
 			{
 				selectedTile = game.SelectTile({ player.coords.x + 1, player.coords.y });
+				selectedTileItem = Items::GetItem_NoCopy(selectedTile->itemName);
 				interacting = false;
 				return;
 			}
@@ -1750,6 +1855,7 @@ public:
 			else {
 				moved = true;
 				selectedTile = nullptr;
+				selectedTileItem = nullptr;
 				gameScreen.tradeDialogue = false;
 				game.MovePlayer(MAP_DOWN);
 				playerDir = direction::down;
@@ -1759,6 +1865,7 @@ public:
 			if (interacting)
 			{
 				selectedTile = { game.SelectTile({ player.coords.x, player.coords.y - 1}) };
+				selectedTileItem = Items::GetItem_NoCopy(selectedTile->itemName);
 				interacting = false;
 				return;
 			}
@@ -1769,6 +1876,7 @@ public:
 			else {
 				moved = true;
 				selectedTile = nullptr;
+				selectedTileItem = nullptr;
 				gameScreen.tradeDialogue = false;
 				game.MovePlayer(MAP_LEFT);
 				playerDir = direction::left;
@@ -1778,6 +1886,7 @@ public:
 			if (interacting)
 			{
 				selectedTile = { game.SelectTile({ player.coords.x, player.coords.y + 1}) };
+				selectedTileItem = Items::GetItem_NoCopy(selectedTile->itemName);
 				interacting = false;
 				return;
 			}
@@ -1788,6 +1897,7 @@ public:
 			else {
 				moved = true;
 				selectedTile = nullptr;
+				selectedTileItem = nullptr;
 				gameScreen.tradeDialogue = false;
 				game.MovePlayer(MAP_RIGHT);
 				playerDir = direction::right;

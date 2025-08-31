@@ -1,0 +1,64 @@
+SECTIONS {
+sections : [GOLD_NECKLACE,CIGARETTES,GOLD_RING,DIAMOND_RING];
+}
+
+GOLD_NECKLACE {
+name : "Gold Necklace";
+description : "Shiny gold necklace. You're sure at some point people enjoyed useless amenities like this.";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "You eat a bandage.";
+useTxt : "You wrap a bandage around your wound.";
+effects : [0,0,0,0];
+equipType : 7;
+sprite : "J";
+spriteColor : [0.95, 0.95, 0.15];
+}
+
+GOLD_RING {
+name : "Gold Ring";
+description : "Shiny gold ring. You're sure at some point people enjoyed useless amenities like this.";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "You eat a bandage.";
+useTxt : "You wrap a bandage around your wound.";
+effects : [0,0,0,0];
+equipType : 7;
+sprite : "J";
+spriteColor : [0.95, 0.95, 0.15];
+}
+
+DIAMOND_RING {
+name : "Diamond Ring";
+description : "Shiny gold ring with a diamond embossed. Probably worth a pretty penny.";
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "You eat a bandage.";
+useTxt : "You wrap a bandage around your wound.";
+effects : [0,0,0,0];
+equipType : 7;
+sprite : "J";
+spriteColor : [0.75, 0.75, 0.95];
+}
+
+
+CIGARETTES {
+name : "Box of Cigarettes";
+description : "They taste terrible AND kill you fast.";
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "You eat a bandage.";
+useTxt : "You wrap a bandage around your wound.";
+effects : [0,0,0,0];
+equipType : 7;
+sprite : "J";
+spriteColor : [0.75, 0.75, 0.75];
+}
