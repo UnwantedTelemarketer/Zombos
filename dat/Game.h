@@ -26,8 +26,9 @@ private:
 	double effectTickCount;
 	bool forwardTime = true;
 	std::vector<std::string> missMessages = { "blank", "You swing at nothing and almost fall over.", "You miss.", "You don't hit anything." };
-	std::map<std::string, std::vector<std::string>> npcMessages;
+	
 public:
+	std::map<std::string, std::vector<std::string>> npcMessages;
 	timeOfDay time;
 	float sfxvolume = 1.f;
 	float musicvolume = 1.f;
@@ -81,6 +82,7 @@ public:
 	void AttemptAttack(Entity* ent);
 
 	bool PlayerNearby(Vector2_I coords);
+	void LoadMessages();
 
 	void SpawnEntity(Entity* curNPC);
 
@@ -97,6 +99,7 @@ public:
 	std::string GetItemChar(Tile* tile);
 	ImVec4 GetItemColor(Tile* tile, float intensity);
 	std::string GetTileChar(Tile* tile);
+	ImVec4 GetTileCharColor(Tile* tile, float intensity);
 
 	std::string GetTileChar(Vector2_I tile);
 
@@ -115,13 +118,6 @@ static void T_UpdateChunk(GameManager* gm, Vector2_I coords)
 }
 
 void GameManager::LoadData() {
-	OpenedData data;
-	ItemReader::GetDataFromFile("dialogue.eid", "WANDERER_CALM", &data);
-	npcMessages.insert({ "wanderer_calm", {} });
-	for (size_t i = 1; i <= data.getInt("size"); i++)
-	{
-		npcMessages["wanderer_calm"].push_back(data.getString(std::to_string(i)));
-	}
 
 	OpenedData tileData;
 	ItemReader::GetDataFromFile("tiles.eid", "TILES", &tileData);
@@ -130,6 +126,62 @@ void GameManager::LoadData() {
 		tile_icons.insert({ stoi(tileData.getArray(x.first)[1]) , tileData.getArray(x.first)[0] });
 	}
 	lerpingTo = urban;
+
+	Console::Log("Loading dialogue...", WARNING, __LINE__);
+	LoadMessages();
+}
+
+//Load All NPC dialogue into the game
+void GameManager::LoadMessages() {
+	std::vector<std::string> messageTypes = { 
+		"CALM_WANDERER",
+		"HAPPY_WANDERER",
+		"ANGRY_WANDERER",
+		"AFRAID_WANDERER",
+		"BRAVE_WANDERER", 
+		"TRUST_WANDERER",
+		"UNTRUST_WANDERER"};
+
+	for (uint32_t i = 0; i < messageTypes.size(); i++)
+	{
+		OpenedData data;
+		switch(i){
+		case 0:
+			ItemReader::GetDataFromFile("dialogue/dialogue_calm.eid", messageTypes[i], &data);
+			break;
+		case 1:
+		case 2:
+			ItemReader::GetDataFromFile("dialogue/dialogue_happy.eid", messageTypes[i], &data);
+			break;
+		case 3:
+		case 4:
+			ItemReader::GetDataFromFile("dialogue/dialogue_fear.eid", messageTypes[i], &data);
+			break;
+		case 5:
+		case 6:
+			ItemReader::GetDataFromFile("dialogue/dialogue_trust.eid", messageTypes[i], &data);
+			break;
+		}
+		Console::Log(messageTypes[i], LOG, __LINE__);
+		npcMessages.insert({ messageTypes[i], {} });
+		const int messagesSize = data.getInt("size");
+
+
+		if (messagesSize <= 0 || messageTypes.size() <= 0) {
+			Console::Log("'" + messageTypes[i] + "' size is invalid. (" + std::to_string(messagesSize) + ")", ERROR, __LINE__);
+			continue;
+		}
+		else if (messagesSize >= 50 || messageTypes.size() >= 50) {
+			Console::Log("'" + messageTypes[i] + "' size is too large. (" + std::to_string(messagesSize) + ")", ERROR, __LINE__);
+			continue;
+		}
+
+		for (uint32_t x = 1; x <= messagesSize; x++)
+		{
+			npcMessages[messageTypes[i]].push_back(data.getString(std::to_string(x)));
+		}
+	}
+	Console::Log("Finished loading dialogue!", SUCCESS, __LINE__);
 }
 
 void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1) {
@@ -424,7 +476,7 @@ bool GameManager::PlayerNearby(Vector2_I coords) {
 Tile* GameManager::SelectTile(Vector2_I coords) {
 	Tile* selTile = mainMap.GetTileFromThisOrNeighbor(coords);
 	if (selTile->entity != nullptr && selTile->entity->canTalk) {
-		selTile->entity->message = npcMessages["wanderer_calm"][Math::RandInt(0, 7)];
+		selTile->entity->SelectMessage(npcMessages);
 	}
 	return mainMap.GetTileFromThisOrNeighbor(coords);
 }
@@ -481,42 +533,46 @@ void GameManager::MovePlayer(int dir) {
 	}
 
 	biome curBiome = mainMap.GetBiome(mPlayer.coords);
-	if(!isDark())
-	if (curBiome == desert) { 
-		if (lerpingTo != desert) {
-			Utilities::Lerp("bgColor", &bgColor, BG_DESERT, 0.5f);
-			mainBGcolor = BG_DESERT;
-			currentBiome = lerpingTo = desert;
+	if (!isDark()) {
+		if (curBiome == desert) {
+			if (lerpingTo != desert) {
+				Utilities::Lerp("bgColor", &bgColor, BG_DESERT, 0.5f);
+				mainBGcolor = BG_DESERT;
+				currentBiome = lerpingTo = desert;
+			}
 		}
-	}
-	else if (curBiome == taiga) {
-		if (lerpingTo != taiga) {
-			Utilities::Lerp("bgColor", &bgColor, BG_TAIGA, 1.f);
-			mainBGcolor = BG_TAIGA;
-			currentBiome = lerpingTo = taiga;
+		else if (curBiome == taiga) {
+			if (lerpingTo != taiga) {
+				Utilities::Lerp("bgColor", &bgColor, BG_TAIGA, 1.f);
+				mainBGcolor = BG_TAIGA;
+				currentBiome = lerpingTo = taiga;
+			}
 		}
-	}
-	else if (curBiome == forest){
-		if (lerpingTo != forest) {
-			Utilities::Lerp("bgColor", &bgColor, BG_FOREST, 1.f);
-			mainBGcolor = BG_FOREST;
-			currentBiome = lerpingTo = forest;
+		else if (curBiome == forest) {
+			if (lerpingTo != forest) {
+				Utilities::Lerp("bgColor", &bgColor, BG_FOREST, 1.f);
+				mainBGcolor = BG_FOREST;
+				currentBiome = lerpingTo = forest;
+			}
 		}
-	}
-	else if (curBiome == ocean) {
-		if (lerpingTo != ocean) {
-			Audio::Play("dat/sounds/movement/enter_water.wav");
-			Utilities::Lerp("bgColor", &bgColor, BG_WATER, 1.f);
-			mainBGcolor = BG_WATER;
-			currentBiome = lerpingTo = ocean;
+		else if (curBiome == ocean) {
+			if (lerpingTo != ocean) {
+				Audio::Play("dat/sounds/movement/enter_water.wav");
+				Utilities::Lerp("bgColor", &bgColor, BG_WATER, 1.f);
+				mainBGcolor = BG_WATER;
+				currentBiome = lerpingTo = ocean;
+			}
+		}
+		else {
+			if (lerpingTo != swamp) {
+				Utilities::Lerp("bgColor", &bgColor, BG_SWAMP, 0.5f);
+				mainBGcolor = BG_SWAMP;
+				currentBiome = lerpingTo = swamp;
+			}
 		}
 	}
 	else {
-		if (lerpingTo != swamp) {
-			Utilities::Lerp("bgColor", &bgColor, BG_SWAMP, 0.5f);
-			mainBGcolor = BG_SWAMP;
-			currentBiome = lerpingTo = swamp;
-		}
+		mainBGcolor = { 0,0,0 };
 	}
 
 	//relic of the past
@@ -526,7 +582,7 @@ void GameManager::MovePlayer(int dir) {
 
 void GameManager::UpdateEffects() {
 
-	//1 is smoke, 2 is rain
+	//1 is smoke, 2 is rain, 20 is lightning
 	int tempMap[30][30]{};
 
 	if (mainMap.currentWeather == rainy || mainMap.currentWeather == thunder) {
@@ -557,6 +613,12 @@ void GameManager::UpdateEffects() {
 
 				else { tempMap[(int)std::floor((i + 1) * 1.1)][j] = 2; }
 			}
+			if (mainMap.effectLayer.localCoords[i][j] >= 20) {
+				tempMap[i][j] = mainMap.effectLayer.localCoords[i][j] + 1;
+			}
+			if (mainMap.effectLayer.localCoords[i][j] == 24) {
+				tempMap[i][j] = 0;
+			}
 		}
 	}
 	for (size_t i = 0; i < CHUNK_HEIGHT; i++)
@@ -584,6 +646,7 @@ void GameManager::UpdateTick() {
 		UpdateEffects();
 		effectTickCount = 0;
 	}
+
 
 
 	if (pInv.CurrentEquipExists(weapon)) {
@@ -635,6 +698,26 @@ void GameManager::UpdateTick() {
 			}
 		}
 
+		if (mainMap.currentWeather == thunder) {
+			if (Math::RandInt(0, 65) == 15) {
+				Vector2_I lightningTile = { Math::RandInt(2, 29), Math::RandInt(2, 29) };
+				mainMap.DrawLine(mainMap.GetLine({ 0, Math::RandInt(0,29) }, lightningTile, 20), 20);
+
+				bgColor = { 1,1,1 };
+				Utilities::Lerp("BackgroundColor", &bgColor, mainBGcolor, 0.3f);
+				Tile* struckTile = mainMap.GetTileFromThisOrNeighbor(lightningTile);
+
+				if (struckTile->liquid != water) {
+					struckTile->SetLiquid(fire);
+				}
+				if (struckTile->entity != nullptr) {
+					struckTile->entity->health -= 100;
+				}
+
+				Audio::Play("dat/sounds/lightning.mp3");
+			}
+		}
+
 		if (mPlayer.coveredIn == water || mPlayer.bodyTemp > 98.5f) {
 			mPlayer.bodyTemp -= 0.025f;
 		}
@@ -644,7 +727,9 @@ void GameManager::UpdateTick() {
 		}
 
 		if (mPlayer.bodyTemp < 95.f) {
-			mPlayer.health -= 1.f;
+			if (mPlayer.sicknessLevel <= 0) {
+				mPlayer.sicknessLevel = 1;
+			}
 		}
 
 		//soak items and tick down to dry them off in your inventory
@@ -741,7 +826,6 @@ void GameManager::UpdateEntities(Vector2_I chunkCoords) {
 
 	std::shared_ptr<Chunk> usedChunk = mainMap.GetProperChunk(chunkCoords);
 
-	mainMap.ClearLine();
 	mainMap.ClearEntities(usedChunk);
 	for (int i = 0; i < usedChunk->entities.size(); i++)
 	{
@@ -862,6 +946,20 @@ std::string GameManager::GetTileChar(Tile* tile) {
 
 std::string GameManager::GetTileChar(Vector2_I tile) {
 	return GameManager::GetTileChar(&mainMap.CurrentChunk()->localCoords[tile.x][tile.y]);
+}
+
+ImVec4 GameManager::GetTileCharColor(Tile* tile, float intensity = -1.f) {
+	if (tile->entity != nullptr) {
+		return { 1, 0, 0, 1 };
+	}
+	if (intensity == -1.f) { intensity = tile->brightness; }
+	if (tile->liquid == fire) { return Cosmetic::FireColor(); }
+	vec3 color = Items::GetItemColor(tile->itemName);
+	color.x /= (darkTime * intensity);
+	color.y /= (darkTime * intensity);
+	color.z /= (darkTime * intensity);
+	return { color.x, color.y, color.z, 1 };
+
 }
 
 std::string GameManager::GetWalkSound(){
@@ -1040,6 +1138,7 @@ public:
 
 void Commands::RunCommand(std::string input, GameManager* game) {
 	std::vector<std::string> tokens = Tokenizer::getTokens(input);
+	Math::PushFrontLog(&game->consoleLog, input);
 	for (int i = 0; i < tokens.size(); i++) {
 		if (tokens[i] == "give") {
 			if (tokens.size() < 3) { return; }
@@ -1049,6 +1148,14 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 			}
 			Math::PushFrontLog(&game->consoleLog, "- Added " + tokens[i + 2] + " " + tokens[i + 1]);
 			game->pInv.AddItemByID(tokens[i + 1], stoi(tokens[i + 2]));
+		}
+		if (tokens[i] == "say") {
+			if (tokens.size() < 3) { return; }
+			if (game->npcMessages.count(tokens[i + 1]) == 0) {
+				Math::PushFrontLog(&game->consoleLog, "- No dialogue list with that name.");
+				return;
+			}
+			Math::PushFrontLog(&game->consoleLog, "- " + game->npcMessages[tokens[i + 1]][stoi(tokens[i + 2])]);
 		}
 		else if (tokens[i] == "god" || tokens[i] == "buddha") {
 			if (tokens.size() < 2) { return; }
@@ -1096,9 +1203,11 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 				}else if (tokens[i + 2] == "thunder") {
 					game->mainMap.SetWeather(thunder);
 				}
+				Math::PushFrontLog(&game->consoleLog, "- Weather changed");
 			}
 			else if (tokens[i + 1] == "time") {
 				game->worldTimeTicks = stoi(tokens[i + 2]);
+				Math::PushFrontLog(&game->consoleLog, "- Time changed");
 			}
 		}
 		else if (tokens[i] == "help") {
@@ -1121,6 +1230,7 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 		else if (input == "bring him forth") {
 			Math::PushFrontLog(&game->actionLog, "He shall arrive.");
 		}
+
 	}
 	if (previous_commands.size() > 5) {
 		previous_commands.erase(previous_commands.begin());

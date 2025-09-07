@@ -1,0 +1,11 @@
+Vvtvmj {
+behaviour : 1;
+faction : 0;
+damage : 10;
+entID : 3;
+health : 25.000000;
+happy : -2.100000;
+fear : 0.000000;
+trust : 0.000000;
+}
+

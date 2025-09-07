@@ -190,14 +190,39 @@ struct Feeling{
 	float trust = 0.f;
 	float fear = 0.f;
 	float happy = 0.f;
-	float anger = 0.f;
 
 	float overall() const {
-		return trust + fear + happy + anger;
+		return trust + fear + happy;
+	}
+
+	Feeling operator*(int mult) const {
+		return{
+			trust * mult,
+			fear * mult,
+			happy * mult,
+		};
+	}
+	Feeling operator+(Feeling fl) const {
+		return{
+			trust + fl.trust,
+			fear + fl.fear,
+			happy + fl.happy,
+		};
+	}
+
+	Feeling operator-() const {
+		return{
+			-trust,
+			-fear,
+			-happy,
+		};
 	}
 };
 
-static Feeling Happy = { 0.f,0.f,1.f,0.f };
+static Feeling FEELING_HAPPY  = { 0.f,0.f,1.f };
+static Feeling FEELING_ANGRY  = { 0.f,0.f,-1.f };
+static Feeling FEELING_AFRAID = { 0.f,1.f,0.f };
+static Feeling FEELING_TRUST  = { 1.f,0.f,0.f };
 
 struct Memory {
 	MemoryType type;
@@ -240,6 +265,7 @@ struct Entity {
 	Entity* target = nullptr;
 	std::vector<Item> inv;
 	std::vector<Memory> memories;
+	const float MOOD_STRONG = 2.f;
 
 	bool targeting() { return target != nullptr || targetingPlayer; }
 
@@ -262,18 +288,16 @@ struct Entity {
 			auto& mem = *it;
 			Feeling& towards = (mem.who == ID_PLAYER) ? feelingTowardsPlayer
 				: feelingTowardsOthers[mem.who];
-			//reinforce feeling with memory
+			/*reinforce feeling with memory
 			towards.trust += mem.emotion.trust * 0.05f;   // small reinforcement
 			towards.fear  += mem.emotion.fear  * 0.05f;
-			towards.happy += mem.emotion.happy * 0.05f;
-			towards.anger += mem.emotion.anger * 0.05f;
+			towards.happy += mem.emotion.happy * 0.05f;*/
 
 			// Decay memory strength over time unless persistent
 			if (!mem.persistent) {
 				mem.emotion.trust *= 0.98f;
 				mem.emotion.fear  *= 0.98f;
 				mem.emotion.happy *= 0.98f;
-				mem.emotion.anger *= 0.98f;
 			}
 			mem.ticksPassed++;
 
@@ -286,11 +310,12 @@ struct Entity {
 		}
 	}
 
-	void AddMemory(MemoryType type, int who, Feeling f, bool persistent = false) {
+	void AddMemory(MemoryType type, int who, Feeling f, std::string whatHappened, bool persistent = false) {
 		Memory m;
 		m.type = type;
 		m.emotion = f;
 		m.who = who;
+		m.event = whatHappened;
 		m.ticksPassed = 0;
 		m.persistent = persistent;
 
@@ -301,21 +326,19 @@ struct Entity {
 			feelingTowardsPlayer.trust += f.trust;
 			feelingTowardsPlayer.fear  += f.fear;
 			feelingTowardsPlayer.happy += f.happy;
-			feelingTowardsPlayer.anger += f.anger;
 		}
 		else {
 			feelingTowardsOthers[who].trust += f.trust;
 			feelingTowardsOthers[who].fear  += f.fear;
 			feelingTowardsOthers[who].happy += f.happy;
-			feelingTowardsOthers[who].anger += f.anger;
 		}
 	}
 
 	void UpdateMood() {
-		if (feelingTowardsPlayer.anger >= 1.f) {
+		if (feelingTowardsPlayer.happy < -3.f && feelingTowardsPlayer.fear <= 5.f) {
 			b = Aggressive;
 		}
-		else if (feelingTowardsPlayer.anger <= 0.25f) {
+		else if (feelingTowardsPlayer.happy >= -2.5f) {
 			b = Protective;
 		}
 	}
@@ -335,6 +358,63 @@ struct Entity {
 			itemWant = "nthng";
 			itemGive = "nthng";
 		}
+	}
+
+	void SelectMessage(std::map<std::string,std::vector<std::string>> npcMessages) {
+		float t = feelingTowardsPlayer.trust;
+		float f = feelingTowardsPlayer.fear;
+		float h = feelingTowardsPlayer.happy;
+
+		float strongest = std::max({ std::abs(t), std::abs(f), std::abs(h) });
+
+		if (strongest < 2.f) {
+			message = npcMessages.at("CALM_WANDERER")[Math::RandInt(0, 7)];
+		}
+		else if (std::abs(h) == strongest) {
+			message = (h > 0)
+				? npcMessages.at("HAPPY_WANDERER")[Math::RandInt(0, 3)]
+				: npcMessages.at("ANGRY_WANDERER")[Math::RandInt(0, 3)];
+		}
+		else if (std::abs(t) == strongest) {
+			message = (t > 0)
+				? npcMessages.at("TRUST_WANDERER")[Math::RandInt(0, 3)]
+				: npcMessages.at("UNTRUST_WANDERER")[Math::RandInt(0, 3)];
+		}
+		else if (std::abs(f) == strongest) {
+			message = (f > 0)
+				? npcMessages.at("AFRAID_WANDERER")[Math::RandInt(0, 3)]
+				: npcMessages.at("BRAVE_WANDERER")[Math::RandInt(0, 3)];
+		}
+	}
+
+	std::vector<std::string> GenerateMessagesForMemories() {
+		std::vector<std::string> memorySentences = {};
+		for (int i = 0; i < memories.size(); i++) {
+			std::string msg = "I ";
+			switch (memories[i].type) {
+			case MemoryType::Observation:
+				msg += "saw you ";
+				break;
+			case MemoryType::Attacked:
+				msg += "was attacked by you";
+				memorySentences.push_back(msg);
+				break;
+			case MemoryType::Helped:
+				msg += "was helped by you ";
+				break;
+			case MemoryType::Conversation:
+				msg += "talked to you about ";
+				break;
+			case MemoryType::Trade:
+				msg += "traded with you for a ";
+				break;
+			}
+
+			msg += memories[i].event;
+			msg += ", and ";
+			memorySentences.push_back(msg);
+		}
+		return memorySentences;
 	}
 
 	// If theyre status to the player changes, they will be saved on unloading.

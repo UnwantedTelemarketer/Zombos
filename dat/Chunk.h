@@ -146,11 +146,13 @@ public:
 		ItemReader::GetDataFromFile(specialEntFilePath + "names.eid", "NAMES", &specialEnts, false);
 
 		std::vector<std::string> entNames = specialEnts.getArray("names");
+		LAZY_LOG(entNames);
 
 		//save entities
 		if (entities.size() != 0) {
-			for (int i = 0; i < entities.size() - 1; i++) {
+			for (int i = 0; i < entities.size(); i++) {
 				//if they have been interacted with, save them special to the side
+				LAZY_LOG(entities[i]->feelingTowardsPlayer.overall())
 				if (entities[i]->feelingTowardsPlayer.overall() != 0) {
 					SaveData specEntDat;
 					specEntDat.sections.insert({ entities[i]->name, {} });
@@ -160,9 +162,18 @@ public:
 					specEntDat.addInt(entities[i]->name, "faction", entities[i]->faction);
 					specEntDat.addInt(entities[i]->name, "damage", entities[i]->damage);
 					specEntDat.addFloat(entities[i]->name, "happy", entities[i]->feelingTowardsPlayer.happy);
-					specEntDat.addFloat(entities[i]->name, "anger", entities[i]->feelingTowardsPlayer.anger);
 					specEntDat.addFloat(entities[i]->name, "fear", entities[i]->feelingTowardsPlayer.fear);
 					specEntDat.addFloat(entities[i]->name, "trust", entities[i]->feelingTowardsPlayer.trust);
+
+					std::vector<std::string> memories;
+					for (size_t i = 0; i < entities[i]->memories.size(); i++)
+					{
+						memories.push_back(std::to_string(entities[i]->memories[i].who));
+						memories.push_back(std::to_string((int)(entities[i]->memories[i].type)));
+						memories.push_back(entities[i]->memories[i].event);
+					}
+					specEntDat.sections[entities[i]->name].lists.insert({ "memories", memories });
+					
 					specEntDat.addInt(entities[i]->name, "entID", entities[i]->entityID);
 					std::string fileName = specialEntFilePath + entities[i]->name + ".eid";
 					ItemReader::SaveDataToFile(fileName, specEntDat, true);

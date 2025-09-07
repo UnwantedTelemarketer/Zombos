@@ -1,0 +1,15 @@
+TRUST_WANDERER {
+size : 4;
+1 : "Oh, thank goodness you're here. Someone I can trust.";
+2 : "Good to see you, now I don't have to keep looking over my shoulder.";
+3 : "Oh man, it's good to see you. Wanna stick around for a little while?";
+4 : "I know some secrets I wanna let you in on.";
+};
+
+UNTRUST_WANDERER {
+size : 4;
+1 : "I don't trust you.";
+2 : "Don't do anything fishy.";
+3 : "I've got my eye on you.";
+4 : "Something about you seems off.";
+};

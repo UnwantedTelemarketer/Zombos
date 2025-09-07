@@ -1,0 +1,16 @@
+
+AFRAID_WANDERER {
+size : 4;
+1 : "Go away!";
+2 : "Please, just leave me alone.";
+3 : "Look, please just don't hurt me.";
+4 : "Not you again! Please, leave me alone.";
+};
+
+BRAVE_WANDERER {
+size : 4;
+1 : "Hello again. Did you hear about the town of zombies we cleared?";
+2 : "Hey, if you want some help with something dangerous, I'm your man.";
+3 : "I wouldn't let any bandit touch my stuff.";
+4 : "Nothing can stop me.";
+};

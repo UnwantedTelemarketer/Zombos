@@ -1,0 +1,15 @@
+HAPPY_WANDERER {
+size : 4;
+1 : "Good to see you again.";
+2 : "Hey, look who it is! Good to see you.";
+3 : "Long time no see! How's it been?";
+4 : "Hello friend! Where have you been?";
+};
+
+ANGRY_WANDERER {
+size : 4;
+1 : "Don't talk to me.";
+2 : "Don't test my patience pal.";
+3 : "Don't think I forgot what you did man.";
+4 : "I've got nothing to talk to you about.";
+};

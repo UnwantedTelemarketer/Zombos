@@ -1,4 +1,4 @@
-WANDERER_CALM {
+CALM_WANDERER {
 size : 8;
 1 :	"Hello friend. Staying alive I hope?";
 2 :	"I hate those damn followers just about as much as the zombies.";
@@ -8,8 +8,4 @@ size : 8;
 6 :	"Watch out for finders. They're just marking the way.";
 7 :	"Don't get caught in the rain without a jacket.";
 8 :	"The mud isn't so bad with some boots.";
-};
-
-WANDERER_RUMOURS {
-
 };

@@ -42,6 +42,7 @@ private:
 	std::vector<Tile*> itemTiles;
 	std::vector<std::string> itemIcons;
 	std::vector<ImVec2> itemPositions;
+	std::vector<ImVec4> itemColors;
 	std::vector<std::string> mobIcons;
 	std::vector<ImVec2> mobPositions;
 	std::vector<ImVec4> mobColors;
@@ -617,8 +618,7 @@ public:
 		}
 		//-------Map rendering-------
 
-		if (game.isNight()) { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ 0.0,0.0,0.0,1 }); }
-		else { ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ game.bgColor.x,game.bgColor.y,game.bgColor.z,1 }); }
+		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4{ game.bgColor.x,game.bgColor.y,game.bgColor.z,1 });
 
 		//map drawing
 		{
@@ -723,10 +723,17 @@ public:
 						printIcon = "#";
 						iconColor = { 1,0,0,1 };
 					}
+					else if (map.GetEffectFromThisOrNeighbor(curCoords) >= 20 &&
+							 map.GetEffectFromThisOrNeighbor(curCoords) <= 23)
+					{
+						effectShowing = true;
+						printIcon = "I";
+						iconColor = { 1,1,0,1 };
+					}
 					else if (curTile->entity != nullptr) {
 						mobPositions.push_back(ImGui::GetCursorPos());
 						mobIcons.push_back(game.GetTileChar(curTile));
-						mobColors.push_back(game.GetTileColor(curTile, 0.f));
+						mobColors.push_back(game.GetTileColor(curTile, intensity));
 						//batchedString.append(" ");
 						ImGui::Text(" ");
 						ImGui::SameLine();
@@ -775,6 +782,7 @@ public:
 						itemPositions.push_back(ImGui::GetCursorPos());
 						itemTiles.push_back(curTile);
 						itemIcons.push_back(game.GetItemChar(curTile));
+						itemColors.push_back(game.GetItemColor(curTile, intensity));
 						ImGui::Text(" ");
 						//batchedString.append(" ");
 						ImGui::SameLine();
@@ -809,11 +817,12 @@ public:
 				for (size_t i = 0; i < itemIcons.size(); i++)
 				{
 					ImGui::SetCursorPos(itemPositions[i]);
-					ImGui::TextColored(game.GetItemColor(itemTiles[i]), itemIcons[i].c_str());
+					ImGui::TextColored(itemColors[i], itemIcons[i].c_str());
 				}
 				itemTiles.clear();
 				itemIcons.clear();
 				itemPositions.clear();
+				itemColors.clear();
 			}
 
 			//print mobs with separate font
@@ -1338,14 +1347,15 @@ public:
 				if (selectedTile->entity->faction == Human_W) {
 					ImGui::TextColored({ 0,0.5,1,1 }, "Name :"); ImGui::SameLine();
 					ImGui::TextColored({ 0,0.5,1,1 }, selectedTile->entity->name.c_str());
-					ImGui::Text("Happiness : "); ImGui::SameLine();
-					ImGui::TextColored({ 0,0.5,0,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.happy).c_str());
-					ImGui::Text("Trust : "); ImGui::SameLine();
-					ImGui::TextColored({ 1,0.5,0,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.trust).c_str());
-					ImGui::Text("Fear : "); ImGui::SameLine();
-					ImGui::TextColored({ 0,0.5,1,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.fear).c_str());
-					ImGui::Text("Anger : "); ImGui::SameLine();
-					ImGui::TextColored({ 1,0,0,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.anger).c_str());
+
+					if (gameScreen.debugOpen) {
+						ImGui::Text("Happiness : "); ImGui::SameLine();
+						ImGui::TextColored({ 0,0.5,0,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.happy).c_str());
+						ImGui::Text("Trust : "); ImGui::SameLine();
+						ImGui::TextColored({ 1,0.5,0,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.trust).c_str());
+						ImGui::Text("Fear : "); ImGui::SameLine();
+						ImGui::TextColored({ 0,0.5,1,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.fear).c_str());
+					}
 				}
 
 
@@ -1394,7 +1404,7 @@ public:
 							if (ImGui::Button("Confirm Trade")) {
 								if (pInv.TryGetItem(selectedTile->entity->itemWant, false, &_)) {
 									//success
-									selectedTile->entity->AddMemory(MemoryType::Trade, ID_PLAYER, { 0.1f,0.f,0.5f,0.f });
+									selectedTile->entity->AddMemory(MemoryType::Trade, ID_PLAYER, { 0.1f,0.f,0.5f }, Items::GetItem_NoCopy(selectedTile->entity->itemWant)->name);
 									pInv.RemoveItem(selectedTile->entity->itemWant);
 									pInv.AddItemByID(selectedTile->entity->itemGive);
 									selectedTile->entity->GenerateTrades();
@@ -1411,6 +1421,23 @@ public:
 						}
 						if (ImGui::Button("Trade?")) {
 							gameScreen.tradeDialogue = true;
+
+							if (pInv.CurrentEquipMatches(neck, "TOOTH_NECKLACE")) {
+								selectedTile->entity->AddMemory(MemoryType::Observation, ID_PLAYER, -FEELING_TRUST, "wearing a tooth necklace", true);
+							}
+						}
+						if (ImGui::Button("Remember me?")) {
+							std::vector<std::string> memoryMessages = selectedTile->entity->GenerateMessagesForMemories();
+							if (memoryMessages.size() > 0) {
+								selectedTile->entity->message = "Yeah, I remember you. ";
+								for (size_t i = 0; i < memoryMessages.size(); i++)
+								{
+									selectedTile->entity->message += memoryMessages[i];
+								}
+							}
+							else {
+								selectedTile->entity->message = "You don't look familiar.";
+							}
 						}
 					}
 

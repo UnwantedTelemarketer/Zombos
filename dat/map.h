@@ -82,7 +82,7 @@ public:
 	std::vector<Vector2_I> GetSquareEdge(Vector2_I centerTile, int size);
 	std::vector<Vector2_I> GetCircle(Vector2_I centerPoint, int size);
 	std::vector<Vector2_I> GetCircleEdge(Vector2_I centerPoint, int size);
-	void DrawLine(std::vector<Vector2_I> list);
+	void DrawLine(std::vector<Vector2_I> list, int lineChar);
 	void ClearLine();
 	void ClearEntities(std::shared_ptr<Chunk> chunk);
 	void ClearChunkOfEnts(std::shared_ptr<Chunk> chunk);
@@ -328,10 +328,15 @@ Entity* Map::SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f) {
 					zomb->b = (Behaviour)entData.getInt("behaviour");
 					zomb->faction = (Faction)entData.getInt("faction");
 					zomb->damage = entData.getInt("damage");
-					zomb->feelingTowardsPlayer.anger = entData.getFloat("anger");
 					zomb->feelingTowardsPlayer.fear = entData.getFloat("fear");
 					zomb->feelingTowardsPlayer.trust = entData.getFloat("trust");
 					zomb->feelingTowardsPlayer.happy = entData.getFloat("happy");
+					std::vector<std::string> mems = entData.getArray("memories");
+					for (size_t x = 0; x < mems.size(); x++)
+					{
+						zomb->AddMemory((MemoryType)stoi(mems[x + 1]), stoi(mems[x]), { 0.f,0.f,0.f }, mems[x + 2], true);
+						x += 2;
+					}
 				}
 			}
 		}
@@ -604,7 +609,7 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 				if (curEnt->b == Protective || curEnt->b == Protective_Stationary) { curEnt->aggressive = true; curEnt->b = Aggressive; }
 
 				//drop their reputation with player
-				if (curEnt->entityID == ID_HUMAN) { curEnt->AddMemory(MemoryType::Attacked, ID_PLAYER, { 0.f,0.f,0.f,0.5f }); }
+				if (curEnt->entityID == ID_HUMAN) { curEnt->AddMemory(MemoryType::Attacked, ID_PLAYER, FEELING_ANGRY, "attacked"); }
 
 				//if it has durability
 				if (pInv.equippedItems[weapon].maxDurability != -1) {
@@ -1340,13 +1345,13 @@ std::vector<Vector2_I> Map::GetLine(Vector2_I startTile, Vector2_I endTile, int 
 }
 
 //Start tile, End tile
-void Map::DrawLine(std::vector<Vector2_I> list)
+void Map::DrawLine(std::vector<Vector2_I> list, int lineChar = 15)
 {
 	line.insert(line.end(), list.begin(), list.end());
 
 	for (int i = 0; i < list.size(); i++)
 	{
-		effectLayer.localCoords[list[i].x][list[i].y] = 15;
+		effectLayer.localCoords[list[i].x][list[i].y] = lineChar;
 	}
 }
 

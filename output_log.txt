@@ -21,63 +21,95 @@
 [ Line 10 ]: [1;32mSuccesfully created object BG[0m
 [ Line 79 ]: [1;32mLoaded texture from res/plank.png.[0m
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
-[ Line 1738 ]: [1;32mDone![0m
+[ Line 130 ]: [0;33mLoading dialogue...[0m
+[ Line 165 ]: [0;37mCALM_WANDERER[0m
+[ Line 165 ]: [0;37mHAPPY_WANDERER[0m
+[ Line 165 ]: [0;37mANGRY_WANDERER[0m
+[ Line 165 ]: [0;37mAFRAID_WANDERER[0m
+[ Line 165 ]: [0;37mBRAVE_WANDERER[0m
+[ Line 165 ]: [0;37mTRUST_WANDERER[0m
+[ Line 165 ]: [0;37mUNTRUST_WANDERER[0m
+[ Line 184 ]: [1;32mFinished loading dialogue![0m
+[ Line 1765 ]: [1;32mDone![0m
 [ Line 41 ]: [1;31m0[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/248249.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/249249.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/250249.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/248250.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/249250.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/250250.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/248251.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/249251.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/250251.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/251249.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/251250.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/251251.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/251255.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/250252.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/251252.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253252.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254253.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255254.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255252.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255253.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255254.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253255.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254255.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255255.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/256255.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253253.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253254.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253255.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253256.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253253.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254253.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255253.chunk[0m
-[ Line 1798 ]: [1;32mgive MOLTEN_GLASS 1[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253252.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254252.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255252.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253255.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254255.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255255.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253252.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254252.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255252.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/254250.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/255250.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/256250.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/254251.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/255251.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/256251.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/254252.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/255252.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/256252.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/257250.chunk[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line 1825 ]: [1;32mgive TOOTH_NECKLACE 1[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/258250.chunk[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/259250.chunk[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/259251.chunk[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line -1 ]: [0;37m-2.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/newest/entities/Yllest.eid[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/newestfinal/save.eid[0m
-[ Line 207 ]: [1;32mSave complete in 17.457273ms.[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253250.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253253.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254253.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255253.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253254.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254254.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255254.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/253255.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/254255.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newestfinal/map/255255.chunk[0m
-[ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/newestfinal/save.eid[0m
-[ Line 207 ]: [1;32mSave complete in 17.980490ms.[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/newest/save.eid[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line 208 ]: [1;32mSave complete in 37.577915ms.[0m
