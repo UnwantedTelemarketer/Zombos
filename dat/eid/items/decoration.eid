@@ -5,6 +5,7 @@ sections : [CHAIR,TABLE];
 CHAIR {
 name : "Chair";
 description : "Chair for sitting.";
+weight : 8.0;
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -20,6 +21,7 @@ spriteColor : [0.65, 0.35, 0.0];
 TABLE {
 name : "Table";
 description : "Table for using.";
+weight : 20.0;
 stackable : false;
 holdsLiquid : false;
 consumable : false;

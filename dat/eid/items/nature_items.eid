@@ -20,6 +20,7 @@ sections : [FLAT_MUSHROOM,
 FLAT_MUSHROOM {
 name : "Flat-top Mushroom"; 
 description : "Probably edible. Best cooked with other things.";
+weight : 0.1;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
@@ -37,6 +38,7 @@ spriteColor : [0.65, 0.35, 0.0];
 COOKED_FLAT_MUSHROOM {
 name : "Flat-top Mushroom (Cooked)";
 description : "Seared to perfection.";
+weight : 0.1;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
@@ -52,6 +54,7 @@ spriteColor : [0.65, 0.35, 0.0];
 GLOWING_MUSHROOM {
 name : "Glowing Mushroom"; 
 description : "Probably edible. Best cooked with other things.";
+weight : 0.1;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
@@ -70,6 +73,7 @@ emissionDistance : 3;
 BASIC_FLOWER {
 name : "Flower"; 
 description : "Looks pretty.";
+weight : 0.1;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
@@ -85,6 +89,7 @@ spriteColor : [0.9, 0.9, 0.0];
 CRYSTAL {
 name : "Crystal"; 
 description : "Looks pretty cool.";
+weight : 1.0;
 stackable : true;
 holdsLiquid : false;
 consumable : false;
@@ -101,6 +106,7 @@ emissionDistance : 3;
 SNOW {
 name : "Snow"; 
 description : "Pile of snow.";
+weight : 0.1;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
@@ -116,6 +122,7 @@ spriteColor : [0.85, 0.85, 0.90];
 LILYPAD {
 name : "Lilypad"; 
 description : "Grows in water.";
+weight : 0.1;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
@@ -131,6 +138,7 @@ spriteColor : [0.0, 0.45, 0.0];
 CLAY {
 name : "Clay Lump"; 
 description : "Lump of malleable clay.";
+weight : 0.1;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
@@ -146,6 +154,7 @@ spriteColor : [0.65, 0.35, 0.0];
 BULL_HORN {
 name : "Bull Horn"; 
 description : "Sharp horn from a wild bull.";
+weight : 0.25;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
@@ -161,6 +170,7 @@ spriteColor : [0.75, 0.75, 0.75];
 MOSS {
 name : "Moss"; 
 description : "Regular old moss.";
+weight : 0.1;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
@@ -176,6 +186,7 @@ spriteColor : [0.0, 0.65, 0.0];
 LIVING_MOSS {
 name : "Moss"; 
 description : "Looks like moss. Also seems to pulsate slowly?";
+weight : 0.1;
 stackable : true;
 holdsLiquid : false;
 consumable : true;

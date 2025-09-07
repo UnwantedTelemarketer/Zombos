@@ -1,0 +1,12 @@
+Uhhqoz {
+behaviour : 1;
+faction : 0;
+damage : 10;
+entID : 3;
+health : 30.000000;
+happy : -1.000000;
+fear : 0.000000;
+trust : 0.000000;
+memories : [];
+}
+

@@ -5,6 +5,7 @@ sections : [BANDAGE,CLOTH_TORCH,LIGHTER,CANTEEN,GUTS,GLASS_JAR,GLOWING_MUSHROOM_
 BANDAGE {
 name : "Sterile Bandage";
 description : "Clean bandage that can be used to stop bleeding.";
+weight : 0.5;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
@@ -21,6 +22,7 @@ spriteColor : [0.95, 0.95, 0.85];
 LIGHTER {
 name : "Lighter";
 description : "A lighter that can start fires.";
+weight : 0.5;
 id : "lighter";
 stackable : false;
 holdsLiquid : false;
@@ -39,6 +41,7 @@ spriteColor : [0.35, 0.35, 0.35];
 LIGHTER_EMPTY {
 name : "Lighter (Empty)";
 description : "A lighter that can start fires. No fuel left.";
+weight : 0.3;
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -55,6 +58,7 @@ spriteColor : [0.35, 0.35, 0.35];
 MATCH {
 name : "Match";
 description : "Consumable firestarter.";
+weight : 0.1;
 stackable : true;
 holdsLiquid : false;
 consumable : false;
@@ -71,6 +75,7 @@ spriteColor : [0.35, 0.35, 0.35];
 CANTEEN {
 name : "Canteen";
 description : "Holds liquid.";
+weight : 1.0;
 stackable : false;
 holdsLiquid : true;
 consumable : false;
@@ -86,6 +91,7 @@ spriteColor : [0.0, 0.50, 0.0];
 GUTS {
 name : "Zombie Guts";
 description : "Gross old zombie guts. Might be useful. Maybe.";
+weight : 2.0;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
@@ -102,6 +108,7 @@ spriteColor : [0.65, 0.0, 0.0];
 GLASS_JAR {
 name : "Glass Jar";
 description : "Holds liquid.";
+weight : 1.0;
 stackable : false;
 holdsLiquid : true;
 consumable : false;
@@ -118,6 +125,7 @@ spriteColor : [0.5, 0.50, 0.5];
 LANTERN {
 name : "Lantern";
 description : "Lights up the area around it.";
+weight : 2.0;
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -135,6 +143,7 @@ emissionDistance : 5;
 GLOWING_MUSHROOM_JAR {
 name : "Glowing Mushroom Jar";
 description : "Glowing mushroom sealed in a glass jar. Small light source.";
+weight : 2.0;
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -152,6 +161,7 @@ emissionDistance : 4;
 BEAR_TRAP {
 name : "Bear Trap (Open)";
 description : "A perfect way for someone to lose a foot.";
+weight : 7.5;
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -168,6 +178,7 @@ spriteColor : [0.5, 0.50, 0.5];
 BEAR_TRAP_C {
 name : "Bear Trap (Closed)";
 description : "Someone may have lost a foot.";
+weight : 7.5;
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -183,6 +194,7 @@ spriteColor : [0.5, 0.50, 0.5];
 CLOTH_TORCH {
 name : "Cloth Torch";
 description : "Cloth wrapped around a stick. Flammable.";
+weight : 2.5;
 stackable : true;
 holdsLiquid : false;
 consumable : false;

@@ -5,6 +5,7 @@ sections : [CHALK_W,CHALK_B]
 CHALK_W {
 name : "Chalk Stick (White)";
 description : "Stick of white-ish chalk.";
+weight : 0.25f;
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -22,6 +23,7 @@ spriteColor : [0.95, 0.95, 0.85];
 CHALK_B {
 name : "Chalk Stick (Blue)";
 description : "Stick of blue-ish chalk.";
+weight : 0.25f;
 stackable : false;
 holdsLiquid : false;
 consumable : false;

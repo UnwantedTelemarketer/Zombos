@@ -5,6 +5,7 @@ sections : [GOLD_NECKLACE,CIGARETTES,GOLD_RING,DIAMOND_RING];
 GOLD_NECKLACE {
 name : "Gold Necklace";
 description : "Shiny gold necklace. You're sure at some point people enjoyed useless amenities like this.";
+weight : 1.0;
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -20,6 +21,7 @@ spriteColor : [0.95, 0.95, 0.15];
 GOLD_RING {
 name : "Gold Ring";
 description : "Shiny gold ring. You're sure at some point people enjoyed useless amenities like this.";
+weight : 0.35;
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -35,6 +37,7 @@ spriteColor : [0.95, 0.95, 0.15];
 DIAMOND_RING {
 name : "Diamond Ring";
 description : "Shiny gold ring with a diamond embossed. Probably worth a pretty penny.";
+weight : 0.2;
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -51,6 +54,7 @@ spriteColor : [0.75, 0.75, 0.95];
 CIGARETTES {
 name : "Box of Cigarettes";
 description : "They taste terrible AND kill you fast.";
+weight : 0.2;
 stackable : true;
 holdsLiquid : false;
 consumable : false;

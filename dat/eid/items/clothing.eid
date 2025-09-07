@@ -8,6 +8,7 @@ sections : [LEATHER_BOOTS, RAINCOAT, LEATHER_JACKET, TOOTH_NECKLACE];
 LEATHER_BOOTS {
 name : "Leather Boots";
 description : "Leather boots to help with weather. (Walks through mud without getting stuck)";
+weight : 2.5f;
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -26,6 +27,7 @@ waterproof : true;
 RAINCOAT{
 name : "Raincoat";
 description : "Old raincoat. Keeps you from getting wet.";
+weight : 4.5f;
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -44,6 +46,7 @@ waterproof : true;
 LEATHER_JACKET{
 name : "Leather Jacket";
 description : "Black leather jacket. Helps absorb a small amount of hits or bites.";
+weight : 4.5f;
 stackable : false;
 holdsLiquid : false;
 consumable : false;
@@ -62,6 +65,7 @@ waterproof : true;
 TOOTH_NECKLACE{
 name : "Necklace of Teeth";
 description : "A necklace made of wire with teeth all around the rim.";
+weight : 1.0f;
 stackable : false;
 holdsLiquid : false;
 consumable : false;

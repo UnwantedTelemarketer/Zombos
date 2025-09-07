@@ -30,86 +30,60 @@
 [ Line 165 ]: [0;37mTRUST_WANDERER[0m
 [ Line 165 ]: [0;37mUNTRUST_WANDERER[0m
 [ Line 184 ]: [1;32mFinished loading dialogue![0m
-[ Line 1765 ]: [1;32mDone![0m
+[ Line 1775 ]: [1;32mDone![0m
 [ Line 41 ]: [1;31m0[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/254250.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/255250.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/256250.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/254251.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/255251.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/256251.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/254252.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/255252.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/256252.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/257250.chunk[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line 281 ]: [1;31mFailed to create save or save exists![0m
+[ Line 274 ]: [1;32mNew save created successfully![0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/weedss/entities/names.eid', but can't find file.[0m
+[ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line 1825 ]: [1;32mgive TOOTH_NECKLACE 1[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/258250.chunk[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/259250.chunk[0m
-[ Line 261 ]: [1;32mReading Chunk from dat/saves/newest/map/259251.chunk[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
+[ Line 261 ]: [1;32mReading Chunk from dat/saves/weedss/map/250249.chunk[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, }[0m
-[ Line -1 ]: [0;37m-2.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37m0.000000[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/newest/entities/Yllest.eid[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/newest/save.eid[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/weedss/save.eid[0m
+[ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
+[ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
+[ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
+[ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {Unyhhn, Xlyqcc, Gvikfg, Fdaaqv, Yllest, }[0m
 [ Line -1 ]: [0;37m0.000000[0m
-[ Line 208 ]: [1;32mSave complete in 37.577915ms.[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line 209 ]: [1;32mSave complete in 36.933392ms.[0m

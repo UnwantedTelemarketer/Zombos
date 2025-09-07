@@ -1530,7 +1530,9 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 	{
 		if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].burningFor > 5) { continue; }
 		else if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].burningFor < 0) { continue; }
-		chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].SetLiquid(fire);
+		if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].liquid != nothing) {
+			chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].SetLiquid(fire);
+		}
 		floodFill({ tilesToBurn[i].x, tilesToBurn[i].y }, 5, false);
 	}
 

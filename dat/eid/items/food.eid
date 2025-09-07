@@ -5,6 +5,7 @@ sections : [MEAT,COOKED_MEAT,OVERCOOKED_MEAT,BURNT_MEAT,RATION,ENERGY_DRINK]
 MEAT {
 name : "Meat";
 description : "Uncooked meat. Not very satiating.";
+weight : 0.5;
 id : "meat";
 stackable : true;
 holdsLiquid : false;
@@ -23,6 +24,7 @@ spriteColor : [1.0, 0.1, 0.2];
 COOKED_MEAT {
 name : "Cooked Meat";
 description : "Cooked meat. Very satiating.";
+weight : 0.5;
 id : "cookedmeat";
 stackable : true;
 holdsLiquid : false;
@@ -41,6 +43,7 @@ spriteColor : [0.6, 0.1, 0.2];
 OVERCOOKED_MEAT {
 name : "Slightly Overcooked Meat";
 description : "Overcooked meat. Still tastes good.";
+weight : 0.5;
 id : "overcookedmeat";
 stackable : true;
 holdsLiquid : false;
@@ -59,6 +62,7 @@ spriteColor : [0.6, 0.1, 0.2];
 BURNT_MEAT {
 name : "Burnt Meat";
 description : "Burnt meat. Way overcooked.";
+weight : 0.5;
 id : "burntmeat";
 stackable : true;
 holdsLiquid : false;
@@ -75,6 +79,7 @@ spriteColor : [0.6, 0.1, 0.2];
 RATION {
 name : "Ration";
 description : "Basic ration of food.";
+weight : 0.5;
 id : "ration";
 stackable : true;
 holdsLiquid : false;
@@ -91,6 +96,7 @@ spriteColor : [1.0, 0.1, 0.2];
 ENERGY_DRINK {
 name : "Canned Energy Drink";
 description : "Energy drink in a can. 200mg of caffeine!";
+weight : 0.2;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
@@ -107,6 +113,7 @@ spriteColor : [1.0, 0.1, 0.2];
 CANNED_FOOD {
 name : "Canned Food";
 description : "Beans in a can. Never expire!";
+weight : 0.5;
 stackable : true;
 holdsLiquid : false;
 consumable : true;

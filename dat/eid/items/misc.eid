@@ -3,6 +3,7 @@
 ITEM_ZERO {
 name : "Not An Item";
 description : "Keeps the game from crashing if you have no items.";
+weight : 0.0;
 id : "zero";
 stackable : false;
 holdsLiquid : false;

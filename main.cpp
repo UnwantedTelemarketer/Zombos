@@ -29,6 +29,7 @@ private:
 		props.h = 720;
 		props.vsync = 0;
 		props.cc = { 0.5, 0.5, 0.5, 1 };
+		props.title = "By The Fire";
 		props.framebuffer_display = false;
 		return props;
 	}
@@ -117,7 +118,7 @@ public:
 		{"Hunter",		{"BEAR_TRAP", "LEATHER_BOOTS", "CAMPFIRE"}, {2, 1, 1}},
 		{"Explorer",	{"RATION", "LEATHER_BOOTS", "BITS"}, {5, 1, 10}},
 		{"Vagrant",		{"ROCK", "STICK", "ROPE"}, {5, 5, 3}},
-		{"Amnesiac",	{"MUD"}, {1}},
+		{"Amnesiac",	{}, {}},
 	};
 
 	//Yelling Text above NPCs
@@ -1067,6 +1068,13 @@ public:
 				}
 			}
 			ImGui::EndListBox();
+
+			ImGui::Text("Total Weight : "); ImGui::SameLine();
+			ImGui::ProgressBar(pInv.totalWeight / pInv.maxWeight);
+			std::string totalWeight = std::to_string(pInv.totalWeight);
+			totalWeight += " / ";
+			totalWeight += std::to_string(pInv.maxWeight);
+			ImGui::Text(totalWeight.c_str()); ImGui::SameLine();
 		}
 		ImGui::PopStyleColor(1);
 		ImGui::End();
@@ -1146,6 +1154,8 @@ public:
 
 			ImGui::Text("Crafting ID ::"); ImGui::SameLine();
 			ImGui::Text(curItem.section.c_str());
+			ImGui::Text("Weight : "); ImGui::SameLine();
+			ImGui::Text(std::to_string(curItem.weight).c_str());
 
 			if (ImGui::Button("Use"))
 			{

@@ -9,6 +9,7 @@ sections : [GLOB]
 GLOB {
 name : "Glob of Goo"; 
 description : "EWWWW!!!.";
+weight : 0.0;
 id : "zero";
 stackable : true;
 holdsLiquid : false;

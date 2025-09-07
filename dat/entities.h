@@ -90,6 +90,7 @@ struct Item {
 		name = item.getString("name");
 		section = item.section_name;
 		description = item.getString("description");
+		weight = item.getFloat("weight");
 		//id = item.getString("id");
 		stackable = item.getBool("stackable");
 		holdsLiquid = item.getBool("holdsLiquid");
@@ -719,6 +720,9 @@ struct Tile {
 			break;
 		case blood:
 			tileColor = { 1, 0, 0 };
+			break;
+		case mud:
+			tileColor = { 0.5f, 0.3f, 0 };
 			break;
 		case nothing:
 			Utilities::Lerp("tileColor" + std::to_string(Math::RandInt(1, 50000)), &tileColor, mainTileColor, 0.5f);

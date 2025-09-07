@@ -23,6 +23,7 @@ spriteColor : [0.5, 0.50, 0.5];
 MACHETE {
 name : "Machete";
 description : "Sharp and deadly.";
+weight : 2.5;
 id : "machete";
 stackable : false;
 holdsLiquid : false;
@@ -41,6 +42,7 @@ spriteColor : [0.5, 0.50, 0.5];
 KNIFE {
 name : "Makeshift Knife";
 description : "A makeshift knife to aid in many situations.";
+weight : 1.5;
 id : "knife";
 stackable : false;
 holdsLiquid : false;
@@ -59,6 +61,7 @@ spriteColor : [0.5, 0.50, 0.5];
 BULL_KNIFE {
 name : "Bull-Horn Knife";
 description : "A knife made from a bull's horn.";
+weight : 1.5;
 stackable : false;
 holdsLiquid : false;
 consumable : false;

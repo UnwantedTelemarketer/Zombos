@@ -12,6 +12,8 @@ public:
 	Color clothes;
 	std::vector<Item> items;
 	std::unordered_map<equipType, Item> equippedItems;
+	float totalWeight = 0.f;
+	float maxWeight = 10.f;
 
 	void AddItem(Item it, int count = 1)
 	{
@@ -21,6 +23,7 @@ public:
 				if (items[i].section == it.section)
 				{
 					items[i].count += it.count * count;
+					totalWeight += it.weight;
 					ResetItemNames();
 					return;
 				}
@@ -28,6 +31,7 @@ public:
 		}
 
 		items.push_back(it);
+		totalWeight += it.weight;
 		itemNames.push_back(it.name);
 		for (int i = 0; i < count - 1; i++)
 		{
@@ -122,6 +126,8 @@ public:
 			if (items[i].section == itemID)
 			{
 				items[i].count -= amount;
+				totalWeight -= items[i].weight;
+
 				if (items[i].count > 1) itemNames[i] = items[i].name + " x " + std::to_string(items[i].count);
 				else if (items[i].count == 1) itemNames[i] = items[i].name;
 				else if (items[i].count <= 0) {
