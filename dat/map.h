@@ -101,7 +101,7 @@ public:
 	void TempCheck(Player* p, Vector2_I coords);
 	std::string GetCurrentSavePath() const { return "dat/saves/" + currentSaveName + "/"; }
 
-	Entity* SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f);
+	Entity* SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f, bool spawnSpecial);
 	void SpawnHumanInCurrent(Vector2_I spawnCoords, Behaviour b, Faction f);
 
 	~Map();
@@ -123,10 +123,10 @@ void Map::SetupNoise(int l_seed, int b_seed) {
 	}
 	mapNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 	mapNoise.SetFrequency(0.85f);
-	biomeTempNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	biomeTempNoise.SetFrequency(0.025f);
-	biomeMoistureNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	biomeMoistureNoise.SetFrequency(0.020f);
+	biomeTempNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
+	biomeTempNoise.SetFrequency(0.035f);
+	biomeMoistureNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
+	biomeMoistureNoise.SetFrequency(0.035f);
 
 	mapNoise.SetSeed(landSeed);
 	biomeTempNoise.SetSeed(biomeSeed);
@@ -301,15 +301,21 @@ void Map::MakeNewChunk(Vector2_I coords) {
 }
 
 void Map::SpawnHumanInCurrent(Vector2_I spawnCoords, Behaviour b, Faction f) {
-	CurrentChunk()->entities.push_back(SpawnHuman(spawnCoords, b, f));
+	CurrentChunk()->entities.push_back(SpawnHuman(spawnCoords, b, f, false));
 }
 
-Entity* Map::SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f) {
+Entity* Map::SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f, bool spawnSpecial = false) {
 	Entity* zomb = new Entity{ 35, "Human", ID_HUMAN, b, false, f, 10, 10, true, spawnCoords.x, spawnCoords.y, true };
+
+	if (b == Aggressive) 
+	{ 
+		zomb->aggressive = true;
+		zomb->feelingTowardsPlayer.happy = -5;
+	}
 
 	zomb->smart = true;
 	//Random chance to spawn previous npc
-	if (Math::RandInt(0, 5) == 2) {
+	if (Math::RandInt(0, 5) == 2 && spawnSpecial) {
 		std::string specialEntFilePath = (
 			"dat/saves/"
 			+ currentSaveName
@@ -368,9 +374,14 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 			zomb->inv.push_back(Items::GetItem("SCRAP"));
 			zomb->inv.push_back(Items::GetItem("GUTS"));
 		}
-		else if (num >= 15) {
+		else if (num >= 19) {
 			//humans have a lot more logic than the rest
-			chunk->entities.push_back(SpawnHuman(spawnCoords, Protective, Human_W));
+			if (Math::RandInt(0, 4) >= 3) {
+				chunk->entities.push_back(SpawnHuman(spawnCoords, Protective, Human_W, true));
+			}
+			else {
+				chunk->entities.push_back(SpawnHuman(spawnCoords, Aggressive, Bandit));
+			}
 			continue;
 		}
 		else if (num >= 10) {
@@ -850,10 +861,24 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				{
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_SAND");
 				}
+				if (curTemp < 0.505) {
+					if (Math::RandInt(0, 10) > 6) {
+						chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
+						chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+					}
+				}
 				break;
 			case taiga:
 				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
-				if (currentTile < -(taiga_pond_height / 100)) {
+				if (curTemp > 0.495) {
+					if (Math::RandInt(0, 10) > 6) {
+						chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
+						chunk->localCoords[i][j].mainTileColor = { 0.5, 0.55, 0.35 };
+						chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+						chunk->localCoords[i][j].ResetColor();
+					}
+				}
+				else if (currentTile < -(taiga_pond_height / 100)) {
 					chunk->localCoords[i][j].biomeID = (short)currentBiome;
 					chunk->localCoords[i][j].SetLiquid(water, true);
 					chunk->localCoords[i][j].liquidTime = -1;
@@ -888,12 +913,25 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				if (currentTile < -0.10f) {
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_TALLGRASS");
 				}
+				if (curTemp > 0.495) {
+					if (Math::RandInt(0, 10) > 6) {
+						chunk->localCoords[i][j] = Tiles::GetTile("TILE_SAND");
+					}
+				}
 				break;
 			case swamp:
 				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
-				chunk->localCoords[i][j].mainTileColor = {0.5, 0.55, 0.35};
+				chunk->localCoords[i][j].mainTileColor = { 0.5, 0.55, 0.35 };
 				chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
 				chunk->localCoords[i][j].ResetColor();
+				if (curTemp < 0.505) {
+					if (Math::RandInt(0, 10) > 6) {
+						chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
+						chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+						chunk->localCoords[i][j].mainTileColor.z = 0.35f;
+						chunk->localCoords[i][j].ResetColor();
+					}
+				}
 				if (current < -0.3f) {
 					chunk->localCoords[i][j].biomeID = (short)currentBiome;
 					chunk->localCoords[i][j].SetLiquid(water, true);
@@ -956,7 +994,7 @@ void Map::PickStructure(Vector2_I startingChunk) {
 	int randInt = Math::RandInt(0, 4);
 
 	//chance for rare structure
-	if (Math::RandInt(0, 35) == 2) {
+	if (Math::RandInt(0, 30) == 2) {
 		OpenedData dat;
 
 		switch (randInt) {

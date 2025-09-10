@@ -146,14 +146,12 @@ public:
 		ItemReader::GetDataFromFile(specialEntFilePath + "names.eid", "NAMES", &specialEnts, false);
 
 		std::vector<std::string> entNames = specialEnts.getArray("names");
-		LAZY_LOG(entNames);
 
 		//save entities
 		if (entities.size() != 0) {
 			for (int i = 0; i < entities.size(); i++) {
 				//if they have been interacted with, save them special to the side
-				LAZY_LOG(entities[i]->feelingTowardsPlayer.overall())
-				if (entities[i]->feelingTowardsPlayer.overall() != 0) {
+				if (entities[i]->feelingTowardsPlayer.overall() != 0 && entities[i]->name != "Human") {
 					SaveData specEntDat;
 					specEntDat.sections.insert({ entities[i]->name, {} });
 

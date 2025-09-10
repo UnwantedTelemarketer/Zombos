@@ -30,139 +30,27 @@
 [ Line 165 ]: [0;37mTRUST_WANDERER[0m
 [ Line 165 ]: [0;37mUNTRUST_WANDERER[0m
 [ Line 184 ]: [1;32mFinished loading dialogue![0m
-[ Line 1783 ]: [1;32mDone![0m
+[ Line 1831 ]: [1;32mDone![0m
 [ Line 40 ]: [1;31m0[0m
-[ Line 289 ]: [1;32mNew save created successfully![0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/asdsdddcc/entities/names.eid', but can't find file.[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/251249.chunk[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/251251.chunk[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line 1843 ]: [1;32mset tickrate 0.1[0m
-[ Line 1843 ]: [1;32mset time 2900[0m
-[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/249249.chunk[0m
-[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/250249.chunk[0m
-[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/251249.chunk[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/249252.chunk[0m
-[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/250252.chunk[0m
-[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/251252.chunk[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/252252.chunk[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/249250.chunk[0m
-[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/249251.chunk[0m
-[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/249252.chunk[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line 1843 ]: [1;32mset tickrate 0.5[0m
-[ Line 1843 ]: [1;32mset weather thunder[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/248252.chunk[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/250253.chunk[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
+[ Line 328 ]: [1;32mNew save created successfully![0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/bgbgte/entities/names.eid', but can't find file.[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/250251.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/249252.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/250252.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/251252.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/248253.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/249250.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/245246.chunk[0m
+[ Line 1891 ]: [1;32mset bleeding 0[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/238239.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/235241.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/234240.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/229240.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/227240.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/226240.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/226242.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/224241.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/bgbgte/map/223242.chunk[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/asdsdddcc/save.eid[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line 210 ]: [1;32mSave complete in 32.802109ms.[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/bgbgte/save.eid[0m
+[ Line 213 ]: [1;32mSave complete in 22.819841ms.[0m

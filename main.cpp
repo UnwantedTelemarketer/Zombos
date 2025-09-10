@@ -86,6 +86,9 @@ public:
 	std::vector<Vector2_I> item_positions;
 	Vector2_I cursorPos = { 15, 15 };
 	std::string customTileSelect = "TILE_STONE";
+	FastNoiseLite mapGenNoise, mapGenNoise2;
+	float noiseFreq = 0.4f;
+	int noiseType = 0;
 
 	char customMapBuffer[512] = "";
 
@@ -264,6 +267,42 @@ public:
 		if (Input::KeyDown(KEY_GRAVE_ACCENT)) {
 			debugMenuScreen = !debugMenuScreen;
 		}
+
+
+		ImGui::Begin("Map Gen Screen");
+		/*ImGui::SliderFloat("Frequency", &noiseFreq, 0.f, 1.f);
+		mapGenNoise.SetFrequency(noiseFreq);
+
+		ImGui::SliderInt("Noise Type", &noiseType, 0, 5);
+		mapGenNoise.SetNoiseType((FastNoiseLite::NoiseType)noiseType);*/
+		ImGui::InputInt("Seed", &noiseType);
+		mapGenNoise.SetSeed(noiseType);
+		mapGenNoise2.SetSeed(noiseType * 2);
+		for (size_t i = 0; i < 30; i++)
+		{
+			for (size_t x = 0; x < 30; x++)
+			{
+				float currentNoise = mapGenNoise.GetNoise(i * 0.1, x * 0.1);
+				float currentNoise2 = mapGenNoise2.GetNoise(i * 0.1, x * 0.1);
+
+				if (currentNoise2 <= -0.25) {
+					ImGui::TextColored({ 0.67f, 0.75f, 0.f, 1.f }, "_ ");
+				}
+				else if (currentNoise <= -0.25) {
+					ImGui::TextColored({ 0.65f, 0.1f, 0.f, 1.f }, "~ ");
+				}
+				else if (currentNoise2 >= 0 &&
+						 currentNoise <= 0.25) {
+					ImGui::TextColored({ 0.f, 0.4f, 0.f, 1.f }, "^ ");
+				}
+				else {
+					ImGui::TextColored({ 0.2f, 0.85f, 0.f, 1.f }, ", ");
+				}
+				ImGui::SameLine();
+			}
+			ImGui::Text(" ");
+		}
+		ImGui::End();
 
 		if (debugMenuScreen) {
 			ImGui::Begin("Debug Menu");
@@ -1777,6 +1816,15 @@ public:
 			Console::Log("Save folder does not exist. Creating new...", text::white, __LINE__);
 			CreateNewDirectory("dat/saves/");
 		}
+
+		mapGenNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
+		mapGenNoise.SetFrequency(0.6);
+		mapGenNoise.SetSeed(Math::RandInt(1, 2147483647));
+
+		mapGenNoise2.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
+		mapGenNoise2.SetFrequency(0.9);
+		mapGenNoise2.SetSeed(Math::RandInt(1, 2147483647));
+
 
 		//itemLoading.join();
 		//tileLoading.join();
