@@ -70,6 +70,7 @@ public:
 	Vector4 customTabColor;
 	bool savedGamesScreen = false;
 	bool newGameScreen = false;
+	bool debugMenuScreen = false;
 	bool wrongDir = false;
 	char saveNameSlot[128];
 
@@ -260,7 +261,21 @@ public:
 		ImGui::SetFontSize(16.f);
 		ImGui::End();
 
-		
+		if (Input::KeyDown(KEY_GRAVE_ACCENT)) {
+			debugMenuScreen = !debugMenuScreen;
+		}
+
+		if (debugMenuScreen) {
+			ImGui::Begin("Debug Menu");
+			if (ImGui::Button("Open Custom Structure Editor")) {
+				currentState = map_gen_test;
+				map.CreateMap(map.landSeed, map.biomeSeed);
+			}
+			if (ImGui::Button("Generate Random Name")) {
+				Console::Log(NameGenerator::generateFirstName(), ERROR, 1);
+			}
+			ImGui::End();
+		}
 
 		if (newGameScreen) {
 			ImGui::Begin("New Game Menu");
@@ -374,13 +389,6 @@ public:
 			Audio::Play(sfxs["crunchy_click"]);
 		}
 
-		ImGui::End();
-
-		ImGui::Begin("Debug");
-		if (ImGui::Button("Open Custom Structure Editor")) {
-			currentState = map_gen_test;
-			map.CreateMap(map.landSeed, map.biomeSeed);
-		}
 		ImGui::End();
 
 		ImGui::PopFont();
@@ -1350,7 +1358,7 @@ public:
 
 				if (selectedTile->entity->name == "Human") {
 					//give them a new name when we chat
-					selectedTile->entity->name = Generation::GenerateName();
+					selectedTile->entity->name = NameGenerator::generateFirstName();
 				}
 
 				//show their name

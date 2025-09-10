@@ -1140,6 +1140,30 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 	std::vector<std::string> tokens = Tokenizer::getTokens(input);
 	Math::PushFrontLog(&game->consoleLog, input);
 	for (int i = 0; i < tokens.size(); i++) {
+		if (tokens[i] == "spawn") {
+			//if not enough or out of bounds
+			if (tokens.size() < 4) { return; }
+			if (stoi(tokens[i + 2]) > 29 || 
+				stoi(tokens[i + 2]) < 0  ||
+				stoi(tokens[i + 3]) > 29 || 
+				stoi(tokens[i + 3]) < 0  ) { return; }
+
+			//try and get the spawn coords
+			Vector2_I spawnCoords;
+			try {
+				spawnCoords = { stoi(tokens[i + 2]), stoi(tokens[i + 3]) };
+			}
+			catch (std::exception e) {
+				Math::PushFrontLog(&game->consoleLog, "- Invalid spawn coordinates.");
+				return;
+			}
+
+			if (tokens[i + 1] == "human") {
+				game->mainMap.SpawnHumanInCurrent(spawnCoords, Behaviour::Protective, Faction::Human_W);
+				Math::PushFrontLog(&game->consoleLog, "- Spawned random human.");
+			}
+
+		}
 		if (tokens[i] == "give") {
 			if (tokens.size() < 3) { return; }
 			if (Items::list.count(tokens[i + 1]) == 0) { 
@@ -1212,16 +1236,16 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 		}
 		else if (tokens[i] == "help") {
 			std::string helpstring =
-						  "- give {item name} {amount} - gives item\n";
-			helpstring += "set weather {clear / rain / thunder} - sets the weather\n";
-			helpstring += "set time {time in ticks} - sets the time to a specific tick\n";
-			helpstring += "set tickrate {float} - sets time between ticks in seconds (default is 0.5)\n";
-			helpstring += "set {health / hunger / thirst} {number} - sets attribute\n";
-			helpstring += "set {bleeding / sickness} {number} - sets attribute (0 - 3)\n";
-			helpstring += "buddha {on / off} - toggles buddha mode\n";
-			helpstring += "god {on / off} - toggles god mode\n";
-			helpstring += "bring him forth - brings him forth\n";
-			helpstring += "help - this\n";
+						  "\n ~give {item name} {amount} - gives item\n";
+			helpstring += " ~set weather {clear / rain / thunder} - sets the weather\n";
+			helpstring += " ~set time {time in ticks} - sets the time to a specific tick\n";
+			helpstring += " ~set tickrate {float} - sets time between ticks in seconds (default is 0.5)\n";
+			helpstring += " ~set {health / hunger / thirst} {number} - sets attribute\n";
+			helpstring += " ~set {bleeding / sickness} {number} - sets attribute (0 - 3)\n";
+			helpstring += " ~buddha {on / off} - toggles buddha mode\n";
+			helpstring += " ~god {on / off} - toggles god mode\n";
+			helpstring += " ~bring him forth - brings him forth\n";
+			helpstring += " ~help - this\n";
 
 			Math::PushFrontLog(&game->consoleLog, helpstring);
 

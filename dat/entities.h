@@ -412,7 +412,12 @@ struct Entity {
 			}
 
 			msg += memories[i].event;
-			msg += ", and ";
+			if (i == memories.size() - 1) {
+				msg += ".";
+			}
+			else {
+				msg += ", and ";
+			}
 			memorySentences.push_back(msg);
 		}
 		return memorySentences;
@@ -514,7 +519,7 @@ struct Player {
 		healTick++;
 
 		//cant heal if youre too hungry
-		if (hunger >= 70) {
+		if (hunger >= 70 && bleedingLevel <= 0) {
 			if (sicknessLevel < 2) {
 				if (healTick >= 100) {
 					health += 2;

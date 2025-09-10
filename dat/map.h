@@ -102,6 +102,7 @@ public:
 	std::string GetCurrentSavePath() const { return "dat/saves/" + currentSaveName + "/"; }
 
 	Entity* SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f);
+	void SpawnHumanInCurrent(Vector2_I spawnCoords, Behaviour b, Faction f);
 
 	~Map();
 
@@ -297,6 +298,10 @@ void Map::MakeNewChunk(Vector2_I coords) {
 	SpawnChunkEntities(tempChunk);
 
 
+}
+
+void Map::SpawnHumanInCurrent(Vector2_I spawnCoords, Behaviour b, Faction f) {
+	CurrentChunk()->entities.push_back(SpawnHuman(spawnCoords, b, f));
 }
 
 Entity* Map::SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f) {
@@ -609,7 +614,7 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 				if (curEnt->b == Protective || curEnt->b == Protective_Stationary) { curEnt->aggressive = true; curEnt->b = Aggressive; }
 
 				//drop their reputation with player
-				if (curEnt->entityID == ID_HUMAN) { curEnt->AddMemory(MemoryType::Attacked, ID_PLAYER, FEELING_ANGRY, "attacked"); }
+				if (curEnt->smart) { curEnt->AddMemory(MemoryType::Attacked, ID_PLAYER, FEELING_ANGRY, "", true); }
 
 				//if it has durability
 				if (pInv.equippedItems[weapon].maxDurability != -1) {
