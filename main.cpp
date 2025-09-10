@@ -1752,8 +1752,8 @@ public:
 		//std::thread tileLoading = Tiles::LoadTilesFromFiles(&game.tile_colors);
 
 		Engine::Instance().AddScene(&main);
-		main.CreateObject("BG", { 0,0 }, { 3,3 }, "res/bg.png");
-		main.CreateObject("Box", { 0,0 }, { 1,1 }, "res/plank.png");
+		main.CreateObject("BG", { -1,-1 }, { 2,2 }, "res/bg.png");
+		main.CreateObject("Box", { -0.5,-0.25 }, { 1,1 }, "res/plank.png");
 		p = main.FindObject("Box");
 
 		gameScreen.fancyGraphics = true;

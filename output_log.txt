@@ -16,7 +16,7 @@
 [ Line 83 ]: [0;33mLoading Tiles from files...[0m
 [ Line 92 ]: [0;37mtiles.eid[0m
 [ Line 102 ]: [1;32mLoaded Tiles![0m
-[ Line 226 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
+[ Line 225 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
 [ Line 79 ]: [1;32mLoaded texture from res/bg.png.[0m
 [ Line 10 ]: [1;32mSuccesfully created object BG[0m
 [ Line 79 ]: [1;32mLoaded texture from res/plank.png.[0m
@@ -31,53 +31,138 @@
 [ Line 165 ]: [0;37mUNTRUST_WANDERER[0m
 [ Line 184 ]: [1;32mFinished loading dialogue![0m
 [ Line 1783 ]: [1;32mDone![0m
-[ Line 41 ]: [1;31m0[0m
+[ Line 40 ]: [1;31m0[0m
 [ Line 289 ]: [1;32mNew save created successfully![0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/spaw2n test/entities/names.eid', but can't find file.[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/spaw2n test/entities/names.eid', but can't find file.[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/spaw2n test/entities/names.eid', but can't find file.[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/spaw2n test/entities/names.eid', but can't find file.[0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/asdsdddcc/entities/names.eid', but can't find file.[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/251249.chunk[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/251251.chunk[0m
 [ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37mList : {}[0m
-[ Line 1843 ]: [1;32mspawn human 3 11[0m
-[ Line 1843 ]: [1;32mspawn human 3 11[0m
-[ Line 1843 ]: [1;32mspawn human 11 3[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line 1843 ]: [1;32mset tickrate 0.1[0m
+[ Line 1843 ]: [1;32mset time 2900[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/249249.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/250249.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/251249.chunk[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/249252.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/250252.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/251252.chunk[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/252252.chunk[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/249250.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/249251.chunk[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/249252.chunk[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line 1843 ]: [1;32mset tickrate 0.5[0m
+[ Line 1843 ]: [1;32mset weather thunder[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/248252.chunk[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line 262 ]: [1;32mReading Chunk from dat/saves/asdsdddcc/map/250253.chunk[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/spaw2n test/save.eid[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/asdsdddcc/save.eid[0m
 [ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37mList : {}[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37m0.000000[0m
+[ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37mList : {}[0m
 [ Line -1 ]: [0;37m0.000000[0m
 [ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37mList : {}[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line -1 ]: [0;37m0.000000[0m
-[ Line 210 ]: [1;32mSave complete in 42.810501ms.[0m
+[ Line 210 ]: [1;32mSave complete in 32.802109ms.[0m

@@ -31,7 +31,6 @@ namespace antibox
 		mAppList = apps;
 	}
 
-
 	void Engine::Initialize() { //Do all the initialization
 		srand((unsigned)time(NULL)); //for rng
 		WindowProperties props = mApp->GetWindowProperties();

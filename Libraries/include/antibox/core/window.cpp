@@ -66,6 +66,12 @@ namespace antibox {
 		glfwSwapBuffers(win);
 	}
 
+	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+	{
+		glViewport(0, 0, width, height);
+		// Also update your projection matrix here if needed
+	}
+
 	bool Window::init(const WindowProperties& props) { // Window Properties
 		// Create a glfw window object of width by height pixels, naming it whatever the window name is
 		Window::win = glfwCreateWindow(props.w, props.h, props.title.c_str(), NULL, NULL);
@@ -98,6 +104,10 @@ namespace antibox {
 
 		mImguiWindow.Create(props.imguiProps);
 		showFramebuffer = props.framebuffer_display;
+
+		//set the callback to change the projection of the camera on the screen resizing
+		glfwSetFramebufferSizeCallback(win, framebuffer_size_callback);
+
 		return true;
 		//glEnable(GL_STENCIL_TEST);
 	}

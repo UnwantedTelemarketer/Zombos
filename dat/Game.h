@@ -765,6 +765,7 @@ void GameManager::UpdateTick() {
 					Audio::SetVolumeLoop(musicvolume, "night_music");
 					Audio::SetVolumeLoop(sfxvolume, "crickets");
 					startedMusicNight = true;
+					Utilities::Lerp("background", &bgColor, {0,0,0}, 2.f);
 				}
 
 				if (forwardTime) { darkTime = std::min(10.f, darkTime + 0.05f); }
@@ -1109,8 +1110,8 @@ dimming:
 	//if its night time
 	if (isDark()) {
 		if ((darkTime >= 10.f && intensity >= 1.f) || (mainMap.isUnderground && intensity >= 1.f)) {
-			if(dormantMoon) color = { 0.075f,0.075f,0.075f,1 };
-			else color = { 0.f,0.f,0.f,1 };
+			if(dormantMoon) color = { 0.1f,0.1f,0.1f,1 };
+			else color = { 0.05f,0.05f,0.05f,1 };
 		}
 		else {
 			color.x /= (darkTime * intensity);
