@@ -34,6 +34,7 @@ effects : [0,0,4,35];
 equipType : 1;
 equipModifier : 2;
 durability : 30;
+canBurnThings : true;
 sprite : "X";
 spriteColor : [0.35, 0.35, 0.35];
 }
@@ -61,13 +62,14 @@ description : "Consumable firestarter.";
 weight : 0.1;
 stackable : true;
 holdsLiquid : false;
-consumable : false;
+consumable : true;
 amount : 1;
 consumeTxt : "cant consume.";
 useTxt : "You light yourself on fire.";
 effects : [0,0,4,35];
 equipType : 1;
 equipModifier : 2;
+canBurnThings : true;
 sprite : "A";
 spriteColor : [0.35, 0.35, 0.35];
 }

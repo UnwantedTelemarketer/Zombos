@@ -1,0 +1,12 @@
+Lyaielyr {
+behaviour : 4;
+faction : 2;
+damage : 10;
+entID : 3;
+health : 35.000000;
+happy : -5.000000;
+fear : 0.000000;
+trust : 0.000000;
+memories : [];
+}
+

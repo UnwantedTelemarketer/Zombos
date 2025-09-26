@@ -86,7 +86,7 @@ consumeTxt : "Glass.";
 useTxt : "You cut yourself with a piece of glass.";
 effects : [2,3,0,0];
 equipType : 0;
-sprite : "B";
+sprite : "-";
 spriteColor : [0.7, 0.7, 0.9];
 }
 

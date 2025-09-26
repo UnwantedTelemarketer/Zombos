@@ -104,9 +104,21 @@ public:
 	Entity* SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f, bool spawnSpecial);
 	void SpawnHumanInCurrent(Vector2_I spawnCoords, Behaviour b, Faction f);
 
+	void Restart();
+
 	~Map();
 
 };
+
+void Map::Restart() {
+	for (const auto& chnk : world.chunks)
+	{
+			chnk.second->SaveChunk(currentSaveName);
+	}
+	world.chunks.clear();
+	currentWeather = clear;
+	currentSaveName = "";
+}
 
 void Map::SetupNoise(int l_seed, int b_seed) {
 	if (l_seed == -1) {
@@ -301,7 +313,7 @@ void Map::MakeNewChunk(Vector2_I coords) {
 }
 
 void Map::SpawnHumanInCurrent(Vector2_I spawnCoords, Behaviour b, Faction f) {
-	CurrentChunk()->entities.push_back(SpawnHuman(spawnCoords, b, f, false));
+	CurrentChunk()->AddEntity(SpawnHuman(spawnCoords, b, f, false));
 }
 
 Entity* Map::SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f, bool spawnSpecial = false) {
@@ -314,6 +326,7 @@ Entity* Map::SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f, bool spaw
 	}
 
 	zomb->smart = true;
+	//if(Math::RandInt(0,10) > 0) zomb->SelectQuest();
 	//Random chance to spawn previous npc
 	if (Math::RandInt(0, 5) == 2 && spawnSpecial) {
 		std::string specialEntFilePath = (
@@ -377,10 +390,10 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 		else if (num >= 19) {
 			//humans have a lot more logic than the rest
 			if (Math::RandInt(0, 4) >= 3) {
-				chunk->entities.push_back(SpawnHuman(spawnCoords, Protective, Human_W, true));
+				chunk->AddEntity(SpawnHuman(spawnCoords, Protective, Human_W, true));
 			}
 			else {
-				chunk->entities.push_back(SpawnHuman(spawnCoords, Aggressive, Bandit));
+				chunk->AddEntity(SpawnHuman(spawnCoords, Aggressive, Bandit));
 			}
 			continue;
 		}
@@ -419,7 +432,7 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 			zomb->inv.push_back(Items::GetItem("MEAT"));
 		}
 		zomb->target = nullptr;
-		chunk->entities.push_back(zomb);
+		chunk->AddEntity(zomb);
 	}
 }
 
@@ -625,7 +638,20 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 				if (curEnt->b == Protective || curEnt->b == Protective_Stationary) { curEnt->aggressive = true; curEnt->b = Aggressive; }
 
 				//drop their reputation with player
-				if (curEnt->smart) { curEnt->AddMemory(MemoryType::Attacked, ID_PLAYER, FEELING_ANGRY, "", true); }
+				if (curEnt->smart) {
+					curEnt->AddMemory(MemoryType::Attacked, ID_PLAYER, FEELING_ANGRY, "", true);
+
+					//drop rep with their friends too
+					//increase rep with enemies
+					for (const auto& kv : curEnt->feelingTowardsOthers)
+					{
+						if (kv.second.happy > 1.f && kv.second.trust > 1.f) {
+							Entity* entFriend = CurrentChunk()->entsByID[kv.first];
+							entFriend->feelingTowardsPlayer += FEELING_ANGRY * 2;
+							entFriend->AddMemory(MemoryType::Observation, ID_PLAYER, FEELING_ANGRY, "attack my friend", true);
+						}
+					}
+				}
 
 				//if it has durability
 				if (pInv.equippedItems[weapon].maxDurability != -1) {
@@ -734,7 +760,7 @@ bool Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 			changed = true;
 			p->coords.x = 0; //move them to the other side of the screen
 			world.chunks[{chunk->globalChunkCoord.x + 1,
-				chunk->globalChunkCoord.y}]->entities.push_back(p); //put them in the vector of the next chunk over
+				chunk->globalChunkCoord.y}]->AddEntity(p); //put them in the vector of the next chunk over
 		}
 		else { //prevent the error of them being on the outer bounds and not exiting the chunk,
 			   // leaving them at an x or y value of 30 which is invalid bcus the chunks are 0-29
@@ -750,7 +776,7 @@ bool Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 			changed = true;
 			p->coords.x = CHUNK_WIDTH - 1;
 			world.chunks[{chunk->globalChunkCoord.x - 1,
-				chunk->globalChunkCoord.y}]->entities.push_back(p);
+				chunk->globalChunkCoord.y}]->AddEntity(p);
 		}
 		else {
 			p->coords.x = 0;
@@ -764,7 +790,7 @@ bool Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 			changed = true;
 			p->coords.y = 0;
 			world.chunks[{chunk->globalChunkCoord.x,
-				chunk->globalChunkCoord.y + 1}]->entities.push_back(p);
+				chunk->globalChunkCoord.y + 1}]->AddEntity(p);
 		}
 		else {
 			p->coords.y = CHUNK_HEIGHT - 1;
@@ -778,7 +804,7 @@ bool Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 			changed = true;
 			p->coords.y = CHUNK_HEIGHT - 1;
 			world.chunks[{chunk->globalChunkCoord.x,
-				chunk->globalChunkCoord.y - 1}]->entities.push_back(p);
+				chunk->globalChunkCoord.y - 1}]->AddEntity(p);
 		}
 		else {
 			p->coords.y = 0;
@@ -787,16 +813,7 @@ bool Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 
 	
 	if (changed) {
-		int indexOfEnt = -1;
-
-		for (int i = 0; i < chunk->entities.size(); i++)
-		{
-			if (chunk->entities[i] == p) {
-				indexOfEnt = i;
-				break;
-			}
-		}
-		chunk->entities.erase(chunk->entities.begin() + indexOfEnt);
+		chunk->RemoveEntity(p);
 		FixEntityIndex(chunk);
 		return true;
 	}
@@ -1038,17 +1055,20 @@ void Map::PlaceCampsite(Vector2_I startingChunk) {
 	Vector2_I randomCoords1 = {
 		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].x,
 		buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].y };
-
-	world.chunks[startingChunk]->entities.push_back(SpawnHuman(randomCoords1, Protective_Stationary, Human_W));
-
-	if (Math::RandInt(0, 10) == 5) {
-		Vector2_I randomCoords2 = {
+	Vector2_I randomCoords2 = {
 			buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].x,
 			buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)].y };
 
-		world.chunks[startingChunk]->entities.push_back(SpawnHuman(randomCoords2, Protective_Stationary, Human_W));
-	}
 
+	//make two dudes who trust each other
+	Entity* zomb = SpawnHuman(randomCoords1, Protective_Stationary, Human_W);
+	Entity* zomb2 = SpawnHuman(randomCoords2, Protective_Stationary, Human_W);
+
+	zomb->feelingTowardsOthers.insert({ zomb2->entityID , (FEELING_HAPPY + FEELING_TRUST) * 2 });
+	zomb2->feelingTowardsOthers.insert({ zomb->entityID , (FEELING_HAPPY + FEELING_TRUST) * 2 });
+
+	world.chunks[startingChunk]->AddEntity(zomb);
+	world.chunks[startingChunk]->AddEntity(zomb2);
 
 
 	//GetTileFromThisOrNeighbor(buildingBlocks[Math::RandInt(0, buildingBlocks.size() - 1)], startingChunk)->hasItem = true;
@@ -1106,7 +1126,7 @@ void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2
 			case '+':
 				*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
 
-				world.chunks[startingChunk]->entities.push_back(SpawnHuman(curCoordsModified, Protective, Human_W));
+				world.chunks[startingChunk]->AddEntity(SpawnHuman(curCoordsModified, Protective, Human_W));
 				break;
 			}
 		}
@@ -1176,7 +1196,7 @@ void Map::PlaceBuilding(Vector2_I startingChunk) {
 	{
 		
 		Tile* curTile = GetTileFromThisOrNeighbor({ buildingBlocks[i].x,buildingBlocks[i].y }, startingChunk);
-		if (Math::RandInt(0, 10) == 5) {
+		if (Math::RandInt(0, 7) == 5) {
 			if (Math::RandInt(0, 10) == 5 && curTile->biomeID == forest) {
 				*curTile = Tiles::GetTile("TILE_TREE_BASE");
 			}
@@ -1217,7 +1237,7 @@ void Map::PlaceBuilding(Vector2_I startingChunk) {
 	//draw walls
 	for (int i = 0; i < wallBlocks.size(); i++)
 	{
-		if (Math::RandInt(0, 10) == 5) {
+		if (Math::RandInt(0, 7) == 5) {
 			continue;
 		}
 		Tile* curTile = GetTileFromThisOrNeighbor(wallBlocks[i], startingChunk);
@@ -1262,7 +1282,7 @@ void Map::GenerateTomb(std::shared_ptr<Chunk> chunk) {
 	int entx = Math::RandInt(3, 26);
 	int enty = Math::RandInt(3, 26);
 	Entity* zomb = new Entity{ 35, "Zombie", ID_ZOMBIE, Aggressive, true, Zombie, 10, 8, false, enty, entx };
-	chunk->entities.push_back(zomb);
+	chunk->AddEntity(zomb);
 }
 
 /*void Map::ClearEffects() {

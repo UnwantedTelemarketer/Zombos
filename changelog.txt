@@ -1,19 +1,29 @@
 v0.2.4 Changes
   - Added Bleeding and Sickness instead of direct damage
   
-  - New Items (Chalk, Moss, etc.)
+  - New Items (Chalk, Moss, Bone, Skull, etc.)
 
   - Added player spawnpoint house
 
   - Added new Cooking Recipes
 
+  - Added Amnesiac Starting
+
   - Player now passively heals at different rates based on conditions
 
   - reworked the day night cycle
 
-  -	New Status Indicators
+  -	New Status Indicators for bleeding and sick
 
   - Rebalanced food and water for the new time
+
+  - New NPC reactions and memories (hurting their friends)
+
+  - Biome Blending
+
+  - Larger Biomes
+
+  - Lightning
 
   - More sfxs
 

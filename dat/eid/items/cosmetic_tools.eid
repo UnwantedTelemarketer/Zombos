@@ -16,6 +16,7 @@ effects : [0,0,0,0];
 equipType : 1;
 equipModifier : 1;
 durability : 40;
+marker : true;
 sprite : "A";
 spriteColor : [0.95, 0.95, 0.85];
 }
@@ -34,6 +35,7 @@ effects : [0,0,0,0];
 equipType : 1;
 equipModifier : 1;
 durability : 40;
+marker : true;
 sprite : "A";
 spriteColor : [0.65, 0.65, 0.95];
 }

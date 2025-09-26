@@ -6,10 +6,10 @@ materials.eid : 0;
 misc.eid : 0;
 survival_items.eid : 0;
 weapons.eid : 0;
-custom_items.eid : 0;
 nature_items.eid : 0;
 clothing.eid : 0;
 decoration.eid : 0;
 cosmetic_tools.eid : 0;
 trade_valuables.eid : 0;
+custom/custom_items.eid : 0;
 }

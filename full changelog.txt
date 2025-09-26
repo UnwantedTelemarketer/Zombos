@@ -1,0 +1,27 @@
+0.2.4
+
+	- Items can now change when used (drinking energy drink becomes empty can)
+	- Items added
+		-Bone
+		-Skull
+		-Chalk (Blue)
+		-Chalk (White)
+		-Energy Drink
+		-Empty Can
+		-Canned Food
+		-Gold Necklace
+		-Diamond Ring
+		-Gold Ring
+		-Tooth Necklace
+		-Moss
+		-Living Moss
+	- Tiles added
+		-Pedestal
+		-Mossy Stone
+	- Biomes are now much larger, and blend on the edges into each other
+	- A full day/night cycle is now about 20 minutes, 11 being day and 9 being night
+	- When a campfire with two npcs is generated, they are spawned as friends
+	- When an npc is attacked, any friendly NPCs in the chunk will see and gain a memory
+
+  --Engine Changes--
+	- The sprites now scales properly with window resizing

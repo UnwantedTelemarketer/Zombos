@@ -5,7 +5,7 @@
 
 #include <chrono>
 
-#define DOSFONT  "dat/fonts/symbolic/symbolic_chainfence.ttf"
+#define DOSFONT  "dat/fonts/symbolic/symbolic_pedestal_extended.ttf"
 #define ITEMFONT "dat/fonts/symbolic/symbolic_items_extended.ttf"
 #define MOBFONT "dat/fonts/symbolic/symbolic_mobs_extended.ttf"
 #define VGAFONT  "dat/fonts/VGA437.ttf"
@@ -72,6 +72,7 @@ public:
 	bool newGameScreen = false;
 	bool debugMenuScreen = false;
 	bool wrongDir = false;
+	bool deathScreen = false;
 	char saveNameSlot[128];
 
 	//Game Stuff
@@ -226,8 +227,8 @@ public:
 
 			ImGui::Text("\n--UI Settings--");
 			ImGui::SliderInt("Y Separator Value", &ySeparator, 0, 20);
-			ImGui::SliderInt("View Distance (Width)", &yViewDist, 1, 40);
-			ImGui::SliderInt("View Distance (Height)", &xViewDist, 1, 40);
+			ImGui::SliderInt("View Distance (Width)", &yViewDist, 5, 40);
+			ImGui::SliderInt("View Distance (Height)", &xViewDist, 5, 40);
 
 
 			ImGui::Text("\n--Sound Settings--");
@@ -244,7 +245,7 @@ public:
 
 			ImGui::Text("\n--Additional Settings--");
 			if (!map.isUnderground) {
-				if (ImGui::RadioButton("Free View Enabled (Experimental)", game.freeView)) {
+				if (ImGui::RadioButton("Center camera on Player", game.freeView)) {
 					game.freeView = !game.freeView;
 				}
 			}
@@ -345,7 +346,10 @@ public:
 				Audio::Play(sfxs["crunchy_click"]);
 				map.currentSaveName = std::string(saveNameSlot);
 
-				if (DoesDirectoryExist(map.GetCurrentSavePath())) {
+				if (saveNameSlot[0] == 0) {
+					gameScreen.CreatePopup("Error", "Empty save name.");
+				}
+				else if (DoesDirectoryExist(map.GetCurrentSavePath())) {
 
 					OpenedData data;
 					ItemReader::GetDataFromFile(map.GetCurrentSavePath() + "save.eid", "STATS", &data, false);
@@ -387,6 +391,10 @@ public:
 					game.musicvolume = settings.getFloat("musicSound");
 					Audio::StopLoop("menu");
 					Audio::SetVolumeLoop(game.musicvolume, "ambient_day");
+					savedGamesScreen = false;
+					newGameScreen = false;
+					gameScreen.createChar = false;
+					
 
 					for (auto const& eType : Items::EquipmentTypes)
 					{
@@ -636,12 +644,25 @@ public:
 		if (bgSelected != -1) {
 			pInv.clothes = { 1.f, 1.f, 1.f };
 			if (ImGui::Button("Start")) {
-				for (size_t i = 0; i < backgrounds[bgSelected].items.size(); i++)
-				{
-					pInv.AddItemByID(backgrounds[bgSelected].items[i], backgrounds[bgSelected].itemCounts[i]);
+				if (bgSelected != 5) {
+					for (size_t i = 0; i < backgrounds[bgSelected].items.size(); i++)
+					{
+						pInv.AddItemByID(backgrounds[bgSelected].items[i], backgrounds[bgSelected].itemCounts[i]);
+					}
+				}
+				else {
+					for (size_t i = 0; i < Math::RandInt(2,4); i++)
+					{
+						pInv.AddItem(Items::GetRandomItem());
+					}
 				}
 				Audio::StopLoop("menu");
 				Audio::PlayLoop("dat/sounds/music/ambient12.wav", "ambient_day");
+
+				savedGamesScreen = false;
+				newGameScreen = false;
+				gameScreen.createChar = false;
+
 				currentState = playing;
 			}
 		}
@@ -893,6 +914,21 @@ public:
 			SWAP_FONT("ui");
 		}
 
+		if (deathScreen) {
+			ImGui::Begin("Dead");
+			ImGui::Text("You Died!");
+			if (ImGui::Button("Return to Menu")) {
+				currentState = menu;
+				pInv.Restart();
+				player.Restart();
+				game.Restart();
+				deathScreen = false;
+				ImGui::End();
+				return;
+			}
+			ImGui::End();
+		}
+
 
 		ImGui::PopStyleColor(1);
 
@@ -1105,10 +1141,12 @@ public:
 				{
 					ImGui::PushStyleColor(ImGuiCol_Text, Cosmetic::CoveredColor(pInv.items[n].coveredIn));
 				}
+				ImGui::PushID(n);
 				if (ImGui::Selectable((*pInv.GetItemNames())[n].c_str(), is_selected)) {
 					invSelectedName = (*pInv.GetItemNames())[n];
 					currentItemIndex = n;
 				}
+				ImGui::PopID();
 				if (pInv.items[n].coveredIn != nothing)
 				{
 					ImGui::PopStyleColor(1);
@@ -1483,19 +1521,28 @@ public:
 								selectedTile->entity->AddMemory(MemoryType::Observation, ID_PLAYER, -FEELING_TRUST, "wearing a tooth necklace", true);
 							}
 						}
-						if (ImGui::Button("Remember me?")) {
-							std::vector<std::string> memoryMessages = selectedTile->entity->GenerateMessagesForMemories();
-							if (memoryMessages.size() > 0) {
-								selectedTile->entity->message = "Yeah, I remember you. ";
-								for (size_t i = 0; i < memoryMessages.size(); i++)
-								{
-									selectedTile->entity->message += memoryMessages[i];
+						if (selectedTile->entity->feelingTowardsPlayer.overall() != 0.f) {
+							if (ImGui::Button("Remember me?")) {
+								std::vector<std::string> memoryMessages = selectedTile->entity->GenerateMessagesForMemories();
+								if (memoryMessages.size() > 0) {
+									std::string newMessage = "Yeah, I remember you. ";
+									for (size_t i = 0; i < memoryMessages.size(); i++)
+									{
+										newMessage += memoryMessages[i];
+									}
+
+									selectedTile->entity->message = newMessage;
+								}
+								else {
+									selectedTile->entity->message = "You don't look familiar.";
 								}
 							}
-							else {
-								selectedTile->entity->message = "You don't look familiar.";
-							}
 						}
+						/*if (selectedTile->entity->currentQuest.what != "nthng") {
+							if (ImGui::Button("Sure, I'll help.")) {
+
+							}
+						}*/
 					}
 
 
@@ -1609,30 +1656,31 @@ public:
 			}
 
 			//only light fires if we are holding a lighter or match
-			if (pInv.CurrentEquipMatches(weapon, "LIGHTER") || pInv.CurrentEquipMatches(weapon, "MATCH")) {
+			if (pInv.CurrentEquipExists(weapon) && pInv.equippedItems[weapon].canBurnThings) {
 				if (ImGui::Button("Burn Tile")) {
 					selectedTile->liquid = fire;
 					Audio::Play("dat/sounds/start_fire.mp3");
 					map.floodFill(selectedTile->coords, 5, false);
 
-					if (pInv.CurrentEquipMatches(weapon, "MATCH")) {
+					std::string itemName = pInv.equippedItems[weapon].name;
+					if (pInv.equippedItems[weapon].consumable) {
 						pInv.Unequip(weapon);
-						pInv.RemoveItem("MATCH");
+						pInv.RemoveItem(itemName);
 					}
 
-					if (pInv.CurrentEquipMatches(weapon, "LIGHTER")) {
+					if (pInv.equippedItems[weapon].maxDurability != -1.f) {
 						pInv.equippedItems[weapon].durability -= 1;
 						if (pInv.equippedItems[weapon].durability <= 0) {
 							pInv.Unequip(weapon);
 							pInv.RemoveItem("LIGHTER");
-							pInv.AddItemByID("LIGHTER_E");
+							pInv.AddItemByID("LIGHTER_EMPTY");
 						}
 					}
 				}
 			}
 
-			//only mark tile if we are holding chalk
-			if (pInv.CurrentEquipMatches(weapon, "CHALK_W") || pInv.CurrentEquipMatches(weapon, "CHALK_B")) {
+			//only mark tile if we are holding something that marks
+			if (pInv.CurrentEquipExists(weapon) && pInv.equippedItems[weapon].marker) {
 				if (ImGui::Button("Mark Tile")) {
 					Audio::Play("dat/sounds/chalk.mp3");
 					selectedTile->tileColor = pInv.equippedItems[weapon].spriteColor;
@@ -1884,7 +1932,7 @@ public:
 
 		//-=================================================================
 
-		if (player.health <= 0) { currentState = menu; player.health = 100; }
+		if (player.health <= 0) { deathScreen = true; return; }
 
 		if (gameScreen.console_showing) {
 			if (Input::KeyDown(KEY_ENTER)) {

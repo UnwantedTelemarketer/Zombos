@@ -15,6 +15,14 @@ public:
 	float totalWeight = 0.f;
 	float maxWeight = 10.f;
 
+	void Restart() {
+		items.clear();
+		itemNames.clear();
+		equippedItems.clear();
+		maxWeight = 10.f;
+		totalWeight = 0.f;
+	}
+
 	void AddItem(Item it, int count = 1)
 	{
 		if (it.stackable) {

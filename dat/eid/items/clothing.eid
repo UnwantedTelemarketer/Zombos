@@ -76,7 +76,7 @@ effects : [0,0,0,0];
 equipType : 7;
 equipModifier : 1;
 durability : -1;
-sprite : "K";
-spriteColor : [0.3, 0.3, 0.2];
+sprite : "_";
+spriteColor : [0.8, 0.8, 0.7];
 waterproof : true;
 }

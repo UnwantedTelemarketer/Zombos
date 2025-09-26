@@ -1,0 +1,21 @@
+SECTIONS {
+sections : [CUSTOM_ITEM]
+}
+
+CUSTOM_ITEM {
+name : "Item Display Name"; 
+description : "Visual description of the item.";
+weight : 0.0;
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "Text in the log when you consume it";
+useTxt : "Text in the log when you use it.";
+
+effects : [0,0,0,0];
+equipType : 0;
+sprite : "A";
+spriteColor : [1.0, 1.0, 1.0]
+}
+

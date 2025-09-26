@@ -14,7 +14,7 @@ consumeTxt : "You eat a bandage.";
 useTxt : "You wrap a bandage around your wound.";
 effects : [0,0,0,0];
 equipType : 7;
-sprite : "J";
+sprite : "_";
 spriteColor : [0.95, 0.95, 0.15];
 }
 

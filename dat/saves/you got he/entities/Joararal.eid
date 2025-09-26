@@ -1,0 +1,12 @@
+Joararal {
+behaviour : 4;
+faction : 0;
+damage : 10;
+entID : 3;
+health : -15.000000;
+happy : -2.000000;
+fear : 0.000000;
+trust : 0.000000;
+memories : [0,4,,0,4,];
+}
+

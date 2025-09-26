@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <set>
+#include <unordered_set>
 
 enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid = 6, bandage = 7};
 enum biome { desert, ocean, forest, swamp, taiga, grassland, urban, jungle };
@@ -75,9 +76,13 @@ struct Item {
 	Vector3 spriteColor = {1,1,1};
 	float maxDurability = -1.f;
 	float durability = 0.f;
-	bool waterproof = false;
+	std::map<std::string, int> attributes;
 	std::string giveItemOnConsume = "nthng";
 	std::string customSound = "nthng";
+
+	bool waterproof = false;
+	bool marker = false;
+	bool canBurnThings = false;
 
 	void CoverIn(Liquid l, int ticks) {
 		coveredIn = l;
@@ -100,37 +105,48 @@ struct Item {
 		useTxt = item.getString("useTxt");
 		eType = (equipType)item.getInt("equipType");
 		sprite = item.getString("sprite");
-
+		
+		//Each of these trys are an attribute that not all items have, and thus shouldnt need to specify
 		try {
 			maxDurability = item.getFloat("durability");
 			durability = maxDurability;
-		}//this is fine if it doesnt work, not all items have durability and shouldnt need to specify
+		}
 		catch (std::exception e) { maxDurability = -1.f; }
 
 		try {
-			waterproof = item.getBool("waterproof");
-		}//this is fine if it doesnt work, not all items are waterproof
+			 waterproof = item.getBool("waterproof");
+		}
 		catch (std::exception e) { waterproof = false; }
 
 		try {
 			giveItemOnConsume = item.getString("giveItemOnConsume");
-		}//this is fine if it doesnt work, not all items are waterproof
+		}
 		catch (std::exception e) { giveItemOnConsume = "nthng"; }
 
 		try {
 			customSound = item.getString("soundOnUse");
-		}//this is fine if it doesnt work, not all items are waterproof
+		}
 		catch (std::exception e) { customSound = "nthng"; }
+
+		try {
+			marker = item.getBool("marker");
+		}
+		catch (std::exception e) { marker = false; }
+
+		try {
+			canBurnThings = item.getBool("canBurnThings");
+		}
+		catch (std::exception e) { canBurnThings = false; }
 
 		try {
 			cookable = item.getBool("cookable");
 			cooks_into = item.getString("cooksInto");
-		}//this is fine if it doesnt work, not all items are cookable
+		}
 		catch (std::exception e) { cookable = false; }
 
 		try {
 			emissionDist = item.getInt("emissionDistance");
-		}//this is fine if it doesnt work, not all items are emissive
+		}
 		catch (std::exception e) { emissionDist = 0; }
 
 		try {
@@ -210,6 +226,12 @@ struct Feeling{
 			happy + fl.happy,
 		};
 	}
+	Feeling& operator+=(const Feeling& fl) {
+		trust += fl.trust;
+		fear += fl.fear;
+		happy += fl.happy;
+		return *this;
+	}
 
 	Feeling operator-() const {
 		return{
@@ -224,6 +246,16 @@ static Feeling FEELING_HAPPY  = { 0.f,0.f,1.f };
 static Feeling FEELING_ANGRY  = { 0.f,0.f,-1.f };
 static Feeling FEELING_AFRAID = { 0.f,1.f,0.f };
 static Feeling FEELING_TRUST  = { 1.f,0.f,0.f };
+
+enum QuestType {collect, kill};
+
+struct Quest {
+	QuestType qType;
+	std::string what;
+	Vector2_I where;
+};
+
+static Quest nthng = { kill, "nthng", {-5,-5}};
 
 struct Memory {
 	MemoryType type;
@@ -262,6 +294,8 @@ struct Entity {
 	std::string message = "empty";
 	std::string itemWant = "nthng";
 	std::string itemGive = "nthng";
+	Quest currentQuest = nthng;
+	
 	std::vector<std::string> idleSounds;
 	Entity* target = nullptr;
 	std::vector<Item> inv;
@@ -361,11 +395,50 @@ struct Entity {
 		}
 	}
 
+	void SelectQuest() {
+		Vector2_I QuestCoords = { coords.x + Math::RandInt(-15,15), coords.y + Math::RandInt(-15,15) };
+		currentQuest = { (QuestType)Math::RandInt(0,1), "nthng" ,QuestCoords};
+
+		OpenedData c;
+		ItemReader::GetDataFromFile("loot_tables/trade.eid", "WANTS", &c);
+
+		switch(currentQuest.qType){
+		case kill:
+			currentQuest.what = "John Baker";
+			break;
+		case collect:
+			currentQuest.what = c.getArray("items")[Math::RandInt(0, c.getArray("items").size() - 1)];
+			break;
+		default:
+			break;
+		}
+
+	}
+
 	void SelectMessage(std::map<std::string,std::vector<std::string>> npcMessages) {
+
+		if (currentQuest.what != nthng.what)
+		{
+			message = "Hey, would you be able to help me out? I ";
+
+			if (currentQuest.qType == kill) {
+				message += "need you to kill ";
+				message += currentQuest.what;
+				message += ". Would you be able to help me out?";
+			}
+			if (currentQuest.qType == QuestType::collect) {
+				message += "need you to find me a ";
+				message += currentQuest.what;
+				message += ". Would you be able to help me out?";
+			}
+			return;
+		}
+		
+
 		float t = feelingTowardsPlayer.trust;
 		float f = feelingTowardsPlayer.fear;
 		float h = feelingTowardsPlayer.happy;
-
+		
 		float strongest = std::max({ std::abs(t), std::abs(f), std::abs(h) });
 
 		if (strongest < 2.f) {
@@ -390,7 +463,14 @@ struct Entity {
 
 	std::vector<std::string> GenerateMessagesForMemories() {
 		std::vector<std::string> memorySentences = {};
+		std::unordered_set<std::string> repeatMemories;
+
 		for (int i = 0; i < memories.size(); i++) {
+			if (repeatMemories.find(memories[i].event) != repeatMemories.end()) {
+				continue;
+			}
+			repeatMemories.insert(memories[i].event);
+
 			std::string msg = "I ";
 			switch (memories[i].type) {
 			case MemoryType::Observation:
@@ -449,6 +529,27 @@ struct Player {
 	int thirstTick = 0;
 	int hungerTick = 0;
 	int damageMode = 0;
+
+	void Restart() {
+		health = 100;
+		thirst = 100;
+		hunger = 100;
+		damage = 5;
+		bleedingLevel = 0;
+		sicknessLevel = 0;
+		ticksCovered = 0;
+		liquidLast = 50;
+
+		coords = { 0,0 };
+		bodyTemp = 98.5f;
+		bleedTicks = 0;
+		sickTicks = 0;
+		healTick = 0;
+		thirstTick = 0;
+		hungerTick = 0;
+		damageMode = 0;
+		coveredIn = nothing;
+	}
 
 	void TakeDamage(ConsumeEffect type, int dmg) {
 		if (damageMode != 2) { health -= dmg; }
@@ -602,12 +703,12 @@ struct Saved_Tile {
 	int ticksPassed = 0;
 	int ticksNeeded = 1;
 	int liquidTicks = 0;
-	bool hasItem = false;
 	std::string itemName = "NULL";
-	int x, y = 0;
 	short biomeID;
 	bool hasContainer = false;
 	Saved_Container cont;
+	bool colorDiff = false;
+	Vector3 tempColor = {0,0,0};
 
 	void Serialize(std::ofstream& stream) {
 		stream.write(reinterpret_cast<const char*>(&id), sizeof(id));
@@ -617,13 +718,16 @@ struct Saved_Tile {
 		stream.write(reinterpret_cast<const char*>(&ticksPassed), sizeof(ticksPassed));
 		stream.write(reinterpret_cast<const char*>(&ticksNeeded), sizeof(ticksNeeded));
 		stream.write(reinterpret_cast<const char*>(&liquidTicks), sizeof(liquidTicks));
-		stream.write(reinterpret_cast<const char*>(&hasItem), sizeof(hasItem));
-		stream.write(reinterpret_cast<const char*>(&x), sizeof(x));
-		stream.write(reinterpret_cast<const char*>(&y), sizeof(y));
 		stream.write(reinterpret_cast<const char*>(&biomeID), sizeof(biomeID));
 		stream.write(reinterpret_cast<const char*>(&hasContainer), sizeof(hasContainer));
 		if (hasContainer) {
 			cont.Serialize(stream);
+		}
+		stream.write(reinterpret_cast<const char*>(&colorDiff), sizeof(colorDiff));
+		if (colorDiff) {
+			stream.write(reinterpret_cast<const char*>(&tempColor.x), sizeof(tempColor.x));
+			stream.write(reinterpret_cast<const char*>(&tempColor.y), sizeof(tempColor.y));
+			stream.write(reinterpret_cast<const char*>(&tempColor.z), sizeof(tempColor.z));
 		}
 
 		size_t size = itemName.size();
@@ -641,13 +745,16 @@ struct Saved_Tile {
 		stream.read(reinterpret_cast<char*>(&ticksPassed), sizeof(ticksPassed));
 		stream.read(reinterpret_cast<char*>(&ticksNeeded), sizeof(ticksNeeded));
 		stream.read(reinterpret_cast<char*>(&liquidTicks), sizeof(liquidTicks));
-		stream.read(reinterpret_cast<char*>(&hasItem), sizeof(hasItem));
-		stream.read(reinterpret_cast<char*>(&x), sizeof(x));
-		stream.read(reinterpret_cast<char*>(&y), sizeof(y));
 		stream.read(reinterpret_cast<char*>(&biomeID), sizeof(biomeID));
 		stream.read(reinterpret_cast<char*>(&hasContainer), sizeof(hasContainer));
 		if (hasContainer) {
 			cont.Deserialize(stream);
+		}
+		stream.read(reinterpret_cast<char*>(&colorDiff), sizeof(colorDiff));
+		if (colorDiff) {
+			stream.read(reinterpret_cast<char*>(&tempColor.x), sizeof(tempColor.x));
+			stream.read(reinterpret_cast<char*>(&tempColor.y), sizeof(tempColor.y));
+			stream.read(reinterpret_cast<char*>(&tempColor.z), sizeof(tempColor.z));
 		}
 
 		size_t size = 0;
@@ -773,10 +880,7 @@ static void CreateSavedTile(Saved_Tile* sTile, Tile tile) {
 	sTile->ticksPassed = tile.ticksPassed;
 	sTile->ticksNeeded = tile.ticksNeeded;
 	sTile->liquidTicks = tile.liquidTime;
-	sTile->hasItem = tile.hasItem;
 	sTile->itemName = tile.itemName == "NULL" ? "_" : tile.itemName;
-	sTile->x = tile.coords.x;
-	sTile->y = tile.coords.y;
 	sTile->biomeID = tile.biomeID;
 
 	if (tile.tileContainer != nullptr) {
@@ -786,6 +890,10 @@ static void CreateSavedTile(Saved_Tile* sTile, Tile tile) {
 		for (auto const& item : tile.tileContainer->items) {
 			sTile->cont.items.push_back(item.section);
 		}
+	}
+	if (tile.tileColor != tile.mainTileColor && tile.liquid == Liquid::nothing) {
+		sTile->tempColor = tile.tileColor;
+		sTile->colorDiff = true;
 	}
 }
 

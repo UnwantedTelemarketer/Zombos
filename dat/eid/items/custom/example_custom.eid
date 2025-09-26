@@ -1,0 +1,51 @@
+//Section required to list out all items in the file
+SECTIONS {
+sections : [ITEM_NAME]
+}
+
+//=-----ConsumeEffects------ 
+none = 0,
+heal = 1,
+quench = 2,
+saturate = 3,
+pierceDamage = 4,
+bluntDamage = 5,
+coverInLiquid = 6
+
+--------EQUIP TYPE --------
+0 for none,
+1 for weapon,
+2 for hat, 
+3 for shirt,
+4 for pants
+
+//HEADER FOR ITEM NAME
+ITEM_NAME {
+name : "Item Display Name"; 
+description : "Visual description of the item.";
+weight : 0.0;
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "Text in the log when you consume it";
+useTxt : "Text in the log when you use it.";
+
+//effect is in pairs: {consumeeffect, amount}. So theres consume effect, its amount, use effect, its amount
+effects : [0,0,0,0];
+equipType : 0;
+sprite : "A";
+spriteColor : [0.0, 0.0, 0.0]
+
+//Optional attributes for the item
+
+marker : true;					//lets this mark tiles with its color
+canBurnThings : true;			//lets you burn tiles when its equipped
+waterproof : true;				//keeps the player dry when equipped
+giveItemOnConsume : "nothing";  //lets it change to something when consumed, ex. a wrapper from eating a candy bar
+soundOnUse : "sound.mp3";		//the custom sound file to play when its used
+cookable : true;				//lets it cook into something in a fire
+cooksInto : "BREAD";
+emissionDistance : 5;			//lets it emit light when on the ground or equipped
+}
+

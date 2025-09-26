@@ -106,7 +106,7 @@ consumeTxt : "You drink the energy drink. You feel wired.";
 useTxt : "Does Nothig.";
 effects : [2,3,0,0];
 equipType : 0;
-sprite : "G";
+sprite : "-";
 spriteColor : [1.0, 0.1, 0.2];
 }
 

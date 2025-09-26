@@ -96,6 +96,8 @@ public:
 	void LoadData();
 	std::string GetWalkSound();
 
+	void Restart();
+
 	std::string GetItemChar(Tile* tile);
 	ImVec4 GetItemColor(Tile* tile, float intensity);
 	std::string GetTileChar(Tile* tile);
@@ -194,7 +196,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	grassWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };
 	rockWalk = { "dat/sounds/movement/rock_walk1.wav","dat/sounds/movement/rock_walk2.wav", "dat/sounds/movement/rock_walk3.wav" };
 	mainMap.SetWeather(clear);
-	mainMap.ticksUntilWeatherUpdate = Math::RandInt(15, 600);
+	mainMap.ticksUntilWeatherUpdate = Math::RandInt(600, 800);
 	worldTimeTicks = 1950; // 1pm
 
 	//if(seed == -1) deleteAllFilesInDirectory();
@@ -211,6 +213,10 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	
 	mainMap.isUnderground = false;
 	Math::PushBackLog(&actionLog, "Press H to open the help menu.");
+}
+
+void GameManager::Restart() {
+	mainMap.Restart();
 }
 
 void GameManager::AddRecipes() {

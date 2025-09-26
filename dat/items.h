@@ -113,9 +113,8 @@ namespace Tiles {
 		createdTile->ticksPassed = tile.ticksPassed;
 		createdTile->ticksNeeded = tile.ticksNeeded;
 		createdTile->liquidTime = tile.liquidTicks;
-		createdTile->hasItem = tile.hasItem;
 		createdTile->itemName = tile.itemName == "_" ? "NULL" : tile.itemName;
-		createdTile->coords = { tile.x, tile.y };
+		createdTile->hasItem = tile.itemName != "_";
 		createdTile->biomeID = tile.biomeID;
 
 		//load static data from the tile to save file size
@@ -143,6 +142,19 @@ namespace Items {
 
 	static Vector3 GetItemColor (std::string itemName) {
 		return colors[itemName];
+	}
+
+	static Item GetRandomItem() {
+		static std::random_device rd;
+		static std::mt19937 gen(rd());
+
+		std::uniform_int_distribution<size_t> dist(0, list.size() - 1);
+
+		size_t index = dist(gen);
+		auto it = list.begin();
+		std::advance(it, index);
+
+		return it->second;
 	}
 
 	static std::string GetRandomItemFromPool(std::string filename) {

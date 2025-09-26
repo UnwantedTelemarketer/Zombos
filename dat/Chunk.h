@@ -17,6 +17,7 @@ public:
 	Vector2_I globalChunkCoord;
 	Tile localCoords[CHUNK_WIDTH][CHUNK_HEIGHT];
 	std::vector<Entity*> entities;
+	std::map<int, Entity*> entsByID;
 
 	Tile* GetTileAtCoords(int x, int y) {
 		return GetTileAtCoords({ x, y });
@@ -30,6 +31,30 @@ public:
 		if (xInvalid && yInvalid) { return nullptr; }
 
 		return &localCoords[pos.x][pos.y];
+	}
+
+	void AddEntity(Entity* ent) {
+		entities.push_back(ent);
+		entsByID.insert({ent->entityID, ent});
+	}
+
+	void RemoveEntity(Entity* ent) {
+		int indexOfEnt = -1;
+
+		for (int i = 0; i < entities.size(); i++)
+		{
+			if (entities[i] == ent) {
+				indexOfEnt = i;
+				break;
+			}
+		}
+		entities.erase(entities.begin() + indexOfEnt);
+
+		entsByID.erase(ent->entityID);
+	}
+
+	void RemoveEntity(int entID) {
+		RemoveEntity(entsByID[entID]);
 	}
 
 	void LoadChunk(Vector2_I coords, std::string currentSaveName) {
@@ -66,11 +91,12 @@ public:
 		globalChunkCoord = coords;
 
 		//once deserialized, read the data into the tiles
-		for (size_t i = 0; i < CHUNK_WIDTH; i++)
+		for (int i = 0; i < CHUNK_WIDTH; i++)
 		{
-			for (size_t j = 0; j < CHUNK_HEIGHT; j++)
+			for (int j = 0; j < CHUNK_HEIGHT; j++)
 			{
 				Tiles::LoadTile(&localCoords[i][j], sChunk.tiles[i][j]);
+				localCoords[i][j].coords = { i, j };
 				//Correctly load the correct color of tile if its grass
 				if (localCoords[i][j].id == 1) 
 				{
@@ -98,6 +124,10 @@ public:
 					for (auto const& item : sChunk.tiles[i][j].cont.items) {
 						localCoords[i][j].tileContainer->AddItem(Items::GetItem(item));
 					}
+				}
+
+				if (sChunk.tiles[i][j].colorDiff) {
+					localCoords[i][j].tileColor = sChunk.tiles[i][j].tempColor;
 				}
 			}
 		}
@@ -254,10 +284,7 @@ static void CreateSavedChunk(Saved_Chunk* sChunk, Chunk ch) {
 			sChunk->tiles[i][j].burningFor = ch.localCoords[i][j].burningFor;
 			sChunk->tiles[i][j].ticksPassed = ch.localCoords[i][j].ticksPassed;
 			sChunk->tiles[i][j].ticksNeeded = ch.localCoords[i][j].ticksNeeded;
-			sChunk->tiles[i][j].hasItem = ch.localCoords[i][j].hasItem;
 			sChunk->tiles[i][j].itemName = ch.localCoords[i][j].itemName;
-			sChunk->tiles[i][j].x = ch.localCoords[i][j].coords.x;
-			sChunk->tiles[i][j].y = ch.localCoords[i][j].coords.y;
 			sChunk->tiles[i][j].biomeID = ch.localCoords[i][j].biomeID;
 		}
 	}
