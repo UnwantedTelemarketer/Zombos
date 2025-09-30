@@ -251,9 +251,12 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 	Entity* tempTarget = nullptr;
 	bool moved = false;
 	ent->tempViewDistance = isDark() ? ent->viewDistance * 2 : ent->viewDistance;
-	if (ent->idleSounds.size() > 0) {
-		if (Math::RandInt(0, 25) == 1) {
-			Audio::Play(ent->RandomIdleSound());
+
+	if (chunkInUse->globalChunkCoord == mainMap.c_glCoords) {
+		if (ent->idleSounds.size() > 0) {
+			if (Math::RandInt(0, 25) == 1) {
+				Audio::Play(ent->RandomIdleSound());
+			}
 		}
 	}
 
@@ -292,8 +295,10 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		//check if player is near
 		if (path.size() < ent->viewDistance) {
 			ent->targetingPlayer = true;
-			if (ent->name == "Zombie" && Math::RandInt(0,20) == 1) {
-				Audio::Play("dat/sounds/zombie_angry.mp3");
+			if (chunkInUse->globalChunkCoord == mainMap.c_glCoords) {
+				if (ent->name == "Zombie" && Math::RandInt(0, 20) == 1) {
+					Audio::Play("dat/sounds/zombie_angry.mp3");
+				}
 			}
 		}
 		else {
@@ -442,7 +447,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		ent->coveredIn = nothing;
 	}
 
-	if (moved) {
+	if (moved && chunkInUse->globalChunkCoord == mainMap.c_glCoords) {
 		auto tileCheck = chunkInUse->GetTileAtCoords(ent->coords);
 		if (tileCheck && tileCheck->itemName == "BEAR_TRAP") {
 			Audio::Play("dat/sounds/bear_trap.mp3");

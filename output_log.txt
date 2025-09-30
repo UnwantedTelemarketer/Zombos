@@ -17,9 +17,7 @@
 [ Line 92 ]: [0;37mtiles.eid[0m
 [ Line 102 ]: [1;32mLoaded Tiles![0m
 [ Line 225 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
-[ Line 79 ]: [1;32mLoaded texture from res/bg.png.[0m
-[ Line 10 ]: [1;32mSuccesfully created object BG[0m
-[ Line 79 ]: [1;32mLoaded texture from res/plank.png.[0m
+[ Line 79 ]: [1;32mLoaded texture from res/logo.png.[0m
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
 [ Line 132 ]: [0;33mLoading dialogue...[0m
 [ Line 167 ]: [0;37mCALM_WANDERER[0m
@@ -30,13 +28,11 @@
 [ Line 167 ]: [0;37mTRUST_WANDERER[0m
 [ Line 167 ]: [0;37mUNTRUST_WANDERER[0m
 [ Line 186 ]: [1;32mFinished loading dialogue![0m
-[ Line 1879 ]: [1;32mDone![0m
+[ Line 1873 ]: [1;32mDone![0m
 [ Line 40 ]: [1;31m0[0m
-[ Line 329 ]: [1;32mNew save created successfully![0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/cvv/entities/names.eid', but can't find file.[0m
-[ Line 273 ]: [1;32mReading Chunk from dat/saves/cvv/map/249250.chunk[0m
-[ Line 273 ]: [1;32mReading Chunk from dat/saves/cvv/map/251250.chunk[0m
-[ Line 273 ]: [1;32mReading Chunk from dat/saves/cvv/map/250251.chunk[0m
+[ Line 324 ]: [1;32mNew save created successfully![0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/kok/entities/names.eid', but can't find file.[0m
+[ Line 273 ]: [1;32mReading Chunk from dat/saves/kok/map/251249.chunk[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/cvv/save.eid[0m
-[ Line 214 ]: [1;32mSave complete in 18.502018ms.[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/kok/save.eid[0m
+[ Line 214 ]: [1;32mSave complete in 18.888836ms.[0m

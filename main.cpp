@@ -259,11 +259,6 @@ public:
 	void MenuScene() {
 		ImGui::PushFont(Engine::Instance().getFont("ui"));
 		//ImGui::ShowDemoWindow();
-		ImGui::Begin("title");
-		ImGui::SetFontSize(48.f);
-		ImGui::Text("By The Fire");
-		ImGui::SetFontSize(16.f);
-		ImGui::End();
 
 		if (Input::KeyDown(KEY_GRAVE_ACCENT)) {
 			debugMenuScreen = !debugMenuScreen;
@@ -1563,7 +1558,7 @@ public:
 					}
 				}
 
-				ImGui::TextColored({ 0,1.0f,0.5f,1.f }, "--------------------");
+				ImGui::TextColored({ 0,1.0f,0.5f,1.f }, "---------------------");
 			}
 
 			else if (curCont != nullptr) {
@@ -1839,8 +1834,7 @@ public:
 		//std::thread tileLoading = Tiles::LoadTilesFromFiles(&game.tile_colors);
 
 		Engine::Instance().AddScene(&main);
-		main.CreateObject("BG", { -1,-1 }, { 2,2 }, "res/bg.png");
-		main.CreateObject("Box", { -0.5,-0.25 }, { 1,1 }, "res/plank.png");
+		main.CreateObject("Box", { -0.5,-0.25 }, { 1,1 }, "res/logo.png");
 		p = main.FindObject("Box");
 
 		gameScreen.fancyGraphics = true;

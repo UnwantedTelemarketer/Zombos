@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [CHALK_W,CHALK_B]
+sections : [CHALK_W,CHALK_B,CHALK_R,CHALK_G]
 }
 
 CHALK_W {
@@ -38,4 +38,42 @@ durability : 40;
 marker : true;
 sprite : "A";
 spriteColor : [0.65, 0.65, 0.95];
+}
+
+CHALK_R {
+name : "Chalk Stick (Red)";
+description : "Stick of red-ish chalk.";
+weight : 0.25f;
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "You eat a bandage.";
+useTxt : "You wrap a bandage around your wound.";
+effects : [0,0,0,0];
+equipType : 1;
+equipModifier : 1;
+durability : 40;
+marker : true;
+sprite : "A";
+spriteColor : [0.95, 0.65, 0.65];
+}
+
+CHALK_G {
+name : "Chalk Stick (Green)";
+description : "Stick of green-ish chalk.";
+weight : 0.25f;
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "You eat a bandage.";
+useTxt : "You wrap a bandage around your wound.";
+effects : [0,0,0,0];
+equipType : 1;
+equipModifier : 1;
+durability : 40;
+marker : true;
+sprite : "A";
+spriteColor : [0.65, 0.95, 0.65];
 }
