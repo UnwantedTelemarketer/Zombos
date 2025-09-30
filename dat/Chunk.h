@@ -239,6 +239,10 @@ public:
 		{
 			for (size_t j = 0; j < CHUNK_HEIGHT; j++)
 			{
+				if (localCoords[i][j].tileLerpID != "nthng") {
+					Utilities::RemoveLerp(localCoords[i][j].tileLerpID);
+				}
+
 				CreateSavedTile(&sChunk->tiles[i][j], localCoords[i][j]);
 			}
 		}

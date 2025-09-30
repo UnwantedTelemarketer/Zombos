@@ -32,3 +32,11 @@
 [ Line 186 ]: [1;32mFinished loading dialogue![0m
 [ Line 1879 ]: [1;32mDone![0m
 [ Line 40 ]: [1;31m0[0m
+[ Line 329 ]: [1;32mNew save created successfully![0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/cvv/entities/names.eid', but can't find file.[0m
+[ Line 273 ]: [1;32mReading Chunk from dat/saves/cvv/map/249250.chunk[0m
+[ Line 273 ]: [1;32mReading Chunk from dat/saves/cvv/map/251250.chunk[0m
+[ Line 273 ]: [1;32mReading Chunk from dat/saves/cvv/map/250251.chunk[0m
+[ Line -1 ]: [0;37mNow saving...[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/cvv/save.eid[0m
+[ Line 214 ]: [1;32mSave complete in 18.502018ms.[0m

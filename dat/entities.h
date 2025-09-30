@@ -794,6 +794,7 @@ struct Tile {
 	vec3 tileColor;
 	vec3 mainTileColor;
 	short biomeID;
+	std::string tileLerpID = "nthng";
 
 	bool CanUpdate() {
 		return ticksPassed >= ticksNeeded && changesOverTime;
@@ -837,7 +838,9 @@ struct Tile {
 			tileColor = { 0.5f, 0.3f, 0 };
 			break;
 		case nothing:
-			Utilities::Lerp("tileColor" + std::to_string(Math::RandInt(1, 50000)), &tileColor, mainTileColor, 0.5f);
+			std::string lerpID = "tileColor" + std::to_string(Math::RandInt(1, 50000));
+			tileLerpID = lerpID;
+			Utilities::Lerp(lerpID, &tileColor, mainTileColor, 0.5f);
 			break;
 		}
 		 

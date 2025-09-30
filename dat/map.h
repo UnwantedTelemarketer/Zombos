@@ -232,7 +232,6 @@ void Map::UnloadChunks(std::vector<Vector2_I> chunksToDelete) {
 
 	//remove them
 	for (auto& vec : chunksToDelete) {
-		//world.chunks[vec]->SaveChunk();
 		world.chunks.erase(vec);
 
 		auto it = world.chunks.find(vec);
@@ -501,7 +500,11 @@ int Map::GetEffectFromThisOrNeighbor(Vector2_I tilecoords) {
 
 Tile* Map::TileAtPos(Vector2_I coords)
 {
-	return &CurrentChunk()->localCoords[coords.x][coords.y];
+	/*if (coords.x >= 30 || coords.x < 0 || coords.y >= 30 || coords.y < 0) {
+		Console::Log("Tried to access invalid tile coords in current chunk: " + std::to_string(coords.x) + "," + std::to_string(coords.y), text::red, __LINE__);
+		return nullptr;
+	}*/
+	return CurrentChunk()->GetTileAtCoords(coords);
 }
 
 Tile* Map::GetTileFromThisOrNeighbor(Vector2_I tilecoords, Vector2_I global_coords) {
@@ -1433,10 +1436,11 @@ void Map::ClearEntities(std::shared_ptr<Chunk> chunk)
 	for (int i = 0; i < chunk->entities.size(); i++)
 	{
 		Vector2_I coord = chunk->entities[i]->coords;
-		try {
+		if (coord.x >= 0 && coord.x < 30 && coord.y >= 0 && coord.y < 30) {
 			chunk->localCoords[coord.x][coord.y].entity = nullptr;
-		} catch(std::exception e) { LAZY_LOG(e.what()) }
+		}
 	}
+	
 }
 
 void Map::ClearChunkOfEnts(std::shared_ptr<Chunk> chunk)
@@ -1591,6 +1595,8 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 	//set fire to tiles
 	for (int i = 0; i < tilesToBurn.size(); i++)
 	{
+		if (tilesToBurn[i].x < 0 || tilesToBurn[i].x >= CHUNK_WIDTH || tilesToBurn[i].y < 0 || tilesToBurn[i].y >= CHUNK_HEIGHT) { continue; }
+
 		if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].burningFor > 5) { continue; }
 		else if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].burningFor < 0) { continue; }
 		if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].liquid != nothing) {

@@ -416,14 +416,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		}
 	}
 
-	if (moved) {
-		if (mainMap.TileAtPos(ent->coords)->itemName == "BEAR_TRAP") {
-			Audio::Play("dat/sounds/bear_trap.mp3");
-			ent->health -= 35;
-			mainMap.TileAtPos(ent->coords)->itemName = "BEAR_TRAP_C";
-		}
-		Audio::Play(quietWalkSounds[Math::RandInt(0, 2)]);
-	}
+	
 	if (ent->coords == mPlayer.coords || mainMap.GetTileFromThisOrNeighbor(ent->coords)->walkable == false) {
 		ent->coords = oldCoords;
 		return;
@@ -447,6 +440,16 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 	}
 	else {
 		ent->coveredIn = nothing;
+	}
+
+	if (moved) {
+		auto tileCheck = chunkInUse->GetTileAtCoords(ent->coords);
+		if (tileCheck && tileCheck->itemName == "BEAR_TRAP") {
+			Audio::Play("dat/sounds/bear_trap.mp3");
+			ent->health -= 35;
+			tileCheck->itemName = "BEAR_TRAP_C";
+		}
+		Audio::Play(quietWalkSounds[Math::RandInt(0, 2)]);
 	}
 }
 
@@ -810,12 +813,12 @@ void GameManager::UpdateTick() {
 
 		//hardcoded version of updating surrounding chunks
 		T_UpdateChunk(this, mainMap.c_glCoords);
-		/*if (!mainMap.isUnderground) {
+		if (!mainMap.isUnderground) {
 			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x + 1,  mainMap.c_glCoords.y });
 			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x - 1,  mainMap.c_glCoords.y });
 			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y + 1 });
 			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y - 1 });
-		}*/
+		}
 		testTime = (glfwGetTime() - curTime) * 1000;
 
 		//Utilities::Lerp("playertemp", &mPlayer.visualTemp, mPlayer.bodyTemp, 0.5f);

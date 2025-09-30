@@ -40,6 +40,9 @@ namespace antibox {
 			antibox::Engine::Instance().LerpFloat(lerpID + "2", &val->y, endVal.y, time);
 			antibox::Engine::Instance().LerpFloat(lerpID + "3", &val->z, endVal.z, time);
 		}
+		void RemoveLerp(std::string id) {
+			antibox::Engine::Instance().RemoveLerp(id);
+		}
 	}
 
 	namespace Audio {

@@ -42,6 +42,8 @@ namespace antibox {
 		void SetVolumeLoop(float volume, std::string name);
 		float GetVolume();
 		void LerpFloat(std::string lerpID, float* val, float endVal, float time);
+		//Remove lerp by its id if its in there
+		void RemoveLerp(std::string id) { floatsToLerp.erase(id); }
 
 		~Engine(); //Destructor
 
