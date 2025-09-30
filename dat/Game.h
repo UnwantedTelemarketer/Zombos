@@ -206,9 +206,10 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 
 	//Faction, Enemies
 	factionEnemies = {
-		{Human_W, {Zombie}},
+		{Human_W, {Zombie, Bandit}},
 		{Zombie, {Human_W, Wildlife}},
-		{Wildlife, {}}
+		{Wildlife, {}},
+		{Bandit, {Human_W, Zombie}},
 	};
 	
 	mainMap.isUnderground = false;

@@ -119,7 +119,7 @@ public:
 	int bgSelected = -1;
 	std::vector<classes> backgrounds = 
 	{	{"Fighter",		{"MACHETE", "LEATHER_JACKET", "ROCK"}, {1, 1, 10}},
-		{"Survivalist", {"MATCH", "RAINCOAT", "BANDAGE"}, {5, 1, 2}},
+		{"Survivalist", {"MATCH", "RAINCOAT", "BANDAGE", "BOTTLED_WATER"}, {5, 1, 2, 1}},
 		{"Hunter",		{"BEAR_TRAP", "LEATHER_BOOTS", "CAMPFIRE"}, {2, 1, 1}},
 		{"Explorer",	{"RATION", "LEATHER_BOOTS", "BITS"}, {5, 1, 10}},
 		{"Vagrant",		{"ROCK", "STICK", "ROPE"}, {5, 5, 3}},

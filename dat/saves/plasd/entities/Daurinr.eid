@@ -1,0 +1,12 @@
+Daurinr {
+behaviour : 4;
+faction : 0;
+damage : 10;
+entID : 3;
+health : 0.000000;
+happy : -7.000000;
+fear : 0.000000;
+trust : 0.000000;
+memories : [0,2,attack my friend,0,4,];
+}
+

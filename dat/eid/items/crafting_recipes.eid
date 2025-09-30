@@ -15,7 +15,8 @@ sections : [CAMPFIRE,
 			LEATHER_BOOTS,
 			BULL_KNIFE,
 			CLOTH_TORCH,
-			BEAR_TRAP]
+			BEAR_TRAP,
+			STERILE_CLOTH]
 }
 
 CAMPFIRE {
@@ -85,4 +86,8 @@ recipe : [BEAR_TRAP_C,1];
 
 LIGHTER {
 recipe : [LIGHTER_EMPTY,1,RESIN,10];
+}
+
+STERILE_CLOTH {
+recipe : [OLD_CLOTH,1,BOTTLED_ALCOHOL,1];
 }

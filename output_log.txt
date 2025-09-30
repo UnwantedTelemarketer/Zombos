@@ -31,8 +31,24 @@
 [ Line 1873 ]: [1;32mDone![0m
 [ Line 40 ]: [1;31m0[0m
 [ Line 324 ]: [1;32mNew save created successfully![0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/kok/entities/names.eid', but can't find file.[0m
-[ Line 273 ]: [1;32mReading Chunk from dat/saves/kok/map/251249.chunk[0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/restart test/entities/names.eid', but can't find file.[0m
+[ Line 273 ]: [1;32mReading Chunk from dat/saves/restart test/map/249252.chunk[0m
+[ Line 273 ]: [1;32mReading Chunk from dat/saves/restart test/map/251252.chunk[0m
+[ Line 273 ]: [1;32mReading Chunk from dat/saves/restart test/map/249250.chunk[0m
+[ Line 273 ]: [1;32mReading Chunk from dat/saves/restart test/map/249251.chunk[0m
+[ Line 273 ]: [1;32mReading Chunk from dat/saves/restart test/map/249252.chunk[0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/restart test/save.eid', but can't find file.[0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/restart test/save.eid', but can't find file.[0m
+[ Line 273 ]: [1;32mReading Chunk from dat/saves/restart test/map/-1-1.chunk[0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/eid/save.eid', but can't find file.[0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/eid/save.eid', but can't find file.[0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/eid/save.eid', but can't find file.[0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/eid/save.eid', but can't find file.[0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/eid/save.eid', but can't find file.[0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/eid/save.eid', but can't find file.[0m
+[ Line 331 ]: [1;31mFailed to create save or save exists![0m
+[ Line 324 ]: [1;32mNew save created successfully![0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/rasda/entities/names.eid', but can't find file.[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/kok/save.eid[0m
-[ Line 214 ]: [1;32mSave complete in 18.888836ms.[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/rasda/save.eid[0m
+[ Line 214 ]: [1;32mSave complete in 19.372133ms.[0m

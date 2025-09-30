@@ -662,6 +662,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 # Output directory
 ################################################################################
 
+#find_package(Freetype REQUIRED)
+
 if(WIN32)
     if("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         set_target_properties(${PROJECT_NAME} PROPERTIES
@@ -889,16 +891,19 @@ if(WIN32)
         set(ADDITIONAL_LIBRARY_DEPENDENCIES
             "glfw3;"
             "opengl32"
+            #"Freetype::Freetype"
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x64")
         set(ADDITIONAL_LIBRARY_DEPENDENCIES
             "glfw3;"
             "opengl32"
+            #"Freetype::Freetype"
         )
     elseif("${CMAKE_VS_PLATFORM_NAME}" STREQUAL "x86")
         set(ADDITIONAL_LIBRARY_DEPENDENCIES
             "glfw3;"
             "opengl32"
+            #"Freetype::Freetype"
         )
     endif()
 elseif(UNIX)

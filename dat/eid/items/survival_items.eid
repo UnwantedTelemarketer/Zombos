@@ -1,5 +1,7 @@
 SECTIONS {
-sections : [BANDAGE,CLOTH_TORCH,LIGHTER,CANTEEN,GUTS,GLASS_JAR,GLOWING_MUSHROOM_JAR,LANTERN,MATCH,BEAR_TRAP,BEAR_TRAP_C,LIGHTER_EMPTY];
+sections : [BANDAGE,CLOTH_TORCH,LIGHTER,CANTEEN,GUTS,GLASS_JAR,
+			GLOWING_MUSHROOM_JAR,LANTERN,MATCH,BEAR_TRAP,
+			BEAR_TRAP_C,LIGHTER_EMPTY,STERILE_CLOTH];
 }
 
 BANDAGE {
@@ -12,6 +14,23 @@ consumable : true;
 amount : 1;
 consumeTxt : "You eat a bandage.";
 useTxt : "You wrap a bandage around your wound.";
+effects : [0,0,7,1];
+soundOnUse : "dat/sounds/bandage.mp3";
+equipType : 0;
+sprite : "J";
+spriteColor : [0.95, 0.95, 0.85];
+}
+
+STERILE_CLOTH {
+name : "Sterile Cloth";
+description : "Clean cloth that can be used to stop bleeding.";
+weight : 0.5;
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+amount : 1;
+consumeTxt : "You eat a bandage.";
+useTxt : "You wrap a cloth around your wound.";
 effects : [0,0,7,1];
 soundOnUse : "dat/sounds/bandage.mp3";
 equipType : 0;

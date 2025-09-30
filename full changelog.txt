@@ -6,6 +6,8 @@
 		-Skull
 		-Chalk (Blue)
 		-Chalk (White)
+		-Chalk (Red)
+		-Chalk (Green)
 		-Energy Drink
 		-Empty Can
 		-Canned Food
@@ -15,13 +17,30 @@
 		-Tooth Necklace
 		-Moss
 		-Living Moss
+		-Bottled Alcohol
+		-Empty Glass Bottle
+		-Bottled Water
+		-Empty Bottle
+		-Sterile Cloth (from tattered cloth, can bandage)
 	- Tiles added
 		-Pedestal
 		-Mossy Stone
+		-Gravestone
+	- Can bandage with tattered cloth, adds sickness
+	- New Item Tags
+		- marker - for chalk, allows drawing on walls and ground
+		- canBurnThings - for lighter and matches, allows starting fires
 	- Biomes are now much larger, and blend on the edges into each other
 	- A full day/night cycle is now about 20 minutes, 11 being day and 9 being night
 	- When a campfire with two npcs is generated, they are spawned as friends
 	- When an npc is attacked, any friendly NPCs in the chunk will see and gain a memory
+	- Bandits now dislike humans and vice versa
+	- Surrounding chunks are now updated each tick along with players chunk
+	- Lightning now strikes during thunder storms and lights fires
+	- Can now properly back out to the main menu from the game, and restart when you die
+	- NPC Quests started
+	- Tiles now save their modified color
+	- Amnesiac role now spawns with 1-4 random items
 
   --Engine Changes--
 	- The sprites now scales properly with window resizing

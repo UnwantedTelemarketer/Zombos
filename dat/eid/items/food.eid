@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [MEAT,COOKED_MEAT,OVERCOOKED_MEAT,BURNT_MEAT,RATION,ENERGY_DRINK]
+sections : [MEAT,COOKED_MEAT,OVERCOOKED_MEAT,BURNT_MEAT,RATION,ENERGY_DRINK,BOTTLED_WATER,BOTTLED_ALCOHOL,CANNED_FOOD]
 }
 
 MEAT {
@@ -109,6 +109,41 @@ equipType : 0;
 sprite : "-";
 spriteColor : [1.0, 0.1, 0.2];
 }
+
+BOTTLED_WATER {
+name : "Bottled Water";
+description : "Water in a plastic bottle.";
+weight : 0.2;
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+giveItemOnConsume : "EMPTY_BOTTLE";
+amount : 1;
+consumeTxt : "You drink the water bottle. You feel refreshed.";
+useTxt : "Does Nothig.";
+effects : [2,3,0,0];
+equipType : 0;
+sprite : "-";
+spriteColor : [0.3, 0.3, 0.55];
+}
+
+BOTTLED_ALCOHOL {
+name : "Bottled Alcohol";
+description : "Alcohol in a glass bottle.";
+weight : 0.2;
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+giveItemOnConsume : "EMPTY_GLASS_BOTTLE";
+amount : 1;
+consumeTxt : "You drink the alcohol. You feel tipsy.";
+useTxt : "Does Nothig.";
+effects : [2,2,0,0];
+equipType : 0;
+sprite : "-";
+spriteColor : [0.3, 0.3, 0.3];
+}
+
 
 CANNED_FOOD {
 name : "Canned Food";

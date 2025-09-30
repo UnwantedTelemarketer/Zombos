@@ -26,7 +26,7 @@
 1224	1785	7809294821816012	CMakeFiles/antibox_cmake.dir/Libraries/include/imgui/imgui_widgets.cpp.obj	86f1a6d9f5fdc6d4
 80	1861	7809294810373432	CMakeFiles/antibox_cmake.dir/Libraries/include/antibox/graphics/shader.cpp.obj	3fd1038a19f4559c
 117	1868	7809294810743515	CMakeFiles/antibox_cmake.dir/Libraries/include/glm/detail/glm.cpp.obj	244c72be3af1143
-53	3238	7809358550214951	CMakeFiles/antibox_cmake.dir/main.cpp.obj	5fda9a7674ab6248
+43	3174	7809433858794733	CMakeFiles/antibox_cmake.dir/main.cpp.obj	5fda9a7674ab6248
 107	1932	7809294810643492	CMakeFiles/antibox_cmake.dir/Libraries/include/antibox/objects/scene.cpp.obj	4bbbb7789a73e718
 41	2406	7809294809983341	CMakeFiles/antibox_cmake.dir/Libraries/include/antibox/core/audio.cpp.obj	90dd2ea5c2fd5572
 67	2403	7809352071896938	CMakeFiles/antibox_cmake.dir/Libraries/include/antibox/graphics/sprite.cpp.obj	c01bb8d465a16507
@@ -36,14 +36,8 @@
 70	2391	7809352071941731	CMakeFiles/antibox_cmake.dir/Libraries/include/antibox/managers/rendermanager.cpp.obj	5787808b18e0256e
 78	2331	7809352072011739	CMakeFiles/antibox_cmake.dir/Libraries/include/antibox/objects/gameobject.cpp.obj	a8b4f12f5c370797
 59	2344	7809352071826913	CMakeFiles/antibox_cmake.dir/Libraries/include/antibox/core/window.cpp.obj	8a48b914e3e840ec
-3240	8800	7809358582075015	C:/dev/C++/antibox_cmake/antibox_cmake.exe	7e1525edc221e2b5
-36	3336	7809427298980410	CMakeFiles/antibox_cmake.dir/main.cpp.obj	5fda9a7674ab6248
-3357	8483	7809427332189235	C:/dev/C++/antibox_cmake/antibox_cmake.exe	7e1525edc221e2b5
-25	3075	7809430586997772	CMakeFiles/antibox_cmake.dir/main.cpp.obj	5fda9a7674ab6248
-3077	8290	7809430617524646	C:/dev/C++/antibox_cmake/antibox_cmake.exe	7e1525edc221e2b5
-26	3188	7809433234451127	CMakeFiles/antibox_cmake.dir/main.cpp.obj	5fda9a7674ab6248
-3191	8732	7809433266099242	C:/dev/C++/antibox_cmake/antibox_cmake.exe	7e1525edc221e2b5
-42	3200	7809433600484363	CMakeFiles/antibox_cmake.dir/main.cpp.obj	5fda9a7674ab6248
-3203	8700	7809433632091710	C:/dev/C++/antibox_cmake/antibox_cmake.exe	7e1525edc221e2b5
-43	3174	7809433858794733	CMakeFiles/antibox_cmake.dir/main.cpp.obj	5fda9a7674ab6248
 3177	8735	7809433890137525	C:/dev/C++/antibox_cmake/antibox_cmake.exe	7e1525edc221e2b5
+26	3473	7809468995655680	CMakeFiles/antibox_cmake.dir/main.cpp.obj	5fda9a7674ab6248
+3476	9159	7809469030156927	C:/dev/C++/antibox_cmake/antibox_cmake.exe	7e1525edc221e2b5
+26	3455	7809488584536786	CMakeFiles/antibox_cmake.dir/main.cpp.obj	5fda9a7674ab6248
+3458	8820	7809488618859518	C:/dev/C++/antibox_cmake/antibox_cmake.exe	7e1525edc221e2b5
