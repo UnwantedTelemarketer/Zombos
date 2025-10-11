@@ -790,7 +790,9 @@ struct Tile {
 	bool visited = false;
 	bool technical_update = false;
 	vec2_i coords;
+	vec2_i g_coords = { 0, 0 };
 	bool double_size = false;
+	bool casts_shadow = false;
 	vec3 tileColor;
 	vec3 mainTileColor;
 	short biomeID;
@@ -871,6 +873,10 @@ struct Tile {
 		try { //not everything is collectible, dont require it
 			collectibleName = data.getString("collectibleName");
 		} catch (std::exception e) { }
+		try { //not everything is shadow, dont require it
+			casts_shadow = data.getBool("castsShadow");
+		}
+		catch (std::exception e) {}
 
 		mainTileColor = tileColor;
 	}

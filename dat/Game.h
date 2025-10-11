@@ -58,12 +58,11 @@ public:
 	vec3 BG_DESERT, BG_WATER, BG_FOREST, BG_TAIGA, BG_SWAMP;
 
 
-	int worldTimeTicks = 0;
 	float darkTime = 1.f;
 	bool paused = false;
 
-	bool isDark() { return ((worldTimeTicks >= 2850 || worldTimeTicks < 900) || mainMap.isUnderground); }
-	bool isNight() { return (worldTimeTicks >= 2850 || worldTimeTicks < 900); }
+	bool isDark() { return ((mainMap.worldTimeTicks >= 2850 || mainMap.worldTimeTicks < 900) || mainMap.isUnderground); }
+	bool isNight() { return (mainMap.worldTimeTicks >= 2850 || mainMap.worldTimeTicks < 900); }
 	double GetTick() { return (tickRate - tickCount); }
 	float TickRate() { return tickRate; }
 	void SetTick(float secs) { tickRate = secs * 1000; effectTickRate = tickRate / 10; }
@@ -105,8 +104,8 @@ public:
 
 	std::string GetTileChar(Vector2_I tile);
 
-	ImVec4 GetTileColor(Tile* tile, float intensity);
-	ImVec4 GetTileColor(Vector2_I tile, float intensity);
+	ImVec4 GetTileColor(Tile* tile, float intensity, bool shadows);
+	ImVec4 GetTileColor(Vector2_I tile, float intensity, bool shadows);
 	ImVec4 GetPlayerColor();
 	Tile* SelectTile(Vector2_I coords);
 };
@@ -197,7 +196,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	rockWalk = { "dat/sounds/movement/rock_walk1.wav","dat/sounds/movement/rock_walk2.wav", "dat/sounds/movement/rock_walk3.wav" };
 	mainMap.SetWeather(clear);
 	mainMap.ticksUntilWeatherUpdate = Math::RandInt(600, 800);
-	worldTimeTicks = 1950; // 1pm
+	mainMap.worldTimeTicks = 1950; // 1pm
 
 	//if(seed == -1) deleteAllFilesInDirectory();
 	SetTick(tick);
@@ -676,7 +675,7 @@ void GameManager::UpdateTick() {
 	{
 		tickCount = 0;
 		float curTime = glfwGetTime();
-		worldTimeTicks++;
+		mainMap.worldTimeTicks++;
 
 		if (mainMap.UpdateWeather()) {
 			switch (mainMap.currentWeather) {
@@ -767,11 +766,11 @@ void GameManager::UpdateTick() {
 		}
 
 		//time and brightness
-		if (worldTimeTicks > 3600) { worldTimeTicks = 0; }
+		if (mainMap.worldTimeTicks > 3600) { mainMap.worldTimeTicks = 0; }
 
 		if (!mainMap.isUnderground) {
 			//
-			if (worldTimeTicks >= 2850 || worldTimeTicks <= 900) {
+			if (mainMap.worldTimeTicks >= 2850 || mainMap.worldTimeTicks <= 900) {
 				time = night;
 				if (!startedMusicNight) {
 					Audio::StopLoop("ambient_day");
@@ -785,9 +784,9 @@ void GameManager::UpdateTick() {
 
 				if (forwardTime) { darkTime = std::min(10.f, darkTime + 0.05f); }
 				else { darkTime = std::max(1.f, darkTime - 0.05f); }
-				if (worldTimeTicks > 600 && worldTimeTicks <= 750) { forwardTime = false; }
+				if (mainMap.worldTimeTicks > 600 && mainMap.worldTimeTicks <= 750) { forwardTime = false; }
 			}
-			else if (worldTimeTicks == 900) {
+			else if (mainMap.worldTimeTicks == 900) {
 				time = day;
 				startedMusicNight = false;
 				mainMap.ResetLightValues();
@@ -974,6 +973,7 @@ ImVec4 GameManager::GetTileCharColor(Tile* tile, float intensity = -1.f) {
 	color.x /= (darkTime * intensity);
 	color.y /= (darkTime * intensity);
 	color.z /= (darkTime * intensity);
+
 	return { color.x, color.y, color.z, 1 };
 
 }
@@ -1024,7 +1024,7 @@ ImVec4 GameManager::GetPlayerColor() {
 	return ImVec4{ end_color.x, end_color.y, end_color.z, 1};
 }
 
-ImVec4 GameManager::GetTileColor(Tile* tile, float intensity) {
+ImVec4 GameManager::GetTileColor(Tile* tile, float intensity, bool shadows) {
 	ImVec4 color;
 	//check for entitites
 	if (tile->entity != nullptr)
@@ -1070,57 +1070,6 @@ ImVec4 GameManager::GetTileColor(Tile* tile, float intensity) {
 	}
 
 	color = { tile->tileColor.x, tile->tileColor.y, tile->tileColor.z, 1 };
-	//regular tile color
-	/*switch (tile.id) {
-	case 0:
-		color = { 0.75, 0.75, 0.75, 1 };
-		break;
-	case 2: //dirt
-		color = { 1, 0.45, 0, 1 };
-		break;
-	case 3: //flower
-		color = { 0.65, 1, 0.1, 1 };
-		break;
-	case 5: //scrap
-		color = { 1, 0.5, 0, 1 };
-		break;
-	case 100://conveyor belts
-	case 101:
-	case 102:
-	case 103:
-	case 104:
-	case 105:
-	case 106:
-	case 107:
-	case 6: //stone
-		color = { 0.75, 0.75, 0.75, 1 };
-		break;
-	case 7: //sand
-		color = { 1, 1, 0.5, 1 };
-		break;
-	case 11:
-		color = { 0,0.35,0,1 };
-		break;
-	case 13:
-		color = { 0.23,0.23,0.23,1 };
-		break;
-	case 14: //crystal
-		color = { 0.95,0.5,0.f,1 };
-		break;
-	case 15: //big rock
-		color = { 0.35,0.35,0.35,1 };
-		break;
-	case 16: //snow
-		color = { 0.85,0.85,0.9,1 };
-		break;
-	case 17: //mud
-		color = { 0.35,0.15,0.1,1 };
-		break;
-	default:
-		color = { 0, 0.65, 0, 1 };
-		break;
-	}
-	*/
 dimming:
 	//if its night time
 	if (isDark()) {
@@ -1134,13 +1083,20 @@ dimming:
 			color.z /= (darkTime * intensity);
 		}
 	}
+	else if (shadows && mainMap.GetChunkAtCoords(tile->g_coords) != nullptr) {
+		if (mainMap.GetChunkAtCoords(tile->g_coords)->shadows.contains(tile->coords) && !tile->double_size) {
+			color.x *= 0.5f;
+			color.y *= 0.5f;
+			color.z *= 0.5f;
+		}
+	}
 
 	return color;
 }
 
 
-ImVec4 GameManager::GetTileColor(Vector2_I tile, float intensity) {
-	return GameManager::GetTileColor(&mainMap.CurrentChunk()->localCoords[tile.x][tile.y], intensity);
+ImVec4 GameManager::GetTileColor(Vector2_I tile, float intensity, bool shadows) {
+	return GameManager::GetTileColor(&mainMap.CurrentChunk()->localCoords[tile.x][tile.y], intensity, shadows);
 }
 
 class Commands {
@@ -1246,7 +1202,7 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 				Math::PushFrontLog(&game->consoleLog, "- Weather changed");
 			}
 			else if (tokens[i + 1] == "time") {
-				game->worldTimeTicks = stoi(tokens[i + 2]);
+				game->mainMap.worldTimeTicks = stoi(tokens[i + 2]);
 				Math::PushFrontLog(&game->consoleLog, "- Time changed");
 			}
 		}

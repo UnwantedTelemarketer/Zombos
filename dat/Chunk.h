@@ -18,6 +18,7 @@ public:
 	Tile localCoords[CHUNK_WIDTH][CHUNK_HEIGHT];
 	std::vector<Entity*> entities;
 	std::map<int, Entity*> entsByID;
+	std::set<Vector2_I> shadows;
 
 	Tile* GetTileAtCoords(int x, int y) {
 		return GetTileAtCoords({ x, y });
@@ -162,6 +163,16 @@ public:
 					true };
 
 				entities.push_back(loadedEntity);
+			}
+		}
+	}
+
+	void SetTileCoords() {
+		for (int i = 0; i < CHUNK_WIDTH; i++)
+		{
+			for (int j = 0; j < CHUNK_HEIGHT; j++)
+			{
+				localCoords[i][j].g_coords = globalChunkCoord;
 			}
 		}
 	}

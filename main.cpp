@@ -72,6 +72,7 @@ public:
 	bool newGameScreen = false;
 	bool debugMenuScreen = false;
 	bool wrongDir = false;
+	bool showShadows = false;
 	bool deathScreen = false;
 	char saveNameSlot[128];
 
@@ -154,7 +155,7 @@ public:
 		dat.addInt("STATS", "seed", map.landSeed);
 		dat.addInt("STATS", "global_x", map.CurrentChunk()->globalChunkCoord.x);
 		dat.addInt("STATS", "global_y", map.CurrentChunk()->globalChunkCoord.y);
-		dat.addFloat("STATS", "time", game.worldTimeTicks);
+		dat.addFloat("STATS", "time", map.worldTimeTicks);
 		dat.addInt("STATS", "weather", map.currentWeather);
 		dat.addInt("SETTINGS", "ySep", ySeparator);
 		dat.addInt("SETTINGS", "xDist", xViewDist);
@@ -243,11 +244,14 @@ public:
 				Audio::SetVolumeLoop(game.musicvolume, "ambient_cave");
 			}
 
-			ImGui::Text("\n--Additional Settings--");
+			ImGui::Text("\n--Graphics Settings--");
 			if (!map.isUnderground) {
 				if (ImGui::RadioButton("Center camera on Player", game.freeView)) {
 					game.freeView = !game.freeView;
 				}
+			}
+			if (ImGui::RadioButton("Show Shadows", showShadows)) {
+				showShadows = !showShadows;
 			}
 
 			//ImGui::ColorPicker3("Tab Color", &customTabColor.x);
@@ -453,7 +457,7 @@ public:
 				else {
 
 					printIcon = game.GetTileChar(curTile);
-					iconColor = game.GetTileColor(curTile, 0.f);
+					iconColor = game.GetTileColor(curTile, 0.f, showShadows);
 				}
 
 				ImGui::TextColored(iconColor, printIcon.c_str());
@@ -797,7 +801,7 @@ public:
 					else if (curTile->entity != nullptr) {
 						mobPositions.push_back(ImGui::GetCursorPos());
 						mobIcons.push_back(game.GetTileChar(curTile));
-						mobColors.push_back(game.GetTileColor(curTile, intensity));
+						mobColors.push_back(game.GetTileColor(curTile, intensity, showShadows));
 						//batchedString.append(" ");
 						ImGui::Text(" ");
 						ImGui::SameLine();
@@ -806,7 +810,7 @@ public:
 					}
 					else {
 						printIcon = game.GetTileChar(curTile);
-						iconColor = game.GetTileColor(curTile, intensity);
+						iconColor = game.GetTileColor(curTile, intensity, showShadows);
 					}
 
 					if (i < CHUNK_HEIGHT - 1 && !effectShowing && underTile != nullptr) {
@@ -824,19 +828,19 @@ public:
 							//screen += "G";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
 							if (printIcon != ENT_PLAYER) printIcon = "G";
-							iconColor = game.GetTileColor(underTile, intensity);
+							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 						else if (underTile->id == 12) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
 							if (printIcon != ENT_PLAYER) printIcon = "J";
-							iconColor = game.GetTileColor(underTile, intensity);
+							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 						else if (underTile->id == 18) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
 							if (printIcon != ENT_PLAYER) printIcon = "Y";
-							iconColor = game.GetTileColor(underTile, intensity);
+							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 					}
 
@@ -1594,7 +1598,7 @@ public:
 				ImGui::TextColored(ImVec4{ 0.5, 0.34, 0, 1 }, "U");
 			}
 			else {*/
-			ImGui::TextColored(game.GetTileColor(selectedTile, 1.f), game.GetTileChar(selectedTile).c_str());
+			ImGui::TextColored(game.GetTileColor(selectedTile, 1.f, showShadows), game.GetTileChar(selectedTile).c_str());
 			//}
 			SWAP_FONT("ui");
 
@@ -1708,7 +1712,7 @@ public:
 		if (gameScreen.debugOpen) {
 			ImGui::Begin("Debug Window");
 
-			ImGui::Text(("Current World Time: " + std::to_string(game.worldTimeTicks)).c_str());
+			ImGui::Text(("Current World Time: " + std::to_string(map.worldTimeTicks)).c_str());
 			//FPS
 
 			lastFPS = Utilities::getFPS();

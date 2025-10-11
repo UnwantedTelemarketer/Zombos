@@ -41,6 +41,7 @@
 	- NPC Quests started
 	- Tiles now save their modified color
 	- Amnesiac role now spawns with 1-4 random items
+	- Shadows now can be cast by double height objects, and change angle based on time of day
 
   --Engine Changes--
 	- The sprites now scales properly with window resizing

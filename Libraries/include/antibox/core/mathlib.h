@@ -98,6 +98,9 @@ namespace antibox {
 		}*/
 	};
 
+	static Vector2_I one = { 1, 1 };
+	static Vector2_I zero = { 0, 0 };
+
 	//Vector2 using floats for x and y.
 	struct Vector2
 	{
@@ -151,6 +154,12 @@ namespace antibox {
 			x /= num;
 			y /= num;
 			z /= num;
+		}
+
+		void operator*=(const float num) {
+			x *= num;
+			y *= num;
+			z *= num;
 		}
 
 	};

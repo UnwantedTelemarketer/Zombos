@@ -41,13 +41,15 @@ public:
 	weather currentWeather;
 	int ticksUntilWeatherUpdate = 0;
 	std::string currentSaveName;
+	std::vector<Vector2_I> shadowTileTimes;
+	int worldTimeTicks = 0;
 
 	int landSeed = 0, biomeSeed = 0;
 	float tempMin = 0.5f, moistureMin = 0.5f;
 	FastNoiseLite mapNoise, biomeTempNoise, biomeMoistureNoise;
 	
 	
-	
+	std::shared_ptr<Chunk> GetChunkAtCoords(Vector2_I coords);
 	void CreateMap(int seed, int b_seed);
 	bool DoesChunkExistsOrMakeNew(Vector2_I coords);
 	void UpdateMemoryZone(Vector2_I coords);
@@ -104,6 +106,8 @@ public:
 	Entity* SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f, bool spawnSpecial);
 	void SpawnHumanInCurrent(Vector2_I spawnCoords, Behaviour b, Faction f);
 
+	Vector2_I GetShadowMod();
+
 	void Restart();
 
 	~Map();
@@ -143,6 +147,18 @@ void Map::SetupNoise(int l_seed, int b_seed) {
 	mapNoise.SetSeed(landSeed);
 	biomeTempNoise.SetSeed(biomeSeed);
 	biomeMoistureNoise.SetSeed(Math::RandInt(1, 2147483647));
+
+	shadowTileTimes = {
+		{ 0, -2 },
+		{ 1, -2 },
+		{ 2, -2 },
+		{ 2, -1 },
+		{ 2, 0 },
+		{ 2, 1 },
+		{ 2, 2 },
+		{ 1, 2 },
+		{ 0, 2 },
+	};
 }
 
 void Map::CreateMap(int l_seed, int b_seed)
@@ -185,6 +201,13 @@ bool Map::DoesChunkExistsOrMakeNew(Vector2_I coords) {
 		}
 	}
 	return true;
+}
+
+std::shared_ptr<Chunk> Map::GetChunkAtCoords(Vector2_I coords) {
+	if (!world.chunks.contains(coords)) {
+		return nullptr;
+	}
+	return world.chunks[coords];
 }
 
 //Change which chunks are in memory at one time
@@ -1002,7 +1025,9 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 			}
 
 			chunk->localCoords[i][j].coords = { i, j };
+			chunk->localCoords[i][j].g_coords = chunk->globalChunkCoord;
 			chunk->localCoords[i][j].biomeID = (short)currentBiome;
+
 		}
 	}
 	//if(Math::RandInt(0, 15) == 14) {Place}
@@ -1461,12 +1486,16 @@ void Map::PlaceEntities(std::shared_ptr<Chunk> chunk)
 	//place the player and all entities on top of the tiles
 	for (int i = 0; i < chunk->entities.size(); i++)
 	{
-		try {
-			chunk->localCoords
-				[chunk->entities[i]->coords.x]
-				[chunk->entities[i]->coords.y].entity = chunk->entities[i];
-		}
-		catch (std::exception e) { Console::Log(e.what(), ERROR, __LINE__); }
+		if (chunk->entities[i] == nullptr) { continue; }
+		if (chunk->entities[i]->coords.x >= 30 ||
+			chunk->entities[i]->coords.x < 0   ||
+			chunk->entities[i]->coords.y >= 30 ||
+			chunk->entities[i]->coords.y < 0) { continue; }
+
+
+		chunk->localCoords
+			[chunk->entities[i]->coords.x]
+			[chunk->entities[i]->coords.y].entity = chunk->entities[i];
 	}
 
 }
@@ -1484,15 +1513,39 @@ void Map::TempCheck(Player* p, Vector2_I coords) {
 	}
 }
 
+Vector2_I Map::GetShadowMod() {
+		const int dayStart = 901;
+		const int dayEnd = 2850;
+		if (worldTimeTicks < dayStart || worldTimeTicks > dayEnd) return { 0,0 }; // night
+
+		const int totalDayTicks = dayEnd - dayStart + 1; // 1950
+		int offset = worldTimeTicks - dayStart;              // 0..1949
+		int seg = (offset * 9) / totalDayTicks;         // integer 0..8
+		if (seg < 0) seg = 0;
+		if (seg > 8) seg = 8;
+		return shadowTileTimes[seg];
+}
+
 void Map::UpdateTiles(vec2_i coords, Player* p) {
 	std::vector<Vector2_I> tilesToBurn;
 	std::shared_ptr<Chunk> chunk = GetProperChunk(coords);
+
+	chunk->shadows.clear();
 
 	for (int x = 0; x < CHUNK_HEIGHT; x++) {
 		for (int y = 0; y < CHUNK_WIDTH; y++) {
 			Tile *curTile = &chunk->localCoords[x][y];
 
 			DoTechnical(curTile, chunk, x, y);
+
+			if (curTile->casts_shadow) {
+				for (auto const& tileCoord : GetLine(curTile->coords + GetShadowMod(), curTile->coords, 3))
+				{
+					if (tileCoord.x < 0 || tileCoord.x >= CHUNK_WIDTH || tileCoord.y < 0 || tileCoord.y >= CHUNK_HEIGHT) { continue; }
+
+					chunk->shadows.insert(tileCoord);
+				}
+			}
 
 			//Something something flood fill
 			if (!curTile->visited) { curTile->brightness = 1.f; }
@@ -1611,7 +1664,7 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 //============ Conveyor Belts ============
 void Map::DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y) {
 	//Conveyors pass items to the next spot
-	if (curTile->id >= 100 && curTile->id <= 107 && curTile->hasItem && curTile->technical_update == false) {
+	/*if (curTile->id >= 100 && curTile->id <= 107 && curTile->hasItem && curTile->technical_update == false) {
 
 		//Get a vector2 of which direction to go to next
 		Vector2_I nextTileCoord = { 0, 0 };
@@ -1654,7 +1707,7 @@ void Map::DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y)
 				if (nextTile->id == 105) { nextTile->technical_dir = direction::down; }
 				break;
 		}
-	}
+	}*/
 
 	//living moss spreads and eats items
 	if (curTile->itemName == "LIVING_MOSS") {

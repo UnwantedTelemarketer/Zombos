@@ -1,54 +1,44 @@
-[ Line 177 ]: [0;33mLoading Items from files...[0m
-[ Line 192 ]: [0;37mitems/clothing.eid[0m
-[ Line 192 ]: [0;37mitems/cosmetic_tools.eid[0m
-[ Line 192 ]: [0;37mitems/crafted_materials.eid[0m
-[ Line 192 ]: [0;37mitems/custom/custom_items.eid[0m
-[ Line 192 ]: [0;37mitems/decoration.eid[0m
-[ Line 192 ]: [0;37mitems/droppable.eid[0m
-[ Line 192 ]: [0;37mitems/food.eid[0m
-[ Line 192 ]: [0;37mitems/materials.eid[0m
-[ Line 192 ]: [0;37mitems/misc.eid[0m
-[ Line 192 ]: [0;37mitems/nature_items.eid[0m
-[ Line 192 ]: [0;37mitems/survival_items.eid[0m
-[ Line 192 ]: [0;37mitems/trade_valuables.eid[0m
-[ Line 192 ]: [0;37mitems/weapons.eid[0m
-[ Line 201 ]: [1;32mLoaded Items![0m
+[ Line 178 ]: [0;33mLoading Items from files...[0m
+[ Line 193 ]: [0;37mitems/clothing.eid[0m
+[ Line 193 ]: [0;37mitems/cosmetic_tools.eid[0m
+[ Line 193 ]: [0;37mitems/crafted_materials.eid[0m
+[ Line 193 ]: [0;37mitems/custom/custom_items.eid[0m
+[ Line 193 ]: [0;37mitems/decoration.eid[0m
+[ Line 193 ]: [0;37mitems/droppable.eid[0m
+[ Line 193 ]: [0;37mitems/food.eid[0m
+[ Line 193 ]: [0;37mitems/materials.eid[0m
+[ Line 193 ]: [0;37mitems/misc.eid[0m
+[ Line 193 ]: [0;37mitems/nature_items.eid[0m
+[ Line 193 ]: [0;37mitems/survival_items.eid[0m
+[ Line 193 ]: [0;37mitems/trade_valuables.eid[0m
+[ Line 193 ]: [0;37mitems/weapons.eid[0m
+[ Line 202 ]: [1;32mLoaded Items![0m
 [ Line 83 ]: [0;33mLoading Tiles from files...[0m
 [ Line 92 ]: [0;37mtiles.eid[0m
 [ Line 102 ]: [1;32mLoaded Tiles![0m
 [ Line 225 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
 [ Line 79 ]: [1;32mLoaded texture from res/logo.png.[0m
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
-[ Line 132 ]: [0;33mLoading dialogue...[0m
-[ Line 167 ]: [0;37mCALM_WANDERER[0m
-[ Line 167 ]: [0;37mHAPPY_WANDERER[0m
-[ Line 167 ]: [0;37mANGRY_WANDERER[0m
-[ Line 167 ]: [0;37mAFRAID_WANDERER[0m
-[ Line 167 ]: [0;37mBRAVE_WANDERER[0m
-[ Line 167 ]: [0;37mTRUST_WANDERER[0m
-[ Line 167 ]: [0;37mUNTRUST_WANDERER[0m
-[ Line 186 ]: [1;32mFinished loading dialogue![0m
-[ Line 1873 ]: [1;32mDone![0m
+[ Line 131 ]: [0;33mLoading dialogue...[0m
+[ Line 166 ]: [0;37mCALM_WANDERER[0m
+[ Line 166 ]: [0;37mHAPPY_WANDERER[0m
+[ Line 166 ]: [0;37mANGRY_WANDERER[0m
+[ Line 166 ]: [0;37mAFRAID_WANDERER[0m
+[ Line 166 ]: [0;37mBRAVE_WANDERER[0m
+[ Line 166 ]: [0;37mTRUST_WANDERER[0m
+[ Line 166 ]: [0;37mUNTRUST_WANDERER[0m
+[ Line 185 ]: [1;32mFinished loading dialogue![0m
+[ Line 1877 ]: [1;32mDone![0m
 [ Line 40 ]: [1;31m0[0m
-[ Line 324 ]: [1;32mNew save created successfully![0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/restart test/entities/names.eid', but can't find file.[0m
-[ Line 273 ]: [1;32mReading Chunk from dat/saves/restart test/map/249252.chunk[0m
-[ Line 273 ]: [1;32mReading Chunk from dat/saves/restart test/map/251252.chunk[0m
-[ Line 273 ]: [1;32mReading Chunk from dat/saves/restart test/map/249250.chunk[0m
-[ Line 273 ]: [1;32mReading Chunk from dat/saves/restart test/map/249251.chunk[0m
-[ Line 273 ]: [1;32mReading Chunk from dat/saves/restart test/map/249252.chunk[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/restart test/save.eid', but can't find file.[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/restart test/save.eid', but can't find file.[0m
-[ Line 273 ]: [1;32mReading Chunk from dat/saves/restart test/map/-1-1.chunk[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/eid/save.eid', but can't find file.[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/eid/save.eid', but can't find file.[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/eid/save.eid', but can't find file.[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/eid/save.eid', but can't find file.[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/eid/save.eid', but can't find file.[0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/eid/save.eid', but can't find file.[0m
-[ Line 331 ]: [1;31mFailed to create save or save exists![0m
-[ Line 324 ]: [1;32mNew save created successfully![0m
-[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/rasda/entities/names.eid', but can't find file.[0m
+[ Line 328 ]: [1;32mNew save created successfully![0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/aaaaaaa/entities/names.eid', but can't find file.[0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/aaaaaaa/entities/names.eid', but can't find file.[0m
+[ Line 269 ]: [1;31mAttempting to read from file 'dat/saves/aaaaaaa/entities/names.eid', but can't find file.[0m
+[ Line 296 ]: [1;32mReading Chunk from dat/saves/aaaaaaa/map/251249.chunk[0m
+[ Line 296 ]: [1;32mReading Chunk from dat/saves/aaaaaaa/map/250250.chunk[0m
+[ Line 296 ]: [1;32mReading Chunk from dat/saves/aaaaaaa/map/251250.chunk[0m
+[ Line 296 ]: [1;32mReading Chunk from dat/saves/aaaaaaa/map/250251.chunk[0m
+[ Line 1937 ]: [1;32mset tickrate 0.05[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 370 ]: [1;32mWrote to file dat/saves/rasda/save.eid[0m
-[ Line 214 ]: [1;32mSave complete in 19.372133ms.[0m
+[ Line 370 ]: [1;32mWrote to file dat/saves/aaaaaaa/save.eid[0m
+[ Line 215 ]: [1;32mSave complete in 17.298410ms.[0m
