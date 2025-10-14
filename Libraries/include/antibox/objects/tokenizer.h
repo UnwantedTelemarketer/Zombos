@@ -119,12 +119,16 @@ struct OpenedData {
 
 		for (size_t i = 0; i < array.length(); i++)
 		{
-			if (array[i] == ',' && current_array != "") {
-				actual_array.push_back(current_array);
-				current_array = "";
-				continue;
+			//if theres no escape character
+			if (i > 0 && array[i - 1] != '\\') {
+				//if we have a comma, end the element there
+				if (array[i] == ',' && current_array != "") {
+					actual_array.push_back(current_array);
+					current_array = "";
+					continue;
+				}
 			}
-			current_array += array[i];
+			if(array[i] != '\\') current_array += array[i];
 		}
 
 		if (current_array != "") { actual_array.push_back(current_array); }

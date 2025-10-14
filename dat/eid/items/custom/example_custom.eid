@@ -17,7 +17,10 @@ coverInLiquid = 6
 1 for weapon,
 2 for hat, 
 3 for shirt,
-4 for pants
+4 for pants,
+5 for boots,
+6 for gloves,
+7 for neck
 
 //HEADER FOR ITEM NAME
 ITEM_NAME {

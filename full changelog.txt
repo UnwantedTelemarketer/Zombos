@@ -26,6 +26,7 @@
 		-Pedestal
 		-Mossy Stone
 		-Gravestone
+		-Wooden Floor
 	- Can bandage with tattered cloth, adds sickness
 	- New Item Tags
 		- marker - for chalk, allows drawing on walls and ground
@@ -42,6 +43,11 @@
 	- Tiles now save their modified color
 	- Amnesiac role now spawns with 1-4 random items
 	- Shadows now can be cast by double height objects, and change angle based on time of day
+	- Added encumberance, player can only move once per tick while slowed
+	- Added upper and downstairs chunks (for houses/sewers/bunkers etc)
+	- Fixed loading equipped items
 
   --Engine Changes--
-	- The sprites now scales properly with window resizing
+	- The sprites now scale properly with window resizing
+	- Added function to change boolean after set time
+	- Tokenizer can now read commas in arrays IF theres an escape character before it (forward slash)

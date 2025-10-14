@@ -52,6 +52,7 @@ public:
 	biome currentBiome, lerpingTo;
 	float testTime;
 	bool startedMusicNight = false;
+	float reg_font_size = 16.f;
 
 	std::vector<std::string> sandWalk, grassWalk, rockWalk;
 
@@ -61,7 +62,7 @@ public:
 	float darkTime = 1.f;
 	bool paused = false;
 
-	bool isDark() { return ((mainMap.worldTimeTicks >= 2850 || mainMap.worldTimeTicks < 900) || mainMap.isUnderground); }
+	bool isDark() { return ((mainMap.worldTimeTicks >= 2850 || mainMap.worldTimeTicks < 900) || mainMap.playerLevel != 0); }
 	bool isNight() { return (mainMap.worldTimeTicks >= 2850 || mainMap.worldTimeTicks < 900); }
 	double GetTick() { return (tickRate - tickCount); }
 	float TickRate() { return tickRate; }
@@ -211,7 +212,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 		{Bandit, {Human_W, Zombie}},
 	};
 	
-	mainMap.isUnderground = false;
+	//mainMap.playerLevel = 0;
 	Math::PushBackLog(&actionLog, "Press H to open the help menu.");
 }
 
@@ -505,6 +506,13 @@ void GameManager::SpawnEntity(Entity* ent) {
 }
 
 void GameManager::MovePlayer(int dir) {
+
+	if (mPlayer.stunned) { return; }
+	if (pInv.Encumbered()) { 
+		mPlayer.stunned = true;
+		Utilities::SetVarInSeconds("stun", &mPlayer.stunned, 0.5f);
+	}
+
 	Tile* playerTile = mainMap.GetTileFromThisOrNeighbor(mPlayer.coords);
 	if (playerTile->liquid == mud || 
 		(playerTile->liquid == water && playerTile->liquidTime == -1)) {
@@ -536,13 +544,28 @@ void GameManager::MovePlayer(int dir) {
 		Audio::Play("dat/sounds/bear_trap.mp3");
 		mainMap.TileAtPos(mPlayer.coords)->itemName = "BEAR_TRAP_C";
 	}
-	if (mainMap.TileAtPos(mPlayer.coords)->id == 19) {
+	/*if (mainMap.TileAtPos(mPlayer.coords)->id == 19) {
 		if (EnterCave()) {
 			freeView = false;
 			//Audio::LerpMusic("ambient_day", "dat/sounds/wet-pizza-rat.mp3", "ambient_cave");
 			Audio::StopLoop("ambient_day");
 			Audio::PlayLoop("dat/sounds/music/wet-pizza-rat.mp3", "ambient_cave");
 			Math::PushBackLog(&actionLog, "You enter a dark cave underground.");
+		}
+	}*/
+
+	if (mainMap.TileAtPos(mPlayer.coords)->id == 23) {
+		if (!mPlayer.indoors) {
+			mPlayer.indoors = true;
+			Math::PushBackLog(&actionLog, "You enter a building.");
+			//Utilities::Lerp("fontsize", &reg_font_size, 32.f, 1.f);
+		}
+	}
+	else {
+		if (mPlayer.indoors) {
+			mPlayer.indoors = false;
+			Math::PushBackLog(&actionLog, "You exit the building.");
+			//Utilities::Lerp("fontsize", &reg_font_size, 16.f, 1.f);
 		}
 	}
 
@@ -768,7 +791,7 @@ void GameManager::UpdateTick() {
 		//time and brightness
 		if (mainMap.worldTimeTicks > 3600) { mainMap.worldTimeTicks = 0; }
 
-		if (!mainMap.isUnderground) {
+		if (mainMap.playerLevel == 0) {
 			//
 			if (mainMap.worldTimeTicks >= 2850 || mainMap.worldTimeTicks <= 900) {
 				time = night;
@@ -818,7 +841,7 @@ void GameManager::UpdateTick() {
 
 		//hardcoded version of updating surrounding chunks
 		T_UpdateChunk(this, mainMap.c_glCoords);
-		if (!mainMap.isUnderground) {
+		if (mainMap.playerLevel == 0) {
 			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x + 1,  mainMap.c_glCoords.y });
 			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x - 1,  mainMap.c_glCoords.y });
 			T_UpdateChunk(this, Vector2_I{ mainMap.c_glCoords.x,  mainMap.c_glCoords.y + 1 });
@@ -886,8 +909,8 @@ void GameManager::SetTile(Vector2_I tile, int newTile) {
 	mainMap.CurrentChunk()->localCoords[tile.x][tile.y].id = newTile;
 }
 
-bool GameManager::EnterCave() {
-	if (!mainMap.isUnderground)
+/*bool GameManager::EnterCave() {
+	if (mainMap.playerLevel == 0)
 	{
 		if (mainMap.underground.chunks.count({ mainMap.c_glCoords }) == 0) {
 			lerpingTo = urban;
@@ -899,11 +922,11 @@ bool GameManager::EnterCave() {
 
 			mainMap.underground.chunks[{mainMap.c_glCoords}] = tempChunk;
 		}
-		mainMap.isUnderground = true;
+		mainMap.playerLevel = -1;
 		return true;
 	}
 	return false;
-}
+}*/
 
 std::string GameManager::GetItemChar(Tile* tile) {
 	if (!tile->hasItem || item_icons.count(tile->itemName) == 0) {
@@ -980,7 +1003,7 @@ ImVec4 GameManager::GetTileCharColor(Tile* tile, float intensity = -1.f) {
 
 std::string GameManager::GetWalkSound(){
 
-	if(mainMap.isUnderground) return rockWalk[Math::RandInt(0, 2)];
+	if(mainMap.playerLevel == -1) return rockWalk[Math::RandInt(0, 2)];
 
 	switch (currentBiome) {
 	case ocean:
@@ -1073,7 +1096,7 @@ ImVec4 GameManager::GetTileColor(Tile* tile, float intensity, bool shadows) {
 dimming:
 	//if its night time
 	if (isDark()) {
-		if ((darkTime >= 10.f && intensity >= 1.f) || (mainMap.isUnderground && intensity >= 1.f)) {
+		if ((darkTime >= 10.f && intensity >= 1.f) || (mainMap.playerLevel == -1 && intensity >= 1.f)) {
 			if(dormantMoon) color = { 0.1f,0.1f,0.1f,1 };
 			else color = { 0.05f,0.05f,0.05f,1 };
 		}
@@ -1205,6 +1228,10 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 				game->mainMap.worldTimeTicks = stoi(tokens[i + 2]);
 				Math::PushFrontLog(&game->consoleLog, "- Time changed");
 			}
+			else if (tokens[i + 1] == "playerLevel") {
+				game->mainMap.playerLevel = stoi(tokens[i + 2]);
+				Math::PushFrontLog(&game->consoleLog, "- Player level changed");
+			}
 		}
 		else if (tokens[i] == "help") {
 			std::string helpstring =
@@ -1214,6 +1241,7 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 			helpstring += " ~set tickrate {float} - sets time between ticks in seconds (default is 0.5)\n";
 			helpstring += " ~set {health / hunger / thirst} {number} - sets attribute\n";
 			helpstring += " ~set {bleeding / sickness} {number} - sets attribute (0 - 3)\n";
+			helpstring += " ~set playerLevel {-1/0/1} - sets the chunk height (underground, ground, upstairs) \n";
 			helpstring += " ~buddha {on / off} - toggles buddha mode\n";
 			helpstring += " ~god {on / off} - toggles god mode\n";
 			helpstring += " ~bring him forth - brings him forth\n";

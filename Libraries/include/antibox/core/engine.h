@@ -31,6 +31,7 @@ namespace antibox {
 		int keyDownCode; //Variable holding the last pressed key
 		int currentSceneID;
 		std::map<std::string, lerp_pack> floatsToLerp;
+		std::map<std::string, timed_bool> boolsToChange;
 
 		//Singleton for engine
 		static Engine& Instance();
@@ -41,6 +42,7 @@ namespace antibox {
 		void SetVolume(float volume);
 		void SetVolumeLoop(float volume, std::string name);
 		float GetVolume();
+		void SetBoolAfterTime(std::string lerpID, bool* val, float time);
 		void LerpFloat(std::string lerpID, float* val, float endVal, float time);
 		//Remove lerp by its id if its in there
 		void RemoveLerp(std::string id) { floatsToLerp.erase(id); }

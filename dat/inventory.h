@@ -23,6 +23,10 @@ public:
 		totalWeight = 0.f;
 	}
 
+	bool Encumbered() {
+		return totalWeight > maxWeight;
+	}
+
 	void AddItem(Item it, int count = 1)
 	{
 		if (it.stackable) {

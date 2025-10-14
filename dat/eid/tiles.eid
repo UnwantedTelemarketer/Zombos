@@ -1,6 +1,7 @@
 //to add new tiles, just put its char in here with its blockid and then go to items.h
 
 TILES {
+	TILE_AIR : [C, -2];
 	TILE_LIQUID : [A, -1];
 	TILE_GRASS : [B, 1];
 	TILE_DIRT : [C, 2];
@@ -34,4 +35,5 @@ TILES {
 	TILE_CHAIN_FENCE : [Z, 20]
 	TILE_PEDESTAL : [., 21]
 	TILE_GRAVESTONE : [., 22]
+	TILE_WOOD_PLANKS : [=, 23]
 }

@@ -36,7 +36,8 @@ public:
 	T_Chunk effectLayer; //is the visual effects (lines, fire, smoke, etc)
 	World world; //keeps the original generated map so that tiles walked over wont be erased
 	World underground; //map but underground, different map entirely
-	bool isUnderground;
+	World upstairs; //map but upstairs, different map entirely
+	int playerLevel = 0; //0 is ground, 1 is upstairs, -1 is underground
 	std::vector<Vector2_I> line;
 	weather currentWeather;
 	int ticksUntilWeatherUpdate = 0;
@@ -73,6 +74,8 @@ public:
 	bool CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk);
 	void EmptyChunk(std::shared_ptr<Chunk> chunk);
 	void BuildChunk(std::shared_ptr<Chunk> chunk);
+	void CreateUpperAndLower(Vector2_I coords);
+	void DeleteUpperAndLower(Vector2_I coords);
 	void PlaceBuilding(Vector2_I startingChunk);
 	Vector2_I PlaceStartingBuilding();
 	void PickStructure(Vector2_I startingChunk);
@@ -193,10 +196,12 @@ bool Map::DoesChunkExistsOrMakeNew(Vector2_I coords) {
 	if (world.chunks[coords] == nullptr) {
 		if (fileExists(filename.c_str())) {
 			ReadChunk(coords, filename);
+			CreateUpperAndLower(coords);
 			return true;
 		}
 		else {
 			MakeNewChunk(coords);
+			CreateUpperAndLower(coords);
 			return false;
 		}
 	}
@@ -257,6 +262,8 @@ void Map::UnloadChunks(std::vector<Vector2_I> chunksToDelete) {
 	for (auto& vec : chunksToDelete) {
 		world.chunks.erase(vec);
 
+		DeleteUpperAndLower(vec);
+
 		auto it = world.chunks.find(vec);
 		if (it != world.chunks.end()) {
 			std::cout << "Use count: " << it->second.use_count() << "\n";
@@ -301,6 +308,25 @@ void Map::ReadChunk(Vector2_I curChunk, std::string path) {
 	world.chunks[curChunk] = tempChunk;
 }
 
+void Map::CreateUpperAndLower(Vector2_I coords) {
+	underground.chunks[coords] = std::make_shared<Chunk>();
+	upstairs.chunks[coords] = std::make_shared<Chunk>();
+
+	for (size_t i = 0; i < CHUNK_WIDTH; i++)
+	{
+		for (size_t b = 0; b < CHUNK_HEIGHT; b++)
+		{
+			underground.chunks[coords]->localCoords[i][b] = Tiles::GetTile("TILE_AIR");
+			upstairs.chunks[coords]->localCoords[i][b] = Tiles::GetTile("TILE_AIR");
+		}
+	}
+}
+
+void Map::DeleteUpperAndLower(Vector2_I coords) {
+	underground.chunks.erase(coords);
+	upstairs.chunks.erase(coords);
+}
+
 
 void Map::MakeNewChunk(Vector2_I coords) {
 	std::shared_ptr<Chunk> tempChunk = std::make_shared<Chunk>();
@@ -312,6 +338,7 @@ void Map::MakeNewChunk(Vector2_I coords) {
 	//add to world map
 	world.chunks[tempChunk->globalChunkCoord] = tempChunk;
 
+	/*
 	//place old roads
 	if (Math::RandInt(0, 2) == 1) {
 		OpenedData dat;
@@ -322,7 +349,7 @@ void Map::MakeNewChunk(Vector2_I coords) {
 		ItemReader::GetDataFromFile("structures/oldroads.eid", dat.getArray("names")[Math::RandInt(0,leng-1)], &roadDat);
 		PlaceStructure(coords, roadDat.getString("tiles"), { roadDat.getInt("width"), roadDat.getInt("height") });
 	}
-
+	*/
 	//place structures
 	if (Math::RandInt(1, 4) == 2) { PickStructure(coords); }
 
@@ -330,7 +357,6 @@ void Map::MakeNewChunk(Vector2_I coords) {
 
 	//place entities
 	SpawnChunkEntities(tempChunk);
-
 
 }
 
@@ -459,20 +485,27 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 }
 
 std::shared_ptr<Chunk> Map::CurrentChunk() {
-	if (!isUnderground) {
-		return world.chunks[c_glCoords];
-	}
-	else {
-		return underground.chunks[{c_glCoords.x, c_glCoords.y}];
-	}
+	switch (playerLevel) {
+		case -1:
+			return underground.chunks[c_glCoords];
+		case 0:
+			return world.chunks[c_glCoords];
+		case 1:
+			return upstairs.chunks[c_glCoords];
+	};
 }
 
 
 
 std::shared_ptr<Chunk> Map::GetProperChunk(Vector2_I coords) {
-	return !isUnderground
-		? world.chunks[{coords.x, coords.y}]
-		: underground.chunks[{coords.x, coords.y}];
+	switch (playerLevel) {
+		case -1:
+			return underground.chunks[coords];
+		case 0:
+			return world.chunks[coords];
+		case 1:
+			return upstairs.chunks[coords];
+	};
 }
 
 //std::vector<Tile> GetTileInRadius(vec2_i center) {
@@ -550,18 +583,25 @@ Tile* Map::GetTileFromThisOrNeighbor(Vector2_I tilecoords, Vector2_I global_coor
 		globalCoords.y -= 1;
 	}
 
-	if (world.chunks.contains(globalCoords)) {
-		if (!isUnderground) {
-			curTile = world.chunks[globalCoords]->GetTileAtCoords(tilecoords);
-		}
-		else {
-			curTile = underground.chunks[globalCoords]->GetTileAtCoords(tilecoords);
-		}
-		return curTile;
-	}
-	else {
-		return nullptr;
-	}
+	switch (playerLevel) {
+		case -1:
+			if (underground.chunks.contains(globalCoords)) {
+				curTile = underground.chunks[globalCoords]->GetTileAtCoords(tilecoords);
+				return curTile;
+			}
+		case 0:
+			if (world.chunks.contains(globalCoords)) {
+				curTile = world.chunks[globalCoords]->GetTileAtCoords(tilecoords);
+				return curTile;
+			}
+		case 1:
+			if (upstairs.chunks.contains(globalCoords)) {
+				curTile = upstairs.chunks[globalCoords]->GetTileAtCoords(tilecoords);
+				return curTile;
+			}
+		default:
+			return nullptr;
+	};
 }
 
 Tile* Map::GetTileFromThisOrNeighbor(Vector2_I tilecoords)
@@ -1058,6 +1098,7 @@ void Map::PickStructure(Vector2_I startingChunk) {
 	}
 	//otherwise set up camp or a random house
 	else {
+		OpenedData roadDat;
 		switch (randInt) {
 		case 0:
 		case 1:
@@ -1065,6 +1106,9 @@ void Map::PickStructure(Vector2_I startingChunk) {
 			PlaceBuilding(startingChunk);
 			break;
 		case 3:
+			ItemReader::GetDataFromFile("structures/houses.eid", "HOUSE_2", &roadDat);
+			PlaceStructure(startingChunk, roadDat.getString("tiles"), { roadDat.getInt("width"), roadDat.getInt("height") });
+			break;
 		case 4:
 			PlaceCampsite(startingChunk);
 			break;
@@ -1134,28 +1178,15 @@ void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2
 				continue;
 			}
 			//								  --convert 1d coords into 2d--
-			switch (structure[(x + (i * dimensions.x))]) {
-			case '?':
-				break;
-			case 'w':
-				*curTile = Tiles::GetTile("TILE_STONE");
-				break;
-			case 'f':
+			if(structure[(x + (i * dimensions.x))] == '+'){
 				*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
-				break; 
-			case 'c':
-				*curTile = Tiles::GetTile("TILE_CHAIN_FENCE");
-				break;
-			case '-':
-				*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
-				curTile->hasItem = true;
-				curTile->itemName = "TABLE";
-				break;
-			case '+':
-				*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
-
 				world.chunks[startingChunk]->AddEntity(SpawnHuman(curCoordsModified, Protective, Human_W));
-				break;
+			}
+			else if (structure[(x + (i * dimensions.x))] == '\x7e') {
+				continue;
+			}
+			else {
+				*curTile = Tiles::GetTileByID(static_cast<int>(structure[(x + (i * dimensions.x))]));
 			}
 		}
 	}
@@ -1177,7 +1208,7 @@ Vector2_I Map::PlaceStartingBuilding() {
 
 		Tile* curTile = GetTileFromThisOrNeighbor({ buildingBlocks[i].x,buildingBlocks[i].y }, c_glCoords);
 
-		*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
+		*curTile = Tiles::GetTile("TILE_WOOD_PLANKS");
 	}
 
 	int door = 6;
@@ -1203,6 +1234,7 @@ Vector2_I Map::PlaceStartingBuilding() {
 }
 
 void Map::PlaceBuilding(Vector2_I startingChunk) {
+
 	Vector2_I cornerstone = { Math::RandInt(0, CHUNK_WIDTH - 1), Math::RandInt(0, CHUNK_HEIGHT - 1) };
 
 	//pick some corners to draw to

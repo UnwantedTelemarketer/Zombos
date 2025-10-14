@@ -529,6 +529,8 @@ struct Player {
 	int thirstTick = 0;
 	int hungerTick = 0;
 	int damageMode = 0;
+	bool stunned = false;
+	bool indoors = false;
 
 	void Restart() {
 		health = 100;

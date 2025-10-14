@@ -34,6 +34,11 @@ namespace antibox {
 	namespace Utilities {
 		float deltaTime() { return antibox::Engine::Instance().deltaTime(); }
 		float getFPS() { return antibox::Engine::Instance().getFPS(); }
+
+		//Flips a bool after (time) seconds
+		void SetVarInSeconds(std::string lerpID, bool* value, float time) { antibox::Engine::Instance().SetBoolAfterTime(lerpID, value, time); }
+
+		//Linearly interpolates a float or Vector3 to a target value over (time) seconds
 		void Lerp(std::string lerpID, float* val, float endVal, float time) { antibox::Engine::Instance().LerpFloat(lerpID, val, endVal, time); }
 		void Lerp(std::string lerpID, Vector3* val, Vector3 endVal, float time) {
 			antibox::Engine::Instance().LerpFloat(lerpID + "1", &val->x, endVal.x, time);

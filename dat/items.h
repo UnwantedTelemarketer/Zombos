@@ -74,6 +74,10 @@ namespace Tiles {
 		return list[name];
 	}
 
+	Tile GetTileByID(int ID) {
+		return list[nameByID[ID]];
+	}
+
 	Tile* GetTile(int ID) {
 		//get the name by the id, and then get the item. Used for loading saved chunks to cut down on data that needss to be saved on disk vs ram
 		return &list[nameByID[ID]];
@@ -131,7 +135,7 @@ namespace Tiles {
 namespace Items {
 	static std::map<std::string, Item> list;
 	static std::map<std::string, Vector3> colors;
-	static std::vector<equipType> EquipmentTypes = { weapon, hat, shirt, pants, boots, gloves };
+	static std::vector<equipType> EquipmentTypes = { weapon, hat, shirt, pants, boots, gloves, neck };
 
 	static Item GetItem(std::string itemName) {
 		return list[itemName];

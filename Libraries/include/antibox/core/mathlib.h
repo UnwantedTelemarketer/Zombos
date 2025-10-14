@@ -266,4 +266,11 @@ namespace antibox {
 		float endVal;
 		float elapsedTime;
 	};
+
+	//value to change, end time, elapsed time
+	struct timed_bool {
+		bool* valToChange;
+		float endTime;
+		float elapsedTime;
+	};;
 }

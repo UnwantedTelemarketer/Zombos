@@ -45,6 +45,13 @@ namespace antibox
 		mApp->Init();
 	}
 
+	void Engine::SetBoolAfterTime(std::string lerpID, bool* val, float time) {
+		if (boolsToChange.count(lerpID) == 0) {
+			boolsToChange.erase(lerpID);
+		}
+		boolsToChange.insert({ lerpID, { val, time, 0 } });
+	}
+
 	void Engine::LerpFloat(std::string lerpID, float* val, float endVal, float time) {
 		if (floatsToLerp.count(lerpID) == 0) {
 			//Console::Log(lerpID + " already on lerp stack. Overwritting...", WARNING, __LINE__);
@@ -174,6 +181,24 @@ namespace antibox
 				}
 				else {
 					++currentPack; // Move to the next element
+				}
+			}
+		}
+		if (!boolsToChange.empty()) {
+			for (auto currentBool = boolsToChange.begin(); currentBool != boolsToChange.end();) {
+				currentBool->second.elapsedTime += deltaTime() / 1000.f;
+
+				if (currentBool->second.elapsedTime >= currentBool->second.endTime) {
+					if (currentBool->second.valToChange) {
+						*currentBool->second.valToChange = !*currentBool->second.valToChange;
+					}
+					else {
+						Console::Log(currentBool->first + " is nullptr. Removing from bool stack...", ERROR, __LINE__);
+					}
+					currentBool = boolsToChange.erase(currentBool);
+				}
+				else {
+					++currentBool; // Only increment when not erasing
 				}
 			}
 		}

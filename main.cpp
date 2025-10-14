@@ -5,7 +5,7 @@
 
 #include <chrono>
 
-#define DOSFONT  "dat/fonts/symbolic/symbolic_pedestal_extended.ttf"
+#define DOSFONT  "dat/fonts/symbolic/symbolic_tiles_ex_wood.ttf"
 #define ITEMFONT "dat/fonts/symbolic/symbolic_items_extended.ttf"
 #define MOBFONT "dat/fonts/symbolic/symbolic_mobs_extended.ttf"
 #define VGAFONT  "dat/fonts/VGA437.ttf"
@@ -65,6 +65,7 @@ public:
 	int xMin, xMax, yMin, yMax;
 	int xViewDist, yViewDist;
 	char recipe_search[128] = "";
+	char customStructName[128] = "";
 	int customStructHeight = 1;
 	int customStructWidth = 1;
 	Vector4 customTabColor;
@@ -245,7 +246,7 @@ public:
 			}
 
 			ImGui::Text("\n--Graphics Settings--");
-			if (!map.isUnderground) {
+			if (map.playerLevel == 0) {
 				if (ImGui::RadioButton("Center camera on Player", game.freeView)) {
 					game.freeView = !game.freeView;
 				}
@@ -322,7 +323,10 @@ public:
 			if (ImGui::Button("Create New Save")) {
 				Audio::Play(sfxs["crunchy_click"]);
 				map.currentSaveName = std::string(saveNameSlot);
-				if (CreateNewDirectory("dat/saves/" + map.currentSaveName)) {
+				if (saveNameSlot[0] == 0) {
+					gameScreen.CreatePopup("Error", "Empty save name.");
+				}
+				else if (CreateNewDirectory("dat/saves/" + map.currentSaveName)) {
 					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/map");
 					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/entities");
 					Console::Log("New save created successfully!", SUCCESS, __LINE__);
@@ -399,7 +403,7 @@ public:
 					{
 						std::string eTypeName = Cosmetic::EquipTypeName(eType);
 						OpenedData data;
-						if (ItemReader::GetDataFromFile("save.eid", eTypeName, &data)) {
+						if (ItemReader::GetDataFromFile(map.GetCurrentSavePath() + "save.eid", eTypeName, &data, false)) {
 							Item equippedItem = Items::GetItem(data.getString("name"));
 							equippedItem.durability = data.getInt("durability");
 
@@ -442,9 +446,38 @@ public:
 
 	void MapTool() {
 
+		ImGui::Begin("Tile Selector");
+
+		static int selectedTileIndex = 0;
+		static std::vector<std::string> tileNames;
+
+		// Only populate once
+		if (tileNames.empty()) {
+			for (const auto& pair : Tiles::list) {
+				tileNames.push_back(pair.first);
+			}
+		}
+
+		// Show a list box for tile selection
+		if (ImGui::ListBox("Available Tiles", &selectedTileIndex,
+			[](void* data, int idx, const char** out_text) {
+				const auto& names = *static_cast<std::vector<std::string>*>(data);
+				*out_text = names[idx].c_str();
+				return true;
+			},
+			&tileNames, static_cast<int>(tileNames.size()), 10))
+		{
+			// Update the selected tile string
+			customTileSelect = tileNames[selectedTileIndex];
+		}
+
+		ImGui::Text("Selected: %s", customTileSelect.c_str());
+		ImGui::End();
+
 		ImGui::Begin("Custom Building Tool");
 
 		ImGui::PushFont(Engine::Instance().getFont("main"));
+
 		for (int i = 0; i < 30; i++) {
 			for (int j = 0; j < 30; j++) {
 				Vector2_I curPos = { i, j };
@@ -455,7 +488,6 @@ public:
 					iconColor = { 1,0,0,1 };
 				}
 				else {
-
 					printIcon = game.GetTileChar(curTile);
 					iconColor = game.GetTileColor(curTile, 0.f, showShadows);
 				}
@@ -467,6 +499,7 @@ public:
 		}
 		ImGui::PopFont();
 
+		ImGui::InputText("Export Name", &customStructName[0], IM_ARRAYSIZE(customStructName));
 		ImGui::InputInt("Width", &customStructWidth);
 		ImGui::InputInt("Height", &customStructHeight);
 		if (ImGui::Button("Export Custom Structure")) {
@@ -474,35 +507,16 @@ public:
 			for (int i = 0; i < 30; i++) {
 				for (int j = 0; j < 30; j++) {
 					Vector2_I curPos = { i, j };
-					switch (customBuilding->GetTileAtCoords(curPos)->id) {
-					case ID_GRASS:
-						mapExport += "?";
-						break;
-					case ID_SAND:
-						break;
-					case ID_STONE:
-						mapExport += "w";
-						break;
-					case 13:
-						mapExport += "f";
-						break;
-					case 14:
-						mapExport += "+";
-						break;
-					case 16:
-						mapExport += "-";
-						break;
-					case 20:
-						mapExport += "c";
-						break;
-					}
+					if (customBuilding->GetTileAtCoords(curPos)->id == 7) { continue; }
+					if (customBuilding->GetTileAtCoords(curPos)->id == 1) { mapExport += '\x7e'; continue; }
+					mapExport += static_cast<char>(customBuilding->GetTileAtCoords(curPos)->id);
 				}
 			}
 			SaveData structure;
-			structure.sections.insert({ "MONKEY_BAR", {} });
-			structure.addString("MONKEY_BAR", "tiles", mapExport);
-			structure.addInt("MONKEY_BAR", "width", customStructWidth);
-			structure.addInt("MONKEY_BAR", "height", customStructHeight);
+			structure.sections.insert({ customStructName, {} });
+			structure.addString(customStructName, "tiles", mapExport);
+			structure.addInt(customStructName, "width", customStructWidth);
+			structure.addInt(customStructName, "height", customStructHeight);
 
 			ItemReader::SaveDataToFile("newStructure", structure, true);
 		}
@@ -516,74 +530,6 @@ public:
 		if (ImGui::Button("Generate")) {
 			map.CreateMap(map.landSeed, map.biomeSeed);
 		}
-		ImGui::End();
-
-		ImGui::Begin("Map Generator");
-		bool item = false;
-		//ImGui::PushFont(Engine::Instance().getFont("main"));
-		/*for (int i = -CHUNK_WIDTH; i < CHUNK_WIDTH * 2; i++) {
-			for (int j = -CHUNK_HEIGHT; j < CHUNK_HEIGHT * 2; j++) {
-
-				Tile* curTile = map.GetTileFromThisOrNeighbor({ i, j });
-				Tile* underTile = map.GetTileFromThisOrNeighbor({ i + 1, j });
-
-				if (curTile->hasItem)
-				{
-					item = true;
-					itemPositions.push_back(ImGui::GetCursorPos());
-					itemTiles.push_back(curTile);
-					itemIcons.push_back(game.GetItemChar(curTile));
-					ImGui::Text(" ");
-					ImGui::SameLine();
-					continue;
-				}
-
-				printIcon = game.GetTileChar(curTile);
-				iconColor = game.GetTileColor(curTile, 0.f);
-
-				if (underTile != nullptr) {
-					if (underTile->id == 11) {
-						//screen += "G";
-						//colors.push_back(game.GetTileColor(underTile, intensity));
-						printIcon = "G";
-						iconColor = game.GetTileColor(underTile, 0.f);
-					}
-					else if (underTile->id == 12) {
-						//screen += "J";
-						//colors.push_back(game.GetTileColor(underTile, intensity));
-						printIcon = "J";
-						iconColor = game.GetTileColor(underTile, 0.f);
-					}
-					else if (underTile->id == 18) {
-						//screen += "J";
-						//colors.push_back(game.GetTileColor(underTile, intensity));
-						printIcon = "Y";
-						iconColor = game.GetTileColor(underTile, 0.f);
-					}
-				}
-
-				ImGui::TextColored(iconColor, printIcon.c_str());
-				ImGui::SameLine();
-				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 0.05);
-			}
-			ImGui::Text("");
-		}
-		if (item) {
-			ImGui::PopFont();
-			ImGui::PushFont(Engine::Instance().getFont("items"));
-			for (size_t i = 0; i < itemIcons.size(); i++)
-			{
-				ImGui::SetCursorPos(itemPositions[i]);
-
-				ImGui::TextColored(game.GetItemColor(itemTiles[i]), itemIcons[i].c_str());
-			}
-			itemTiles.clear();
-			itemIcons.clear();
-			itemPositions.clear();
-		}
-		*/
-		//ImGui::PopFont();
-
 		ImGui::End();
 	}
 
@@ -694,6 +640,8 @@ public:
 			if (gameScreen.fancyGraphics) {
 				SWAP_FONT("main");
 			}
+
+			ImGui::SetFontSize(game.reg_font_size);
 
 			bool item = false;
 			ImVec2 playerPos;
@@ -906,6 +854,10 @@ public:
 				mobPositions.clear();
 				mobColors.clear();
 			}
+
+
+			ImGui::SetFontSize(16.f);
+
 			ImGui::End();
 		}
 
@@ -933,7 +885,7 @@ public:
 
 		//TechScreen();
 
-		if (game.mainMap.isUnderground) {
+		/*if (game.mainMap.isUnderground) {
 			if (ImGui::Button("Leave Cave")) {
 				Audio::StopLoop("ambient_cave");
 				Audio::PlayLoop("dat/sounds/music/ambient12.wav", "ambient_day");
@@ -941,7 +893,7 @@ public:
 				game.mainMap.isUnderground = !game.mainMap.isUnderground;
 				game.freeView = true;
 			}
-		}
+		}*/
 
 		//------Action Log----
 		ImGui::Begin("Action Log");
@@ -1032,6 +984,10 @@ public:
 			}
 			else {
 				ImGui::TextColored({ 0.8f,1.f,0.8f, 1.f }, "Feeling well");
+			}
+
+			if (pInv.Encumbered()) {
+				ImGui::TextColored(ImVec4{ 1, 0, 0, 1 }, "Overencumbered! Walking slower.");
 			}
 
 			ImGui::Text("Body Temperature :"); ImGui::SameLine();
@@ -1175,7 +1131,7 @@ public:
 			SWAP_FONT("items");
 			ImGui::SetFontSize(32.f);
 			ImGui::Text(game.item_icons[curItem.section].c_str());
-			ImGui::SetFontSize(16.f);
+			ImGui::SetFontSize(game.reg_font_size);
 			SWAP_FONT("ui");
 
 			if (curItem.maxDurability != -1.f) {
@@ -1352,7 +1308,7 @@ public:
 				SWAP_FONT("items");
 				ImGui::SetFontSize(32.f);
 				ImGui::Text(("\n" + game.item_icons[recipeSelectedName]).c_str());
-				ImGui::SetFontSize(16.f);
+				ImGui::SetFontSize(game.reg_font_size);
 				SWAP_FONT("ui");
 				ImGui::Text(" - Required Components - ");
 				for (size_t i = 0; i < components.size(); i++)
@@ -1729,6 +1685,8 @@ public:
 			ImGui::Text("Weather : "); ImGui::SameLine();
 			ImGui::Text(Cosmetic::WeatherName(game.mainMap.currentWeather));
 
+			ImGui::Text(("Height: " + std::to_string(map.playerLevel)).c_str());
+
 			ImGui::Text(("Local X: " + std::to_string(player.coords.x)).c_str());
 			ImGui::Text(("Local Y: " + std::to_string(player.coords.y)).c_str());
 
@@ -1739,7 +1697,7 @@ public:
 			ImGui::Text(CHAR_ARRAY(map.CurrentChunk()->entities.size()));
 			for (size_t i = 0; i < map.CurrentChunk()->entities.size(); i++)
 			{
-				ImGui::Text(map.CurrentChunk()->entities[i]->name.c_str()); ImGui::SameLine();
+				ImGui::Text(("--" + map.CurrentChunk()->entities[i]->name).c_str()); ImGui::SameLine();
 				ImGui::Text(CHAR_ARRAY(map.CurrentChunk()->entities[i]->coords.x)); ImGui::SameLine();
 				ImGui::Text(CHAR_ARRAY(map.CurrentChunk()->entities[i]->coords.y));
 			}
@@ -1902,27 +1860,7 @@ public:
 				cursorPos.y += 1;
 			}
 			if (Input::KeyHeldDown(KEY_SPACE)) {
-				if (Input::KeyHeldDown(KEY_LEFT_SHIFT)) {
-					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_SAND");
-				}
-				else if (Input::KeyHeldDown(KEY_F)) {
-					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_STONE_FLOOR");
-				}
-				else if (Input::KeyHeldDown(KEY_A)) {
-					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_GRASS");
-				}
-				else if (Input::KeyHeldDown(KEY_S)) {
-					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_CRYSTAL");
-				}
-				else if (Input::KeyHeldDown(KEY_C)) {
-					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_CHAIN_FENCE");
-				}
-				else if (Input::KeyHeldDown(KEY_D)) {
-					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile("TILE_MUD");
-				}
-				else {
-					*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile(customTileSelect);
-				}
+				*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile(customTileSelect);
 			}
 			return;
 		}

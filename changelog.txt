@@ -28,6 +28,8 @@ v0.2.4 Changes
   - Lightning
 
   - More sfxs
+
+  - Encumberance now slows the player
   
 
 --v0.2.3 Changes--

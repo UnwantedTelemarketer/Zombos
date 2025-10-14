@@ -1,5 +1,6 @@
 SECTIONS {
-sections : [TILE_GRASS,
+sections : [TILE_AIR,
+			TILE_GRASS,
 			TILE_TALLGRASS,
 			TILE_DIRT,
 			TILE_SAND,
@@ -16,7 +17,23 @@ sections : [TILE_GRASS,
 			TILE_CAVE_ENTRANCE,
 			TILE_CHAIN_FENCE,
 			TILE_PEDESTAL,
-			TILE_GRAVESTONE]
+			TILE_GRAVESTONE,
+			TILE_WOOD_PLANKS]
+}
+
+TILE_AIR {
+id : -2;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : "NULL";
+itemName : "NULL";
+hasItem : false;
+walkable : false;
+changesOverTime : false;
+timedReplacement : "NULL";
+double_size : false;
+color : [0, 0, 0];
 }
 
 TILE_GRASS {
@@ -297,4 +314,19 @@ changesOverTime : false;
 timedReplacement : "NULL";
 double_size : false;
 color : [0.5,0.5,0.5];
+}
+
+TILE_WOOD_PLANKS {
+id : 23;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : "NULL";
+itemName : "NULL";
+hasItem : false;
+walkable : true;
+changesOverTime : false;
+timedReplacement : "NULL";
+double_size : false;
+color : [0.6,0.4,0.3];
 }

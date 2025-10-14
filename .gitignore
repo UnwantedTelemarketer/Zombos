@@ -229,6 +229,7 @@ _pkginfo.txt
 save.eid
 output_log.txt
 out/build/
+dat/saves/
 
 # Visual Studio cache files
 # files ending in .cache can be ignored
