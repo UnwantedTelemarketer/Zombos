@@ -72,6 +72,9 @@ namespace antibox {
 		void SetFramebufferMode(bool fb) { Engine::Instance().GetWindow()->UseFramebuffer(fb); }
 		//Changes whether to render to the screen directly or to a framebuffer.
 		void SetBackgroundColor(glm::vec4 color) { Engine::Instance().GetWindow()->UpdateCC(color); }
+		void GetMonitorSize(int& width, int& height) {
+			Engine::Instance().GetWindow()->GetScreenSize(width, height);
+		}
 	}
 	
 	namespace Editor {

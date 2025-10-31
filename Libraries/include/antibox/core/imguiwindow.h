@@ -32,6 +32,8 @@ namespace antibox
 		bool WantCaptureMouse();
 		bool WantCaptureKeyboard();
 
+		void UpdateScale();
+
 		void BeginRender();
 		void EndRender();
 	};

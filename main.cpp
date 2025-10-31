@@ -23,10 +23,12 @@ class Caves : public App {
 private:
 	WindowProperties GetWindowProperties() {
 		WindowProperties props;
+		vec2_i monitorRes;
+		Rendering::GetMonitorSize(monitorRes.x, monitorRes.y);
 
 		props.imguiProps = { true, true, false, {DOSFONT, ITEMFONT, VGAFONT, MOBFONT}, {"main", "items", "ui", "mobs"}, 16.f };
-		props.w = 1340;
-		props.h = 720;
+		props.w = monitorRes.x * 0.7f;
+		props.h = monitorRes.y * 0.67f;
 		props.vsync = 0;
 		props.cc = { 0.5, 0.5, 0.5, 1 };
 		props.title = "By The Fire";
@@ -68,6 +70,7 @@ public:
 	char customStructName[128] = "";
 	int customStructHeight = 1;
 	int customStructWidth = 1;
+	float uiFontSize = 16.f;
 	Vector4 customTabColor;
 	bool savedGamesScreen = false;
 	bool newGameScreen = false;
@@ -161,6 +164,7 @@ public:
 		dat.addInt("SETTINGS", "ySep", ySeparator);
 		dat.addInt("SETTINGS", "xDist", xViewDist);
 		dat.addInt("SETTINGS", "yDist", yViewDist);
+		dat.addFloat("SETTINGS", "uiFontSize", game.reg_font_size);
 		dat.addFloat("SETTINGS", "sfxSound", game.sfxvolume);
 		dat.addFloat("SETTINGS", "musicSound", game.musicvolume);
 
@@ -231,6 +235,7 @@ public:
 			ImGui::SliderInt("Y Separator Value", &ySeparator, 0, 20);
 			ImGui::SliderInt("View Distance (Width)", &yViewDist, 5, 40);
 			ImGui::SliderInt("View Distance (Height)", &xViewDist, 5, 40);
+			ImGui::SliderFloat("Font Size ",  &game.reg_font_size, 8.f, 64.f);
 
 
 			ImGui::Text("\n--Sound Settings--");
@@ -266,6 +271,7 @@ public:
 		//ImGui::ShowDemoWindow();
 
 		if (Input::KeyDown(KEY_GRAVE_ACCENT)) {
+
 			debugMenuScreen = !debugMenuScreen;
 		}
 
@@ -830,6 +836,7 @@ public:
 			//print items with separate font
 			if (item) {
 				SWAP_FONT("items");
+				ImGui::SetFontSize(game.reg_font_size);
 				for (size_t i = 0; i < itemIcons.size(); i++)
 				{
 					ImGui::SetCursorPos(itemPositions[i]);
@@ -844,6 +851,7 @@ public:
 			//print mobs with separate font
 			if (mobPositions.size() > 0) {
 				SWAP_FONT("mobs");
+				ImGui::SetFontSize(game.reg_font_size);
 				for (size_t i = 0; i < mobPositions.size(); i++)
 				{
 					ImGui::SetCursorPos(mobPositions[i]);
@@ -1617,13 +1625,13 @@ public:
 					Audio::Play("dat/sounds/start_fire.mp3");
 					map.floodFill(selectedTile->coords, 5, false);
 
-					std::string itemName = pInv.equippedItems[weapon].name;
+					std::string itemName = pInv.equippedItems[weapon].section;
 					if (pInv.equippedItems[weapon].consumable) {
 						pInv.Unequip(weapon);
 						pInv.RemoveItem(itemName);
 					}
 
-					if (pInv.equippedItems[weapon].maxDurability != -1.f) {
+					else if (pInv.equippedItems[weapon].maxDurability != -1.f) {
 						pInv.equippedItems[weapon].durability -= 1;
 						if (pInv.equippedItems[weapon].durability <= 0) {
 							pInv.Unequip(weapon);

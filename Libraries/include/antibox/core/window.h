@@ -41,6 +41,7 @@ namespace antibox {
 		inline ImguiWindow imwin() { return Window::mImguiWindow; }
 		inline Framebuffer* GetFramebuffer() { return mFramebuffer.get(); }
 		inline void UseFramebuffer(bool tf) { showFramebuffer = tf; }
+		void GetScreenSize(int& w, int& h);
 
 	private:
 		bool showFramebuffer = false;

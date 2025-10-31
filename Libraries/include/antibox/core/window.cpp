@@ -72,6 +72,13 @@ namespace antibox {
 		// Also update your projection matrix here if needed
 	}
 
+	void Window::GetScreenSize(int& w, int& h) {
+		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+		w = mode->width;
+		h = mode->height;
+	}
+
 	bool Window::init(const WindowProperties& props) { // Window Properties
 		// Create a glfw window object of width by height pixels, naming it whatever the window name is
 		Window::win = glfwCreateWindow(props.w, props.h, props.title.c_str(), NULL, NULL);

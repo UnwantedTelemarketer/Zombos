@@ -59,6 +59,13 @@ namespace antibox
 		ImGui::DestroyContext();
 	}
 
+	void ImguiWindow::UpdateScale() {
+		ImGuiIO& io = ImGui::GetIO();
+
+		io.DisplaySize.x = (float)Engine::Instance().window_w;
+		io.DisplaySize.y = (float)Engine::Instance().window_h;
+	}
+
 	bool ImguiWindow::WantCaptureMouse()
 	{
 		return ImGui::GetIO().WantCaptureMouse;

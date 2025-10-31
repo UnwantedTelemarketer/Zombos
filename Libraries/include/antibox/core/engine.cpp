@@ -39,6 +39,7 @@ namespace antibox
 		mApp->Init();
 		Console::Log(mAudio->init(), text::red, __LINE__);
 		prevtime = glfwGetTime();
+
 	}
 
 	void Engine::InitializeApp(App* app) {
@@ -69,6 +70,7 @@ namespace antibox
 		closeScene = false;
 		while (!closeScene) //This is the window loop from GLFW.
 		{
+			//window->imwin().UpdateScale();
 			if (appToChangeTo != -1) {
 				ChangeApp(appToChangeTo);
 				appToChangeTo = -1;
