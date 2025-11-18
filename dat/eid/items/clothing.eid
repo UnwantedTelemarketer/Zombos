@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [LEATHER_BOOTS, RAINCOAT, LEATHER_JACKET, TOOTH_NECKLACE];
+sections : [LEATHER_BOOTS, RAINCOAT, LEATHER_JACKET, TOOTH_NECKLACE, CANVAS_BACKPACK, HAT, DRIVING_GLOVES, JEANS];
 }
 
 
@@ -79,4 +79,73 @@ durability : -1;
 sprite : "_";
 spriteColor : [0.8, 0.8, 0.7];
 waterproof : true;
+}
+
+CANVAS_BACKPACK{
+name : "Canvas Backpack";
+description : "A backpack made of canvas. Makes carrying more easier.";
+weight : 1.0f;
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "weatr bppts";
+useTxt : "Does Nothig.";
+effects : [0,0,0,0];
+equipType : 8;
+equipModifier : 10;
+durability : -1;
+sprite : "_";
+spriteColor : [0.8, 0.8, 0.7];
+}
+
+HAT{
+name : "Baseball Cap";
+description : "A hat.";
+weight : 1.0f;
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "weatr bppts";
+useTxt : "Does Nothig.";
+effects : [0,0,0,0];
+equipType : 2;
+durability : -1;
+sprite : "_";
+spriteColor : [0.8, 0.8, 0.7];
+}
+
+DRIVING_GLOVES{
+name : "Driving Gloves";
+description : "Some driving gloves.";
+weight : 1.0f;
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "weatr bppts";
+useTxt : "Does Nothig.";
+effects : [0,0,0,0];
+equipType : 6;
+durability : -1;
+sprite : "_";
+spriteColor : [0.8, 0.8, 0.7];
+}
+
+JEANS{
+name : "Jeans";
+description : "Denim jeans.";
+weight : 1.0f;
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "weatr bppts";
+useTxt : "Does Nothig.";
+effects : [0,0,0,0];
+equipType : 4;
+durability : -1;
+sprite : "_";
+spriteColor : [0.8, 0.8, 0.7];
 }

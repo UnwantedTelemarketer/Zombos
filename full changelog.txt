@@ -22,11 +22,18 @@
 		-Bottled Water
 		-Empty Bottle
 		-Sterile Cloth (from tattered cloth, can bandage)
+		-Jeans
+		-Driving Gloves
+		-Baseball Cap
+		-Canvas Backpack
 	- Tiles added
 		-Pedestal
 		-Mossy Stone
 		-Gravestone
 		-Wooden Floor
+		-Stairs (Decorative)
+		-Stairs Up
+		-Stairs Down
 	- Can bandage with tattered cloth, adds sickness
 	- New Item Tags
 		- marker - for chalk, allows drawing on walls and ground
@@ -46,6 +53,9 @@
 	- Added encumberance, player can only move once per tick while slowed
 	- Added upper and downstairs chunks (for houses/sewers/bunkers etc)
 	- Fixed loading equipped items
+	- Fixed weight calculations during crafting
+	- Added weight change with backpack
+	- Added proper upstairs transition and attic to custom house
 
   --Engine Changes--
 	- The sprites now scale properly with window resizing

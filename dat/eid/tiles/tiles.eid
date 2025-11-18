@@ -18,7 +18,10 @@ sections : [TILE_AIR,
 			TILE_CHAIN_FENCE,
 			TILE_PEDESTAL,
 			TILE_GRAVESTONE,
-			TILE_WOOD_PLANKS]
+			TILE_WOOD_PLANKS,
+			TILE_STAIRS,
+			TILE_STAIRS_UP,
+			TILE_STAIRS_DOWN]
 }
 
 TILE_AIR {
@@ -329,4 +332,49 @@ changesOverTime : false;
 timedReplacement : "NULL";
 double_size : false;
 color : [0.6,0.4,0.3];
+}
+
+TILE_STAIRS {
+id : 24;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : "NULL";
+itemName : "NULL";
+hasItem : false;
+walkable : true;
+changesOverTime : false;
+timedReplacement : "NULL";
+double_size : false;
+color : [0.6,0.4,0.3];
+}
+
+TILE_STAIRS_UP {
+id : 25;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : "NULL";
+itemName : "NULL";
+hasItem : false;
+walkable : true;
+changesOverTime : false;
+timedReplacement : "NULL";
+double_size : false;
+color : [0.7,0.5,0.4];
+}
+
+TILE_STAIRS_DOWN {
+id : 33;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : "NULL";
+itemName : "NULL";
+hasItem : false;
+walkable : true;
+changesOverTime : false;
+timedReplacement : "NULL";
+double_size : false;
+color : [0.5,0.3,0.2];
 }

@@ -80,7 +80,7 @@ public:
 	Vector2_I PlaceStartingBuilding();
 	void PickStructure(Vector2_I startingChunk);
 	void PlaceCampsite(Vector2_I startingChunk);
-	void PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2_I dimensions);
+	void PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2_I dimensions, Vector2_I corner);
 	void GenerateTomb(std::shared_ptr<Chunk> chunk);
 	std::vector<Vector2_I> GetLine(Vector2_I startTile, Vector2_I endTile, int limit);
 	std::vector<Vector2_I> GetSquare(Vector2_I centerTile, int size);
@@ -1086,13 +1086,13 @@ void Map::PickStructure(Vector2_I startingChunk) {
 		case 0:
 		case 1:
 			ItemReader::GetDataFromFile("structures/structs.eid", "MONKEY_BAR", &dat);
-			PlaceStructure(startingChunk, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") });
+			PlaceStructure(startingChunk, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") }, {15, 15});
 			break;
 		case 2:
 		case 3:
 		case 4:
 			ItemReader::GetDataFromFile("structures/structs.eid", "RADIO_SHACK", &dat);
-			PlaceStructure(startingChunk, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") });
+			PlaceStructure(startingChunk, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") }, {15, 15});
 			break;
 		}
 	}
@@ -1103,11 +1103,11 @@ void Map::PickStructure(Vector2_I startingChunk) {
 		case 0:
 		case 1:
 		case 2:
-			PlaceBuilding(startingChunk);
-			break;
+			//PlaceBuilding(startingChunk);
+			//break;
 		case 3:
-			ItemReader::GetDataFromFile("structures/houses.eid", "HOUSE_2", &roadDat);
-			PlaceStructure(startingChunk, roadDat.getString("tiles"), { roadDat.getInt("width"), roadDat.getInt("height") });
+			ItemReader::GetDataFromFile("structures/houses.eid", "HOUSE_STAIRS", &roadDat);
+			PlaceStructure(startingChunk, roadDat.getString("tiles"), { roadDat.getInt("width"), roadDat.getInt("height") }, {15,15});
 			break;
 		case 4:
 			PlaceCampsite(startingChunk);
@@ -1151,8 +1151,14 @@ void Map::PlaceCampsite(Vector2_I startingChunk) {
 
 }
 
-void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2_I dimensions) {
-	Vector2_I cornerstone = { Math::RandInt(0, CHUNK_WIDTH - 5), Math::RandInt(0, CHUNK_HEIGHT - 5) };
+void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2_I dimensions, Vector2_I corner) {
+	Vector2_I cornerstone = zero;
+	if (corner == zero) {
+		cornerstone = { Math::RandInt(0, CHUNK_WIDTH - 5), Math::RandInt(0, CHUNK_HEIGHT - 5) };
+	}
+	else {
+		cornerstone = corner;
+	}
 
 	bool newChunk = false;
 	std::vector<Vector2_I> chunksCoordsToDelete;
@@ -1187,6 +1193,14 @@ void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2
 			}
 			else {
 				*curTile = Tiles::GetTileByID(static_cast<int>(structure[(x + (i * dimensions.x))]));
+
+				//place items on wood tile
+				if (curTile->id == 23) {
+					if (Math::RandInt(0, 15) == 4) {
+						curTile->hasItem = true;
+						curTile->itemName = Items::GetRandomItemFromPool("house.eid");
+					}
+				}
 			}
 		}
 	}
@@ -1256,7 +1270,7 @@ void Map::PlaceBuilding(Vector2_I startingChunk) {
 	{
 		
 		Tile* curTile = GetTileFromThisOrNeighbor({ buildingBlocks[i].x,buildingBlocks[i].y }, startingChunk);
-		if (Math::RandInt(0, 7) == 5) {
+		if (Math::RandInt(0, 5) == 3) {
 			if (Math::RandInt(0, 10) == 5 && curTile->biomeID == forest) {
 				*curTile = Tiles::GetTile("TILE_TREE_BASE");
 			}

@@ -67,6 +67,10 @@ public:
 			RemoveItem(items[index].section);
 		}
 
+		if (tempItem.eType == back) {
+			maxWeight += tempItem.mod;
+		}
+
 		Cleanup();
 	}
 
@@ -85,6 +89,11 @@ public:
 	
 	void Unequip(equipType type) {
 		Item tempItem = equippedItems[type];
+
+		if (tempItem.eType == back) {
+			maxWeight -= tempItem.mod;
+		}
+
 		AddItem(tempItem);
 		equippedItems.erase(type);
 		Cleanup();
@@ -128,6 +137,13 @@ public:
 		{
 			itemNames.erase(itemNames.begin() + itemsToErase[i] - i);
 			items.erase(items.begin() + itemsToErase[i] - i);
+		}
+
+		totalWeight = 0.f;
+
+		for (size_t i = 0; i < items.size(); i++)
+		{
+			totalWeight += items[i].weight * items[i].count;
 		}
 	}
 

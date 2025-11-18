@@ -111,19 +111,21 @@ const char* Cosmetic::EquipTypeName(int type) {
 	case 0:
 		return "None";
 	case 1:
-		return "WEAPON";
+		return "Weapon";
 	case 2:
-		return "HAT";
+		return "Hat";
 	case 3:
-		return "SHIRT";
+		return "Shirt";
 	case 4:
-		return "PANTS";
+		return "Pants";
 	case 5:
-		return "BOOTS";
+		return "Boots";
 	case 6:
-		return "GLOVES";
+		return "Gloves";
 	case 7:
-		return "NECK";
+		return "Neck";
+	case 8:
+		return "Back";
 	default:
 		return "None";
 	}

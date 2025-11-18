@@ -5,7 +5,7 @@
 
 #include <chrono>
 
-#define DOSFONT  "dat/fonts/symbolic/symbolic_tiles_ex_wood.ttf"
+#define DOSFONT  "dat/fonts/symbolic/symbolic_stairs.ttf"
 #define ITEMFONT "dat/fonts/symbolic/symbolic_items_extended.ttf"
 #define MOBFONT "dat/fonts/symbolic/symbolic_mobs_extended.ttf"
 #define VGAFONT  "dat/fonts/VGA437.ttf"
@@ -129,6 +129,7 @@ public:
 		{"Explorer",	{"RATION", "LEATHER_BOOTS", "BITS"}, {5, 1, 10}},
 		{"Vagrant",		{"ROCK", "STICK", "ROPE"}, {5, 5, 3}},
 		{"Amnesiac",	{}, {}},
+		//{"CLOTHIER",	{"LEATHER_BOOTS", "LEATHER_JACKET", "TOOTH_NECKLACE", "JEANS", "DRIVING_GLOVES", "HAT", "CANVAS_BACKPACK"}, {1, 1, 1, 1, 1, 1, 1}},
 	};
 
 	//Yelling Text above NPCs
@@ -587,6 +588,11 @@ public:
 					ImGui::Text("--Starting Inventory--");
 					ImGui::Text("???");
 					break;
+				case 6:
+					ImGui::TextWrapped("Test Class");
+					ImGui::Text("--Starting Inventory--");
+					ImGui::Text("Clothes");
+					break;
 				}
 				ImGui::Text("~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~");
 			}
@@ -1018,63 +1024,20 @@ public:
 		if (gameScreen.equipmentScreenOpen) {
 
 			ImGui::Begin("Equipment");
-			if (pInv.CurrentEquipExists(hat)) {
-				ImGui::Text("Hat :"); ImGui::SameLine();
-				ImGui::Text(pInv.equippedItems[hat].name.c_str());
-				if (pInv.equippedItems[hat].maxDurability != -1)
-					ImGui::ProgressBar(pInv.equippedItems[hat].durability / pInv.equippedItems[hat].maxDurability, ImVec2(0.0f, 0.0f));
-				if (ImGui::Button("Unequip Hat")) {
-					pInv.Unequip(hat);
-				}
-			}
 
-			if (pInv.CurrentEquipExists(neck)) {
-				ImGui::Text("Neck :"); ImGui::SameLine();
-				ImGui::Text(pInv.equippedItems[neck].name.c_str());
-				if (pInv.equippedItems[neck].maxDurability != -1)
-					ImGui::ProgressBar(pInv.equippedItems[neck].durability / pInv.equippedItems[neck].maxDurability, ImVec2(0.0f, 0.0f));
-				if (ImGui::Button("Unequip Neck")) {
-					pInv.Unequip(neck);
-				}
-			}
+			for (const auto& eType : Items::EquipmentTypes)
+			{
+				if (eType == weapon) continue;
 
-			if (pInv.CurrentEquipExists(shirt)) {
-				ImGui::Text("Shirt :"); ImGui::SameLine();
-				ImGui::Text(pInv.equippedItems[shirt].name.c_str());
-				if (pInv.equippedItems[shirt].maxDurability != -1)
-					ImGui::ProgressBar(pInv.equippedItems[shirt].durability / pInv.equippedItems[shirt].maxDurability, ImVec2(0.0f, 0.0f));
-				if (ImGui::Button("Unequip Shirt")) {
-					pInv.Unequip(shirt);
-				}
-			}
-
-			if (pInv.CurrentEquipExists(gloves)) {
-				ImGui::Text("Gloves :"); ImGui::SameLine();
-				ImGui::Text(pInv.equippedItems[gloves].name.c_str());
-				if (pInv.equippedItems[gloves].maxDurability != -1)
-					ImGui::ProgressBar(pInv.equippedItems[gloves].durability / pInv.equippedItems[gloves].maxDurability, ImVec2(0.0f, 0.0f));
-				if (ImGui::Button("Unequip Gloves")) {
-					pInv.Unequip(gloves);
-				}
-			}
-
-			if (pInv.CurrentEquipExists(pants)) {
-				ImGui::Text("Pants :"); ImGui::SameLine();
-				ImGui::Text(pInv.equippedItems[pants].name.c_str());
-				if (pInv.equippedItems[pants].maxDurability != -1)
-					ImGui::ProgressBar(pInv.equippedItems[pants].durability / pInv.equippedItems[pants].maxDurability, ImVec2(0.0f, 0.0f));
-				if (ImGui::Button("Unequip Pants")) {
-					pInv.Unequip(pants);
-				}
-			}
-
-			if (pInv.CurrentEquipExists(boots)) {
-				ImGui::Text("Boots :"); ImGui::SameLine();
-				ImGui::Text(pInv.equippedItems[boots].name.c_str());
-				if (pInv.equippedItems[boots].maxDurability != -1)
-					ImGui::ProgressBar(pInv.equippedItems[boots].durability / pInv.equippedItems[boots].maxDurability, ImVec2(0.0f, 0.0f));
-				if (ImGui::Button("Unequip Boots")) {
-					pInv.Unequip(boots);
+				std::string eTypeName = Cosmetic::EquipTypeName(eType);
+				if (pInv.CurrentEquipExists(eType)) {
+					ImGui::Text((eTypeName + " : ").c_str()); ImGui::SameLine();
+					ImGui::Text(pInv.equippedItems[eType].name.c_str());
+					if (pInv.equippedItems[eType].maxDurability != -1)
+						ImGui::ProgressBar(pInv.equippedItems[eType].durability / pInv.equippedItems[eType].maxDurability, ImVec2(0.0f, 0.0f));
+					if (ImGui::Button(("Unequip " + eTypeName).c_str())) {
+						pInv.Unequip(eType);
+					}
 				}
 			}
 
@@ -1328,9 +1291,9 @@ public:
 
 					if (newItem != "none") {
 						currentItemIndex = 0;
-						pInv.Cleanup();
 						pInv.AddItem(Items::GetItem(newItem));
 						Audio::Play(sfxs["craft"]);
+						pInv.Cleanup();
 					}
 					else {
 						Audio::Play(sfxs["fail"]);
@@ -2004,6 +1967,7 @@ public:
 			flashlightActive = !flashlightActive;
 			Audio::Play(sfxs["click"]);
 		}
+		
 
 
 		if (moved) {

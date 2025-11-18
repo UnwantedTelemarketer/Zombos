@@ -538,11 +538,28 @@ void GameManager::MovePlayer(int dir) {
 	default:
 		break;
 	}
-			//entering a cave
+
 	if (mainMap.TileAtPos(mPlayer.coords)->itemName == "BEAR_TRAP") {
 		mPlayer.TakeDamage(pierceDamage, 35);
 		Audio::Play("dat/sounds/bear_trap.mp3");
 		mainMap.TileAtPos(mPlayer.coords)->itemName = "BEAR_TRAP_C";
+	}
+
+	//moving up stairs
+	if (mainMap.TileAtPos(mPlayer.coords)->id == 25) {
+		mainMap.playerLevel += 1;
+		Audio::StopLoop("ambient_day");
+
+		OpenedData atticDat;
+
+		ItemReader::GetDataFromFile("structures/houses.eid", "HOUSE_ATTIC", &atticDat);
+		mainMap.PlaceStructure(mainMap.c_glCoords, atticDat.getString("tiles"), { atticDat.getInt("width"), atticDat.getInt("height") }, { 15, 14 });
+	}
+	//moving down stairs
+	else if (mainMap.TileAtPos(mPlayer.coords)->id == 33) {
+		Audio::PlayLoop("dat/sounds/music/ambient12.wav", "ambient_day");
+		Audio::SetVolumeLoop(musicvolume, "ambient_day");
+		mainMap.playerLevel -= 1;
 	}
 	/*if (mainMap.TileAtPos(mPlayer.coords)->id == 19) {
 		if (EnterCave()) {

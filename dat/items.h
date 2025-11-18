@@ -135,7 +135,7 @@ namespace Tiles {
 namespace Items {
 	static std::map<std::string, Item> list;
 	static std::map<std::string, Vector3> colors;
-	static std::vector<equipType> EquipmentTypes = { weapon, hat, shirt, pants, boots, gloves, neck };
+	static std::vector<equipType> EquipmentTypes = { weapon, hat, shirt, pants, boots, gloves, neck, back };
 
 	static Item GetItem(std::string itemName) {
 		return list[itemName];

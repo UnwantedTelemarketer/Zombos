@@ -11,7 +11,7 @@ enum Liquid { nothing = 0, water = 1, blood = 2, fire = 3, guts = 4, mud = 5 , s
 enum Action { use, consume, combine };
 enum Behaviour { Wander, Protective, Protective_Stationary, Stationary, Aggressive, Follow };
 enum Faction { Human_W, Human_T, Bandit, Dweller, Zombie, Wildlife, Takers };
-enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6, neck = 7 };
+enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6, neck = 7, back = 8 };
 
 #define ENT_PLAYER "A"
 #define ID_PLAYER 0
