@@ -7,7 +7,7 @@
 
 #define DOSFONT  "dat/fonts/symbolic/symbolic_stairs.ttf"
 #define ITEMFONT "dat/fonts/symbolic/symbolic_items_extended.ttf"
-#define MOBFONT "dat/fonts/symbolic/symbolic_mobs_extended.ttf"
+#define MOBFONT "dat/fonts/symbolic/symbolic_glyph_test.ttf"
 #define VGAFONT  "dat/fonts/VGA437.ttf"
 #define SWAP_FONT(newfont) ImGui::PopFont(); ImGui::PushFont(Engine::Instance().getFont(newfont));
 //#define DEV_TOOLS
@@ -727,7 +727,7 @@ public:
 					if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
 					{
 						mobPositions.push_back(ImGui::GetCursorPos());
-						mobIcons.push_back(ENT_PLAYER);
+						mobIcons.push_back(Utilities::glyph(0xE000));
 						mobColors.push_back(game.GetPlayerColor());
 						//batchedString.append("#");
 						//continue;
@@ -1370,6 +1370,7 @@ public:
 					ImGui::TextColored({ 0,0.5,1,1 }, selectedTile->entity->name.c_str());
 
 					if (gameScreen.debugOpen) {
+
 						ImGui::Text("Happiness : "); ImGui::SameLine();
 						ImGui::TextColored({ 0,0.5,0,1 }, std::to_string(selectedTile->entity->feelingTowardsPlayer.happy).c_str());
 						ImGui::Text("Trust : "); ImGui::SameLine();
@@ -1408,6 +1409,7 @@ public:
 
 					ImGui::Text("---Dialogue---");
 					if (gameScreen.tradeDialogue) {
+
 						if (pInv.CurrentEquipMatches(neck, "TOOTH_NECKLACE")) {
 							ImGui::TextWrapped("\"...I don't want to trade with you.\"");
 						}
@@ -1439,6 +1441,7 @@ public:
 					else {
 						if (selectedTile->entity->canTalk) {
 							ImGui::TextWrapped(("\"" + selectedTile->entity->message + "\"").c_str());
+							ImGui::Text(std::to_string(selectedTile->entity->taskList.size()).c_str());
 						}
 						if (ImGui::Button("Trade?")) {
 							gameScreen.tradeDialogue = true;
@@ -1581,47 +1584,54 @@ public:
 				}
 			}
 
-			//only light fires if we are holding a lighter or match
-			if (pInv.CurrentEquipExists(weapon) && pInv.equippedItems[weapon].canBurnThings) {
-				if (ImGui::Button("Burn Tile")) {
-					selectedTile->liquid = fire;
-					Audio::Play("dat/sounds/start_fire.mp3");
-					map.floodFill(selectedTile->coords, 5, false);
+			if (ImGui::CollapsingHeader("Additional Options")) {
+				//only light fires if we are holding a lighter or match
+				if (pInv.CurrentEquipExists(weapon) && pInv.equippedItems[weapon].canBurnThings) {
+					if (ImGui::Button("Burn Tile")) {
+						selectedTile->liquid = fire;
+						Audio::Play("dat/sounds/start_fire.mp3");
+						map.floodFill(selectedTile->coords, 5, false);
 
-					std::string itemName = pInv.equippedItems[weapon].section;
-					if (pInv.equippedItems[weapon].consumable) {
-						pInv.Unequip(weapon);
-						pInv.RemoveItem(itemName);
-					}
-
-					else if (pInv.equippedItems[weapon].maxDurability != -1.f) {
-						pInv.equippedItems[weapon].durability -= 1;
-						if (pInv.equippedItems[weapon].durability <= 0) {
+						std::string itemName = pInv.equippedItems[weapon].section;
+						if (pInv.equippedItems[weapon].consumable) {
 							pInv.Unequip(weapon);
-							pInv.RemoveItem("LIGHTER");
-							pInv.AddItemByID("LIGHTER_EMPTY");
+							pInv.RemoveItem(itemName);
+						}
+
+						else if (pInv.equippedItems[weapon].maxDurability != -1.f) {
+							pInv.equippedItems[weapon].durability -= 1;
+							if (pInv.equippedItems[weapon].durability <= 0) {
+								pInv.Unequip(weapon);
+								pInv.RemoveItem("LIGHTER");
+								pInv.AddItemByID("LIGHTER_EMPTY");
+							}
 						}
 					}
 				}
-			}
 
-			//only mark tile if we are holding something that marks
-			if (pInv.CurrentEquipExists(weapon) && pInv.equippedItems[weapon].marker) {
-				if (ImGui::Button("Mark Tile")) {
-					Audio::Play("dat/sounds/chalk.mp3");
-					selectedTile->tileColor = pInv.equippedItems[weapon].spriteColor;
-					pInv.equippedItems[weapon].durability -= 1;
-					if (pInv.equippedItems[weapon].durability <= 0) {
-						std::string name = pInv.equippedItems[weapon].name;
-						pInv.Unequip(weapon);
-						pInv.RemoveItem(name);
+				//only mark tile if we are holding something that marks
+				if (pInv.CurrentEquipExists(weapon) && pInv.equippedItems[weapon].marker) {
+					if (ImGui::Button("Mark Tile")) {
+						Audio::Play("dat/sounds/chalk.mp3");
+						selectedTile->tileColor = pInv.equippedItems[weapon].spriteColor;
+						pInv.equippedItems[weapon].durability -= 1;
+						if (pInv.equippedItems[weapon].durability <= 0) {
+							std::string name = pInv.equippedItems[weapon].name;
+							pInv.Unequip(weapon);
+							pInv.RemoveItem(name);
+						}
 					}
 				}
-			}
 
-			int _ = 0;
-			if (pInv.TryGetItem("ROCK", false, &_)) {
-				if (ImGui::CollapsingHeader("Building Options")) {
+				if (pInv.CurrentEquipExists(weapon) && pInv.equippedItems[weapon].section == "MAKESHIFT_HOE") {
+					if (ImGui::Button("Till Tile")) {
+						*selectedTile = Tiles::GetTileByID(34);
+						selectedTile->ticksNeeded = 120;
+					}
+				}
+
+				int _ = 0;
+				if (pInv.TryGetItem("ROCK", false, &_)) {
 					if (ImGui::Button("Place Wall ( 1 x Rock )")) {
 						*selectedTile = Tiles::GetTile("TILE_STONE");
 						pInv.RemoveItem("ROCK");
@@ -1761,6 +1771,7 @@ public:
 		customBuilding = std::make_shared<Chunk>();
 		Items::LoadItems(&game.item_icons);
 		Tiles::LoadTiles(&game.tile_colors);
+
 
 		map.EmptyChunk(customBuilding);
 		//std::thread itemLoading = Items::LoadItemsFromFiles(&game.item_icons);

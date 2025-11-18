@@ -39,4 +39,5 @@ TILES {
 	TILE_STAIRS : [+, 24],
 	TILE_STAIRS_UP : [+, 25],
 	TILE_STAIRS_DOWN : [+, 33],
+	TILE_TILLED_DIRT : [C, 35],
 }

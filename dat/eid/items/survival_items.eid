@@ -1,7 +1,7 @@
 SECTIONS {
 sections : [BANDAGE,CLOTH_TORCH,LIGHTER,CANTEEN,GUTS,GLASS_JAR,
 			GLOWING_MUSHROOM_JAR,LANTERN,MATCH,BEAR_TRAP,
-			BEAR_TRAP_C,LIGHTER_EMPTY,STERILE_CLOTH];
+			BEAR_TRAP_C,LIGHTER_EMPTY,STERILE_CLOTH,MAKESHIFT_HOE];
 }
 
 BANDAGE {
@@ -230,3 +230,19 @@ sprite : "J";
 spriteColor : [0.95, 0.95, 0.85];
 }
 
+MAKESHIFT_HOE {
+name : "Makeshift Hoe";
+description : "A makeshift hoe used for tilling dirt.";
+weight : 2.5;
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : "You eat a bandage.";
+useTxt : "You wrap a bandage around your wound.";
+effects : [0,0,0,0];
+equipType : 1;
+equipModifier : 1;
+sprite : "J";
+spriteColor : [0.95, 0.95, 0.85];
+}

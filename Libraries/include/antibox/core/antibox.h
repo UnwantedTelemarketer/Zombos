@@ -2,6 +2,8 @@
 #include "engine.h"
 #include "app.h"
 #include <iostream>
+#include <locale>
+#include <codecvt>
 
 //PRINTSCREEN creates an auto reference to the current window (screen) and displays the framebuffer that it gets onto an ImGui Image tab.
 #define PRINTSCREEN auto& window = *Engine::Instance().GetWindow(); ImGui::Image(window.GetFramebuffer()->GetTextureID(), { ImGui::GetWindowSize().x , ImGui::GetWindowSize().y });
@@ -34,6 +36,17 @@ namespace antibox {
 	namespace Utilities {
 		float deltaTime() { return antibox::Engine::Instance().deltaTime(); }
 		float getFPS() { return antibox::Engine::Instance().getFPS(); }
+
+		std::string glyph(char32_t codepoint) {
+			std::string out;
+
+			// 3-byte UTF-8: 1110xxxx 10xxxxxx 10xxxxxx
+			out.push_back(static_cast<char>(0xE0 | (codepoint >> 12)));
+			out.push_back(static_cast<char>(0x80 | ((codepoint >> 6) & 0x3F)));
+			out.push_back(static_cast<char>(0x80 | (codepoint & 0x3F)));
+
+			return out;
+		}
 
 		//Flips a bool after (time) seconds
 		void SetVarInSeconds(std::string lerpID, bool* value, float time) { antibox::Engine::Instance().SetBoolAfterTime(lerpID, value, time); }

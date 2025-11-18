@@ -9,8 +9,8 @@ enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage 
 enum biome { desert, ocean, forest, swamp, taiga, grassland, urban, jungle };
 enum Liquid { nothing = 0, water = 1, blood = 2, fire = 3, guts = 4, mud = 5 , snow = 6};
 enum Action { use, consume, combine };
-enum Behaviour { Wander, Protective, Protective_Stationary, Stationary, Aggressive, Follow };
-enum Faction { Human_W, Human_T, Bandit, Dweller, Zombie, Wildlife, Takers };
+enum Behaviour { Wander, Protective, Protective_Stationary, Stationary, Aggressive, Follow, Tasks };
+enum Faction { Human_W, Human_T, Bandit, Dweller, Zombie, Wildlife, Takers, Farmer };
 enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6, neck = 7, back = 8 };
 
 #define ENT_PLAYER "A"
@@ -266,6 +266,18 @@ struct Memory {
 	bool persistent;
 };
 
+enum TaskType {collectItem};
+
+struct Task {
+	TaskType task;
+	std::vector<Vector2_I> taskArea;
+	int taskModifierID;
+	std::string taskModifierString;
+	int priority;
+	bool currentlyFulfilling = false;
+	Vector2_I currentObjective;
+};
+
 //Health, Name, ID, Behaviour, Aggressive, Faction, View Distance, Damage, Can Talk
 struct Entity {
 	float health;
@@ -300,6 +312,7 @@ struct Entity {
 	Entity* target = nullptr;
 	std::vector<Item> inv;
 	std::vector<Memory> memories;
+	std::vector<Task> taskList;
 	const float MOOD_STRONG = 2.f;
 
 	bool targeting() { return target != nullptr || targetingPlayer; }
@@ -311,6 +324,10 @@ struct Entity {
 			names.push_back(inv[i].name);
 		}
 		return names;
+	}
+
+	void AddTask(Task t) {
+		taskList.push_back(t);
 	}
 
 	std::string RandomIdleSound() {
@@ -373,6 +390,8 @@ struct Entity {
 		if (feelingTowardsPlayer.happy < -3.f && feelingTowardsPlayer.fear <= 5.f) {
 			b = Aggressive;
 		}
+		else if (b == Tasks) { return; }
+
 		else if (feelingTowardsPlayer.happy >= -2.5f) {
 			b = Protective;
 		}
@@ -799,6 +818,7 @@ struct Tile {
 	vec3 mainTileColor;
 	short biomeID;
 	std::string tileLerpID = "nthng";
+	int tileSprite;
 
 	bool CanUpdate() {
 		return ticksPassed >= ticksNeeded && changesOverTime;
@@ -863,6 +883,7 @@ struct Tile {
 		changesOverTime = data.getBool("changesOverTime");
 		timedReplacement = data.getString("timedReplacement");
 		double_size = data.getBool("double_size");
+		tileSprite = stoi(data.getString("sprite"), nullptr, 16);
 
 		if (data.getArray("color").size() <= 0) {
 			tileColor = { 1,0,0 };

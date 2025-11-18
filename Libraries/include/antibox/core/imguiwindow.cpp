@@ -2,7 +2,6 @@
 
 #include "engine.h"
 
-#define ICO_SMILE "\xe2\x98\xba"
 #define ICON_MIN_FA 0xf000
 #define ICON_MAX_16_FA 0xf2e0
 #define ICON_MAX_FA 0xf2e0
@@ -26,10 +25,10 @@ namespace antibox
 
 		ImVector<ImWchar> ranges;
 		ImFontGlyphRangesBuilder builder;
-		builder.AddText(ICO_SMILE);                        // Add a string (here "Hello world" contains 7 unique characters)
+		ImWchar pua[3] = {0xE000, 0xF8FF, 0}; //add the pua section
 		builder.AddChar(0xe298ba);                               // Add a specific character
-		builder.AddRanges(io.Fonts->GetGlyphRangesCyrillic());// Add one of the default ranges
 		builder.AddRanges(io.Fonts->GetGlyphRangesDefault());// Add one of the default ranges
+		builder.AddRanges(pua);
 		builder.BuildRanges(&ranges);
 			
 

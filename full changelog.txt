@@ -26,6 +26,8 @@
 		-Driving Gloves
 		-Baseball Cap
 		-Canvas Backpack
+		-Tomato
+		-Tomato Seeds
 	- Tiles added
 		-Pedestal
 		-Mossy Stone
@@ -34,6 +36,7 @@
 		-Stairs (Decorative)
 		-Stairs Up
 		-Stairs Down
+		-Tilled Dirt
 	- Can bandage with tattered cloth, adds sickness
 	- New Item Tags
 		- marker - for chalk, allows drawing on walls and ground
@@ -56,6 +59,10 @@
 	- Fixed weight calculations during crafting
 	- Added weight change with backpack
 	- Added proper upstairs transition and attic to custom house
+	- NPCs can have tasks
+	- Collect Task
+		- NPC will stay in an area, and when they see a specific item, will collect it.
+	- Farmer NPC added
 
   --Engine Changes--
 	- The sprites now scale properly with window resizing

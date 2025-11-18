@@ -21,7 +21,8 @@ sections : [TILE_AIR,
 			TILE_WOOD_PLANKS,
 			TILE_STAIRS,
 			TILE_STAIRS_UP,
-			TILE_STAIRS_DOWN]
+			TILE_STAIRS_DOWN,
+			TILE_TILLED_DIRT]
 }
 
 TILE_AIR {
@@ -37,6 +38,7 @@ changesOverTime : false;
 timedReplacement : "NULL";
 double_size : false;
 color : [0, 0, 0];
+sprite : 0xE000;
 }
 
 TILE_GRASS {
@@ -52,6 +54,7 @@ changesOverTime : true;
 timedReplacement : "TILE_TALLGRASS";
 double_size : false;
 color : [0, 0.65, 0];
+sprite : 0xE000;
 }
 
 TILE_TALLGRASS {
@@ -68,6 +71,7 @@ changesOverTime : false;
 timedReplacement : 0;
 double_size : false;
 color : [0.65,1,0.1];
+sprite : 0xE000;
 }
 
 TILE_DIRT {
@@ -83,6 +87,7 @@ changesOverTime : true;
 timedReplacement : "TILE_GRASS";
 double_size : false;
 color : [1,0.45,0];
+sprite : 0xE000;
 }
 
 TILE_SAND {
@@ -98,6 +103,7 @@ changesOverTime : false;
 timedReplacement : 0;
 double_size : false;
 color : [1, 1, 0.5, 1];
+sprite : 0xE000;
 }
 
 TILE_STONE {
@@ -114,6 +120,7 @@ timedReplacement : 0;
 double_size : false;
 castsShadow : true;
 color : [0.75, 0.75, 0.75];
+sprite : 0xE000;
 }
 
 TILE_TREE_BASE {
@@ -131,6 +138,7 @@ timedReplacement : 0;
 double_size : true;
 castsShadow : true;
 color : [0, 0.45, 0];
+sprite : 0xE000;
 }
 
 TILE_TREE_BASE_E {
@@ -147,6 +155,7 @@ timedReplacement : true;
 double_size : true;
 castsShadow : true;
 color : [0, 0.25, 0];
+sprite : 0xE000;
 }
 
 TILE_CACTUS_BASE {
@@ -163,6 +172,7 @@ timedReplacement : 0;
 double_size : true;
 castsShadow : true;
 color : [0, 0.65, 0];
+sprite : 0xE000;
 }
 
 TILE_STONE_FLOOR {
@@ -178,6 +188,7 @@ changesOverTime : false;
 timedReplacement : 0;
 double_size : false;
 color : [0.23,0.23,0.23];
+sprite : 0xE000;
 }
 
 TILE_CRYSTAL {
@@ -194,6 +205,7 @@ changesOverTime : false;
 timedReplacement : 0;
 double_size : false;
 color : [0.95,0.5,0];
+sprite : 0xE000;
 }
 
 TILE_SNOW {
@@ -210,6 +222,7 @@ changesOverTime : false;
 timedReplacement : 0;
 double_size : false;
 color : [0.85,0.85,0.90];
+sprite : 0xE000;
 }
 
 TILE_MUD {
@@ -226,6 +239,7 @@ changesOverTime : false;
 timedReplacement : 0;
 double_size : false;
 color : [0.6,0.4,0.3];
+sprite : 0xE000;
 }
 
 TILE_MUD_EMPTY {
@@ -241,6 +255,7 @@ changesOverTime : true;
 timedReplacement : "TILE_MUD";
 double_size : false;
 color : [0.95,0.75,0.65];
+sprite : 0xE000;
 }
 
 TILE_CATTAIL {
@@ -257,6 +272,7 @@ changesOverTime : false;
 timedReplacement : 0;
 double_size : true;
 color : [0.8, 0.7, 0.5];
+sprite : 0xE000;
 }
 
 TILE_CAVE_ENTRANCE {
@@ -272,6 +288,7 @@ changesOverTime : false;
 timedReplacement : "NULL";
 double_size : false;
 color : [0.5,0.5,0.5];
+sprite : 0xE000;
 }
 
 TILE_CHAIN_FENCE {
@@ -287,6 +304,7 @@ changesOverTime : false;
 timedReplacement : "NULL";
 double_size : false;
 color : [0.5,0.5,0.5];
+sprite : 0xE000;
 }
 
 TILE_PEDESTAL {
@@ -302,6 +320,7 @@ changesOverTime : false;
 timedReplacement : "NULL";
 double_size : false;
 color : [0.5,0.5,0.5];
+sprite : 0xE000;
 }
 
 TILE_GRAVESTONE {
@@ -317,6 +336,7 @@ changesOverTime : false;
 timedReplacement : "NULL";
 double_size : false;
 color : [0.5,0.5,0.5];
+sprite : 0xE000;
 }
 
 TILE_WOOD_PLANKS {
@@ -332,6 +352,7 @@ changesOverTime : false;
 timedReplacement : "NULL";
 double_size : false;
 color : [0.6,0.4,0.3];
+sprite : 0xE000;
 }
 
 TILE_STAIRS {
@@ -347,6 +368,7 @@ changesOverTime : false;
 timedReplacement : "NULL";
 double_size : false;
 color : [0.6,0.4,0.3];
+sprite : 0xE000;
 }
 
 TILE_STAIRS_UP {
@@ -362,6 +384,7 @@ changesOverTime : false;
 timedReplacement : "NULL";
 double_size : false;
 color : [0.7,0.5,0.4];
+sprite : 0xE000;
 }
 
 TILE_STAIRS_DOWN {
@@ -377,4 +400,37 @@ changesOverTime : false;
 timedReplacement : "NULL";
 double_size : false;
 color : [0.5,0.3,0.2];
+sprite : 0xE000;
+}
+
+TILE_TILLED_DIRT {
+id : 35;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : 1;
+itemName : "NULL";
+hasItem : false;
+walkable : true;
+changesOverTime : true;
+timedReplacement : "TILE_DIRT";
+double_size : false;
+color : [1,0.45,0];
+sprite : 0xE000;
+}
+
+TILE_WOOD_FENCE {
+id : 36;
+direction : 0;
+liquid : 0;
+collectible : false;
+replacement : 1;
+itemName : "NULL";
+hasItem : false;
+walkable : false;
+changesOverTime : false;
+timedReplacement : "NULL";
+double_size : false;
+color : [1,0.45,0];
+sprite : 0xE000;
 }

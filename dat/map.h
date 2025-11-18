@@ -1076,7 +1076,7 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 
 
 void Map::PickStructure(Vector2_I startingChunk) {
-	int randInt = Math::RandInt(0, 4);
+	int randInt = Math::RandInt(0, 6);
 
 	//chance for rare structure
 	if (Math::RandInt(0, 30) == 2) {
@@ -1091,8 +1091,10 @@ void Map::PickStructure(Vector2_I startingChunk) {
 		case 2:
 		case 3:
 		case 4:
+		case 5:
+		case 6:
 			ItemReader::GetDataFromFile("structures/structs.eid", "RADIO_SHACK", &dat);
-			PlaceStructure(startingChunk, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") }, {15, 15});
+			PlaceStructure(startingChunk, dat.getString("tiles"), { dat.getInt("width"),dat.getInt("height") }, { 15, 15 });
 			break;
 		}
 	}
@@ -1103,14 +1105,28 @@ void Map::PickStructure(Vector2_I startingChunk) {
 		case 0:
 		case 1:
 		case 2:
-			//PlaceBuilding(startingChunk);
-			//break;
+			PlaceBuilding(startingChunk);
+			break;
 		case 3:
 			ItemReader::GetDataFromFile("structures/houses.eid", "HOUSE_STAIRS", &roadDat);
 			PlaceStructure(startingChunk, roadDat.getString("tiles"), { roadDat.getInt("width"), roadDat.getInt("height") }, {15,15});
 			break;
 		case 4:
 			PlaceCampsite(startingChunk);
+			break;
+		case 5:
+		case 6:
+			ItemReader::GetDataFromFile("structures/town.eid", "FARM", &roadDat);
+			PlaceStructure(startingChunk, roadDat.getString("tiles"), { roadDat.getInt("width"), roadDat.getInt("height") }, { 15,15 });
+
+			Entity* ent = SpawnHuman({ 17, 17 }, Behaviour::Tasks, Faction::Farmer);
+			Task t;
+			t.task = collectItem;
+			t.priority = 1;
+			t.taskArea = GetSquare({ 17, 17 }, 5);
+			t.taskModifierString = "TOMATO";
+			ent->AddTask(t);
+			world.chunks[startingChunk]->AddEntity(ent);
 			break;
 		}
 	}
@@ -1604,7 +1620,16 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 				//update if the tile can update (like grass growing)
 				if (curTile->CanUpdate()) {
 					if (curTile->liquid == nothing) {
+						std::string newItem = "nthng";
+						if (curTile->id == 34 && curTile->hasItem && curTile->itemName == "TOMATO_SEEDS") {
+							newItem = "TOMATO";
+						}
 						*curTile = Tiles::GetTile(curTile->timedReplacement);
+						if (newItem != "nthng") {
+							curTile->itemName = newItem;
+							curTile->hasItem = true;
+						}
+						curTile->ticksNeeded = 120;
 					}
 					else {
 						curTile->ticksPassed -= 1;

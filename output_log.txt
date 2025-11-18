@@ -28,12 +28,14 @@
 [ Line 167 ]: [0;37mTRUST_WANDERER[0m
 [ Line 167 ]: [0;37mUNTRUST_WANDERER[0m
 [ Line 186 ]: [1;32mFinished loading dialogue![0m
-[ Line 1806 ]: [1;32mDone![0m
+[ Line 1817 ]: [1;32mDone![0m
 [ Line 40 ]: [1;31m0[0m
 [ Line 339 ]: [1;32mNew save created successfully![0m
-[ Line 1846 ]: [1;32mgive ROCK 10[0m
-[ Line 1846 ]: [1;32mgive LIGHTER 1[0m
+[ Line 1857 ]: [1;32mgive MACHETE 1[0m
+[ Line 1857 ]: [1;32mgive TOMATO 1[0m
+[ Line 1857 ]: [1;32mset bleeding 0[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 374 ]: [1;32mWrote to file dat/saves/sound test/save.eid[0m
-[ Line 273 ]: [1;31mAttempting to read from file 'dat/saves/sound test/entities/names.eid', but can't find file.[0m
-[ Line 221 ]: [1;32mSave complete in 19.447926ms.[0m
+[ Line 374 ]: [1;32mWrote to file dat/saves/famer 6000/save.eid[0m
+[ Line 273 ]: [1;31mAttempting to read from file 'dat/saves/famer 6000/entities/names.eid', but can't find file.[0m
+[ Line 374 ]: [1;32mWrote to file dat/saves/famer 6000/entities/Haaieon.eid[0m
+[ Line 221 ]: [1;32mSave complete in 61.302902ms.[0m

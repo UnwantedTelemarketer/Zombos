@@ -283,6 +283,44 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 
 	switch (ent->b) //check the entities behaviour
 	{
+	case Tasks:
+		for (auto& t : ent->taskList)
+		{
+			//If they have something to do with their task
+			if (t.currentlyFulfilling) {
+				//walk towards the objective
+				std::vector<Vector2_I> pathToObj = mainMap.GetLine(ent->coords, t.currentObjective, 10);
+				if (pathToObj.size() > 2) {
+					ent->coords = pathToObj[1];
+				}
+				//reached tile
+				else {
+					if (t.task == TaskType::collectItem) {
+						Tile& objTile = *mainMap.GetTileFromThisOrNeighbor(t.currentObjective);
+						ent->inv.push_back(Items::GetItem(objTile.itemName));
+						objTile.hasItem = false;
+						objTile.itemName = "nthng";
+					}
+					t.currentlyFulfilling = false;
+					t.currentObjective = zero;
+				}
+			}
+
+			else if (t.task == TaskType::collectItem) {
+				for (const auto& checkTile : t.taskArea)
+				{
+					Tile& curTile = *mainMap.GetTileFromThisOrNeighbor(checkTile);
+					if (curTile.hasItem && curTile.itemName == t.taskModifierString)
+					{
+						t.currentlyFulfilling = true;
+						t.currentObjective = checkTile;
+						break;
+					}
+				}
+			}
+
+		}
+		break;
 	case Follow:
 		if (path.size() >= 3) {
 			ent->coords = path[1];
@@ -997,6 +1035,7 @@ std::string GameManager::GetTileChar(Tile* tile) {
 		return "A";
 	}
 	return tile_icons[tile->id];
+	//return Utilities::glyph(tile->tileSprite);
 }
 
 std::string GameManager::GetTileChar(Vector2_I tile) {
