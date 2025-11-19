@@ -26,411 +26,411 @@ sections : [TILE_AIR,
 }
 
 TILE_AIR {
-id : -2;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : "NULL";
-itemName : "NULL";
-hasItem : false;
-walkable : false;
-changesOverTime : false;
-timedReplacement : "NULL";
-double_size : false;
-color : [0, 0, 0];
-sprite : 0xE000;
+	id : -2;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : "NULL";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : false;
+	changesOverTime : false;
+	timedReplacement : "NULL";
+	double_size : false;
+	color : [0, 0, 0];
+	sprite : "tile_air";
 }
 
 TILE_GRASS {
-id : 1;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : "TILE_TALLGRASS";
-itemName : "NULL";
-hasItem : false;
-walkable : "true";
-changesOverTime : true;
-timedReplacement : "TILE_TALLGRASS";
-double_size : false;
-color : [0, 0.65, 0];
-sprite : 0xE000;
+	id : 1;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : "TILE_TALLGRASS";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : "true";
+	changesOverTime : true;
+	timedReplacement : "TILE_TALLGRASS";
+	double_size : false;
+	color : [0, 0.65, 0];
+	sprite : "tile_grass";
 }
 
 TILE_TALLGRASS {
-id : 3;
-direction : 0;
-liquid : 0;
-collectible : true;
-collectibleName : "GRASS"
-replacement : "TILE_GRASS";
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : false;
-timedReplacement : 0;
-double_size : false;
-color : [0.65,1,0.1];
-sprite : 0xE000;
+	id : 3;
+	direction : 0;
+	liquid : 0;
+	collectible : true;
+	collectibleName : "GRASS"
+	replacement : "TILE_GRASS";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : false;
+	timedReplacement : 0;
+	double_size : false;
+	color : [0.65,1,0.1];
+	sprite : "tile_tall_grass";
 }
 
 TILE_DIRT {
-id : 2;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : 1;
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : true;
-timedReplacement : "TILE_GRASS";
-double_size : false;
-color : [1,0.45,0];
-sprite : 0xE000;
+	id : 2;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : 1;
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : true;
+	timedReplacement : "TILE_GRASS";
+	double_size : false;
+	color : [1,0.45,0];
+	sprite : "tile_dirt";
 }
 
 TILE_SAND {
-id : 7;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : 1;
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : false;
-timedReplacement : 0;
-double_size : false;
-color : [1, 1, 0.5, 1];
-sprite : 0xE000;
+	id : 7;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : 1;
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : false;
+	timedReplacement : 0;
+	double_size : false;
+	color : [1, 1, 0.5, 1];
+	sprite : "tile_sand";
 }
 
 TILE_STONE {
-id : 6;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : 1;
-itemName : "NULL";
-hasItem : false;
-walkable : false;
-changesOverTime : false;
-timedReplacement : 0;
-double_size : false;
-castsShadow : true;
-color : [0.75, 0.75, 0.75];
-sprite : 0xE000;
+	id : 6;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : 1;
+	itemName : "NULL";
+	hasItem : false;
+	walkable : false;
+	changesOverTime : false;
+	timedReplacement : 0;
+	double_size : false;
+	castsShadow : true;
+	color : [0.75, 0.75, 0.75];
+	sprite : "tile_stone_floor";
 }
 
 TILE_TREE_BASE {
-id : 11;
-direction : 0;
-liquid : 0;
-collectible : true;
-collectibleName : "RESIN";
-replacement : "TILE_TREE_BASE_E";
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : false;
-timedReplacement : 0;
-double_size : true;
-castsShadow : true;
-color : [0, 0.45, 0];
-sprite : 0xE000;
+	id : 11;
+	direction : 0;
+	liquid : 0;
+	collectible : true;
+	collectibleName : "RESIN";
+	replacement : "TILE_TREE_BASE_E";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : false;
+	timedReplacement : 0;
+	double_size : true;
+	castsShadow : true;
+	color : [0, 0.45, 0];
+	sprite : "tile_tree_base";
 }
 
 TILE_TREE_BASE_E {
-id : 201;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : "TILE_GRASS";
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : "TILE_TREE_BASE";
-timedReplacement : true;
-double_size : true;
-castsShadow : true;
-color : [0, 0.25, 0];
-sprite : 0xE000;
+	id : 201;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : "TILE_GRASS";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : "TILE_TREE_BASE";
+	timedReplacement : true;
+	double_size : true;
+	castsShadow : true;
+	color : [0, 0.25, 0];
+	sprite : "tile_tree_base";
 }
 
 TILE_CACTUS_BASE {
-id : 12;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : 1;
-itemName : "NULL";
-hasItem : false;
-walkable : false;
-changesOverTime : false;
-timedReplacement : 0;
-double_size : true;
-castsShadow : true;
-color : [0, 0.65, 0];
-sprite : 0xE000;
+	id : 12;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : 1;
+	itemName : "NULL";
+	hasItem : false;
+	walkable : false;
+	changesOverTime : false;
+	timedReplacement : 0;
+	double_size : true;
+	castsShadow : true;
+	color : [0, 0.65, 0];
+	sprite : "tile_cactus_base";
 }
 
 TILE_STONE_FLOOR {
-id : 13;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : 1;
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : false;
-timedReplacement : 0;
-double_size : false;
-color : [0.23,0.23,0.23];
-sprite : 0xE000;
+	id : 13;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : 1;
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : false;
+	timedReplacement : 0;
+	double_size : false;
+	color : [0.23,0.23,0.23];
+	sprite : "tile_stone_floor";
 }
 
 TILE_CRYSTAL {
-id : 14;
-direction : 0;
-liquid : 0;
-collectible : true;
-collectibleName : "CRYSTAL";
-replacement : "TILE_STONE_FLOOR";
-itemName : "NULL";
-hasItem : false;
-walkable : false;
-changesOverTime : false;
-timedReplacement : 0;
-double_size : false;
-color : [0.95,0.5,0];
-sprite : 0xE000;
+	id : 14;
+	direction : 0;
+	liquid : 0;
+	collectible : true;
+	collectibleName : "CRYSTAL";
+	replacement : "TILE_STONE_FLOOR";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : false;
+	changesOverTime : false;
+	timedReplacement : 0;
+	double_size : false;
+	color : [0.95,0.5,0];
+	sprite : "tile_crystal";
 }
 
 TILE_SNOW {
-id : 15;
-direction : 0;
-liquid : 0;
-collectible : true;
-collectibleName : "SNOW";
-replacement : "TILE_DIRT";
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : false;
-timedReplacement : 0;
-double_size : false;
-color : [0.85,0.85,0.90];
-sprite : 0xE000;
+	id : 15;
+	direction : 0;
+	liquid : 0;
+	collectible : true;
+	collectibleName : "SNOW";
+	replacement : "TILE_DIRT";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : false;
+	timedReplacement : 0;
+	double_size : false;
+	color : [0.85,0.85,0.90];
+	sprite : "tile_rock";
 }
 
 TILE_MUD {
-id : 16;
-direction : 0;
-liquid : 0;
-collectible : true;
-collectibleName : "CLAY";
-replacement : "TILE_MUD_EMPTY";
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : false;
-timedReplacement : 0;
-double_size : false;
-color : [0.6,0.4,0.3];
-sprite : 0xE000;
+	id : 16;
+	direction : 0;
+	liquid : 0;
+	collectible : true;
+	collectibleName : "CLAY";
+	replacement : "TILE_MUD_EMPTY";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : false;
+	timedReplacement : 0;
+	double_size : false;
+	color : [0.6,0.4,0.3];
+	sprite : "tile_mud";
 }
 
 TILE_MUD_EMPTY {
-id : 17;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : "NULL";
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : true;
-timedReplacement : "TILE_MUD";
-double_size : false;
-color : [0.95,0.75,0.65];
-sprite : 0xE000;
+	id : 17;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : "NULL";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : true;
+	timedReplacement : "TILE_MUD";
+	double_size : false;
+	color : [0.95,0.75,0.65];
+	sprite : "tile_mud";
 }
 
 TILE_CATTAIL {
-id : 18;
-direction : 0;
-liquid : 0;
-collectible : true;
-collectibleName : "GRASS";
-replacement : "TILE_MUD";
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : false;
-timedReplacement : 0;
-double_size : true;
-color : [0.8, 0.7, 0.5];
-sprite : 0xE000;
+	id : 18;
+	direction : 0;
+	liquid : 0;
+	collectible : true;
+	collectibleName : "GRASS";
+	replacement : "TILE_MUD";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : false;
+	timedReplacement : 0;
+	double_size : true;
+	color : [0.8, 0.7, 0.5];
+	sprite : "tile_cattail_base";
 }
 
 TILE_CAVE_ENTRANCE {
-id : 19;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : "NULL";
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : false;
-timedReplacement : "NULL";
-double_size : false;
-color : [0.5,0.5,0.5];
-sprite : 0xE000;
+	id : 19;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : "NULL";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : false;
+	timedReplacement : "NULL";
+	double_size : false;
+	color : [0.5,0.5,0.5];
+	sprite : "tile_cave_entrance";
 }
 
 TILE_CHAIN_FENCE {
-id : 20;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : "NULL";
-itemName : "NULL";
-hasItem : false;
-walkable : false;
-changesOverTime : false;
-timedReplacement : "NULL";
-double_size : false;
-color : [0.5,0.5,0.5];
-sprite : 0xE000;
+	id : 20;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : "NULL";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : false;
+	changesOverTime : false;
+	timedReplacement : "NULL";
+	double_size : false;
+	color : [0.5,0.5,0.5];
+	sprite : "tile_chain_fence";
 }
 
 TILE_PEDESTAL {
-id : 21;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : "NULL";
-itemName : "NULL";
-hasItem : false;
-walkable : false;
-changesOverTime : false;
-timedReplacement : "NULL";
-double_size : false;
-color : [0.5,0.5,0.5];
-sprite : 0xE000;
+	id : 21;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : "NULL";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : false;
+	changesOverTime : false;
+	timedReplacement : "NULL";
+	double_size : false;
+	color : [0.5,0.5,0.5];
+	sprite : "tile_rock";
 }
 
 TILE_GRAVESTONE {
-id : 22;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : "NULL";
-itemName : "NULL";
-hasItem : false;
-walkable : false;
-changesOverTime : false;
-timedReplacement : "NULL";
-double_size : false;
-color : [0.5,0.5,0.5];
-sprite : 0xE000;
+	id : 22;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : "NULL";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : false;
+	changesOverTime : false;
+	timedReplacement : "NULL";
+	double_size : false;
+	color : [0.5,0.5,0.5];
+	sprite : "tile_rock";
 }
 
 TILE_WOOD_PLANKS {
-id : 23;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : "NULL";
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : false;
-timedReplacement : "NULL";
-double_size : false;
-color : [0.6,0.4,0.3];
-sprite : 0xE000;
+	id : 23;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : "NULL";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : false;
+	timedReplacement : "NULL";
+	double_size : false;
+	color : [0.6,0.4,0.3];
+	sprite : "tile_wood_planks";
 }
 
 TILE_STAIRS {
-id : 24;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : "NULL";
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : false;
-timedReplacement : "NULL";
-double_size : false;
-color : [0.6,0.4,0.3];
-sprite : 0xE000;
+	id : 24;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : "NULL";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : false;
+	timedReplacement : "NULL";
+	double_size : false;
+	color : [0.6,0.4,0.3];
+	sprite : "tile_stairs";
 }
 
 TILE_STAIRS_UP {
-id : 25;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : "NULL";
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : false;
-timedReplacement : "NULL";
-double_size : false;
-color : [0.7,0.5,0.4];
-sprite : 0xE000;
+	id : 25;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : "NULL";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : false;
+	timedReplacement : "NULL";
+	double_size : false;
+	color : [0.7,0.5,0.4];
+	sprite : "tile_stairs";
 }
 
 TILE_STAIRS_DOWN {
-id : 33;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : "NULL";
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : false;
-timedReplacement : "NULL";
-double_size : false;
-color : [0.5,0.3,0.2];
-sprite : 0xE000;
+	id : 33;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : "NULL";
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : false;
+	timedReplacement : "NULL";
+	double_size : false;
+	color : [0.5,0.3,0.2];
+	sprite : "tile_stairs";
 }
 
 TILE_TILLED_DIRT {
-id : 35;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : 1;
-itemName : "NULL";
-hasItem : false;
-walkable : true;
-changesOverTime : true;
-timedReplacement : "TILE_DIRT";
-double_size : false;
-color : [1,0.45,0];
-sprite : 0xE000;
+	id : 35;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : 1;
+	itemName : "NULL";
+	hasItem : false;
+	walkable : true;
+	changesOverTime : true;
+	timedReplacement : "TILE_DIRT";
+	double_size : false;
+	color : [1,0.45,0];
+	sprite : "tile_dirt";
 }
 
 TILE_WOOD_FENCE {
-id : 36;
-direction : 0;
-liquid : 0;
-collectible : false;
-replacement : 1;
-itemName : "NULL";
-hasItem : false;
-walkable : false;
-changesOverTime : false;
-timedReplacement : "NULL";
-double_size : false;
-color : [1,0.45,0];
-sprite : 0xE000;
+	id : 36;
+	direction : 0;
+	liquid : 0;
+	collectible : false;
+	replacement : 1;
+	itemName : "NULL";
+	hasItem : false;
+	walkable : false;
+	changesOverTime : false;
+	timedReplacement : "NULL";
+	double_size : false;
+	color : [1,0.45,0];
+	sprite : "tile_chain_fence";
 }

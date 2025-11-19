@@ -68,3 +68,4 @@
 	- The sprites now scale properly with window resizing
 	- Added function to change boolean after set time
 	- Tokenizer can now read commas in arrays IF theres an escape character before it (forward slash)
+	- Window now scales with resolution

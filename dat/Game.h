@@ -5,6 +5,7 @@
 #include "items.h"
 #include <thread>
 #include "filemanager.h"
+#include "glyphmanager.h"
 #include <cmath>
 
 
@@ -43,10 +44,10 @@ public:
 	std::vector<std::string> quietWalkSounds = {"dat/sounds/movement/grass1_quiet.wav","dat/sounds/movement/grass2_quiet.wav" ,"dat/sounds/movement/grass3_quiet.wav" };
 	std::vector<Vector2_I> oldLocations;
 	std::map<Faction, std::vector<Faction>> factionEnemies;
-	std::map<int, std::string> tile_icons;
 	std::map<std::string, std::string> item_icons;
 	std::map<std::string, Vector3> item_colors;
 	std::map<int, Vector3> tile_colors;
+	GlyphManager glyphs;
 	vec3 mainBGcolor;
 	vec3 bgColor;
 	biome currentBiome, lerpingTo;
@@ -83,6 +84,7 @@ public:
 
 	bool PlayerNearby(Vector2_I coords);
 	void LoadMessages();
+	void LoadGlyphs();
 
 	void SpawnEntity(Entity* curNPC);
 
@@ -120,17 +122,13 @@ static void T_UpdateChunk(GameManager* gm, Vector2_I coords)
 }
 
 void GameManager::LoadData() {
-
-	OpenedData tileData;
-	ItemReader::GetDataFromFile("tiles.eid", "TILES", &tileData);
-
-	for (auto const& x : tileData.tokens) {
-		tile_icons.insert({ stoi(tileData.getArray(x.first)[1]) , tileData.getArray(x.first)[0] });
-	}
 	lerpingTo = urban;
 
 	Console::Log("Loading dialogue...", WARNING, __LINE__);
 	LoadMessages();
+
+	Console::Log("Loading glyphs...", WARNING, __LINE__);
+	glyphs.LoadGlyphs();
 }
 
 //Load All NPC dialogue into the game
@@ -987,7 +985,7 @@ std::string GameManager::GetItemChar(Tile* tile) {
 	if (!tile->hasItem || item_icons.count(tile->itemName) == 0) {
 		return "!";
 	}
-	return item_icons[tile->itemName];
+	return glyphs.getGlyph(item_icons[tile->itemName]);
 }
 
 ImVec4 GameManager::GetItemColor(Tile* tile, float intensity = -1.f) {
@@ -1011,31 +1009,27 @@ std::string GameManager::GetTileChar(Tile* tile) {
 		switch (tile->entity->entityID)
 		{
 		case ID_ZOMBIE:
-			return ENT_ZOMBIE;
+			return glyphs.getGlyph("ent_zombie");
 		case ID_CHICKEN:
-			return ENT_CHICKEN;
+			return glyphs.getGlyph("ent_chicken");
 		case ID_HUMAN:
-			return ENT_HUMAN;
+			return glyphs.getGlyph("ent_human");
 		case ID_FROG:
-			return ENT_FROG;
+			return glyphs.getGlyph("ent_frog");
 		case ID_CAT:
-			return ENT_CAT;
+			return glyphs.getGlyph("ent_cat");
 		case ID_COW:
-			return ENT_COW;
+			return glyphs.getGlyph("ent_cow");
 		case ID_FINDER:
-			return ENT_FINDER;
+			return glyphs.getGlyph("ent_finder");
 		case ID_TAKER:
-			return ENT_TAKER;
+			return glyphs.getGlyph("ent_taker");
 		}
 	}
-	//if (tile.hasItem) {
-		//return item_icons[tile.itemName];
-	//}
 	if (tile->liquid == water && tile->liquidTime == -1) {
-		return "A";
+		return glyphs.getGlyph("vfx_double_tilde");
 	}
-	return tile_icons[tile->id];
-	//return Utilities::glyph(tile->tileSprite);
+	return glyphs.getGlyph(tile->tileSprite);
 }
 
 std::string GameManager::GetTileChar(Vector2_I tile) {

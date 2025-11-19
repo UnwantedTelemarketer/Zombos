@@ -5,9 +5,7 @@
 
 #include <chrono>
 
-#define DOSFONT  "dat/fonts/symbolic/symbolic_stairs.ttf"
-#define ITEMFONT "dat/fonts/symbolic/symbolic_items_extended.ttf"
-#define MOBFONT "dat/fonts/symbolic/symbolic_glyph_test.ttf"
+#define DOSFONT  "dat/fonts/symbolic/symbolic_full.ttf"
 #define VGAFONT  "dat/fonts/VGA437.ttf"
 #define SWAP_FONT(newfont) ImGui::PopFont(); ImGui::PushFont(Engine::Instance().getFont(newfont));
 //#define DEV_TOOLS
@@ -26,7 +24,7 @@ private:
 		vec2_i monitorRes;
 		Rendering::GetMonitorSize(monitorRes.x, monitorRes.y);
 
-		props.imguiProps = { true, true, false, {DOSFONT, ITEMFONT, VGAFONT, MOBFONT}, {"main", "items", "ui", "mobs"}, 16.f };
+		props.imguiProps = { true, true, false, {DOSFONT, VGAFONT}, {"main", "ui"}, 16.f };
 		props.w = monitorRes.x * 0.7f;
 		props.h = monitorRes.y * 0.67f;
 		props.vsync = 0;
@@ -43,12 +41,6 @@ private:
 	std::string printIcon = "";
 	ImVec4 iconColor = { 1,0,0,0 };
 	std::vector<Tile*> itemTiles;
-	std::vector<std::string> itemIcons;
-	std::vector<ImVec2> itemPositions;
-	std::vector<ImVec4> itemColors;
-	std::vector<std::string> mobIcons;
-	std::vector<ImVec2> mobPositions;
-	std::vector<ImVec4> mobColors;
 	vec2_i view_distance = { 15,15 };
 
 	std::shared_ptr<Chunk> customBuilding;
@@ -86,6 +78,7 @@ public:
 	GameManager game;
 	Inventory& pInv = game.pInv;
 	Player& player = game.mPlayer;
+	GlyphManager& glyphs = game.glyphs;
 	direction playerDir = direction::down;
 	float& health = game.mPlayer.health;
 	Map& map = game.mainMap;
@@ -122,12 +115,13 @@ public:
 
 	//Character Creation
 	int bgSelected = -1;
-	std::vector<classes> backgrounds = 
-	{	{"Fighter",		{"MACHETE", "LEATHER_JACKET", "ROCK"}, {1, 1, 10}},
+	std::vector<classes> backgrounds =
+	{ {"Fighter",		{"MACHETE", "LEATHER_JACKET", "ROCK"}, {1, 1, 10}},
 		{"Survivalist", {"MATCH", "RAINCOAT", "BANDAGE", "BOTTLED_WATER"}, {5, 1, 2, 1}},
 		{"Hunter",		{"BEAR_TRAP", "LEATHER_BOOTS", "CAMPFIRE"}, {2, 1, 1}},
 		{"Explorer",	{"RATION", "LEATHER_BOOTS", "BITS"}, {5, 1, 10}},
 		{"Vagrant",		{"ROCK", "STICK", "ROPE"}, {5, 5, 3}},
+		{"Botanist",	{"TOMATO_SEEDS", "WHEAT_SEEDS", "MAKESHIFT_HOE"}, {5, 5, 1}},
 		{"Amnesiac",	{}, {}},
 		//{"CLOTHIER",	{"LEATHER_BOOTS", "LEATHER_JACKET", "TOOTH_NECKLACE", "JEANS", "DRIVING_GLOVES", "HAT", "CANVAS_BACKPACK"}, {1, 1, 1, 1, 1, 1, 1}},
 	};
@@ -236,7 +230,7 @@ public:
 			ImGui::SliderInt("Y Separator Value", &ySeparator, 0, 20);
 			ImGui::SliderInt("View Distance (Width)", &yViewDist, 5, 40);
 			ImGui::SliderInt("View Distance (Height)", &xViewDist, 5, 40);
-			ImGui::SliderFloat("Font Size ",  &game.reg_font_size, 8.f, 64.f);
+			ImGui::SliderFloat("Font Size ", &game.reg_font_size, 8.f, 64.f);
 
 
 			ImGui::Text("\n--Sound Settings--");
@@ -300,7 +294,7 @@ public:
 					ImGui::TextColored({ 0.65f, 0.1f, 0.f, 1.f }, "~ ");
 				}
 				else if (currentNoise2 >= 0 &&
-						 currentNoise <= 0.25) {
+					currentNoise <= 0.25) {
 					ImGui::TextColored({ 0.f, 0.4f, 0.f, 1.f }, "^ ");
 				}
 				else {
@@ -404,7 +398,7 @@ public:
 					savedGamesScreen = false;
 					newGameScreen = false;
 					gameScreen.createChar = false;
-					
+
 
 					for (auto const& eType : Items::EquipmentTypes)
 					{
@@ -584,11 +578,15 @@ public:
 					ImGui::Text("5x Rocks\n5x Sticks\n3x Ropes");
 					break;
 				case 5:
+					ImGui::TextWrapped("You're a botanist. You brough with you the things you needed to farm.");
+					ImGui::Text("5x Tomato Seeds\n5x Wheat Seeds\n1x Makeshift Hoe");
+					break;
+				case 6:
 					ImGui::TextWrapped("You don't remember who you are after waking up in the middle of the forest. What is this stuff in your pockets?");
 					ImGui::Text("--Starting Inventory--");
 					ImGui::Text("???");
 					break;
-				case 6:
+				case 7:
 					ImGui::TextWrapped("Test Class");
 					ImGui::Text("--Starting Inventory--");
 					ImGui::Text("Clothes");
@@ -608,7 +606,7 @@ public:
 					}
 				}
 				else {
-					for (size_t i = 0; i < Math::RandInt(2,4); i++)
+					for (size_t i = 0; i < Math::RandInt(2, 4); i++)
 					{
 						pInv.AddItem(Items::GetRandomItem());
 					}
@@ -726,9 +724,8 @@ public:
 
 					if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
 					{
-						mobPositions.push_back(ImGui::GetCursorPos());
-						mobIcons.push_back(Utilities::glyph(0xE000));
-						mobColors.push_back(game.GetPlayerColor());
+						printIcon = glyphs.getGlyph("ent_player");
+						iconColor = game.GetPlayerColor();
 						//batchedString.append("#");
 						//continue;
 					}
@@ -736,36 +733,33 @@ public:
 					else if (map.GetEffectFromThisOrNeighbor(curCoords) == 1)
 					{
 						effectShowing = true;
-						printIcon = "A";
+						printIcon = glyphs.getGlyph("vfx_double_tilde");
 						iconColor = Cosmetic::SmokeColor();
 					}
 					else if (map.GetEffectFromThisOrNeighbor(curCoords) == 2)
 					{
 						effectShowing = true;
-						printIcon = "a";
+						printIcon = glyphs.getGlyph("vfx_rain");
 						iconColor = Cosmetic::CoveredColor(water);
 					}
 					else if (map.GetEffectFromThisOrNeighbor(curCoords) == 15)
 					{
 						effectShowing = true;
-						printIcon = "#";
+						printIcon = glyphs.getGlyph("vfx_exclamation");
 						iconColor = { 1,0,0,1 };
 					}
 					else if (map.GetEffectFromThisOrNeighbor(curCoords) >= 20 &&
-							 map.GetEffectFromThisOrNeighbor(curCoords) <= 23)
+						map.GetEffectFromThisOrNeighbor(curCoords) <= 23)
 					{
 						effectShowing = true;
-						printIcon = "I";
+						printIcon = glyphs.getGlyph("vfx_exclamation");
 						iconColor = { 1,1,0,1 };
 					}
 					else if (curTile->entity != nullptr) {
-						mobPositions.push_back(ImGui::GetCursorPos());
-						mobIcons.push_back(game.GetTileChar(curTile));
-						mobColors.push_back(game.GetTileColor(curTile, intensity, showShadows));
+
+						printIcon = game.GetTileChar(curTile);
+						iconColor = game.GetTileColor(curTile, intensity, showShadows);
 						//batchedString.append(" ");
-						ImGui::Text(" ");
-						ImGui::SameLine();
-						continue;
 
 					}
 					else {
@@ -780,41 +774,34 @@ public:
 							if (curEnt->targeting() && curEnt->health > 0) {
 								//screen += "!";
 								//colors.push_back(ImVec4{ 1,0,0,1 });
-								printIcon = "!";
+								printIcon = glyphs.getGlyph("vfx_exclamation");
 								iconColor = ImVec4{ 1,0,0,1 };
 							}
 						}
 						if (underTile->id == 11) {
 							//screen += "G";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							if (printIcon != ENT_PLAYER) printIcon = "G";
+							if (printIcon != glyphs.getGlyph("ent_player")) printIcon = glyphs.getGlyph("tile_tree_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 						else if (underTile->id == 12) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							if (printIcon != ENT_PLAYER) printIcon = "J";
+							if (printIcon != glyphs.getGlyph("ent_player")) printIcon = glyphs.getGlyph("tile_cactus_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 						else if (underTile->id == 18) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							if (printIcon != ENT_PLAYER) printIcon = "Y";
+							if (printIcon != glyphs.getGlyph("ent_player")) printIcon = glyphs.getGlyph("tile_cattail_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 					}
 
 					if (curTile->hasItem)
 					{
-						item = true;
-						itemPositions.push_back(ImGui::GetCursorPos());
-						itemTiles.push_back(curTile);
-						itemIcons.push_back(game.GetItemChar(curTile));
-						itemColors.push_back(game.GetItemColor(curTile, intensity));
-						ImGui::Text(" ");
-						//batchedString.append(" ");
-						ImGui::SameLine();
-						continue;
+						printIcon = game.GetItemChar(curTile);
+						iconColor = game.GetItemColor(curTile, intensity);
 					}
 				printing:
 
@@ -838,37 +825,6 @@ public:
 				//batchedString.clear();
 				ImGui::Text("");
 			}
-
-			//print items with separate font
-			if (item) {
-				SWAP_FONT("items");
-				ImGui::SetFontSize(game.reg_font_size);
-				for (size_t i = 0; i < itemIcons.size(); i++)
-				{
-					ImGui::SetCursorPos(itemPositions[i]);
-					ImGui::TextColored(itemColors[i], itemIcons[i].c_str());
-				}
-				itemTiles.clear();
-				itemIcons.clear();
-				itemPositions.clear();
-				itemColors.clear();
-			}
-
-			//print mobs with separate font
-			if (mobPositions.size() > 0) {
-				SWAP_FONT("mobs");
-				ImGui::SetFontSize(game.reg_font_size);
-				for (size_t i = 0; i < mobPositions.size(); i++)
-				{
-					ImGui::SetCursorPos(mobPositions[i]);
-
-					ImGui::TextColored(mobColors[i], mobIcons[i].c_str());
-				}
-				mobIcons.clear();
-				mobPositions.clear();
-				mobColors.clear();
-			}
-
 
 			ImGui::SetFontSize(16.f);
 
@@ -941,7 +897,7 @@ public:
 				ImGui::SameLine();
 				ImGui::TextColored(ImVec4{ 1, 0.5, 0, 1 }, "!!");
 			}
-			else if (game.mPlayer.thirst <= 60) { 
+			else if (game.mPlayer.thirst <= 60) {
 				ImGui::SameLine();
 				ImGui::TextColored(ImVec4{ 1, 1, 0, 1 }, "!");
 			}
@@ -1099,7 +1055,7 @@ public:
 			ImGui::Begin("Current Item");
 			ImGui::Text((curItem.name + "\n\n").c_str());
 
-			SWAP_FONT("items");
+			SWAP_FONT("main");
 			ImGui::SetFontSize(32.f);
 			ImGui::Text(game.item_icons[curItem.section].c_str());
 			ImGui::SetFontSize(game.reg_font_size);
@@ -1276,7 +1232,7 @@ public:
 			//Selected recipe section
 			if (recipeSelectedName != "") {
 				std::vector<std::string> components = game.Crafter.getRecipeComponents(recipeSelectedName);
-				SWAP_FONT("items");
+				SWAP_FONT("main");
 				ImGui::SetFontSize(32.f);
 				ImGui::Text(("\n" + game.item_icons[recipeSelectedName]).c_str());
 				ImGui::SetFontSize(game.reg_font_size);
@@ -1357,7 +1313,7 @@ public:
 			//Both Lists for the entity and for the chest
 			if (selectedTile->entity != nullptr) {
 
-				ImGui::TextColored({0,1.0f,0.5f,1.f},"-----ENTITY INFO-----");
+				ImGui::TextColored({ 0,1.0f,0.5f,1.f }, "-----ENTITY INFO-----");
 
 				if (selectedTile->entity->name == "Human") {
 					//give them a new name when we chat
@@ -1978,7 +1934,7 @@ public:
 			flashlightActive = !flashlightActive;
 			Audio::Play(sfxs["click"]);
 		}
-		
+
 
 
 		if (moved) {

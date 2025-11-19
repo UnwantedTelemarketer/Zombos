@@ -1,0 +1,86 @@
+SECTIONS {
+sections : [GENERAL,EFFECTS,ENTITIES,TILES,ITEMS]
+}
+
+GENERAL {
+error : [3,10];
+}
+
+EFFECTS {
+vfx_rain :			[1,10];
+vfx_exclamation :	[2,10];
+vfx_double_tilde :	[1,1];
+}
+
+ENTITIES {
+ent_player :  [16,1];
+ent_zombie :  [17,1];
+ent_human :	  [18,1];
+ent_chicken : [19,1];
+ent_frog :	  [20,1];
+ent_cat :	  [22,1];
+ent_cow :	  [24,1];
+ent_finder :  [16,2];
+ent_taker :	  [17,2];
+ent_bandit :  [18,2];
+}
+
+//remember, [column,row]
+
+TILES {
+tile_liquid :		[1,1];
+tile_grass :		[2,1];
+tile_air :			[3,1];
+tile_dirt :			[3,1];
+tile_tall_grass :	[2,2];
+tile_rock :			[1,3];
+tile_sand :			[3,1];
+tile_tree_base :	[4,2];
+tile_tree_top :		[4,1];
+tile_cactus_base :	[5,2]:
+tile_cactus_top :	[5,1];
+tile_cattail_base : [6,2]: 
+tile_cattail_top :  [6,1];
+tile_stone_floor :  [5,5];
+tile_crystal :		[2,3];
+tile_mud :			[3,1];
+tile_cave_entrance :[3,3];
+tile_chain_fence :  [5,4];
+tile_gravestone :	[1,3];
+tile_wood_planks :  [3,5];
+tile_stairs :		[4,5];
+}
+
+ITEMS {
+item_stick :		[31,1];
+item_scrap :		[32,1];
+item_rock :			[33,1];
+item_campfire :		[34,1];
+item_machete :		[35,1];
+item_canteen :		[36,1];
+item_raw_meat :		[37,1];
+item_cooked_meat :	[31,2];
+item_bits :			[32,2];
+item_bandage :		[33,2];
+item_cloth :		[34,2];
+item_rope :			[35,2];
+item_plank :		[36,2];
+item_hinge :		[37,2];
+item_chest :		[31,3];
+item_chair :		[32,3];
+item_table :		[33,3];
+item_tent_l :		[34,3];
+item_tent_r :		[35,3];
+item_lilypad :		[36,3];
+item_mushroom :		[37,3];
+item_flower :		[31,4];
+item_guts :			[32,4];
+item_lighter :		[33,4];
+item_seeds :		[34,4];
+item_jar :		    [35,4];
+item_lantern :		[36,4];
+item_bear_trap_o :	[37,4];
+item_bear_trap_c :	[31,5];
+item_moss :			[32,5];
+item_moss_living :	[33,5];
+}

@@ -15,7 +15,7 @@ consumeTxt : "You eat the grass.";
 useTxt : "You wrap grass around your wound.";
 effects : [3,0,7,0];
 equipType : 0;
-sprite : "A";
+sprite : "item_plank";
 spriteColor : [0.0, 0.65, 0.0];
 }
 
@@ -33,7 +33,7 @@ useTxt : "nothing.";
 effects : [0,0,0,5];
 equipType : 1;
 equipModifier : 5;
-sprite : "C";
+sprite : "item_rock";
 spriteColor : [0.4, 0.4, 0.4];
 }
 
@@ -51,7 +51,7 @@ useTxt : "You cut yourself with a piece of the metal.";
 effects : [0,0,4,2];
 equipType : 1;
 equipModifier : 5;
-sprite : "B";
+sprite : "item_scrap";
 spriteColor : [0.6, 0.6, 0.6];
 }
 
@@ -70,7 +70,7 @@ useTxt : "You cut yourself with a piece of glass.";
 effects : [0,0,4,2];
 equipType : 1;
 equipModifier : 5;
-sprite : "B";
+sprite : "item_scrap";
 spriteColor : [0.7, 0.7, 0.9];
 }
 

@@ -11,8 +11,7 @@ sections : [FLAT_MUSHROOM,
 			BULL_HORN,
 			LIVING_MOSS,
 			MOSS,
-			TOMATO_SEEDS,
-			TOMATO]
+			TOMATO_SEEDS]
 }
 
 //ConsumeEffects none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid = 6//
@@ -213,22 +212,6 @@ consumeTxt : "You eat the moss.";
 useTxt : "you cannot use this.";
 effects : [0,0,0,0];
 equipType : 0;
-sprite : ",";
+sprite : "I";
 spriteColor : [0.0, 0.5, 0.0];
-}
-
-TOMATO {
-name : "Tomato"; 
-description : "Tomato. Looks yummy.";
-weight : 0.25;
-stackable : true;
-holdsLiquid : false;
-consumable : true;
-amount : 1;
-consumeTxt : "You eat the tomato.";
-useTxt : "you cannot use this.";
-effects : [3,3,0,0];
-equipType : 0;
-sprite : "S";
-spriteColor : [1, 0, 0.0];
 }

@@ -13,32 +13,24 @@ enum Behaviour { Wander, Protective, Protective_Stationary, Stationary, Aggressi
 enum Faction { Human_W, Human_T, Bandit, Dweller, Zombie, Wildlife, Takers, Farmer };
 enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6, neck = 7, back = 8 };
 
-#define ENT_PLAYER "A"
 #define ID_PLAYER 0
 
-#define ENT_ZOMBIE "B"
 #define ID_ZOMBIE 1
 
-#define ENT_CHICKEN "D"
 #define ID_CHICKEN 2
 
-#define ENT_HUMAN "C"
 #define ID_HUMAN 3
 
-#define ENT_FROG "F"
 #define ID_FROG 4
 
-#define ENT_CAT "G"
 #define ID_CAT 5
 
-#define ENT_COW "a"
 #define ID_COW 6
 
-#define ENT_FINDER "H"
 #define ID_FINDER 7
 
-#define ENT_TAKER "I"
 #define ID_TAKER 8
+
 
 
 //What the effect is and how much it does.
@@ -818,7 +810,7 @@ struct Tile {
 	vec3 mainTileColor;
 	short biomeID;
 	std::string tileLerpID = "nthng";
-	int tileSprite;
+	std::string tileSprite;
 
 	bool CanUpdate() {
 		return ticksPassed >= ticksNeeded && changesOverTime;
@@ -883,7 +875,7 @@ struct Tile {
 		changesOverTime = data.getBool("changesOverTime");
 		timedReplacement = data.getString("timedReplacement");
 		double_size = data.getBool("double_size");
-		tileSprite = stoi(data.getString("sprite"), nullptr, 16);
+		tileSprite = data.getString("sprite");
 
 		if (data.getArray("color").size() <= 0) {
 			tileColor = { 1,0,0 };

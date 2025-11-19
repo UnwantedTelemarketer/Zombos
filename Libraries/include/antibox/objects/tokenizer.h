@@ -199,6 +199,9 @@ public:
 				}
 			}
 			else {
+				if (input[i] == '\t') {
+					continue;
+				}
 				if (input[i] == ' ' || input[i] == ':' || input[i] == ';') {
 					if (current_token != "") {
 						tokens.push_back(current_token);

@@ -19,7 +19,7 @@ effects : [0,0,0,0];
 equipType : 5;
 equipModifier : 15;
 durability : 100;
-sprite : "G";
+sprite : "item_raw_meat";
 spriteColor : [1.0, 0.1, 0.2];
 waterproof : true;
 }
@@ -38,7 +38,7 @@ effects : [0,0,0,0];
 equipType : 3;
 equipModifier : 15;
 durability : 25;
-sprite : "K";
+sprite : "item_cloth";
 spriteColor : [1.0, 1.0, 0.2];
 waterproof : true;
 }
@@ -57,7 +57,7 @@ effects : [0,0,0,0];
 equipType : 3;
 equipModifier : 15;
 durability : 40;
-sprite : "K";
+sprite : "item_cloth";
 spriteColor : [0.3, 0.3, 0.2];
 waterproof : true;
 }
@@ -76,7 +76,7 @@ effects : [0,0,0,0];
 equipType : 7;
 equipModifier : 1;
 durability : -1;
-sprite : "_";
+sprite : "error";
 spriteColor : [0.8, 0.8, 0.7];
 waterproof : true;
 }
@@ -95,7 +95,7 @@ effects : [0,0,0,0];
 equipType : 8;
 equipModifier : 10;
 durability : -1;
-sprite : "_";
+sprite : "error";
 spriteColor : [0.8, 0.8, 0.7];
 }
 
@@ -112,7 +112,7 @@ useTxt : "Does Nothig.";
 effects : [0,0,0,0];
 equipType : 2;
 durability : -1;
-sprite : "_";
+sprite : "error";
 spriteColor : [0.8, 0.8, 0.7];
 }
 
@@ -129,7 +129,7 @@ useTxt : "Does Nothig.";
 effects : [0,0,0,0];
 equipType : 6;
 durability : -1;
-sprite : "_";
+sprite : "error";
 spriteColor : [0.8, 0.8, 0.7];
 }
 
@@ -146,6 +146,6 @@ useTxt : "Does Nothig.";
 effects : [0,0,0,0];
 equipType : 4;
 durability : -1;
-sprite : "_";
+sprite : "error";
 spriteColor : [0.8, 0.8, 0.7];
 }

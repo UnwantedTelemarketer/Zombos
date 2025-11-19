@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [MEAT,COOKED_MEAT,OVERCOOKED_MEAT,BURNT_MEAT,RATION,ENERGY_DRINK,BOTTLED_WATER,BOTTLED_ALCOHOL,CANNED_FOOD]
+sections : [MEAT,COOKED_MEAT,OVERCOOKED_MEAT,BURNT_MEAT,RATION,ENERGY_DRINK,BOTTLED_WATER,BOTTLED_ALCOHOL,CANNED_FOOD,TOMATO]
 }
 
 MEAT {
@@ -160,4 +160,20 @@ effects : [1,3,0,0];
 equipType : 0;
 sprite : "G";
 spriteColor : [1.0, 0.1, 0.2];
+}
+
+TOMATO {
+name : "Tomato"; 
+description : "Tomato. Looks yummy.";
+weight : 0.25;
+stackable : true;
+holdsLiquid : false;
+consumable : true;
+amount : 1;
+consumeTxt : "You eat the tomato.";
+useTxt : "you cannot use this.";
+effects : [3,3,0,0];
+equipType : 0;
+sprite : "S";
+spriteColor : [1, 0, 0.0];
 }

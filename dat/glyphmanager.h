@@ -1,0 +1,91 @@
+﻿#include <antibox/graphics/helpers.h>
+#include <antibox/core/log.h>
+#include "antibox/objects/tokenizer.h"
+#include <iomanip>
+
+class GlyphManager {
+private:
+	std::map<std::string, std::string> glyphs;
+	const int WIDTH = 44;
+	const int HEIGHT = 12;
+
+public:
+	void LoadGlyphs();
+	std::string getGlyph(std::string id);
+	std::string convert(char32_t codepoint);
+
+};
+
+void GlyphManager::LoadGlyphs() {
+
+	OpenedData glyphSectReader;
+	ItemReader::GetDataFromFile("glyphs.eid", "SECTIONS", &glyphSectReader);
+
+
+	std::vector<std::string> glyphSections;
+
+	//read in the section names
+	for (auto const& x : glyphSectReader.getArray("sections")) {
+		glyphSections.push_back(x);
+	}
+
+	//read each section
+	for (auto const& sect : glyphSections)
+	{
+		Console::Log(sect, WARNING, __LINE__);
+		OpenedData spriteData;
+		ItemReader::GetDataFromFile("glyphs.eid", sect, &spriteData);
+
+		for (auto const& arrPair : spriteData.tokens) {
+
+			//we are basically reading in paired coordinates, converting those to
+			//the proper unicode private use area codepoint, then converting that to a the right stuff
+			//to be converted to a utf-8 string so we can render it :/
+
+			std::stringstream sstream;
+			uint32_t coord = 0xE000;
+			int x = stoi(spriteData.getArray(arrPair.first)[0]); //grab the column
+			int y = stoi(spriteData.getArray(arrPair.first)[1]); //grab the row
+			coord += x + (WIDTH * (y - 1));						 //convert it to 1d
+
+			// Convert integer -> char32_t
+			char32_t ch = static_cast<char32_t>(coord);
+
+			glyphs.insert({ arrPair.first , convert(ch) });
+		}
+	}
+
+	Console::Log("Finished loading glyphs!", SUCCESS, __LINE__);
+}
+
+std::string GlyphManager::getGlyph(std::string id) {
+	if (glyphs.contains(id)) {
+		return glyphs[id];
+	}
+	else {
+		Console::Log("Glyph ID '" + id + "' not found!", text::red, __LINE__);
+	}
+	return "?";
+}
+
+std::string GlyphManager::convert(char32_t codepoint) {
+	std::string out;
+
+	if (codepoint <= 0x7F) {
+		// 1-byte
+		out.push_back(static_cast<char>(codepoint));
+	}
+	else if (codepoint <= 0x7FF) {
+		// 2-byte
+		out.push_back(static_cast<char>(0xC0 | (codepoint >> 6)));
+		out.push_back(static_cast<char>(0x80 | (codepoint & 0x3F)));
+	}
+	else {
+		// 3-byte (correct for all PUA BMP characters)
+		out.push_back(static_cast<char>(0xE0 | (codepoint >> 12)));
+		out.push_back(static_cast<char>(0x80 | ((codepoint >> 6) & 0x3F)));
+		out.push_back(static_cast<char>(0x80 | (codepoint & 0x3F)));
+	}
+
+	return out;
+}

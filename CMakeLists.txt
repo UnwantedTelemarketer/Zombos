@@ -124,6 +124,7 @@ set(Header_Files
     "dat/crafting.h"
     "dat/entities.h"
     "dat/filemanager.h"
+    "dat/glyphmanager.h"
     "dat/Game.h"
     "dat/inventory.h"
     "dat/items.h"
