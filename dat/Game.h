@@ -70,7 +70,7 @@ public:
 	void SetTick(float secs) { tickRate = secs * 1000; effectTickRate = tickRate / 10; }
 
 	void AddRecipes();
-	void Setup(int x, int y, float tick, int seed, int biome);
+	void Setup(int x, int y, float tick, int seed, int biome, int moisture);
 
 	void UpdateEntities(Vector2_I chunkCoords);
 	void UpdateTick();
@@ -79,6 +79,7 @@ public:
 	void RedrawEntities(Vector2_I chunkCoords);
 
 	void DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse);
+	void RunTasks(Entity* ent, std::shared_ptr<Chunk> chunkInUse);
 
 	void AttemptAttack(Entity* ent);
 
@@ -184,7 +185,7 @@ void GameManager::LoadMessages() {
 	Console::Log("Finished loading dialogue!", SUCCESS, __LINE__);
 }
 
-void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1) {
+void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1, int moisture = -1) {
 	BG_DESERT = { 0.15, 0.15, 0 };
 	BG_WATER = { 0, 0.1, 0.15 };
 	BG_FOREST = { 0, 0.15, 0 };
@@ -200,7 +201,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1)
 	//if(seed == -1) deleteAllFilesInDirectory();
 	SetTick(tick);
 	AddRecipes();
-	mainMap.CreateMap(seed, biome);
+	mainMap.CreateMap(seed, biome, moisture);
 
 	//Faction, Enemies
 	factionEnemies = {
@@ -282,42 +283,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 	switch (ent->b) //check the entities behaviour
 	{
 	case Tasks:
-		for (auto& t : ent->taskList)
-		{
-			//If they have something to do with their task
-			if (t.currentlyFulfilling) {
-				//walk towards the objective
-				std::vector<Vector2_I> pathToObj = mainMap.GetLine(ent->coords, t.currentObjective, 10);
-				if (pathToObj.size() > 2) {
-					ent->coords = pathToObj[1];
-				}
-				//reached tile
-				else {
-					if (t.task == TaskType::collectItem) {
-						Tile& objTile = *mainMap.GetTileFromThisOrNeighbor(t.currentObjective);
-						ent->inv.push_back(Items::GetItem(objTile.itemName));
-						objTile.hasItem = false;
-						objTile.itemName = "nthng";
-					}
-					t.currentlyFulfilling = false;
-					t.currentObjective = zero;
-				}
-			}
-
-			else if (t.task == TaskType::collectItem) {
-				for (const auto& checkTile : t.taskArea)
-				{
-					Tile& curTile = *mainMap.GetTileFromThisOrNeighbor(checkTile);
-					if (curTile.hasItem && curTile.itemName == t.taskModifierString)
-					{
-						t.currentlyFulfilling = true;
-						t.currentObjective = checkTile;
-						break;
-					}
-				}
-			}
-
-		}
+		RunTasks(ent, chunkInUse);
 		break;
 	case Follow:
 		if (path.size() >= 3) {
@@ -352,9 +318,13 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 			//if the player is targeted
 			else if (ent->targetingPlayer) {
 				if (mPlayer.coveredIn == guts && ent->name == "Zombie") { ent->targetingPlayer = false; }
-				if (path.size() > 1) {
-					if (chunkInUse->GetTileAtCoords(path[1])->walkable) {
-						ent->coords = path[1];
+
+				//pathfind to player with astar if they are chasing
+				auto pathToPlayer = AStar(chunkInUse, ent->coords, mPlayer.coords);
+
+				if (pathToPlayer.size() > 1) {
+					if (chunkInUse->GetTileAtCoords(pathToPlayer[1])->walkable) {
+						ent->coords = pathToPlayer[1];
 						moved = true;
 					}
 					else {
@@ -362,8 +332,8 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 					}
 				}
 				else {
-					if (chunkInUse->GetTileAtCoords(path[0])->walkable) {
-						ent->coords = path[0];
+					if (chunkInUse->GetTileAtCoords(pathToPlayer[0])->walkable) {
+						ent->coords = pathToPlayer[0];
 						moved = true;
 					}
 					else {
@@ -495,6 +465,86 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 	}
 }
 
+void GameManager::RunTasks(Entity* ent, std::shared_ptr<Chunk> chunkInUse) {
+
+	//read through the list of tasks it can do
+	for (auto& t : ent->taskList)
+	{
+		//if its not being fulfilled, check if it can be
+		if (t.currentlyFulfilling == false) {
+			switch (t.task) {
+			case TaskType::collectItem:
+				for (const auto& checkTile : t.taskArea)
+				{
+					Tile& curTile = *mainMap.GetTileFromThisOrNeighbor(checkTile);
+					if (curTile.hasItem && curTile.itemName == t.taskModifierString)
+					{
+						t.currentlyFulfilling = true;
+						t.currentObjective = checkTile;
+
+						//if it can, add it to the queue
+						ent->taskQueue.emplace(&t);
+						break;
+					}
+				}
+				break;
+			case TaskType::dropItem:
+				for (const auto& checkTile : t.taskArea)
+				{
+					Tile& curTile = *mainMap.GetTileFromThisOrNeighbor(checkTile);
+					if (curTile.id == t.taskModifierID && !curTile.hasItem)
+					{
+						t.currentlyFulfilling = true;
+						t.currentObjective = checkTile;
+
+						//if it can, add it to the queue
+						ent->taskQueue.emplace(&t);
+						break;
+					}
+				}
+			}
+		}
+	}
+
+
+	//Now run through the task queue and do tasks
+	for (auto& t : ent->taskQueue)
+	{
+		//If they have something to do with their task
+		if (t->currentlyFulfilling) {
+			//walk towards the objective
+			std::vector<Vector2_I> pathToObj = mainMap.GetLine(ent->coords, t->currentObjective, 10);
+			if (pathToObj.size() > 2) {
+				ent->coords = pathToObj[1];
+
+				//if they are busy, break out of the loop
+				break;
+			}
+			//reached tile
+			else {
+				Tile& objTile = *mainMap.GetTileFromThisOrNeighbor(t->currentObjective);
+				switch (t->task) {
+				case TaskType::collectItem:
+
+					ent->inv.push_back(Items::GetItem(objTile.itemName));
+					objTile.hasItem = false;
+					objTile.itemName = "nthng";
+					break;
+
+				case TaskType::dropItem:
+
+					objTile.hasItem = true;
+					objTile.itemName = t->taskModifierString;
+					objTile.ticksPassed = 0;
+					break;
+				}
+				t->currentlyFulfilling = false;
+				t->currentObjective = zero;
+				ent->taskQueue.erase(t);
+			}
+		}
+	}
+}
 
 bool GameManager::PlayerNearby(Vector2_I coords) {
 	if (mPlayer.coords == vec2_i{coords.x + 1, coords.y} ||

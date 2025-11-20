@@ -45,13 +45,13 @@ public:
 	std::vector<Vector2_I> shadowTileTimes;
 	int worldTimeTicks = 0;
 
-	int landSeed = 0, biomeSeed = 0;
+	int landSeed = 0, biomeSeed = 0, moistureSeed = 0;
 	float tempMin = 0.5f, moistureMin = 0.5f;
 	FastNoiseLite mapNoise, biomeTempNoise, biomeMoistureNoise;
 	
 	
 	std::shared_ptr<Chunk> GetChunkAtCoords(Vector2_I coords);
-	void CreateMap(int seed, int b_seed);
+	void CreateMap(int seed, int b_seed, int moisture);
 	bool DoesChunkExistsOrMakeNew(Vector2_I coords);
 	void UpdateMemoryZone(Vector2_I coords);
 	void UnloadChunks(std::vector<Vector2_I> chunksToDelete);
@@ -101,7 +101,7 @@ public:
 	void ResetLightValues();
 	bool UpdateWeather();
 	void SetWeather(weather we);
-	void SetupNoise(int l_seed, int b_seed);
+	void SetupNoise(int l_seed, int b_seed, int m_seed);
 	std::shared_ptr<Chunk> GetProperChunk(Vector2_I coords);
 	void TempCheck(Player* p, Vector2_I coords);
 	std::string GetCurrentSavePath() const { return "dat/saves/" + currentSaveName + "/"; }
@@ -127,7 +127,7 @@ void Map::Restart() {
 	currentSaveName = "";
 }
 
-void Map::SetupNoise(int l_seed, int b_seed) {
+void Map::SetupNoise(int l_seed, int b_seed, int m_seed) {
 	if (l_seed == -1) {
 		landSeed = Math::RandInt(1, 2147483647);
 	}
@@ -140,6 +140,12 @@ void Map::SetupNoise(int l_seed, int b_seed) {
 	else {
 		biomeSeed = b_seed;
 	}
+	if (m_seed == -1) {
+		moistureSeed = Math::RandInt(1, 2147483647);
+	}
+	else {
+		moistureSeed = m_seed;
+	}
 	mapNoise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 	mapNoise.SetFrequency(0.85f);
 	biomeTempNoise.SetNoiseType(FastNoiseLite::NoiseType_ValueCubic);
@@ -149,7 +155,7 @@ void Map::SetupNoise(int l_seed, int b_seed) {
 
 	mapNoise.SetSeed(landSeed);
 	biomeTempNoise.SetSeed(biomeSeed);
-	biomeMoistureNoise.SetSeed(Math::RandInt(1, 2147483647));
+	biomeMoistureNoise.SetSeed(moistureSeed);
 
 	shadowTileTimes = {
 		{ 0, -2 },
@@ -164,9 +170,9 @@ void Map::SetupNoise(int l_seed, int b_seed) {
 	};
 }
 
-void Map::CreateMap(int l_seed, int b_seed)
+void Map::CreateMap(int l_seed, int b_seed, int moisture)
 {
-	SetupNoise(l_seed, b_seed);
+	SetupNoise(l_seed, b_seed, moisture);
 	
 	UpdateMemoryZone(c_glCoords);
 
@@ -1116,16 +1122,28 @@ void Map::PickStructure(Vector2_I startingChunk) {
 			break;
 		case 5:
 		case 6:
-			ItemReader::GetDataFromFile("structures/town.eid", "FARM", &roadDat);
+			ItemReader::GetDataFromFile("structures/houses.eid", "GARDEN_HOUSE", &roadDat);
 			PlaceStructure(startingChunk, roadDat.getString("tiles"), { roadDat.getInt("width"), roadDat.getInt("height") }, { 15,15 });
 
-			Entity* ent = SpawnHuman({ 17, 17 }, Behaviour::Tasks, Faction::Farmer);
-			Task t;
-			t.task = collectItem;
-			t.priority = 1;
-			t.taskArea = GetSquare({ 17, 17 }, 5);
-			t.taskModifierString = "TOMATO";
-			ent->AddTask(t);
+			Entity* ent = SpawnHuman({ 17, 19 }, Behaviour::Tasks, Faction::Farmer);
+
+			Task gather;
+			gather.task = collectItem;
+			gather.priority = 1;
+			gather.taskArea = GetSquare({ 17, 21 }, 3);
+			gather.taskModifierString = "TOMATO";
+			ent->AddTask(gather);
+
+			Task plant;
+			plant.task = dropItem;
+			plant.priority = 1;
+			plant.taskArea = GetSquare({ 17, 21 }, 3);
+			//what to drop
+			plant.taskModifierString = "TOMATO_SEEDS";
+			//what tile to drop on
+			plant.taskModifierID = 35;
+			ent->AddTask(plant);
+
 			world.chunks[startingChunk]->AddEntity(ent);
 			break;
 		}
@@ -1215,6 +1233,14 @@ void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2
 					if (Math::RandInt(0, 15) == 4) {
 						curTile->hasItem = true;
 						curTile->itemName = Items::GetRandomItemFromPool("house.eid");
+					}
+				}
+				else if (curTile->id == 35) {
+					curTile->ticksPassed = 0;
+					curTile->ticksNeeded = 200;
+					if (Math::RandInt(0, 10) == 3) {
+						curTile->hasItem = true;
+						curTile->itemName = "TOMATO_SEEDS";
 					}
 				}
 			}
@@ -1620,16 +1646,18 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 				//update if the tile can update (like grass growing)
 				if (curTile->CanUpdate()) {
 					if (curTile->liquid == nothing) {
-						std::string newItem = "nthng";
-						if (curTile->id == 34 && curTile->hasItem && curTile->itemName == "TOMATO_SEEDS") {
-							newItem = "TOMATO";
+						if (curTile->id == 35) {
+							if (curTile->hasItem && curTile->itemName == "TOMATO_SEEDS") {
+
+								curTile->itemName = "TOMATO";
+								curTile->hasItem = true;
+							}
+							curTile->ticksPassed = 0;
+							continue;
 						}
 						*curTile = Tiles::GetTile(curTile->timedReplacement);
-						if (newItem != "nthng") {
-							curTile->itemName = newItem;
-							curTile->hasItem = true;
-						}
-						curTile->ticksNeeded = 120;
+						curTile->ticksPassed = 0;
+						curTile->ticksNeeded = 400;
 					}
 					else {
 						curTile->ticksPassed -= 1;

@@ -258,7 +258,7 @@ struct Memory {
 	bool persistent;
 };
 
-enum TaskType {collectItem};
+enum TaskType {collectItem, dropItem};
 
 struct Task {
 	TaskType task;
@@ -305,6 +305,8 @@ struct Entity {
 	std::vector<Item> inv;
 	std::vector<Memory> memories;
 	std::vector<Task> taskList;
+	std::set<Task*> taskQueue;
+	bool busy = false;
 	const float MOOD_STRONG = 2.f;
 
 	bool targeting() { return target != nullptr || targetingPlayer; }

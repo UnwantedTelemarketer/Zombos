@@ -206,6 +206,8 @@ public:
 		int itemIndex = 0;
 		bool covered = false;
 		if (tile->hasItem) {
+			if (tile->itemName.size() <= 1) { return false; }
+
 			Item item = GetItemFromFile("items.eid", tile->itemName);
 			if (tile->liquid != nothing) { 
 				if (item.holdsLiquid) {

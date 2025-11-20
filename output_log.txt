@@ -19,27 +19,37 @@
 [ Line 252 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
 [ Line 79 ]: [1;32mLoaded texture from res/logo.png.[0m
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
-[ Line 127 ]: [0;33mLoading dialogue...[0m
-[ Line 165 ]: [0;37mCALM_WANDERER[0m
-[ Line 165 ]: [0;37mHAPPY_WANDERER[0m
-[ Line 165 ]: [0;37mANGRY_WANDERER[0m
-[ Line 165 ]: [0;37mAFRAID_WANDERER[0m
-[ Line 165 ]: [0;37mBRAVE_WANDERER[0m
-[ Line 165 ]: [0;37mTRUST_WANDERER[0m
-[ Line 165 ]: [0;37mUNTRUST_WANDERER[0m
-[ Line 184 ]: [1;32mFinished loading dialogue![0m
-[ Line 130 ]: [0;33mLoading glyphs...[0m
+[ Line 128 ]: [0;33mLoading dialogue...[0m
+[ Line 166 ]: [0;37mCALM_WANDERER[0m
+[ Line 166 ]: [0;37mHAPPY_WANDERER[0m
+[ Line 166 ]: [0;37mANGRY_WANDERER[0m
+[ Line 166 ]: [0;37mAFRAID_WANDERER[0m
+[ Line 166 ]: [0;37mBRAVE_WANDERER[0m
+[ Line 166 ]: [0;37mTRUST_WANDERER[0m
+[ Line 166 ]: [0;37mUNTRUST_WANDERER[0m
+[ Line 185 ]: [1;32mFinished loading dialogue![0m
+[ Line 131 ]: [0;33mLoading glyphs...[0m
 [ Line 36 ]: [0;37mGENERAL[0m
 [ Line 36 ]: [0;37mEFFECTS[0m
 [ Line 36 ]: [0;37mENTITIES[0m
 [ Line 36 ]: [0;37mTILES[0m
 [ Line 36 ]: [0;37mITEMS[0m
 [ Line 59 ]: [1;32mFinished loading glyphs![0m
-[ Line 1773 ]: [1;32mDone![0m
+[ Line 1780 ]: [1;32mDone![0m
 [ Line 40 ]: [1;31m0[0m
-[ Line 333 ]: [1;32mNew save created successfully![0m
-[ Line 70 ]: [1;31mGlyph ID 'doiii' not found![0m
+[ Line 335 ]: [1;32mNew save created successfully![0m
+[ Line 276 ]: [1;31mAttempting to read from file 'dat/saves/house test/entities/names.eid', but can't find file.[0m
+[ Line 276 ]: [1;31mAttempting to read from file 'dat/saves/house test/entities/names.eid', but can't find file.[0m
+[ Line 276 ]: [1;31mAttempting to read from file 'dat/saves/house test/entities/names.eid', but can't find file.[0m
+[ Line 309 ]: [1;32mReading Chunk from dat/saves/house test/map/250249.chunk[0m
+[ Line 309 ]: [1;32mReading Chunk from dat/saves/house test/map/249249.chunk[0m
+[ Line 309 ]: [1;32mReading Chunk from dat/saves/house test/map/249250.chunk[0m
+[ Line 309 ]: [1;32mReading Chunk from dat/saves/house test/map/249251.chunk[0m
+[ Line 1820 ]: [1;32mhelp[0m
+[ Line 1820 ]: [1;32mspawn [0m
+[ Line 1820 ]: [1;32mspawn human 8 20[0m
+[ Line 1820 ]: [1;32mspawn human 20 8[0m
+[ Line 1820 ]: [1;32mspawn human 20 8[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/cows!/save.eid[0m
-[ Line 276 ]: [1;31mAttempting to read from file 'dat/saves/cows!/entities/names.eid', but can't find file.[0m
-[ Line 215 ]: [1;32mSave complete in 27.206364ms.[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/house test/save.eid[0m
+[ Line 217 ]: [1;32mSave complete in 17.387255ms.[0m

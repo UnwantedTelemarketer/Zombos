@@ -121,8 +121,9 @@ public:
 		{"Hunter",		{"BEAR_TRAP", "LEATHER_BOOTS", "CAMPFIRE"}, {2, 1, 1}},
 		{"Explorer",	{"RATION", "LEATHER_BOOTS", "BITS"}, {5, 1, 10}},
 		{"Vagrant",		{"ROCK", "STICK", "ROPE"}, {5, 5, 3}},
-		{"Botanist",	{"TOMATO_SEEDS", "WHEAT_SEEDS", "MAKESHIFT_HOE"}, {5, 5, 1}},
+		{"Botanist",	{"TOMATO_SEEDS", "WATERING_CAN", "MAKESHIFT_HOE"}, {5, 1, 1}},
 		{"Amnesiac",	{}, {}},
+
 		//{"CLOTHIER",	{"LEATHER_BOOTS", "LEATHER_JACKET", "TOOTH_NECKLACE", "JEANS", "DRIVING_GLOVES", "HAT", "CANVAS_BACKPACK"}, {1, 1, 1, 1, 1, 1, 1}},
 	};
 
@@ -152,6 +153,7 @@ public:
 		dat.addInt("STATS", "y_pos", player.coords.y);
 		dat.addInt("STATS", "biomes", map.biomeSeed);
 		dat.addInt("STATS", "seed", map.landSeed);
+		dat.addInt("STATS", "moisture", map.moistureSeed);
 		dat.addInt("STATS", "global_x", map.CurrentChunk()->globalChunkCoord.x);
 		dat.addInt("STATS", "global_y", map.CurrentChunk()->globalChunkCoord.y);
 		dat.addFloat("STATS", "time", map.worldTimeTicks);
@@ -310,7 +312,7 @@ public:
 			ImGui::Begin("Debug Menu");
 			if (ImGui::Button("Open Custom Structure Editor")) {
 				currentState = map_gen_test;
-				map.CreateMap(map.landSeed, map.biomeSeed);
+				map.CreateMap(map.landSeed, map.biomeSeed, -1);
 			}
 			if (ImGui::Button("Generate Random Name")) {
 				Console::Log(NameGenerator::generateFirstName(), ERROR, 1);
@@ -373,7 +375,7 @@ public:
 					{
 						game.Crafter.SaveRecipe(data.getArray("savedRecipes")[i]); //retrieve saved recipes
 					}
-					game.Setup(data.getInt("x_pos"), data.getInt("y_pos"), 0.5f, data.getInt("seed"), data.getInt("biomes"));
+					game.Setup(data.getInt("x_pos"), data.getInt("y_pos"), 0.5f, data.getInt("seed"), data.getInt("biomes"), data.getInt("moisture"));
 					currentState = playing;
 
 					if (game.isNight()) {
@@ -390,10 +392,13 @@ public:
 					ySeparator = settings.getInt("ySep");
 					xViewDist = settings.getInt("xDist");
 					yViewDist = settings.getInt("yDist");
+					game.reg_font_size = settings.getInt("uiFontSize");
+
 					game.sfxvolume = settings.getFloat("sfxSound");
 					Audio::SetVolume(game.sfxvolume);
 					game.musicvolume = settings.getFloat("musicSound");
 					Audio::StopLoop("menu");
+
 					Audio::SetVolumeLoop(game.musicvolume, "ambient_day");
 					savedGamesScreen = false;
 					newGameScreen = false;
@@ -529,7 +534,7 @@ public:
 		ImGui::InputFloat("Temperature Minimum", &map.tempMin, 0.1f);
 		ImGui::InputFloat("Moisture Minimum", &map.moistureMin, 0.1f);
 		if (ImGui::Button("Generate")) {
-			map.CreateMap(map.landSeed, map.biomeSeed);
+			map.CreateMap(map.landSeed, map.biomeSeed, -1);
 		}
 		ImGui::End();
 	}
@@ -599,7 +604,7 @@ public:
 		if (bgSelected != -1) {
 			pInv.clothes = { 1.f, 1.f, 1.f };
 			if (ImGui::Button("Start")) {
-				if (bgSelected != 5) {
+				if (bgSelected != 6) {
 					for (size_t i = 0; i < backgrounds[bgSelected].items.size(); i++)
 					{
 						pInv.AddItemByID(backgrounds[bgSelected].items[i], backgrounds[bgSelected].itemCounts[i]);
@@ -798,7 +803,7 @@ public:
 						}
 					}
 
-					if (curTile->hasItem)
+					if (curTile->hasItem && curTile->entity == nullptr)
 					{
 						printIcon = game.GetItemChar(curTile);
 						iconColor = game.GetItemColor(curTile, intensity);
@@ -1580,8 +1585,10 @@ public:
 				}
 
 				if (pInv.CurrentEquipExists(weapon) && pInv.equippedItems[weapon].section == "MAKESHIFT_HOE") {
-					if (ImGui::Button("Till Tile")) {
-						*selectedTile = Tiles::GetTileByID(34);
+
+					//we can only till grass
+					if (ImGui::Button("Till Tile") && selectedTile->tileSprite == "tile_grass") {
+						*selectedTile = Tiles::GetTileByID(35);
 						selectedTile->ticksNeeded = 120;
 					}
 				}
@@ -1935,7 +1942,14 @@ public:
 			Audio::Play(sfxs["click"]);
 		}
 
-
+		else if (Input::KeyDown(KEY_M)) {
+			auto path = AStar(map.CurrentChunk(), player.coords, { 0,0 });
+			for (auto& tl : path)
+			{
+				map.GetTileFromThisOrNeighbor(tl)->SetLiquid(blood);
+			}
+			Audio::Play(sfxs["click"]);
+		}
 
 		if (moved) {
 			Audio::Play(game.GetWalkSound());

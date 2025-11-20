@@ -1,7 +1,7 @@
 SECTIONS {
 sections : [BANDAGE,CLOTH_TORCH,LIGHTER,CANTEEN,GUTS,GLASS_JAR,
 			GLOWING_MUSHROOM_JAR,LANTERN,MATCH,BEAR_TRAP,
-			BEAR_TRAP_C,LIGHTER_EMPTY,STERILE_CLOTH,MAKESHIFT_HOE];
+			BEAR_TRAP_C,LIGHTER_EMPTY,STERILE_CLOTH,MAKESHIFT_HOE,WATERING_CAN];
 }
 
 BANDAGE {
@@ -245,4 +245,20 @@ equipType : 1;
 equipModifier : 1;
 sprite : "item_stick";
 spriteColor : [0.95, 0.95, 0.85];
+}
+
+WATERING_CAN {
+name : "Watering Can";
+description : "Holds liquid.";
+weight : 1.0;
+stackable : false;
+holdsLiquid : true;
+consumable : false;
+amount : 1;
+consumeTxt : "You take a sip from your watering can.";
+useTxt : "You pour liquid on yourself.";
+effects : [2,4,2,25];
+equipType : 0;
+sprite : "item_canteen";
+spriteColor : [0.0, 0.50, 0.0];
 }

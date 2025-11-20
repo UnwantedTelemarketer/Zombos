@@ -63,6 +63,10 @@
 	- Collect Task
 		- NPC will stay in an area, and when they see a specific item, will collect it.
 	- Farmer NPC added
+	- NPCs can now farm
+	- A* Pathfinding for angry npcs
+	- Growing crops
+	- New glyph system
 
   --Engine Changes--
 	- The sprites now scale properly with window resizing

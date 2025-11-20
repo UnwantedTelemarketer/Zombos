@@ -1,5 +1,9 @@
 #include "items.h"
 #include <mutex>
+#include <vector>
+#include <queue>
+#include <cmath>
+#include <limits>
 
 #define CHUNK_WIDTH 30
 #define CHUNK_HEIGHT 30
@@ -309,3 +313,101 @@ struct T_Chunk //we dont need the current chunk copy to have an entity list
 {
 	int localCoords[CHUNK_WIDTH][CHUNK_HEIGHT];
 };
+
+
+
+//============ A* Pathfinding ============
+
+std::vector<Vector2_I> AStar(
+	std::shared_ptr<Chunk> grid, // true = walkable, false = blocked
+	Vector2_I start,
+	Vector2_I goal
+) {
+	const int w = 30;
+	const int h = 30;
+
+	auto inBounds = [&](int x, int y) {
+		return x >= 0 && y >= 0 && x < w && y < h;
+		};
+
+	auto heuristic = [&](Vector2_I a, Vector2_I b) {
+		int dx = std::abs(a.x - b.x);
+		int dy = std::abs(a.y - b.y);
+		return 10 * std::max(dx, dy) + 4 * std::min(dx, dy);
+		};
+
+	std::vector<std::vector<int>> gScore(h, std::vector<int>(w, INT_MAX));
+	gScore[start.y][start.x] = 0;
+
+	std::vector<std::vector<Vector2_I>> cameFrom(h, std::vector<Vector2_I>(w, { -1,-1 }));
+
+	struct Node {
+		Vector2_I p;
+		int f;
+		bool operator<(const Node& other) const { return f > other.f; }
+	};
+
+	std::priority_queue<Node> openSet;
+	openSet.push({ start, heuristic(start, goal) });
+
+	const Vector2_I dirs[8] = {
+	{ 1,  0},
+	{-1,  0},
+	{ 0,  1},
+	{ 0, -1},
+	{ 1,  1},
+	{ 1, -1},
+	{-1,  1},
+	{-1, -1}
+	};
+
+
+	while (!openSet.empty()) {
+		Vector2_I current = openSet.top().p;
+		openSet.pop();
+
+		if (current == goal) {
+			// Reconstruct path
+			std::vector<Vector2_I> path;
+			Vector2_I p = goal;
+			while (!(p == start)) {
+				path.push_back(p);
+				p = cameFrom[p.y][p.x];
+			}
+			path.push_back(start);
+			std::reverse(path.begin(), path.end());
+			return path;
+		}
+
+		for (auto d : dirs) {
+			int nx = current.x + d.x;
+			int ny = current.y + d.y;
+
+			if (!inBounds(nx, ny) || !grid->localCoords[nx][ny].walkable)
+				continue;
+
+			// Prevent diagonal corner-cutting
+			if (d.x != 0 && d.y != 0) {
+				if (!grid->localCoords[current.x][nx].walkable) continue;
+				if (!grid->localCoords[nx][current.y].walkable) continue;
+			}
+
+			int moveCost = (d.x == 0 || d.y == 0) ? 10 : 14;
+
+			int newCost = gScore[current.y][current.x] +
+				((d.x == 0 || d.y == 0) ? 10 : 14);
+
+
+			if (newCost < gScore[ny][nx]) {
+				gScore[ny][nx] = newCost;
+				cameFrom[ny][nx] = current;
+
+				int f = newCost + heuristic({ nx, ny }, goal);
+				openSet.push({ {nx, ny}, f });
+			}
+		}
+
+	}
+
+	return {}; // No path found
+}

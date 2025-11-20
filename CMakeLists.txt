@@ -651,7 +651,7 @@ set(ALL_FILES
 ################################################################################
 # Target
 ################################################################################
-add_executable(${PROJECT_NAME} ${ALL_FILES} "Libraries/include/antibox/server/client.cpp" "Libraries/include/antibox/server/server.cpp" )
+add_executable(${PROJECT_NAME} ${ALL_FILES} "Libraries/include/antibox/server/client.cpp" "Libraries/include/antibox/server/server.cpp"  "Libraries/include/antibox/tools/pathfinding.h")
 
 use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
 set(ROOT_NAMESPACE runicdepths)
