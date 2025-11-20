@@ -14,7 +14,7 @@ consumeTxt : "Stick.";
 useTxt : "Stick.";
 effects : [0,0,0,0];
 equipType : 0;
-sprite : "P";
+sprite : "item_chair";
 spriteColor : [0.65, 0.35, 0.0];
 }
 
@@ -30,7 +30,7 @@ consumeTxt : "Stick.";
 useTxt : "Stick.";
 effects : [0,0,0,0];
 equipType : 0;
-sprite : "Q";
+sprite : "item_table";
 spriteColor : [0.65, 0.35, 0.0];
 }
 
@@ -46,7 +46,7 @@ consumeTxt : "Stick.";
 useTxt : "Stick.";
 effects : [0,0,0,0];
 equipType : 0;
-sprite : "=";
+sprite : "item_skull";
 spriteColor : [0.85, 0.85, 0.8];
 }
 
@@ -62,6 +62,6 @@ consumeTxt : "Stick.";
 useTxt : "Stick.";
 effects : [0,0,0,0];
 equipType : 0;
-sprite : "~";
+sprite : "item_bone";
 spriteColor : [0.85, 0.85, 0.8];
 }

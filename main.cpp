@@ -5,7 +5,7 @@
 
 #include <chrono>
 
-#define DOSFONT  "dat/fonts/symbolic/symbolic_full.ttf"
+#define DOSFONT  "dat/fonts/symbolic/symbolic_full_cons.ttf"
 #define VGAFONT  "dat/fonts/VGA437.ttf"
 #define SWAP_FONT(newfont) ImGui::PopFont(); ImGui::PushFont(Engine::Instance().getFont(newfont));
 //#define DEV_TOOLS

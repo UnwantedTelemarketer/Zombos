@@ -6,22 +6,22 @@ sections : [LEATHER_BOOTS, RAINCOAT, LEATHER_JACKET, TOOTH_NECKLACE, CANVAS_BACK
 //notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6
 
 LEATHER_BOOTS {
-name : "Leather Boots";
-description : "Leather boots to help with weather. (Walks through mud without getting stuck)";
-weight : 2.5f;
-stackable : false;
-holdsLiquid : false;
-consumable : false;
-amount : 1;
-consumeTxt : "weatr bppts";
-useTxt : "Does Nothig.";
-effects : [0,0,0,0];
-equipType : 5;
-equipModifier : 15;
-durability : 100;
-sprite : "item_raw_meat";
-spriteColor : [1.0, 0.1, 0.2];
-waterproof : true;
+	name : "Leather Boots";
+	description : "Leather boots to help with weather. (Walks through mud without getting stuck)";
+	weight : 2.5f;
+	stackable : false;
+	holdsLiquid : false;
+	consumable : false;
+	amount : 1;
+	consumeTxt : "weatr bppts";
+	useTxt : "Does Nothig.";
+	effects : [0,0,0,0];
+	equipType : 5;
+	equipModifier : 15;
+	durability : 100;
+	sprite : "item_raw_meat";
+	spriteColor : [1.0, 0.1, 0.2];
+	waterproof : true;
 }
 
 RAINCOAT{
@@ -76,7 +76,7 @@ effects : [0,0,0,0];
 equipType : 7;
 equipModifier : 1;
 durability : -1;
-sprite : "error";
+sprite : "item_necklace";
 spriteColor : [0.8, 0.8, 0.7];
 waterproof : true;
 }
@@ -95,7 +95,7 @@ effects : [0,0,0,0];
 equipType : 8;
 equipModifier : 10;
 durability : -1;
-sprite : "error";
+sprite : "item_tent_r";
 spriteColor : [0.8, 0.8, 0.7];
 }
 

@@ -19,7 +19,7 @@ ent_human :	  [18,1];
 ent_chicken : [19,1];
 ent_frog :	  [20,1];
 ent_cat :	  [22,1];
-ent_cow :	  [24,1];
+ent_cow :	  [23,1];
 ent_finder :  [16,2];
 ent_taker :	  [17,2];
 ent_bandit :  [18,2];
@@ -83,4 +83,9 @@ item_bear_trap_o :	[37,4];
 item_bear_trap_c :	[31,5];
 item_moss :			[32,5];
 item_moss_living :	[33,5];
+item_skull :		[34,5];
+item_bone :			[35,5];
+item_necklace :		[36,5];
+item_can :			[37,5];
+item_ring :			[38,1];
 }

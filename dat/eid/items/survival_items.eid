@@ -17,7 +17,7 @@ useTxt : "You wrap a bandage around your wound.";
 effects : [0,0,7,1];
 soundOnUse : "dat/sounds/bandage.mp3";
 equipType : 0;
-sprite : "J";
+sprite : "item_bandage";
 spriteColor : [0.95, 0.95, 0.85];
 }
 
@@ -34,7 +34,7 @@ useTxt : "You wrap a cloth around your wound.";
 effects : [0,0,7,1];
 soundOnUse : "dat/sounds/bandage.mp3";
 equipType : 0;
-sprite : "J";
+sprite : "item_cloth";
 spriteColor : [0.95, 0.95, 0.85];
 }
 
@@ -54,7 +54,7 @@ equipType : 1;
 equipModifier : 2;
 durability : 30;
 canBurnThings : true;
-sprite : "X";
+sprite : "item_lighter";
 spriteColor : [0.35, 0.35, 0.35];
 }
 
@@ -71,7 +71,7 @@ useTxt : "You light yourself on fire.";
 effects : [0,0,0,0];
 equipType : 1;
 equipModifier : 2;
-sprite : "X";
+sprite : "item_lighter";
 spriteColor : [0.35, 0.35, 0.35];
 }
 
@@ -89,7 +89,7 @@ effects : [0,0,4,35];
 equipType : 1;
 equipModifier : 2;
 canBurnThings : true;
-sprite : "A";
+sprite : "item_stick";
 spriteColor : [0.35, 0.35, 0.35];
 }
 
@@ -105,7 +105,7 @@ consumeTxt : "You take a sip from your canteen.";
 useTxt : "You pour liquid on yourself.";
 effects : [2,4,2,25];
 equipType : 0;
-sprite : "F";
+sprite : "item_canteen";
 spriteColor : [0.0, 0.50, 0.0];
 }
 
@@ -122,7 +122,7 @@ useTxt : "You smear the guts on yourself.";
 effects : [4,10,6,4];
 soundOnUse : "dat/sounds/squelch.mp3"
 equipType : 0;
-sprite : "W";
+sprite : "item_guts";
 spriteColor : [0.65, 0.0, 0.0];
 }
 
@@ -139,7 +139,7 @@ useTxt : "You pour liquid on yourself.";
 effects : [2,3,2,25];
 equipType : 1;
 equipMod : 2;
-sprite : "Z";
+sprite : "item_jar";
 spriteColor : [0.5, 0.50, 0.5];
 }
 
@@ -156,7 +156,7 @@ useTxt : ".";
 effects : [0,0,0,0];
 equipType : 1;
 equipModifier : 1;
-sprite : "Z";
+sprite : "item_lantern";
 spriteColor : [0.65, 0.55, 0.5];
 emissionDistance : 5;
 }
@@ -174,7 +174,7 @@ useTxt : "You pour liquid on yourself.";
 effects : [0,10,0,25];
 equipType : 1;
 equipModifier : 1;
-sprite : "!";
+sprite : "item_lantern";
 spriteColor : [0.0, 0.50, 0.0];
 emissionDistance : 4;
 }
@@ -191,7 +191,7 @@ consumeTxt : "You take a sip from your canteen.";
 useTxt : "You pour liquid on yourself.";
 effects : [0,10,0,25];
 equipType : 0;
-sprite : "?";
+sprite : "item_bear_trap_o";
 spriteColor : [0.5, 0.50, 0.5];
 }
 
@@ -208,7 +208,7 @@ consumeTxt : "You take a sip from your canteen.";
 useTxt : "You pour liquid on yourself.";
 effects : [0,10,0,25];
 equipType : 0;
-sprite : ".";
+sprite : "item_bear_trap_c";
 spriteColor : [0.5, 0.50, 0.5];
 }
 
@@ -226,7 +226,7 @@ effects : [0,0,0,0];
 emissionDistance : 4;
 equipType : 1;
 equipModifier : 1;
-sprite : "J";
+sprite : "item_stick";
 spriteColor : [0.95, 0.95, 0.85];
 }
 
@@ -243,6 +243,6 @@ useTxt : "You wrap a bandage around your wound.";
 effects : [0,0,0,0];
 equipType : 1;
 equipModifier : 1;
-sprite : "J";
+sprite : "item_stick";
 spriteColor : [0.95, 0.95, 0.85];
 }

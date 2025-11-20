@@ -8,10 +8,11 @@ private:
 	std::map<std::string, std::string> glyphs;
 	const int WIDTH = 44;
 	const int HEIGHT = 12;
+	std::unordered_set<std::string> invalid_glyphs;
 
 public:
 	void LoadGlyphs();
-	std::string getGlyph(std::string id);
+	const std::string& getGlyph(const std::string& id);
 	std::string convert(char32_t codepoint);
 
 };
@@ -32,7 +33,7 @@ void GlyphManager::LoadGlyphs() {
 	//read each section
 	for (auto const& sect : glyphSections)
 	{
-		Console::Log(sect, WARNING, __LINE__);
+		Console::Log(sect, LOG, __LINE__);
 		OpenedData spriteData;
 		ItemReader::GetDataFromFile("glyphs.eid", sect, &spriteData);
 
@@ -58,14 +59,19 @@ void GlyphManager::LoadGlyphs() {
 	Console::Log("Finished loading glyphs!", SUCCESS, __LINE__);
 }
 
-std::string GlyphManager::getGlyph(std::string id) {
-	if (glyphs.contains(id)) {
-		return glyphs[id];
+const std::string& GlyphManager::getGlyph(const std::string& id) {
+	auto it = glyphs.find(id);
+	if (it != glyphs.end()) {
+		return it->second;   // no copy
 	}
-	else {
+
+	//only spit out the error once
+	if (!invalid_glyphs.contains(id)) {
 		Console::Log("Glyph ID '" + id + "' not found!", text::red, __LINE__);
+		invalid_glyphs.emplace(id);
 	}
-	return "?";
+
+	return glyphs.at("error");  // also no copy
 }
 
 std::string GlyphManager::convert(char32_t codepoint) {

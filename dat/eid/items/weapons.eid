@@ -35,7 +35,7 @@ effects : [0,0,0,0];
 equipType : 1;
 equipModifier : 25;
 durability : 10;
-sprite : "E";
+sprite : "item_machete";
 spriteColor : [0.5, 0.50, 0.5];
 }
 
@@ -54,7 +54,7 @@ effects : [0,0,4,35];
 equipType : 1;
 equipModifier : 35;
 durability : 10;
-sprite : "E";
+sprite : "item_machete";
 spriteColor : [0.5, 0.50, 0.5];
 }
 
@@ -72,6 +72,6 @@ effects : [0,0,4,35];
 equipType : 1;
 equipModifier : 35;
 durability : 10;
-sprite : "E";
+sprite : "item_machete";
 spriteColor : [0.5, 0.50, 0.5];
 }

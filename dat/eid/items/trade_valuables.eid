@@ -14,7 +14,7 @@ consumeTxt : "You eat a bandage.";
 useTxt : "You wrap a bandage around your wound.";
 effects : [0,0,0,0];
 equipType : 7;
-sprite : "_";
+sprite : "item_necklace";
 spriteColor : [0.95, 0.95, 0.15];
 }
 
@@ -30,7 +30,7 @@ consumeTxt : "You eat a bandage.";
 useTxt : "You wrap a bandage around your wound.";
 effects : [0,0,0,0];
 equipType : 6;
-sprite : "J";
+sprite : "item_ring";
 spriteColor : [0.95, 0.95, 0.15];
 }
 
@@ -46,7 +46,7 @@ consumeTxt : "You eat a bandage.";
 useTxt : "You wrap a bandage around your wound.";
 effects : [0,0,0,0];
 equipType : 6;
-sprite : "J";
+sprite : "item_ring";
 spriteColor : [0.75, 0.75, 0.95];
 }
 
@@ -62,6 +62,6 @@ amount : 1;
 consumeTxt : "You eat a bandage.";
 useTxt : "You wrap a bandage around your wound.";
 effects : [0,0,0,0];
-sprite : "J";
+sprite : "item_plank";
 spriteColor : [0.75, 0.75, 0.75];
 }

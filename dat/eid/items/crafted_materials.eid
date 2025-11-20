@@ -14,7 +14,7 @@ consumeTxt : "Eated Rope";
 useTxt : "No Use.";
 effects : [0,0,0,0];
 equipType : 0;
-sprite : "L";
+sprite : "item_rope";
 spriteColor : [0.85, 0.50, 0.0];
 }
 
@@ -30,7 +30,7 @@ consumeTxt : "no eating";
 useTxt : "No Use.";
 effects : [0,0,0,0];
 equipType : 0;
-sprite : "I";
+sprite : "item_bits";
 spriteColor : [1.0, 0.35, 0.0];
 }
 
@@ -46,7 +46,7 @@ consumeTxt : ".";
 useTxt : ".";
 effects : [0,0,0,0];
 equipType : 0;
-sprite : "M";
+sprite : "item_plank";
 spriteColor : [0.75, 0.20, 0.0];
 }
 
@@ -62,7 +62,7 @@ consumeTxt : ".";
 useTxt : ".";
 effects : [0,0,0,0];
 equipType : 0;
-sprite : "N";
+sprite : "item_hinge";
 spriteColor : [0.65, 0.65, 0.65];
 }
 
@@ -78,6 +78,6 @@ consumeTxt : ".";
 useTxt : ".";
 effects : [0,0,0,0];
 equipType : 0;
-sprite : "N";
+sprite : "item_scrap";
 spriteColor : [0.75, 0.7, 0.65];
 }

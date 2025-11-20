@@ -15,7 +15,7 @@ consumeTxt : "Stick.";
 useTxt : "Stick.";
 effects : [0,0,0,0];
 equipType : 0;
-sprite : "D";
+sprite : "item_campfire";
 spriteColor : [0.65, 0.35, 0.0];
 }
 
@@ -32,6 +32,6 @@ consumeTxt : "Stick.";
 useTxt : "Stick.";
 effects : [0,0,0,0];
 equipType : 0;
-sprite : "O";
+sprite : "item_chest";
 spriteColor : [0.65, 0.35, 0.0];
 }

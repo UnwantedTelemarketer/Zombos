@@ -1013,6 +1013,9 @@ std::string GameManager::GetTileChar(Tile* tile) {
 		case ID_CHICKEN:
 			return glyphs.getGlyph("ent_chicken");
 		case ID_HUMAN:
+			if (tile->entity->faction == Faction::Bandit) {
+				return glyphs.getGlyph("ent_bandit");
+			}
 			return glyphs.getGlyph("ent_human");
 		case ID_FROG:
 			return glyphs.getGlyph("ent_frog");
@@ -1125,8 +1128,11 @@ ImVec4 GameManager::GetTileColor(Tile* tile, float intensity, bool shadows) {
 			goto dimming;
 			break;
 		case ID_CAT:
-		case ID_COW:
 			color = { 1,1,1,1 };
+			goto dimming;
+			break;
+		case ID_COW:
+			color = { 0.57,0.3,0,1 };
 			goto dimming;
 			break;
 		}
