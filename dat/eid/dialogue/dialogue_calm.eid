@@ -9,3 +9,12 @@ size : 8;
 7 :	"Don't get caught in the rain without a jacket.";
 8 :	"The mud isn't so bad with some boots.";
 };
+
+
+CALM_FARMER {
+size : 4;
+1 : "Hello, are you interested in plants?"
+2 : "I've been tending this field for a long time."
+3 : "There's never a dull day in the world of botany."
+4 : "I heard there's a new type of tomato someone made."
+}

@@ -258,7 +258,7 @@ struct Memory {
 	bool persistent;
 };
 
-enum TaskType {collectItem, dropItem};
+enum TaskType {collectItem, dropItem, smoke};
 
 struct Task {
 	TaskType task;
@@ -268,6 +268,7 @@ struct Task {
 	int priority;
 	bool currentlyFulfilling = false;
 	Vector2_I currentObjective;
+	int taskTimer;
 };
 
 //Health, Name, ID, Behaviour, Aggressive, Faction, View Distance, Damage, Can Talk
@@ -293,6 +294,7 @@ struct Entity {
 
 	int uID;
 	bool targetingPlayer;
+	bool shouting = false;
 	bool talking;
 	bool smart = false;
 	std::string message = "empty";
@@ -455,7 +457,14 @@ struct Entity {
 		float strongest = std::max({ std::abs(t), std::abs(f), std::abs(h) });
 
 		if (strongest < 2.f) {
-			message = npcMessages.at("CALM_WANDERER")[Math::RandInt(0, 7)];
+			switch(faction){
+			case Human_W:
+				message = npcMessages.at("CALM_WANDERER")[Math::RandInt(0, 7)];
+				break;
+			case Farmer:
+				message = npcMessages.at("CALM_FARMER")[Math::RandInt(0, 3)];
+				break;
+			}
 		}
 		else if (std::abs(h) == strongest) {
 			message = (h > 0)

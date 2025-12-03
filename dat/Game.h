@@ -135,6 +135,7 @@ void GameManager::LoadData() {
 //Load All NPC dialogue into the game
 void GameManager::LoadMessages() {
 	std::vector<std::string> messageTypes = { 
+		"CALM_FARMER",
 		"CALM_WANDERER",
 		"HAPPY_WANDERER",
 		"ANGRY_WANDERER",
@@ -246,7 +247,20 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 	}
 
 	vec2_i oldCoords = ent->coords;
-	std::vector<Vector2_I> path = mainMap.GetLine(ent->coords, mPlayer.coords, 20);
+	std::vector<Vector2_I> path;
+	bool crossChunk = false;
+
+	if (chunkInUse->globalChunkCoord == mainMap.c_glCoords) {
+		path = mainMap.GetLine(ent->coords, mPlayer.coords, 20);
+	}
+	else {
+		Vector2_I offset = mainMap.c_glCoords - chunkInUse->globalChunkCoord;
+		offset *= 30;
+		Vector2_I newPlayerCoords = mPlayer.coords + offset;
+		path = mainMap.GetLine(ent->coords, newPlayerCoords, 20);
+		crossChunk = true;
+	}
+
 	std::vector<Vector2_I> entPath;
 	Entity* tempTarget = nullptr;
 	bool moved = false;
@@ -318,12 +332,17 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 			//if the player is targeted
 			else if (ent->targetingPlayer) {
 				if (mPlayer.coveredIn == guts && ent->name == "Zombie") { ent->targetingPlayer = false; }
-
-				//pathfind to player with astar if they are chasing
-				auto pathToPlayer = AStar(chunkInUse, ent->coords, mPlayer.coords);
+				std::vector<Vector2_I> pathToPlayer;
+				if (crossChunk) {
+					pathToPlayer = path;
+				}
+				else {
+					//pathfind to player with astar if they are chasing
+					pathToPlayer = AStar(chunkInUse, ent->coords, mPlayer.coords);
+				}
 
 				if (pathToPlayer.size() > 1) {
-					if (chunkInUse->GetTileAtCoords(pathToPlayer[1])->walkable) {
+					if (mainMap.GetTileFromThisOrNeighbor(pathToPlayer[1], chunkInUse->globalChunkCoord)->walkable) {
 						ent->coords = pathToPlayer[1];
 						moved = true;
 					}
@@ -332,9 +351,12 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 					}
 				}
 				else {
-					if (chunkInUse->GetTileAtCoords(pathToPlayer[0])->walkable) {
-						ent->coords = pathToPlayer[0];
-						moved = true;
+					if(pathToPlayer.size() == 1)
+					{
+						if (mainMap.GetTileFromThisOrNeighbor(pathToPlayer[0], chunkInUse->globalChunkCoord)->walkable) {
+							ent->coords = pathToPlayer[0];
+							moved = true;
+						}
 					}
 					else {
 						moved = false;
@@ -433,6 +455,9 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		ent->coords = oldCoords;
 		return;
 	}
+
+	tile = mainMap.GetTileFromThisOrNeighbor(ent->coords, chunkInUse->globalChunkCoord);
+
 	//cover entities in liquid if they step in it
 	if (tile != nullptr) {
 		if (tile->liquid != nothing) {
@@ -502,6 +527,13 @@ void GameManager::RunTasks(Entity* ent, std::shared_ptr<Chunk> chunkInUse) {
 						break;
 					}
 				}
+			case TaskType::smoke:
+				if (Math::RandInt(0, 35) == 1) {
+					t.currentlyFulfilling = true;
+					t.currentObjective = zero;
+					t.taskTimer = 20;
+					ent->taskQueue.emplace(&t);
+				}
 			}
 		}
 	}
@@ -512,35 +544,55 @@ void GameManager::RunTasks(Entity* ent, std::shared_ptr<Chunk> chunkInUse) {
 	{
 		//If they have something to do with their task
 		if (t->currentlyFulfilling) {
-			//walk towards the objective
-			std::vector<Vector2_I> pathToObj = mainMap.GetLine(ent->coords, t->currentObjective, 10);
-			if (pathToObj.size() > 2) {
-				ent->coords = pathToObj[1];
+			if (t->currentObjective != zero) {
+				//walk towards the objective
+				std::vector<Vector2_I> pathToObj = mainMap.GetLine(ent->coords, t->currentObjective, 10);
+				if (pathToObj.size() > 2) {
+					ent->coords = pathToObj[1];
 
-				//if they are busy, break out of the loop
-				break;
-			}
-			//reached tile
-			else {
-				Tile& objTile = *mainMap.GetTileFromThisOrNeighbor(t->currentObjective);
-				switch (t->task) {
-				case TaskType::collectItem:
-
-					ent->inv.push_back(Items::GetItem(objTile.itemName));
-					objTile.hasItem = false;
-					objTile.itemName = "nthng";
-					break;
-
-				case TaskType::dropItem:
-
-					objTile.hasItem = true;
-					objTile.itemName = t->taskModifierString;
-					objTile.ticksPassed = 0;
+					//if they are busy, break out of the loop
 					break;
 				}
-				t->currentlyFulfilling = false;
-				t->currentObjective = zero;
-				ent->taskQueue.erase(t);
+				//reached tile
+				else {
+					Tile& objTile = *mainMap.GetTileFromThisOrNeighbor(t->currentObjective);
+					switch (t->task) {
+					case TaskType::collectItem:
+
+						ent->inv.push_back(Items::GetItem(objTile.itemName));
+						objTile.hasItem = false;
+						objTile.itemName = "nthng";
+						break;
+
+					case TaskType::dropItem:
+
+						objTile.hasItem = true;
+						objTile.itemName = t->taskModifierString;
+						objTile.ticksPassed = 0;
+						break;
+					}
+					t->currentlyFulfilling = false;
+					t->currentObjective = zero;
+					ent->taskQueue.erase(t);
+				}
+			}
+			else {
+				switch (t->task) {
+				case TaskType::smoke:
+					if (Math::RandInt(0, 5) == 2) {
+						mainMap.effectLayer.localCoords[ent->coords.x][ent->coords.y] = 1;
+					}
+					t->taskTimer -= 1;
+
+					if (t->taskTimer <= 0) {
+						t->currentlyFulfilling = false;
+						t->currentObjective = zero;
+						t->taskTimer = 0;
+						ent->taskQueue.erase(t);
+						mainMap.GetTileFromThisOrNeighbor(ent->coords)->itemName = "CIGARETTE";
+					}
+					break;
+				}
 			}
 		}
 	}
@@ -852,6 +904,10 @@ void GameManager::UpdateTick() {
 				}
 				if (struckTile->entity != nullptr) {
 					struckTile->entity->health -= 100;
+				}
+				if (!struckTile->hasItem && Math::RandInt(1, 45)) {
+					struckTile->hasItem = true;
+					struckTile->itemName = "FLAT_MUSHROOM";
 				}
 
 				Audio::Play("dat/sounds/lightning.mp3");

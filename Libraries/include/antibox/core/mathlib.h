@@ -85,8 +85,15 @@ namespace antibox {
 			x += vec2.x;
 			y += vec2.y;
 		}
+		void operator*=(int i) {
+			x *= i;
+			y *= i;
+		}
 		Vector2_I operator+(Vector2_I vec2) {
 			return { x + vec2.x, y + vec2.y };
+		}
+		Vector2_I operator-(Vector2_I vec2) {
+			return { x - vec2.x, y - vec2.y };
 		}
 		bool operator<(Vector2_I vec2) {
 			return (x < vec2.x&& y < vec2.y);
