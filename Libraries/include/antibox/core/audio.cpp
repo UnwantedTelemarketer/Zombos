@@ -24,11 +24,42 @@ ma_result AudioEngine::init() {
     if (result != MA_SUCCESS) {
         return result;  // Failed to initialize the engine.
     }
+
     return result;
 }
 
 void AudioEngine::PlayAudio(const char* path) {
     ma_engine_play_sound(&mEngine, path, NULL);
+}
+
+void AudioEngine::PlayModAudio(const char* path, AudioModifier mod) {
+    ma_sound* sound = new ma_sound;
+    std::cout << "starting sound..." << std::endl;
+    ma_result result = ma_sound_init_from_file(&mEngine, path, 0, NULL, NULL, sound);
+
+    if (result != MA_SUCCESS)
+    { 
+        std::cout << "error starting sound" << std::endl;
+        delete sound;
+        return; 
+    }
+    
+    ma_sound_set_pitch(sound, mod.pitch);
+    ma_sound_set_volume(sound, mod.volume);
+
+    // Important: detach so miniaudio frees it automatically when it finishes
+    ma_sound_set_end_callback(
+        sound, 
+        [](void* pUserData, ma_sound* pSound) 
+        {
+            std::cout << "ending sound." << std::endl;
+            ma_sound_uninit(pSound);
+            delete pSound;
+        }, 
+        nullptr);
+
+
+    ma_sound_start(sound);
 }
 
 void AudioEngine::StopAudioLooping(std::string name) {

@@ -73,9 +73,22 @@
 	- Growing crops
 	- New glyph system
 	- Chasing NPCs can cross chunks (long overdue)
+	- Items say the liquid they are covered in
+	- Lowest body temperature locked to 94f degrees
+	- Strange Liquid (for debugging)
+	- Debug Command added (pathfind)
+	- Footstep sounds change based on tile
+	- Tiles now have custom footstep sound files
+	- Factions added more in depth (factionmanager)
+		- Factions generate at the start of the world
+		- Faction leaders are created and saved immediately
 
   --Engine Changes--
 	- The sprites now scale properly with window resizing
 	- Added function to change boolean after set time
 	- Tokenizer can now read commas in arrays IF theres an escape character before it (forward slash)
 	- Window now scales with resolution
+	- Random floats can now be generated
+
+  --Known Bugs--
+	- Fire wont spread?

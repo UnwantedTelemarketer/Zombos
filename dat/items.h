@@ -129,6 +129,8 @@ namespace Tiles {
 		createdTile->mainTileColor = Tiles::GetTile(tile.id)->mainTileColor;
 		createdTile->casts_shadow = Tiles::GetTile(tile.id)->casts_shadow;
 		createdTile->tileSprite = Tiles::GetTile(tile.id)->tileSprite;
+		createdTile->hasRoof = Tiles::GetTile(tile.id)->hasRoof;
+		createdTile->burnsInto = Tiles::GetTile(tile.id)->burnsInto;
 
 	}
 }

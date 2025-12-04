@@ -1,6 +1,7 @@
 #pragma once
 #include "antibox/core/mathlib.h"
 #include <fstream>
+#include "cosmetic.h";
 
 
 class Inventory
@@ -139,6 +140,8 @@ public:
 			items.erase(items.begin() + itemsToErase[i] - i);
 		}
 
+		ResetItemNames();
+
 		totalWeight = 0.f;
 
 		for (size_t i = 0; i < items.size(); i++)
@@ -156,9 +159,9 @@ public:
 				items[i].count -= amount;
 				totalWeight -= items[i].weight;
 
-				if (items[i].count > 1) itemNames[i] = items[i].name + " x " + std::to_string(items[i].count);
-				else if (items[i].count == 1) itemNames[i] = items[i].name;
-				else if (items[i].count <= 0) {
+				ResetItemNames();
+
+				if (items[i].count <= 0) {
 					items.erase(items.begin() + i);
 					itemNames.erase(itemNames.begin() + i);
 					return true;
@@ -381,6 +384,12 @@ public:
 	void ResetItemNames() {
 		for (int i = 0; i < items.size(); i++) {
 			itemNames[i] = items[i].name;
+
+			if (items[i].coveredIn != Liquid::nothing) {
+				std::string adjName = Cosmetic::CoveredAdjName(items[i].coveredIn);
+				itemNames[i] = adjName + " " + itemNames[i];
+			}
+
 			if (items[i].count > 1) {
 				itemNames[i] += " x ";
 				itemNames[i] += std::to_string(items[i].count);

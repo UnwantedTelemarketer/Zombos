@@ -38,6 +38,7 @@ namespace antibox {
 
 		//Play sound once at file path
 		void StartSound(const char* path, std::string name, bool loop);
+		void StartModSound(const char* path, AudioModifier mod);
 		void StopSoundLooping(std::string name);
 		void SetVolume(float volume);
 		void SetVolumeLoop(float volume, std::string name);

@@ -40,7 +40,7 @@ void GlyphManager::LoadGlyphs() {
 		for (auto const& arrPair : spriteData.tokens) {
 
 			//we are basically reading in paired coordinates, converting those to
-			//the proper unicode private use area codepoint, then converting that to a the right stuff
+			//the proper unicode private use area codepoint, then converting that to the right stuff
 			//to be converted to a utf-8 string so we can render it :/
 
 			std::stringstream sstream;

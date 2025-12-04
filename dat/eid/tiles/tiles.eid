@@ -50,6 +50,7 @@ TILE_GRASS {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : "true";
+	walkSound : "movement/grass1.wav";
 	changesOverTime : true;
 	timedReplacement : "TILE_TALLGRASS";
 	double_size : false;
@@ -67,6 +68,7 @@ TILE_TALLGRASS {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/grass1.wav";
 	changesOverTime : false;
 	timedReplacement : 0;
 	double_size : false;
@@ -83,6 +85,7 @@ TILE_DIRT {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/crunchy_dirt.wav";
 	changesOverTime : true;
 	timedReplacement : "TILE_GRASS";
 	double_size : false;
@@ -99,6 +102,7 @@ TILE_SAND {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/sand1.wav";
 	changesOverTime : false;
 	timedReplacement : 0;
 	double_size : false;
@@ -121,6 +125,7 @@ TILE_STONE {
 	castsShadow : true;
 	color : [0.75, 0.75, 0.75];
 	sprite : "tile_stone_floor";
+	hasRoof : true;
 }
 
 TILE_TREE_BASE {
@@ -133,6 +138,7 @@ TILE_TREE_BASE {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/grass1.wav";
 	changesOverTime : false;
 	timedReplacement : 0;
 	double_size : true;
@@ -150,6 +156,7 @@ TILE_TREE_BASE_E {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/grass1.wav";
 	changesOverTime : "TILE_TREE_BASE";
 	timedReplacement : true;
 	double_size : true;
@@ -184,6 +191,7 @@ TILE_STONE_FLOOR {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/rock_walk1.wav";
 	changesOverTime : false;
 	timedReplacement : 0;
 	double_size : false;
@@ -218,6 +226,7 @@ TILE_SNOW {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/crunchy_dirt.wav";
 	changesOverTime : false;
 	timedReplacement : 0;
 	double_size : false;
@@ -235,6 +244,7 @@ TILE_MUD {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/mud.mp3";
 	changesOverTime : false;
 	timedReplacement : 0;
 	double_size : false;
@@ -251,6 +261,7 @@ TILE_MUD_EMPTY {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/mud.mp3";
 	changesOverTime : true;
 	timedReplacement : "TILE_MUD";
 	double_size : false;
@@ -268,6 +279,7 @@ TILE_CATTAIL {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/grass1.wav";
 	changesOverTime : false;
 	timedReplacement : 0;
 	double_size : true;
@@ -283,7 +295,7 @@ TILE_CAVE_ENTRANCE {
 	replacement : "NULL";
 	itemName : "NULL";
 	hasItem : false;
-	walkable : true;
+	walkable : false;
 	changesOverTime : false;
 	timedReplacement : "NULL";
 	double_size : false;
@@ -348,11 +360,13 @@ TILE_WOOD_PLANKS {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/wood1.mp3";
 	changesOverTime : false;
 	timedReplacement : "NULL";
 	double_size : false;
 	color : [0.6,0.4,0.3];
 	sprite : "tile_wood_planks";
+	hasRoof : true;
 }
 
 TILE_STAIRS {
@@ -364,11 +378,13 @@ TILE_STAIRS {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/wood1.mp3";
 	changesOverTime : false;
 	timedReplacement : "NULL";
 	double_size : false;
 	color : [0.6,0.4,0.3];
 	sprite : "tile_stairs";
+	hasRoof : true;
 }
 
 TILE_STAIRS_UP {
@@ -380,11 +396,13 @@ TILE_STAIRS_UP {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/wood1.mp3";
 	changesOverTime : false;
 	timedReplacement : "NULL";
 	double_size : false;
 	color : [0.7,0.5,0.4];
 	sprite : "tile_stairs";
+	hasRoof : true;
 }
 
 TILE_STAIRS_DOWN {
@@ -396,11 +414,13 @@ TILE_STAIRS_DOWN {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/wood1.mp3";
 	changesOverTime : false;
 	timedReplacement : "NULL";
 	double_size : false;
 	color : [0.5,0.3,0.2];
 	sprite : "tile_stairs";
+	hasRoof : true;
 }
 
 TILE_TILLED_DIRT {
@@ -412,6 +432,7 @@ TILE_TILLED_DIRT {
 	itemName : "NULL";
 	hasItem : false;
 	walkable : true;
+	walkSound : "movement/crunchy_dirt.mp3";
 	changesOverTime : true;
 	timedReplacement : "TILE_DIRT";
 	double_size : false;

@@ -17,8 +17,15 @@
 #define MAP_DOWN 2
 #define MAP_LEFT 3
 #define MAP_RIGHT 4
-#define MAP_HEIGHT 500
-#define MAP_WIDTH 500
+#define MAP_HEIGHT 1000
+#define MAP_WIDTH 1000
+#define BURN_TIMER 5
+#define UNABLE_TO_BURN -1
+
+#define FACTION_HUMAN "Human_W"
+#define FACTION_ZOMBIE "Zombie"
+#define FACTION_BANDIT "Bandit"
+#define FACTION_WILDLIFE "Wildlife"
 
 using namespace antibox;
 
@@ -32,7 +39,7 @@ enum weather {clear, rainy, thunder};
 class Map {
 public:
 	bool chunkUpdateFlag = false;
-	Vector2_I c_glCoords{ 250, 250 };
+	Vector2_I c_glCoords{ 500, 500 };
 	T_Chunk effectLayer; //is the visual effects (lines, fire, smoke, etc)
 	World world; //keeps the original generated map so that tiles walked over wont be erased
 	World underground; //map but underground, different map entirely
@@ -106,8 +113,8 @@ public:
 	void TempCheck(Player* p, Vector2_I coords);
 	std::string GetCurrentSavePath() const { return "dat/saves/" + currentSaveName + "/"; }
 
-	Entity* SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f, bool spawnSpecial);
-	void SpawnHumanInCurrent(Vector2_I spawnCoords, Behaviour b, Faction f);
+	Entity* SpawnHuman(Vector2_I spawnCoords, Behaviour b, std::string f, bool spawnSpecial);
+	void SpawnHumanInCurrent(Vector2_I spawnCoords, Behaviour b, std::string f);
 
 	Vector2_I GetShadowMod();
 
@@ -183,7 +190,6 @@ void Map::CreateMap(int l_seed, int b_seed, int moisture)
 			effectLayer.localCoords[i][j] = 0;
 		}
 	}
-
 }
 
 static void T_SaveChunks(std::shared_ptr<Chunk> chunk, std::string currentSaveName) {
@@ -366,12 +372,13 @@ void Map::MakeNewChunk(Vector2_I coords) {
 
 }
 
-void Map::SpawnHumanInCurrent(Vector2_I spawnCoords, Behaviour b, Faction f) {
+void Map::SpawnHumanInCurrent(Vector2_I spawnCoords, Behaviour b, std::string f) {
 	CurrentChunk()->AddEntity(SpawnHuman(spawnCoords, b, f, false));
 }
 
-Entity* Map::SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f, bool spawnSpecial = false) {
-	Entity* zomb = new Entity{ 35, "Human", ID_HUMAN, b, false, f, 10, 10, true, spawnCoords.x, spawnCoords.y, true };
+Entity* Map::SpawnHuman(Vector2_I spawnCoords, Behaviour b, std::string f, bool spawnSpecial = false) {
+	Entity* zomb = new Entity{ 35, "Human", ID_HUMAN, b, false, 10, 10, true, spawnCoords.x, spawnCoords.y, true };
+	zomb->faction = &factions.list[FACTION_HUMAN];
 
 	if (b == Aggressive) 
 	{ 
@@ -404,7 +411,7 @@ Entity* Map::SpawnHuman(Vector2_I spawnCoords, Behaviour b, Faction f, bool spaw
 					zomb->name = nameChosen.c_str();
 					zomb->health = entData.getInt("health");
 					zomb->b = (Behaviour)entData.getInt("behaviour");
-					zomb->faction = (Faction)entData.getInt("faction");
+					zomb->faction = &factions.list[entData.getString("faction")];
 					zomb->damage = entData.getInt("damage");
 					zomb->feelingTowardsPlayer.fear = entData.getFloat("fear");
 					zomb->feelingTowardsPlayer.trust = entData.getFloat("trust");
@@ -435,7 +442,9 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 		Vector2_I spawnCoords = { Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };
 		int num = Math::RandInt(1, 20);
 		if (num >= 20) {
-			zomb = new Entity{ 15, "Finder", ID_FINDER, Protective, true, Takers, 3, 25, true, spawnCoords.x, spawnCoords.y};
+			zomb = new Entity{ 15, "Finder", ID_FINDER, Protective, true, 3, 25, true, spawnCoords.x, spawnCoords.y };
+
+			zomb->faction = &factions.list["Takers"];
 
 			zomb->inv.push_back(Items::GetItem("CRYSTAL"));
 			zomb->inv.push_back(Items::GetItem("SCRAP"));
@@ -444,15 +453,17 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 		else if (num >= 19) {
 			//humans have a lot more logic than the rest
 			if (Math::RandInt(0, 4) >= 3) {
-				chunk->AddEntity(SpawnHuman(spawnCoords, Protective, Human_W, true));
+				chunk->AddEntity(SpawnHuman(spawnCoords, Protective, "Faction_Human_W", true));
 			}
 			else {
-				chunk->AddEntity(SpawnHuman(spawnCoords, Aggressive, Bandit));
+				chunk->AddEntity(SpawnHuman(spawnCoords, Aggressive, "Faction_Bandit"));
 			}
 			continue;
 		}
 		else if (num >= 10) {
-			zomb = new Entity{ 15, "Zombie", ID_ZOMBIE, Aggressive, true, Zombie, 7, 8, false, spawnCoords.x, spawnCoords.y };
+			zomb = new Entity{ 15, "Zombie", ID_ZOMBIE, Aggressive, true, 7, 8, false, spawnCoords.x, spawnCoords.y };
+
+			zomb->faction = &factions.list[FACTION_ZOMBIE];
 
 			zomb->inv.push_back(Items::GetItem("OLD_CLOTH"));
 			zomb->inv.push_back(Items::GetItem("GUTS"));
@@ -462,24 +473,31 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 		else {
 			switch (GetBiome(spawnCoords, chunk->globalChunkCoord)) {
 			case swamp:
-				zomb = new Entity{ 10, "Frog", ID_FROG, Wander, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				zomb = new Entity{ 10, "Frog", ID_FROG, Wander, false, 5, 1, false, spawnCoords.x, spawnCoords.y };
 				zomb->inv.push_back(Items::GetItem("LEATHER"));
 				zomb->idleSounds = { "dat/sounds/frog.mp3" };
+
+				zomb->faction = &factions.list[FACTION_WILDLIFE];
 				break;
 			case taiga:
-				zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, 5, 1, false, spawnCoords.x, spawnCoords.y };
+
+				zomb->faction = &factions.list[FACTION_WILDLIFE];
 				break;
 			case grassland:
-				zomb = new Entity{ 40, "Bull", ID_COW, Aggressive, false, Wildlife, 5, 15, false, spawnCoords.x, spawnCoords.y };
+				zomb = new Entity{ 40, "Bull", ID_COW, Aggressive, false, 5, 15, false, spawnCoords.x, spawnCoords.y };
 				zomb->inv.push_back(Items::GetItem("LEATHER"));
 				zomb->inv.push_back(Items::GetItem("BULL_HORN"));
+				zomb->faction = &factions.list[FACTION_WILDLIFE];
 				break;
 			case desert:
-				zomb = new Entity{ 10, "Cat", ID_CAT, Wander, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				zomb = new Entity{ 10, "Cat", ID_CAT, Wander, false, 5, 1, false, spawnCoords.x, spawnCoords.y };
 				zomb->idleSounds = { "dat/sounds/cat.mp3" };
+				zomb->faction = &factions.list[FACTION_WILDLIFE];
 				break;
 			default:
-				zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, Wildlife, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				zomb->faction = &factions.list[FACTION_WILDLIFE];
 				break;
 			}
 
@@ -1125,7 +1143,7 @@ void Map::PickStructure(Vector2_I startingChunk) {
 			ItemReader::GetDataFromFile("structures/houses.eid", "GARDEN_HOUSE", &roadDat);
 			PlaceStructure(startingChunk, roadDat.getString("tiles"), { roadDat.getInt("width"), roadDat.getInt("height") }, { 15,15 });
 
-			Entity* ent = SpawnHuman({ 17, 19 }, Behaviour::Tasks, Faction::Farmer);
+			Entity* ent = SpawnHuman({ 17, 19 }, Behaviour::Tasks, "Faction_Farmer");
 
 			Task gather;
 			gather.task = collectItem;
@@ -1167,8 +1185,8 @@ void Map::PlaceCampsite(Vector2_I startingChunk) {
 
 
 	//make two dudes who trust each other
-	Entity* zomb = SpawnHuman(randomCoords1, Protective_Stationary, Human_W);
-	Entity* zomb2 = SpawnHuman(randomCoords2, Protective_Stationary, Human_W);
+	Entity* zomb = SpawnHuman(randomCoords1, Protective_Stationary, "Faction_Human_W");
+	Entity* zomb2 = SpawnHuman(randomCoords2, Protective_Stationary, "Faction_Human_W");
 
 	zomb->feelingTowardsOthers.insert({ zomb2->entityID , (FEELING_HAPPY + FEELING_TRUST) * 2 });
 	zomb2->feelingTowardsOthers.insert({ zomb->entityID , (FEELING_HAPPY + FEELING_TRUST) * 2 });
@@ -1220,12 +1238,13 @@ void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2
 			//								  --convert 1d coords into 2d--
 			if(structure[(x + (i * dimensions.x))] == '+'){
 				*curTile = Tiles::GetTile("TILE_STONE_FLOOR");
-				world.chunks[startingChunk]->AddEntity(SpawnHuman(curCoordsModified, Protective, Human_W));
+				world.chunks[startingChunk]->AddEntity(SpawnHuman(curCoordsModified, Protective, "Faction_Human_W"));
 			}
 			else if (structure[(x + (i * dimensions.x))] == '\x7e') {
 				continue;
 			}
 			else {
+				int oldTileID = curTile->id;
 				*curTile = Tiles::GetTileByID(static_cast<int>(structure[(x + (i * dimensions.x))]));
 
 				//place items on wood tile
@@ -1234,6 +1253,7 @@ void Map::PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2
 						curTile->hasItem = true;
 						curTile->itemName = Items::GetRandomItemFromPool("house.eid");
 					}
+					curTile->burnsInto = oldTileID;
 				}
 				else if (curTile->id == 35) {
 					curTile->ticksPassed = 0;
@@ -1262,9 +1282,13 @@ Vector2_I Map::PlaceStartingBuilding() {
 	for (int i = 0; i < buildingBlocks.size(); i++)
 	{
 
-		Tile* curTile = GetTileFromThisOrNeighbor({ buildingBlocks[i].x,buildingBlocks[i].y }, c_glCoords);
+		Tile* curTile = GetTileFromThisOrNeighbor( buildingBlocks[i], c_glCoords);
+
+		int oldTileID = curTile->id;
 
 		*curTile = Tiles::GetTile("TILE_WOOD_PLANKS");
+
+		curTile->burnsInto = oldTileID;
 	}
 
 	int door = 6;
@@ -1397,7 +1421,8 @@ void Map::GenerateTomb(std::shared_ptr<Chunk> chunk) {
 
 	int entx = Math::RandInt(3, 26);
 	int enty = Math::RandInt(3, 26);
-	Entity* zomb = new Entity{ 35, "Zombie", ID_ZOMBIE, Aggressive, true, Zombie, 10, 8, false, enty, entx };
+	Entity* zomb = new Entity{ 35, "Zombie", ID_ZOMBIE, Aggressive, true, 10, 8, false, enty, entx };
+	zomb->faction = &factions.list[FACTION_ZOMBIE];
 	chunk->AddEntity(zomb);
 }
 
@@ -1592,12 +1617,12 @@ void Map::TempCheck(Player* p, Vector2_I coords) {
 	std::vector<Vector2_I> line = GetLine(coords, p->coords, 10);
 	//if a player is near fire
 	if (line.size() <= 2) {
-		//add 0.25 temp unless theyre at 100 
-		p->bodyTemp = p->bodyTemp >= 100 ? 100 : p->bodyTemp + 0.1f;
-	}
-	else if (line.size() <= 5) {
 		//add even faster if theyre closer
 		p->bodyTemp = p->bodyTemp >= 100 ? 100 : p->bodyTemp + 0.15f;
+	}
+	else if (line.size() <= 5) {
+		//add temp when near fire
+		p->bodyTemp = p->bodyTemp >= 100 ? 100 : p->bodyTemp + 0.1f;
 	}
 }
 
@@ -1679,7 +1704,6 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 			//spread fire to a list so we dont spread more than one tile per update
 			if (curTile->liquid == fire) {
 
-
 				if (Math::RandInt(0, 2) == 1) effectLayer.localCoords[x - 1][y] = 1;
 				//If its a campfire, then let it burn but dont spread
 				if (curTile->hasItem && curTile->itemName == "CAMPFIRE") {
@@ -1727,11 +1751,21 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 			}
 
 			//if its been burned recently, dont let it catch again
-			if (curTile->burningFor >= 5) {
+			if (curTile->burningFor >= BURN_TIMER) {
 				curTile->burningFor++;
 				if (curTile->burningFor >= 100) { curTile->burningFor = 0; }
+
+				//If it burns into another tile, change it
+				if (curTile->burningFor == 5 && curTile->burnsInto != -1) {
+					int burnVal = curTile->burningFor;
+					*curTile = Tiles::GetTileByID(curTile->burnsInto);
+					curTile->burningFor = burnVal;
+				}
+
 				curTile->SetLiquid(nothing);
 			}
+
+			//if its wet, slowly dry off 
 			if (curTile->liquid != nothing && curTile->liquidTime != -1) {
 				curTile->liquidTime++;
 				if (curTile->liquidTime >= 100) {
@@ -1747,14 +1781,15 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 	//set fire to tiles
 	for (int i = 0; i < tilesToBurn.size(); i++)
 	{
-		if (tilesToBurn[i].x < 0 || tilesToBurn[i].x >= CHUNK_WIDTH || tilesToBurn[i].y < 0 || tilesToBurn[i].y >= CHUNK_HEIGHT) { continue; }
+		Tile* tileBurning = GetTileFromThisOrNeighbor(tilesToBurn[i], chunk->globalChunkCoord);
 
-		if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].burningFor > 5) { continue; }
-		else if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].burningFor < 0) { continue; }
-		if (chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].liquid != nothing) {
-			chunk->localCoords[tilesToBurn[i].x][tilesToBurn[i].y].SetLiquid(fire);
+		if (tileBurning->burningFor > BURN_TIMER) { continue; }
+		else if (tileBurning->burningFor == UNABLE_TO_BURN) { continue; }
+
+		if (tileBurning->liquid != nothing) {
+			tileBurning->SetLiquid(fire);
 		}
-		floodFill({ tilesToBurn[i].x, tilesToBurn[i].y }, 5, false);
+		floodFill(tilesToBurn[i], 5, false);
 	}
 
 

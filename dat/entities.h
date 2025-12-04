@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "antibox/objects/tokenizer.h"
+#include "FactionManager.h"
 #include <iostream>
 #include <fstream>
 #include <set>
@@ -7,11 +8,12 @@
 
 enum ConsumeEffect { none = 0, heal = 1, quench = 2, saturate = 3, pierceDamage = 4, bluntDamage = 5, coverInLiquid = 6, bandage = 7};
 enum biome { desert, ocean, forest, swamp, taiga, grassland, urban, jungle };
-enum Liquid { nothing = 0, water = 1, blood = 2, fire = 3, guts = 4, mud = 5 , snow = 6};
+enum Liquid { strange_liquid = -1, nothing = 0, water = 1, blood = 2, fire = 3, guts = 4, mud = 5 , snow = 6};
 enum Action { use, consume, combine };
 enum Behaviour { Wander, Protective, Protective_Stationary, Stationary, Aggressive, Follow, Tasks };
-enum Faction { Human_W, Human_T, Bandit, Dweller, Zombie, Wildlife, Takers, Farmer };
 enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots = 5, gloves = 6, neck = 7, back = 8 };
+
+//Faction { Human_W, Human_T, Bandit, Dweller, Zombie, Wildlife, Takers, Farmer };
 
 #define ID_PLAYER 0
 
@@ -278,7 +280,6 @@ struct Entity {
 	int entityID;
 	Behaviour b;
 	bool aggressive;
-	Faction faction;
 	int viewDistance;
 	int damage;
 	bool canTalk;
@@ -291,6 +292,8 @@ struct Entity {
 	int tempViewDistance;
 	Feeling feelingTowardsPlayer = { 0,0,0 };
 	std::unordered_map<int, Feeling> feelingTowardsOthers;
+	Faction* faction;
+	bool factionLeader = false;
 
 	int uID;
 	bool targetingPlayer;
@@ -457,13 +460,11 @@ struct Entity {
 		float strongest = std::max({ std::abs(t), std::abs(f), std::abs(h) });
 
 		if (strongest < 2.f) {
-			switch(faction){
-			case Human_W:
+			if (faction->name == "Faction_Human_W") {
 				message = npcMessages.at("CALM_WANDERER")[Math::RandInt(0, 7)];
-				break;
-			case Farmer:
+			}
+			else if (faction->name == "Faction_Farmer") {
 				message = npcMessages.at("CALM_FARMER")[Math::RandInt(0, 3)];
-				break;
 			}
 		}
 		else if (std::abs(h) == strongest) {
@@ -523,6 +524,33 @@ struct Entity {
 			memorySentences.push_back(msg);
 		}
 		return memorySentences;
+	}
+
+	void SaveToFile(std::string specialEntFilePath) {
+		SaveData specEntDat;
+		specEntDat.sections.insert({ name, {} });
+
+		specEntDat.addFloat(name, "health", health);
+		specEntDat.addInt(name, "behaviour", b);
+		specEntDat.addString(name, "faction", faction->name);
+		specEntDat.addInt(name, "damage", damage);
+		specEntDat.addInt(name, "isLeader", factionLeader);
+		specEntDat.addFloat(name, "happy", feelingTowardsPlayer.happy);
+		specEntDat.addFloat(name, "fear", feelingTowardsPlayer.fear);
+		specEntDat.addFloat(name, "trust", feelingTowardsPlayer.trust);
+
+		std::vector<std::string> memsToSave;
+		for (size_t i = 0; i < memories.size(); i++)
+		{
+			memsToSave.push_back(std::to_string(memories[i].who));
+			memsToSave.push_back(std::to_string((int)(memories[i].type)));
+			memsToSave.push_back(memories[i].event);
+		}
+		specEntDat.sections[name].lists.insert({ "memories", memsToSave });
+
+		specEntDat.addInt(name, "entID", entityID);
+		std::string fileName = specialEntFilePath + name + ".eid";
+		ItemReader::SaveDataToFile(fileName, specEntDat, true);
 	}
 
 	// If theyre status to the player changes, they will be saved on unloading.
@@ -801,6 +829,7 @@ struct Tile {
 	std::string collectibleName = "NULL";
 	std::string collectedReplacement;
 	std::string itemName = "NULL";
+	int burnsInto = -1;
 	int burningFor = 0;
 	bool walkable = true;
 
@@ -820,8 +849,10 @@ struct Tile {
 	vec3 tileColor;
 	vec3 mainTileColor;
 	short biomeID;
+	bool hasRoof = false;
 	std::string tileLerpID = "nthng";
 	std::string tileSprite;
+	std::string walkSound = "movement/grass1.wav";
 
 	bool CanUpdate() {
 		return ticksPassed >= ticksNeeded && changesOverTime;
@@ -829,6 +860,10 @@ struct Tile {
 
 	void ResetColor() {
 		tileColor = mainTileColor;
+	}
+
+	std::string GetWalkSound() {
+		return "dat/sounds/" + walkSound;
 	}
 
 	void SetLiquid(Liquid l, bool perm = false) {
@@ -888,6 +923,13 @@ struct Tile {
 		double_size = data.getBool("double_size");
 		tileSprite = data.getString("sprite");
 
+		if (walkable) {
+			walkSound = data.getString("walkSound");
+		}
+		else {
+			walkSound = "select.wav";
+		}
+
 		if (data.getArray("color").size() <= 0) {
 			tileColor = { 1,0,0 };
 		}
@@ -901,6 +943,10 @@ struct Tile {
 		} catch (std::exception e) { }
 		try { //not everything is shadow, dont require it
 			casts_shadow = data.getBool("castsShadow");
+		}
+		catch (std::exception e) {}
+		try { //not everything is roofed, dont require it
+			hasRoof = data.getBool("hasRoof");
 		}
 		catch (std::exception e) {}
 

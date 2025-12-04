@@ -43,7 +43,6 @@ public:
 	std::vector<std::string> possibleNames = {"John", "Zombie"};
 	std::vector<std::string> quietWalkSounds = {"dat/sounds/movement/grass1_quiet.wav","dat/sounds/movement/grass2_quiet.wav" ,"dat/sounds/movement/grass3_quiet.wav" };
 	std::vector<Vector2_I> oldLocations;
-	std::map<Faction, std::vector<Faction>> factionEnemies;
 	std::map<std::string, std::string> item_icons;
 	std::map<std::string, Vector3> item_colors;
 	std::map<int, Vector3> tile_colors;
@@ -99,7 +98,10 @@ public:
 	void LoadData();
 	std::string GetWalkSound();
 
+	void PlayWalkSound();
+
 	void Restart();
+	void CreateWorldFactions();
 
 	std::string GetItemChar(Tile* tile);
 	ImVec4 GetItemColor(Tile* tile, float intensity);
@@ -130,6 +132,12 @@ void GameManager::LoadData() {
 
 	Console::Log("Loading glyphs...", WARNING, __LINE__);
 	glyphs.LoadGlyphs();
+
+	factions.Create(FACTION_HUMAN);
+	factions.Create(FACTION_ZOMBIE);
+	factions.Create(FACTION_WILDLIFE);
+	factions.Create(FACTION_BANDIT);
+	factions.Create("Takers");
 }
 
 //Load All NPC dialogue into the game
@@ -149,18 +157,19 @@ void GameManager::LoadMessages() {
 		OpenedData data;
 		switch(i){
 		case 0:
+		case 1:
 			ItemReader::GetDataFromFile("dialogue/dialogue_calm.eid", messageTypes[i], &data);
 			break;
-		case 1:
 		case 2:
+		case 3:
 			ItemReader::GetDataFromFile("dialogue/dialogue_happy.eid", messageTypes[i], &data);
 			break;
-		case 3:
 		case 4:
+		case 5:
 			ItemReader::GetDataFromFile("dialogue/dialogue_fear.eid", messageTypes[i], &data);
 			break;
-		case 5:
 		case 6:
+		case 7:
 			ItemReader::GetDataFromFile("dialogue/dialogue_trust.eid", messageTypes[i], &data);
 			break;
 		}
@@ -205,12 +214,15 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1,
 	mainMap.CreateMap(seed, biome, moisture);
 
 	//Faction, Enemies
-	factionEnemies = {
-		{Human_W, {Zombie, Bandit}},
-		{Zombie, {Human_W, Wildlife}},
-		{Wildlife, {}},
-		{Bandit, {Human_W, Zombie}},
-	};
+	factions.list[FACTION_HUMAN].AddEnemy(FACTION_ZOMBIE);
+	factions.list[FACTION_HUMAN].AddEnemy(FACTION_BANDIT);
+
+
+	factions.list[FACTION_ZOMBIE].AddEnemy(FACTION_HUMAN);
+	factions.list[FACTION_ZOMBIE].AddEnemy(FACTION_WILDLIFE);
+
+	factions.list[FACTION_BANDIT].AddEnemy(FACTION_HUMAN);
+	factions.list[FACTION_BANDIT].AddEnemy(FACTION_ZOMBIE);
 	
 	//mainMap.playerLevel = 0;
 	Math::PushBackLog(&actionLog, "Press H to open the help menu.");
@@ -218,6 +230,44 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1,
 
 void GameManager::Restart() {
 	mainMap.Restart();
+}
+
+void GameManager::CreateWorldFactions()
+{
+	//std::vector<std::string> generatedFactions;
+	for (size_t i = 0; i < 3; i++)
+	{
+		std::string factName = NameGenerator::generateFactionName();
+
+		factions.Create(factName);
+
+		//create faction name
+		factions.list[factName].leaderName;
+
+		std::string leaderName = NameGenerator::generateUniqueName();
+
+		//create faction leader
+		factions.list[factName].leaderName = leaderName;
+
+		Entity* leaderEnt = new Entity();
+
+		leaderEnt->faction = &factions.list[factName];
+		leaderEnt->health = Math::RandInt(20,100);
+		leaderEnt->factionLeader = true;
+		leaderEnt->damage = Math::RandInt(5, 15);
+		leaderEnt->name = leaderName;
+
+		factName.erase(std::remove_if(factName.begin(), factName.end(), ::isspace), factName.end());
+
+		std::string specialEntFilePath = (
+			"dat/saves/"
+			+ mainMap.currentSaveName
+			+ "/entities/");
+
+		leaderEnt->SaveToFile(specialEntFilePath);
+
+		delete leaderEnt;
+	}
 }
 
 void GameManager::AddRecipes() {
@@ -327,7 +377,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 			int isEnemies = 0;
 
 			if (!ent->targetingPlayer) {
-				isEnemies = std::find(factionEnemies[ent->faction].begin(), factionEnemies[ent->faction].end(), tempTarget->faction) != factionEnemies[ent->faction].end();
+				isEnemies = factions.AreEnemies(tempTarget->faction->name, ent->faction->name);
 			}
 			//if the player is targeted
 			else if (ent->targetingPlayer) {
@@ -527,6 +577,7 @@ void GameManager::RunTasks(Entity* ent, std::shared_ptr<Chunk> chunkInUse) {
 						break;
 					}
 				}
+				break;
 			case TaskType::smoke:
 				if (Math::RandInt(0, 35) == 1) {
 					t.currentlyFulfilling = true;
@@ -534,6 +585,7 @@ void GameManager::RunTasks(Entity* ent, std::shared_ptr<Chunk> chunkInUse) {
 					t.taskTimer = 20;
 					ent->taskQueue.emplace(&t);
 				}
+				break;
 			}
 		}
 	}
@@ -544,56 +596,53 @@ void GameManager::RunTasks(Entity* ent, std::shared_ptr<Chunk> chunkInUse) {
 	{
 		//If they have something to do with their task
 		if (t->currentlyFulfilling) {
-			if (t->currentObjective != zero) {
-				//walk towards the objective
-				std::vector<Vector2_I> pathToObj = mainMap.GetLine(ent->coords, t->currentObjective, 10);
-				if (pathToObj.size() > 2) {
-					ent->coords = pathToObj[1];
+			//walk towards the objective
+			std::vector<Vector2_I> pathToObj = mainMap.GetLine(ent->coords, t->currentObjective, 10);
+			if (pathToObj.size() > 2) {
+				ent->coords = pathToObj[1];
 
-					//if they are busy, break out of the loop
+				//if they are busy, break out of the loop
+				break;
+			}
+			//reached tile
+			else {
+				Tile& objTile = *mainMap.GetTileFromThisOrNeighbor(t->currentObjective);
+				switch (t->task) {
+				case TaskType::collectItem:
+
+					ent->inv.push_back(Items::GetItem(objTile.itemName));
+					objTile.hasItem = false;
+					objTile.itemName = "nthng";
+					break;
+
+				case TaskType::dropItem:
+
+					objTile.hasItem = true;
+					objTile.itemName = t->taskModifierString;
+					objTile.ticksPassed = 0;
 					break;
 				}
-				//reached tile
-				else {
-					Tile& objTile = *mainMap.GetTileFromThisOrNeighbor(t->currentObjective);
-					switch (t->task) {
-					case TaskType::collectItem:
+				t->currentlyFulfilling = false;
+				t->currentObjective = zero;
+				ent->taskQueue.erase(t);
+			}
+			/*switch (t->task) {
+			case TaskType::smoke:
+				if (Math::RandInt(0, 5) == 2) {
+					mainMap.effectLayer.localCoords[ent->coords.x][ent->coords.y] = 1;
+				}
+				t->taskTimer -= 1;
 
-						ent->inv.push_back(Items::GetItem(objTile.itemName));
-						objTile.hasItem = false;
-						objTile.itemName = "nthng";
-						break;
-
-					case TaskType::dropItem:
-
-						objTile.hasItem = true;
-						objTile.itemName = t->taskModifierString;
-						objTile.ticksPassed = 0;
-						break;
-					}
+				if (t->taskTimer <= 0) {
 					t->currentlyFulfilling = false;
 					t->currentObjective = zero;
+					t->taskTimer = 0;
 					ent->taskQueue.erase(t);
+					mainMap.GetTileFromThisOrNeighbor(ent->coords)->itemName = "CIGARETTE";
 				}
+				break;
 			}
-			else {
-				switch (t->task) {
-				case TaskType::smoke:
-					if (Math::RandInt(0, 5) == 2) {
-						mainMap.effectLayer.localCoords[ent->coords.x][ent->coords.y] = 1;
-					}
-					t->taskTimer -= 1;
-
-					if (t->taskTimer <= 0) {
-						t->currentlyFulfilling = false;
-						t->currentObjective = zero;
-						t->taskTimer = 0;
-						ent->taskQueue.erase(t);
-						mainMap.GetTileFromThisOrNeighbor(ent->coords)->itemName = "CIGARETTE";
-					}
-					break;
-				}
-			}
+			*/
 		}
 	}
 }
@@ -628,7 +677,7 @@ bool GameManager::PlayerNearby(Vector2_I coords) {
 
 Tile* GameManager::SelectTile(Vector2_I coords) {
 	Tile* selTile = mainMap.GetTileFromThisOrNeighbor(coords);
-	if (selTile->entity != nullptr && selTile->entity->canTalk) {
+	if (selTile->entity != nullptr && selTile->entity->canTalk && selTile->entity->health > 0) {
 		selTile->entity->SelectMessage(npcMessages);
 	}
 	return mainMap.GetTileFromThisOrNeighbor(coords);
@@ -749,7 +798,6 @@ void GameManager::MovePlayer(int dir) {
 		}
 		else if (curBiome == ocean) {
 			if (lerpingTo != ocean) {
-				Audio::Play("dat/sounds/movement/enter_water.wav");
 				Utilities::Lerp("bgColor", &bgColor, BG_WATER, 1.f);
 				mainBGcolor = BG_WATER;
 				currentBiome = lerpingTo = ocean;
@@ -848,6 +896,8 @@ void GameManager::UpdateTick() {
 		}
 	}
 
+	pInv.ResetItemNames();
+
 	//Each tick
 	if (tickCount >= tickRate)
 	{
@@ -884,7 +934,7 @@ void GameManager::UpdateTick() {
 		if (mainMap.currentWeather == rainy || mainMap.currentWeather == thunder) {
 			if (Math::RandInt(1, 7) == 2)  //random check
 			{									//									id 13 is indoors
-				if (!pInv.Waterproof(shirt) && mainMap.TileAtPos(mPlayer.coords)->id != 13) {
+				if (!pInv.Waterproof(shirt) && !mainMap.TileAtPos(mPlayer.coords)->hasRoof) {
 					mPlayer.CoverIn(water, 15); //cover the player in it
 				}
 			}
@@ -926,6 +976,10 @@ void GameManager::UpdateTick() {
 			if (mPlayer.sicknessLevel <= 0) {
 				mPlayer.sicknessLevel = 1;
 			}
+		}
+
+		if (mPlayer.bodyTemp < 94.f) {
+			mPlayer.bodyTemp = 94.f;
 		}
 
 		//soak items and tick down to dry them off in your inventory
@@ -1119,7 +1173,7 @@ std::string GameManager::GetTileChar(Tile* tile) {
 		case ID_CHICKEN:
 			return glyphs.getGlyph("ent_chicken");
 		case ID_HUMAN:
-			if (tile->entity->faction == Faction::Bandit) {
+			if (tile->entity->faction->name == FACTION_BANDIT) {
 				return glyphs.getGlyph("ent_bandit");
 			}
 			return glyphs.getGlyph("ent_human");
@@ -1178,6 +1232,10 @@ std::string GameManager::GetWalkSound(){
 	default:
 		return "dat/sounds/bfxr/walk1.wav";
 	}
+}
+
+void GameManager::PlayWalkSound() {
+	Audio::Play(mainMap.TileAtPos(mPlayer.coords)->GetWalkSound());
 }
 
 ImVec4 GameManager::GetPlayerColor() {
@@ -1243,8 +1301,8 @@ ImVec4 GameManager::GetTileColor(Tile* tile, float intensity, bool shadows) {
 			break;
 		}
 	}
-	if (tile->liquid == fire) {
-		color = Cosmetic::FireColor();
+	if (tile->liquid != nothing) {
+		color = Cosmetic::CoveredColor(tile->liquid);
 		goto dimming;
 	}
 
@@ -1296,128 +1354,187 @@ public:
 void Commands::RunCommand(std::string input, GameManager* game) {
 	std::vector<std::string> tokens = Tokenizer::getTokens(input);
 	Math::PushFrontLog(&game->consoleLog, input);
-	for (int i = 0; i < tokens.size(); i++) {
-		if (tokens[i] == "spawn") {
-			//if not enough or out of bounds
-			if (tokens.size() < 4) { return; }
-			if (stoi(tokens[i + 2]) > 29 || 
-				stoi(tokens[i + 2]) < 0  ||
-				stoi(tokens[i + 3]) > 29 || 
-				stoi(tokens[i + 3]) < 0  ) { return; }
-
-			//try and get the spawn coords
-			Vector2_I spawnCoords;
-			try {
-				spawnCoords = { stoi(tokens[i + 2]), stoi(tokens[i + 3]) };
-			}
-			catch (std::exception e) {
-				Math::PushFrontLog(&game->consoleLog, "- Invalid spawn coordinates.");
-				return;
-			}
-
-			if (tokens[i + 1] == "human") {
-				game->mainMap.SpawnHumanInCurrent(spawnCoords, Behaviour::Protective, Faction::Human_W);
-				Math::PushFrontLog(&game->consoleLog, "- Spawned random human.");
-			}
-
-		}
-		if (tokens[i] == "give") {
-			if (tokens.size() < 3) { return; }
-			if (Items::list.count(tokens[i + 1]) == 0) { 
-				Math::PushFrontLog(&game->consoleLog, "- Item \"" + tokens[i + 1] + "\" cannot be found.");
-				return; 
-			}
-			Math::PushFrontLog(&game->consoleLog, "- Added " + tokens[i + 2] + " " + tokens[i + 1]);
-			game->pInv.AddItemByID(tokens[i + 1], stoi(tokens[i + 2]));
-		}
-		if (tokens[i] == "say") {
-			if (tokens.size() < 3) { return; }
-			if (game->npcMessages.count(tokens[i + 1]) == 0) {
-				Math::PushFrontLog(&game->consoleLog, "- No dialogue list with that name.");
-				return;
-			}
-			Math::PushFrontLog(&game->consoleLog, "- " + game->npcMessages[tokens[i + 1]][stoi(tokens[i + 2])]);
-		}
-		else if (tokens[i] == "god" || tokens[i] == "buddha") {
-			if (tokens.size() < 2) { return; }
-			if (tokens[i + 1] == "off") 
-			{
-				Math::PushFrontLog(&game->consoleLog, "- Buddha/God Mode Off");
-				game->mPlayer.damageMode = 0; }
-
-			else if (tokens[i] == "buddha") 
-			{
-				Math::PushFrontLog(&game->consoleLog, "- Buddha Mode On");
-				game->mPlayer.damageMode = 1; }
-
-			else if (tokens[i] == "god") 
-			{
-				Math::PushFrontLog(&game->consoleLog, "- God Mode On");
-				game->mPlayer.damageMode = 2; }
-		}
-		else if (tokens[i] == "set")
+	if (tokens[0] == "debug") {
+		if (tokens.size() < 2) { return; }
+		if (tokens[1] == "pathfind")
 		{
-			if (tokens.size() < 3) { return; }
-			if (tokens[i + 1] == "health") {
-				game->mPlayer.health = stoi(tokens[i + 2]);
+			auto path = AStar(game->mainMap.CurrentChunk(), game->mPlayer.coords, {0,0});
+			for (auto& tl : path)
+			{
+				game->mainMap.GetTileFromThisOrNeighbor(tl)->SetLiquid(strange_liquid);
 			}
-			else if (tokens[i + 1] == "thirst") {
-				game->mPlayer.thirst = stoi(tokens[i + 2]);
-			}
-			else if (tokens[i + 1] == "hunger") {
-				game->mPlayer.hunger = stoi(tokens[i + 2]);
-			}
-			else if (tokens[i + 1] == "sickness") {
-				game->mPlayer.sicknessLevel = stoi(tokens[i + 2]);
-			}
-			else if (tokens[i + 1] == "bleeding") {
-				game->mPlayer.bleedingLevel = stoi(tokens[i + 2]);
-			}
-			else if (tokens[i + 1] == "tickrate") {
-				game->SetTick(stof(tokens[i + 2]));
-			}
-			else if (tokens[i + 1] == "weather") {
-				if(tokens[i + 2] == "clear") {
-					game->mainMap.SetWeather(clear);
-				}else if (tokens[i + 2] == "rain") {
-					game->mainMap.SetWeather(rainy);
-				}else if (tokens[i + 2] == "thunder") {
-					game->mainMap.SetWeather(thunder);
-				}
-				Math::PushFrontLog(&game->consoleLog, "- Weather changed");
-			}
-			else if (tokens[i + 1] == "time") {
-				game->mainMap.worldTimeTicks = stoi(tokens[i + 2]);
-				Math::PushFrontLog(&game->consoleLog, "- Time changed");
-			}
-			else if (tokens[i + 1] == "playerLevel") {
-				game->mainMap.playerLevel = stoi(tokens[i + 2]);
-				Math::PushFrontLog(&game->consoleLog, "- Player level changed");
+			Math::PushFrontLog(&game->consoleLog, "- Pathfinding to (0,0).");
+			return;
+		}
+
+		if (tokens[1] == "name")
+		{
+			Math::PushFrontLog(&game->consoleLog, NameGenerator::generateUniqueName());
+			return;
+		}
+	}
+
+	if (tokens[0] == "list") {
+		if (tokens.size() < 2) { return; }
+
+		if (tokens[1] == "factions") {
+			for (auto const& factnames : factions.list) {
+				Math::PushFrontLog(&game->consoleLog, "- " + factnames.first);
 			}
 		}
-		else if (tokens[i] == "help") {
-			std::string helpstring =
-						  "\n ~give {item name} {amount} - gives item\n";
-			helpstring += " ~set weather {clear / rain / thunder} - sets the weather\n";
-			helpstring += " ~set time {time in ticks} - sets the time to a specific tick\n";
-			helpstring += " ~set tickrate {float} - sets time between ticks in seconds (default is 0.5)\n";
-			helpstring += " ~set {health / hunger / thirst} {number} - sets attribute\n";
-			helpstring += " ~set {bleeding / sickness} {number} - sets attribute (0 - 3)\n";
-			helpstring += " ~set playerLevel {-1/0/1} - sets the chunk height (underground, ground, upstairs) \n";
-			helpstring += " ~buddha {on / off} - toggles buddha mode\n";
-			helpstring += " ~god {on / off} - toggles god mode\n";
-			helpstring += " ~bring him forth - brings him forth\n";
-			helpstring += " ~help - this\n";
 
-			Math::PushFrontLog(&game->consoleLog, helpstring);
+		if (tokens.size() < 3) { return; }
 
-			//Console::Log(helpstring, text::white, -1);
+		//Check if faction exists first
+		if (!factions.DoesExist(tokens[2])) {
+			Math::PushFrontLog(&game->consoleLog, "- Faction '" + tokens[2] + "' does not exist.");
+			return;
 		}
-		else if (input == "bring him forth") {
-			Math::PushFrontLog(&game->actionLog, "He shall arrive.");
+		
+		if (tokens[1] == "enemies") {
+			//list all enemies
+			if (factions.list[tokens[2]].enemies.size() <= 0) {
+				Math::PushFrontLog(&game->consoleLog, "- No enemies");
+
+			}
+			for (auto const& enemie : factions.list[tokens[2]].enemies) {
+				Math::PushFrontLog(&game->consoleLog, "- " + enemie);
+			}
+		}
+		else if (tokens[1] == "allies") {
+			//list all ally
+			if (factions.list[tokens[2]].allies.size() <= 0) {
+				Math::PushFrontLog(&game->consoleLog, "- No allies");
+
+			}
+			for (auto const& ally : factions.list[tokens[2]].allies) {
+				Math::PushFrontLog(&game->consoleLog, "- " + ally);
+			}
+		}
+	}
+
+	if (tokens[0] == "spawn") {
+		//if not enough or out of bounds
+		if (tokens.size() < 4) { return; }
+		if (stoi(tokens[2]) > 29 || 
+			stoi(tokens[2]) < 0  ||
+			stoi(tokens[3]) > 29 || 
+			stoi(tokens[3]) < 0  ) { return; }
+
+		//try and get the spawn coords
+		Vector2_I spawnCoords;
+		try {
+			spawnCoords = { stoi(tokens[2]), stoi(tokens[3]) };
+		}
+		catch (std::exception e) {
+			Math::PushFrontLog(&game->consoleLog, "- Invalid spawn coordinates.");
+			return;
+		}
+
+		if (tokens[1] == "human") {
+			game->mainMap.SpawnHumanInCurrent(spawnCoords, Behaviour::Protective, FACTION_HUMAN);
+			Math::PushFrontLog(&game->consoleLog, "- Spawned random human.");
 		}
 
 	}
+	if (tokens[0] == "give") {
+		if (tokens.size() < 3) { return; }
+		if (Items::list.count(tokens[1]) == 0) { 
+			Math::PushFrontLog(&game->consoleLog, "- Item \"" + tokens[1] + "\" cannot be found.");
+			return; 
+		}
+		Math::PushFrontLog(&game->consoleLog, "- Added " + tokens[2] + " " + tokens[1]);
+		game->pInv.AddItemByID(tokens[1], stoi(tokens[2]));
+	}
+	if (tokens[0] == "say") {
+		if (tokens.size() < 3) { return; }
+		if (game->npcMessages.count(tokens[1]) == 0) {
+			Math::PushFrontLog(&game->consoleLog, "- No dialogue list with that name.");
+			return;
+		}
+		Math::PushFrontLog(&game->consoleLog, "- " + game->npcMessages[tokens[1]][stoi(tokens[2])]);
+	}
+	else if (tokens[0] == "god" || tokens[0] == "buddha") {
+		if (tokens.size() < 2) { return; }
+		if (tokens[1] == "off") 
+		{
+			Math::PushFrontLog(&game->consoleLog, "- Buddha/God Mode Off");
+			game->mPlayer.damageMode = 0; }
+
+		else if (tokens[0] == "buddha") 
+		{
+			Math::PushFrontLog(&game->consoleLog, "- Buddha Mode On");
+			game->mPlayer.damageMode = 1; }
+
+		else if (tokens[0] == "god") 
+		{
+			Math::PushFrontLog(&game->consoleLog, "- God Mode On");
+			game->mPlayer.damageMode = 2; }
+	}
+	else if (tokens[0] == "set")
+	{
+		if (tokens.size() < 3) { return; }
+		if (tokens[1] == "health") {
+			game->mPlayer.health = stoi(tokens[2]);
+		}
+		else if (tokens[1] == "thirst") {
+			game->mPlayer.thirst = stoi(tokens[2]);
+		}
+		else if (tokens[1] == "hunger") {
+			game->mPlayer.hunger = stoi(tokens[2]);
+		}
+		else if (tokens[1] == "sickness") {
+			game->mPlayer.sicknessLevel = stoi(tokens[2]);
+		}
+		else if (tokens[1] == "bleeding") {
+			game->mPlayer.bleedingLevel = stoi(tokens[2]);
+		}
+		else if (tokens[1] == "tickrate") {
+			game->SetTick(stof(tokens[2]));
+		}
+		else if (tokens[1] == "weather") {
+			if(tokens[2] == "clear") {
+				game->mainMap.SetWeather(clear);
+			}else if (tokens[2] == "rain") {
+				game->mainMap.SetWeather(rainy);
+			}else if (tokens[2] == "thunder") {
+				game->mainMap.SetWeather(thunder);
+			}
+			Math::PushFrontLog(&game->consoleLog, "- Weather changed");
+		}
+		else if (tokens[1] == "time") {
+			game->mainMap.worldTimeTicks = stoi(tokens[2]);
+			Math::PushFrontLog(&game->consoleLog, "- Time changed");
+		}
+		else if (tokens[1] == "playerLevel") {
+			game->mainMap.playerLevel = stoi(tokens[2]);
+			Math::PushFrontLog(&game->consoleLog, "- Player level changed");
+		}
+	}
+	else if (tokens[0] == "help") {
+		std::string helpstring =
+						"\n ~give {item name} {amount} - gives item\n";
+		helpstring += " ~set weather {clear / rain / thunder} - sets the weather\n";
+		helpstring += " ~set time {time in ticks} - sets the time to a specific tick\n";
+		helpstring += " ~set tickrate {float} - sets time between ticks in seconds (default is 0.5)\n";
+		helpstring += " ~set {health / hunger / thirst} {number} - sets attribute\n";
+		helpstring += " ~set {bleeding / sickness} {number} - sets attribute (0 - 3)\n";
+		helpstring += " ~set playerLevel {-1/0/1} - sets the chunk height (underground, ground, upstairs) \n";
+		helpstring += " ~spawn human x y - spawns random human at x,y\n";
+		helpstring += " ~buddha {on / off} - toggles buddha mode\n";
+		helpstring += " ~god {on / off} - toggles god mode\n";
+		helpstring += " ~debug {pathfind} - does debug things\n";
+		helpstring += " ~list {factions/enemies/allies} - shows factions/enemies of faction/allies\n";
+		helpstring += " ~help - this\n";
+
+		Math::PushFrontLog(&game->consoleLog, helpstring);
+
+		//Console::Log(helpstring, text::white, -1);
+	}
+	else if (input == "bring him forth") {
+		Math::PushFrontLog(&game->actionLog, "He shall arrive.");
+	}
+
 	if (previous_commands.size() > 5) {
 		previous_commands.erase(previous_commands.begin());
 	}

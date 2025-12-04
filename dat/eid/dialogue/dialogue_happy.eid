@@ -10,6 +10,6 @@ ANGRY_WANDERER {
 size : 4;
 1 : "Don't talk to me.";
 2 : "Don't test my patience pal.";
-3 : "Don't think I forgot what you did man.";
+3 : "Not a fan of you.";
 4 : "I've got nothing to talk to you about.";
 };

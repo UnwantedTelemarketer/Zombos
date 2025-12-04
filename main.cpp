@@ -266,7 +266,6 @@ public:
 	void MenuScene() {
 		ImGui::PushFont(Engine::Instance().getFont("ui"));
 		//ImGui::ShowDemoWindow();
-
 		if (Input::KeyDown(KEY_GRAVE_ACCENT)) {
 
 			debugMenuScreen = !debugMenuScreen;
@@ -314,9 +313,6 @@ public:
 				currentState = map_gen_test;
 				map.CreateMap(map.landSeed, map.biomeSeed, -1);
 			}
-			if (ImGui::Button("Generate Random Name")) {
-				Console::Log(NameGenerator::generateFirstName(), ERROR, 1);
-			}
 			ImGui::End();
 		}
 
@@ -335,6 +331,7 @@ public:
 					Console::Log("New save created successfully!", SUCCESS, __LINE__);
 
 					game.Setup(10, 10, 0.5f);
+					game.CreateWorldFactions();
 					game.mPlayer.coords = game.mainMap.PlaceStartingBuilding();
 					gameScreen.createChar = true;
 				}
@@ -1326,7 +1323,7 @@ public:
 				}
 
 				//show their name
-				if (selectedTile->entity->faction == Human_W) {
+				if (selectedTile->entity->smart) {
 					ImGui::TextColored({ 0,0.5,1,1 }, "Name :"); ImGui::SameLine();
 					ImGui::TextColored({ 0,0.5,1,1 }, selectedTile->entity->name.c_str());
 
@@ -1388,7 +1385,12 @@ public:
 							if (ImGui::Button("Confirm Trade")) {
 								if (pInv.TryGetItem(selectedTile->entity->itemWant, false, &_)) {
 									//success
-									selectedTile->entity->AddMemory(MemoryType::Trade, ID_PLAYER, { 0.1f,0.f,0.5f }, Items::GetItem_NoCopy(selectedTile->entity->itemWant)->name);
+									selectedTile->entity->AddMemory(
+										MemoryType::Trade,
+										ID_PLAYER,
+										{ 0.1f,0.f,0.5f },
+										Items::GetItem_NoCopy(selectedTile->entity->itemWant)->name);
+
 									pInv.RemoveItem(selectedTile->entity->itemWant);
 									pInv.AddItemByID(selectedTile->entity->itemGive);
 									selectedTile->entity->GenerateTrades();
@@ -1408,7 +1410,13 @@ public:
 							gameScreen.tradeDialogue = true;
 
 							if (pInv.CurrentEquipMatches(neck, "TOOTH_NECKLACE")) {
-								selectedTile->entity->AddMemory(MemoryType::Observation, ID_PLAYER, -FEELING_TRUST, "wearing a tooth necklace", true);
+								selectedTile->entity->AddMemory(
+									MemoryType::Observation,
+									ID_PLAYER,
+									-FEELING_TRUST, 
+									"wearing a necklace of teeth", 
+									true
+								);
 							}
 						}
 						if (selectedTile->entity->feelingTowardsPlayer.overall() != 0.f) {
@@ -1778,7 +1786,7 @@ public:
 		//itemLoading.join();
 		//tileLoading.join();
 		Console::Log("Done!", text::green, __LINE__);
-		Audio::PlayLoop("dat/sounds/music/night_zombos.wav", "menu");
+		//Audio::PlayLoop("dat/sounds/music/night_zombos.wav", "menu");
 
 	}
 
@@ -1942,17 +1950,8 @@ public:
 			Audio::Play(sfxs["click"]);
 		}
 
-		else if (Input::KeyDown(KEY_M)) {
-			auto path = AStar(map.CurrentChunk(), player.coords, { 0,0 });
-			for (auto& tl : path)
-			{
-				map.GetTileFromThisOrNeighbor(tl)->SetLiquid(blood);
-			}
-			Audio::Play(sfxs["click"]);
-		}
-
 		if (moved) {
-			Audio::Play(game.GetWalkSound());
+			game.PlayWalkSound();
 		}
 
 		if (player.aiming) {

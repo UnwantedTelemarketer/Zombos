@@ -17,6 +17,13 @@ namespace antibox {
 		//Input the max number, and this will return an int between min and max (inclusive).
 		inline int RandInt(int min, int max) { return min + rand() % (max - min + 1); }
 
+		inline float RandFloat(float min, float max) {
+			float random = ((float)rand()) / (float)RAND_MAX;
+			float diff = max - min;
+			float r = random * diff;
+			return min + r;
+		}
+
 		//Returns a random string from a vector of strings.
 		inline std::string RandString(std::vector<std::string> list) { return list[rand() % (list.size() - 1) + 1]; } //also bad to look at, but i dont want to make a multiline function in a header
 

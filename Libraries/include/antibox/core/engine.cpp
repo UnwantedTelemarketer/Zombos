@@ -265,6 +265,11 @@ namespace antibox
 		mAudio->PlayAudio(path);
 	}
 
+	void Engine::StartModSound(const char* path, AudioModifier mod)
+	{
+		mAudio->PlayModAudio(path, mod);
+	}
+
 	void Engine::StopSoundLooping(std::string name) {
 		mAudio->StopAudioLooping(name);
 	}

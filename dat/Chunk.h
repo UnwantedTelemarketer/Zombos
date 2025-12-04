@@ -158,13 +158,18 @@ public:
 					tempEnt.getInt("entID"),
 					(Behaviour)tempEnt.getInt("behaviour"),
 					false,				 //aggressive
-					(Faction)tempEnt.getInt("faction"),
 					10,					 //view distance
 					tempEnt.getInt("damage"),
 					true,				 //can talk
 					Math::RandInt(2,29), //x coord
 					Math::RandInt(2,29), //y coord
 					true };
+
+				if (!factions.DoesExist(tempEnt.getString("faction"))) {
+					factions.Create(tempEnt.getString("faction"));
+				}
+
+				loadedEntity->faction = &factions.list[tempEnt.getString("faction")];
 
 				entities.push_back(loadedEntity);
 			}
@@ -196,35 +201,13 @@ public:
 		if (entities.size() != 0) {
 			for (int i = 0; i < entities.size(); i++) {
 				//if they have been interacted with, save them special to the side
-				if (entities[i]->feelingTowardsPlayer.overall() != 0 && entities[i]->name != "Human") {
-					SaveData specEntDat;
-					specEntDat.sections.insert({ entities[i]->name, {} });
-
-					specEntDat.addFloat(entities[i]->name, "health", entities[i]->health);
-					specEntDat.addInt(entities[i]->name, "behaviour", entities[i]->b);
-					specEntDat.addInt(entities[i]->name, "faction", entities[i]->faction);
-					specEntDat.addInt(entities[i]->name, "damage", entities[i]->damage);
-					specEntDat.addFloat(entities[i]->name, "happy", entities[i]->feelingTowardsPlayer.happy);
-					specEntDat.addFloat(entities[i]->name, "fear", entities[i]->feelingTowardsPlayer.fear);
-					specEntDat.addFloat(entities[i]->name, "trust", entities[i]->feelingTowardsPlayer.trust);
-
-					std::vector<std::string> memories;
-					for (size_t i = 0; i < entities[i]->memories.size(); i++)
-					{
-						memories.push_back(std::to_string(entities[i]->memories[i].who));
-						memories.push_back(std::to_string((int)(entities[i]->memories[i].type)));
-						memories.push_back(entities[i]->memories[i].event);
-					}
-					specEntDat.sections[entities[i]->name].lists.insert({ "memories", memories });
-					
-					specEntDat.addInt(entities[i]->name, "entID", entities[i]->entityID);
-					std::string fileName = specialEntFilePath + entities[i]->name + ".eid";
-					ItemReader::SaveDataToFile(fileName, specEntDat, true);
+				if ((entities[i]->feelingTowardsPlayer.overall() != 0 && entities[i]->name != "Human") || entities[i]->factionLeader) {
+					entities[i]->SaveToFile(specialEntFilePath);
 
 					//if the name is already in the list, dont add it
 					if (std::find(entNames.begin(), entNames.end(), entities[i]->name) == entNames.end())
-					{ 
-						entNames.push_back(entities[i]->name); 
+					{
+						entNames.push_back(entities[i]->name);
 					}
 				}
 			}
