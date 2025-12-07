@@ -107,7 +107,7 @@ TILE_SAND {
 	timedReplacement : 0;
 	double_size : false;
 	color : [1, 1, 0.5, 1];
-	sprite : "tile_sand";
+	sprite : "tile_dirt";
 }
 
 TILE_STONE {

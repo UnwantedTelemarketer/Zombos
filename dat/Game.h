@@ -46,6 +46,7 @@ public:
 	std::map<std::string, std::string> item_icons;
 	std::map<std::string, Vector3> item_colors;
 	std::map<int, Vector3> tile_colors;
+	std::vector<std::string> newFactionNames, rumoredPeople;
 	GlyphManager glyphs;
 	vec3 mainBGcolor;
 	vec3 bgColor;
@@ -235,16 +236,18 @@ void GameManager::Restart() {
 void GameManager::CreateWorldFactions()
 {
 	//std::vector<std::string> generatedFactions;
-	for (size_t i = 0; i < 3; i++)
+	for (size_t i = 0; i < 4; i++)
 	{
 		std::string factName = NameGenerator::generateFactionName();
-
 		factions.Create(factName);
+
+		newFactionNames.push_back(factName);
 
 		//create faction name
 		factions.list[factName].leaderName;
 
-		std::string leaderName = NameGenerator::generateUniqueName();
+		std::string leaderName = NameGenerator::generateLeaderName();
+		rumoredPeople.push_back(leaderName);
 
 		//create faction leader
 		factions.list[factName].leaderName = leaderName;
@@ -262,7 +265,29 @@ void GameManager::CreateWorldFactions()
 		std::string specialEntFilePath = (
 			"dat/saves/"
 			+ mainMap.currentSaveName
-			+ "/entities/");
+			+ "/entities/leaders/");
+
+		leaderEnt->SaveToFile(specialEntFilePath);
+
+		delete leaderEnt;
+	}
+
+	for (size_t i = 0; i < 15; i++)
+	{
+		std::string specialPerson = NameGenerator::generateUniqueName();
+		rumoredPeople.push_back(specialPerson);
+
+		Entity* leaderEnt = new Entity();
+
+		leaderEnt->health = Math::RandInt(20, 100);
+		leaderEnt->damage = Math::RandInt(5, 15);
+		leaderEnt->name = specialPerson;
+		leaderEnt->faction = &factions.list[FACTION_HUMAN];
+
+		std::string specialEntFilePath = (
+			"dat/saves/"
+			+ mainMap.currentSaveName
+			+ "/entities/unique/");
 
 		leaderEnt->SaveToFile(specialEntFilePath);
 
@@ -296,18 +321,18 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		ent->UpdateMood();
 	}
 
-	vec2_i oldCoords = ent->coords;
+	vec2_i oldCoords = ent->localCoords;
 	std::vector<Vector2_I> path;
 	bool crossChunk = false;
 
 	if (chunkInUse->globalChunkCoord == mainMap.c_glCoords) {
-		path = mainMap.GetLine(ent->coords, mPlayer.coords, 20);
+		path = mainMap.GetLine(ent->localCoords, mPlayer.coords, 20);
 	}
 	else {
 		Vector2_I offset = mainMap.c_glCoords - chunkInUse->globalChunkCoord;
 		offset *= 30;
 		Vector2_I newPlayerCoords = mPlayer.coords + offset;
-		path = mainMap.GetLine(ent->coords, newPlayerCoords, 20);
+		path = mainMap.GetLine(ent->localCoords, newPlayerCoords, 20);
 		crossChunk = true;
 	}
 
@@ -330,7 +355,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 
 		if (curEnt == ent || curEnt->health <= 0) { continue; } //check that we arent looking at the same entity twice
 
-		std::vector<Vector2_I> curPath = mainMap.GetLine(ent->coords, curEnt->coords, 10); //get line to other ent
+		std::vector<Vector2_I> curPath = mainMap.GetLine(ent->localCoords, curEnt->localCoords, 10); //get line to other ent
 
 		if (curPath.size() < entPath.size() || entPath.size() == 0) { //check that its long enough and target them
 			entPath = curPath;
@@ -342,7 +367,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 
 	int dir = Math::RandInt(1, 10);
 
-	Tile* tile = chunkInUse->GetTileAtCoords(ent->coords);
+	Tile* tile = chunkInUse->GetTileAtCoords(ent->localCoords);
 
 	switch (ent->b) //check the entities behaviour
 	{
@@ -351,7 +376,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		break;
 	case Follow:
 		if (path.size() >= 3) {
-			ent->coords = path[1];
+			ent->localCoords = path[1];
 			moved = true;
 		}
 		else {
@@ -388,12 +413,12 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 				}
 				else {
 					//pathfind to player with astar if they are chasing
-					pathToPlayer = AStar(chunkInUse, ent->coords, mPlayer.coords);
+					pathToPlayer = AStar(chunkInUse, ent->localCoords, mPlayer.coords);
 				}
 
 				if (pathToPlayer.size() > 1) {
 					if (mainMap.GetTileFromThisOrNeighbor(pathToPlayer[1], chunkInUse->globalChunkCoord)->walkable) {
-						ent->coords = pathToPlayer[1];
+						ent->localCoords = pathToPlayer[1];
 						moved = true;
 					}
 					else {
@@ -404,7 +429,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 					if(pathToPlayer.size() == 1)
 					{
 						if (mainMap.GetTileFromThisOrNeighbor(pathToPlayer[0], chunkInUse->globalChunkCoord)->walkable) {
-							ent->coords = pathToPlayer[0];
+							ent->localCoords = pathToPlayer[0];
 							moved = true;
 						}
 					}
@@ -423,7 +448,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 
 				if (entPath.size() > 2) {
 					if (chunkInUse->GetTileAtCoords(entPath[1])->walkable) {
-						ent->coords = entPath[1];
+						ent->localCoords = entPath[1];
 						moved = true;
 					}
 					else {
@@ -459,7 +484,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		//run out of liquid
 		if (tile != nullptr) {
 			if (tile->liquid == water) {
-				ent->coords.x--;
+				ent->localCoords.x--;
 				break;
 			}
 			else {
@@ -468,32 +493,32 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 				switch (dir)
 				{
 				case 1:
-					ent->coords.x++;
+					ent->localCoords.x++;
 					break;
 				case 2:
-					ent->coords.x--;
+					ent->localCoords.x--;
 					break;
 				case 3:
-					ent->coords.y++;
+					ent->localCoords.y++;
 					break;
 				case 4:
-					ent->coords.y--;
+					ent->localCoords.y--;
 					break;
 				case 5:
-					ent->coords.x++;
-					ent->coords.y++;
+					ent->localCoords.x++;
+					ent->localCoords.y++;
 					break;
 				case 6:
-					ent->coords.x--;
-					ent->coords.y++;
+					ent->localCoords.x--;
+					ent->localCoords.y++;
 					break;
 				case 7:
-					ent->coords.x++;
-					ent->coords.y--;
+					ent->localCoords.x++;
+					ent->localCoords.y--;
 					break;
 				case 8:
-					ent->coords.x--;
-					ent->coords.y--;
+					ent->localCoords.x--;
+					ent->localCoords.y--;
 					break;
 				}
 			}
@@ -501,12 +526,12 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 	}
 
 	
-	if (ent->coords == mPlayer.coords || mainMap.GetTileFromThisOrNeighbor(ent->coords)->walkable == false) {
-		ent->coords = oldCoords;
+	if (ent->localCoords == mPlayer.coords || mainMap.GetTileFromThisOrNeighbor(ent->localCoords)->walkable == false) {
+		ent->localCoords = oldCoords;
 		return;
 	}
 
-	tile = mainMap.GetTileFromThisOrNeighbor(ent->coords, chunkInUse->globalChunkCoord);
+	tile = mainMap.GetTileFromThisOrNeighbor(ent->localCoords, chunkInUse->globalChunkCoord);
 
 	//cover entities in liquid if they step in it
 	if (tile != nullptr) {
@@ -530,7 +555,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 	}
 
 	if (moved && chunkInUse->globalChunkCoord == mainMap.c_glCoords) {
-		auto tileCheck = chunkInUse->GetTileAtCoords(ent->coords);
+		auto tileCheck = chunkInUse->GetTileAtCoords(ent->localCoords);
 		if (tileCheck && tileCheck->itemName == "BEAR_TRAP") {
 			Audio::Play("dat/sounds/bear_trap.mp3");
 			ent->health -= 35;
@@ -597,9 +622,9 @@ void GameManager::RunTasks(Entity* ent, std::shared_ptr<Chunk> chunkInUse) {
 		//If they have something to do with their task
 		if (t->currentlyFulfilling) {
 			//walk towards the objective
-			std::vector<Vector2_I> pathToObj = mainMap.GetLine(ent->coords, t->currentObjective, 10);
+			std::vector<Vector2_I> pathToObj = mainMap.GetLine(ent->localCoords, t->currentObjective, 10);
 			if (pathToObj.size() > 2) {
-				ent->coords = pathToObj[1];
+				ent->localCoords = pathToObj[1];
 
 				//if they are busy, break out of the loop
 				break;
@@ -677,16 +702,30 @@ bool GameManager::PlayerNearby(Vector2_I coords) {
 
 Tile* GameManager::SelectTile(Vector2_I coords) {
 	Tile* selTile = mainMap.GetTileFromThisOrNeighbor(coords);
-	if (selTile->entity != nullptr && selTile->entity->canTalk && selTile->entity->health > 0) {
-		selTile->entity->SelectMessage(npcMessages);
+	if (selTile->entity != nullptr && selTile->entity->smart && selTile->entity->health > 0) {
+
+		if (Math::RandInt(1, 10) == 5) {
+			std::string msg = "Have you heard about ";
+			if (Math::RandInt(0, 1) == 1) {
+				msg += rumoredPeople[Math::RandInt(0, rumoredPeople.size() - 1)];
+			}
+			else {
+				msg += "the group calling themselves '" + newFactionNames[Math::RandInt(0, newFactionNames.size() - 1)] + "'";
+			}
+			msg += "?";
+			selTile->entity->message = msg;
+		}
+		else {
+			selTile->entity->SelectMessage(npcMessages);
+		}
 	}
 	return mainMap.GetTileFromThisOrNeighbor(coords);
 }
 
 void GameManager::SpawnEntity(Entity* ent) {
 	ent->health = Math::RandNum(100);
-	ent->coords.x = 10;
-	ent->coords.y = 15;
+	ent->localCoords.x = 10;
+	ent->localCoords.y = 15;
 	//if(curNPC->name == "") curNPC->name = Math::RandString(possibleNames);
 	mainMap.CurrentChunk()->entities.push_back(ent);
 	ent->index = mainMap.CurrentChunk()->entities.size() - 1;
@@ -1101,10 +1140,10 @@ void GameManager::UpdateEntities(Vector2_I chunkCoords) {
 
 void GameManager::AttemptAttack(Entity* ent)
 {
-	if (Vector2_I{ ent->coords.x + 1, ent->coords.y } == mPlayer.coords ||
-		Vector2_I{ ent->coords.x - 1, ent->coords.y } == mPlayer.coords ||
-		Vector2_I{ ent->coords.x, ent->coords.y + 1 } == mPlayer.coords ||
-		Vector2_I{ ent->coords.x, ent->coords.y - 1 } == mPlayer.coords)
+	if (Vector2_I{ ent->localCoords.x + 1, ent->localCoords.y } == mPlayer.coords ||
+		Vector2_I{ ent->localCoords.x - 1, ent->localCoords.y } == mPlayer.coords ||
+		Vector2_I{ ent->localCoords.x, ent->localCoords.y + 1 } == mPlayer.coords ||
+		Vector2_I{ ent->localCoords.x, ent->localCoords.y - 1 } == mPlayer.coords)
 	{
 		if (std::count(mainMap.CurrentChunk()->entities.begin(), mainMap.CurrentChunk()->entities.end(), ent))
 		{
@@ -1328,9 +1367,9 @@ dimming:
 	}
 	else if (shadows && mainMap.GetChunkAtCoords(tile->g_coords) != nullptr) {
 		if (mainMap.GetChunkAtCoords(tile->g_coords)->shadows.contains(tile->coords) && !tile->double_size) {
-			color.x *= 0.5f;
-			color.y *= 0.5f;
-			color.z *= 0.5f;
+			color.x *= 0.45f;
+			color.y *= 0.45f;
+			color.z *= 0.45f;
 		}
 	}
 

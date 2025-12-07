@@ -377,8 +377,7 @@ void Map::SpawnHumanInCurrent(Vector2_I spawnCoords, Behaviour b, std::string f)
 }
 
 Entity* Map::SpawnHuman(Vector2_I spawnCoords, Behaviour b, std::string f, bool spawnSpecial = false) {
-	Entity* zomb = new Entity{ 35, "Human", ID_HUMAN, b, false, 10, 10, true, spawnCoords.x, spawnCoords.y, true };
-	zomb->faction = &factions.list[FACTION_HUMAN];
+	Entity* zomb = new Entity( 35, "Human", ID_HUMAN, b, false, 10, 10, spawnCoords, factions.GetFaction(f));
 
 	if (b == Aggressive) 
 	{ 
@@ -442,9 +441,14 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 		Vector2_I spawnCoords = { Math::RandInt(1, CHUNK_WIDTH), Math::RandInt(1, CHUNK_HEIGHT) };
 		int num = Math::RandInt(1, 20);
 		if (num >= 20) {
-			zomb = new Entity{ 15, "Finder", ID_FINDER, Protective, true, 3, 25, true, spawnCoords.x, spawnCoords.y };
-
-			zomb->faction = &factions.list["Takers"];
+			zomb = new Entity
+			(	15,
+				"Finder",
+				ID_FINDER,
+				Protective,
+				false, 3, 25,
+				spawnCoords,
+				factions.GetFaction("Takers"));
 
 			zomb->inv.push_back(Items::GetItem("CRYSTAL"));
 			zomb->inv.push_back(Items::GetItem("SCRAP"));
@@ -453,17 +457,22 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 		else if (num >= 19) {
 			//humans have a lot more logic than the rest
 			if (Math::RandInt(0, 4) >= 3) {
-				chunk->AddEntity(SpawnHuman(spawnCoords, Protective, "Faction_Human_W", true));
+				chunk->AddEntity(SpawnHuman(spawnCoords, Protective, FACTION_HUMAN, true));
 			}
 			else {
-				chunk->AddEntity(SpawnHuman(spawnCoords, Aggressive, "Faction_Bandit"));
+				chunk->AddEntity(SpawnHuman(spawnCoords, Aggressive, FACTION_BANDIT));
 			}
 			continue;
 		}
 		else if (num >= 10) {
-			zomb = new Entity{ 15, "Zombie", ID_ZOMBIE, Aggressive, true, 7, 8, false, spawnCoords.x, spawnCoords.y };
-
-			zomb->faction = &factions.list[FACTION_ZOMBIE];
+			zomb = new Entity( 
+				15,
+				"Zombie",
+				ID_ZOMBIE,
+				Aggressive,
+				true, 7, 8,
+				spawnCoords,
+				factions.GetFaction(FACTION_ZOMBIE));
 
 			zomb->inv.push_back(Items::GetItem("OLD_CLOTH"));
 			zomb->inv.push_back(Items::GetItem("GUTS"));
@@ -473,31 +482,62 @@ void Map::SpawnChunkEntities(std::shared_ptr<Chunk> chunk)
 		else {
 			switch (GetBiome(spawnCoords, chunk->globalChunkCoord)) {
 			case swamp:
-				zomb = new Entity{ 10, "Frog", ID_FROG, Wander, false, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				zomb = new Entity( 10,
+					"Frog",
+					ID_FROG,
+					Wander, 
+					false, 5, 1,
+					spawnCoords,
+					factions.GetFaction(FACTION_WILDLIFE));
+
 				zomb->inv.push_back(Items::GetItem("LEATHER"));
 				zomb->idleSounds = { "dat/sounds/frog.mp3" };
-
-				zomb->faction = &factions.list[FACTION_WILDLIFE];
 				break;
 			case taiga:
-				zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				zomb = new Entity( 
+					10,
+					"Chicken", 
+					ID_CHICKEN, 
+					Wander, 
+					false, 5, 1,
+					spawnCoords, 
+					factions.GetFaction(FACTION_WILDLIFE));
 
-				zomb->faction = &factions.list[FACTION_WILDLIFE];
 				break;
 			case grassland:
-				zomb = new Entity{ 40, "Bull", ID_COW, Aggressive, false, 5, 15, false, spawnCoords.x, spawnCoords.y };
+				zomb = new Entity( 
+					40,
+					"Bull",
+					ID_COW, 
+					Aggressive,
+					false, 5, 15,
+					spawnCoords,
+					factions.GetFaction(FACTION_WILDLIFE));
+
 				zomb->inv.push_back(Items::GetItem("LEATHER"));
 				zomb->inv.push_back(Items::GetItem("BULL_HORN"));
-				zomb->faction = &factions.list[FACTION_WILDLIFE];
 				break;
 			case desert:
-				zomb = new Entity{ 10, "Cat", ID_CAT, Wander, false, 5, 1, false, spawnCoords.x, spawnCoords.y };
+				zomb = new Entity( 
+					10, 
+					"Cat",
+					ID_CAT,
+					Wander,
+					false, 5, 1,
+					spawnCoords,
+					factions.GetFaction(FACTION_WILDLIFE));
 				zomb->idleSounds = { "dat/sounds/cat.mp3" };
-				zomb->faction = &factions.list[FACTION_WILDLIFE];
 				break;
 			default:
-				zomb = new Entity{ 10, "Chicken", ID_CHICKEN, Wander, false, 5, 1, false, spawnCoords.x, spawnCoords.y };
-				zomb->faction = &factions.list[FACTION_WILDLIFE];
+				zomb = new Entity(
+					10,
+					"Chicken",
+					ID_CHICKEN,
+					Wander,
+					false, 5, 1,
+					spawnCoords,
+					factions.GetFaction(FACTION_WILDLIFE));
+
 				break;
 			}
 
@@ -691,7 +731,7 @@ void Map::AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* act
 		damageText = (std::string)curEnt->name + " dies.";
 	}
 
-	Vector2_I coords = curEnt->coords;
+	Vector2_I coords = curEnt->localCoords;
 
 	Math::PushBackLog(actionLog, damageText);
 	chunk->localCoords[coords.x][coords.y].SetLiquid(blood);
@@ -757,9 +797,9 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 			}
 			else {
 				vec2_i newCoords = { x - p->coords.x, y - p->coords.y };
-				curEnt->coords += newCoords;
+				curEnt->localCoords += newCoords;
 				GetTileFromThisOrNeighbor({ x,y })->entity = nullptr;
-				GetTileFromThisOrNeighbor(curEnt->coords)->entity = curEnt;
+				GetTileFromThisOrNeighbor(curEnt->localCoords)->entity = curEnt;
 				CheckBounds(curEnt, CurrentChunk());
 				chunkUpdateFlag = true;
 			}
@@ -841,63 +881,63 @@ offscreen:
 bool Map::CheckBounds(Entity* p, std::shared_ptr<Chunk> chunk) {
 	bool changed = false;
 	int oldIndex = p->index;
-	if (p->coords.x > CHUNK_WIDTH - 1) { //check if they left the chunk
-		if (c_glCoords.x + 1 >= 500) { p->coords.x = CHUNK_WIDTH - 1; return false; } //dont let them leave world bounds
+	if (p->localCoords.x > CHUNK_WIDTH - 1) { //check if they left the chunk
+		if (c_glCoords.x + 1 >= 500) { p->localCoords.x = CHUNK_WIDTH - 1; return false; } //dont let them leave world bounds
 		
 
 		//if they attempt to enter a chunk that isnt loaded, then delete them.
 		if(!(chunk->globalChunkCoord.x + 1 >= c_glCoords.x + 2)) {
 			changed = true;
-			p->coords.x = 0; //move them to the other side of the screen
+			p->localCoords.x = 0; //move them to the other side of the screen
 			world.chunks[{chunk->globalChunkCoord.x + 1,
 				chunk->globalChunkCoord.y}]->AddEntity(p); //put them in the vector of the next chunk over
 		}
 		else { //prevent the error of them being on the outer bounds and not exiting the chunk,
 			   // leaving them at an x or y value of 30 which is invalid bcus the chunks are 0-29
-			p->coords.x = CHUNK_WIDTH - 1;
+			p->localCoords.x = CHUNK_WIDTH - 1;
 		}
 
 	}
-	else if (p->coords.x < 0) {
-		if (c_glCoords.x - 1 < 0) { p->coords.x = 0; return false; }
+	else if (p->localCoords.x < 0) {
+		if (c_glCoords.x - 1 < 0) { p->localCoords.x = 0; return false; }
 
 		//if they attempt to enter a chunk that isnt loaded, then dont let them.
 		if (!(chunk->globalChunkCoord.x - 1 <= c_glCoords.x - 2)) {
 			changed = true;
-			p->coords.x = CHUNK_WIDTH - 1;
+			p->localCoords.x = CHUNK_WIDTH - 1;
 			world.chunks[{chunk->globalChunkCoord.x - 1,
 				chunk->globalChunkCoord.y}]->AddEntity(p);
 		}
 		else {
-			p->coords.x = 0;
+			p->localCoords.x = 0;
 		}
 	}
-	else if (p->coords.y > CHUNK_HEIGHT - 1) {
-		if (chunk->globalChunkCoord.y + 1 >= 500) { p->coords.y = CHUNK_HEIGHT - 1; return false; }
+	else if (p->localCoords.y > CHUNK_HEIGHT - 1) {
+		if (chunk->globalChunkCoord.y + 1 >= 500) { p->localCoords.y = CHUNK_HEIGHT - 1; return false; }
 
 		//if they attempt to enter a chunk that isnt loaded, then delete them.
 		if (!(chunk->globalChunkCoord.y + 1 >= c_glCoords.y + 2)) {
 			changed = true;
-			p->coords.y = 0;
+			p->localCoords.y = 0;
 			world.chunks[{chunk->globalChunkCoord.x,
 				chunk->globalChunkCoord.y + 1}]->AddEntity(p);
 		}
 		else {
-			p->coords.y = CHUNK_HEIGHT - 1;
+			p->localCoords.y = CHUNK_HEIGHT - 1;
 		}
 	}
-	else if (p->coords.y < 0) {
-		if (chunk->globalChunkCoord.y - 1 < 0) { p->coords.y = 0; return false; }
+	else if (p->localCoords.y < 0) {
+		if (chunk->globalChunkCoord.y - 1 < 0) { p->localCoords.y = 0; return false; }
 
 		//if they attempt to enter a chunk that isnt loaded, then delete them.
 		if (!(chunk->globalChunkCoord.y - 1 <= c_glCoords.y - 2)) {
 			changed = true;
-			p->coords.y = CHUNK_HEIGHT - 1;
+			p->localCoords.y = CHUNK_HEIGHT - 1;
 			world.chunks[{chunk->globalChunkCoord.x,
 				chunk->globalChunkCoord.y - 1}]->AddEntity(p);
 		}
 		else {
-			p->coords.y = 0;
+			p->localCoords.y = 0;
 		}
 	}
 
@@ -1127,6 +1167,8 @@ void Map::PickStructure(Vector2_I startingChunk) {
 		OpenedData roadDat;
 		switch (randInt) {
 		case 0:
+			PlaceCampsite(startingChunk);
+			break;
 		case 1:
 		case 2:
 			PlaceBuilding(startingChunk);
@@ -1143,7 +1185,7 @@ void Map::PickStructure(Vector2_I startingChunk) {
 			ItemReader::GetDataFromFile("structures/houses.eid", "GARDEN_HOUSE", &roadDat);
 			PlaceStructure(startingChunk, roadDat.getString("tiles"), { roadDat.getInt("width"), roadDat.getInt("height") }, { 15,15 });
 
-			Entity* ent = SpawnHuman({ 17, 19 }, Behaviour::Tasks, "Faction_Farmer");
+			Entity* ent = SpawnHuman({ 17, 19 }, Behaviour::Tasks, FACTION_HUMAN);
 
 			Task gather;
 			gather.task = collectItem;
@@ -1185,8 +1227,8 @@ void Map::PlaceCampsite(Vector2_I startingChunk) {
 
 
 	//make two dudes who trust each other
-	Entity* zomb = SpawnHuman(randomCoords1, Protective_Stationary, "Faction_Human_W");
-	Entity* zomb2 = SpawnHuman(randomCoords2, Protective_Stationary, "Faction_Human_W");
+	Entity* zomb = SpawnHuman(randomCoords1, Protective_Stationary, FACTION_HUMAN);
+	Entity* zomb2 = SpawnHuman(randomCoords2, Protective_Stationary, FACTION_HUMAN);
 
 	zomb->feelingTowardsOthers.insert({ zomb2->entityID , (FEELING_HAPPY + FEELING_TRUST) * 2 });
 	zomb2->feelingTowardsOthers.insert({ zomb->entityID , (FEELING_HAPPY + FEELING_TRUST) * 2 });
@@ -1407,7 +1449,7 @@ void Map::GenerateTomb(std::shared_ptr<Chunk> chunk) {
 
 	for (int i = 0; i < CHUNK_WIDTH; i++) {
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
-			if (i <= 1 || i >= CHUNK_WIDTH - 2 || j <= 1 || j >= CHUNK_HEIGHT-2) {
+			if (i <= 1 || i >= CHUNK_WIDTH - 2 || j <= 1 || j >= CHUNK_HEIGHT - 2) {
 				chunk->localCoords[i][j] = Tiles::GetTile("TILE_STONE");
 			}
 			else if (Math::RandInt(0, 75) == 25) {
@@ -1421,8 +1463,14 @@ void Map::GenerateTomb(std::shared_ptr<Chunk> chunk) {
 
 	int entx = Math::RandInt(3, 26);
 	int enty = Math::RandInt(3, 26);
-	Entity* zomb = new Entity{ 35, "Zombie", ID_ZOMBIE, Aggressive, true, 10, 8, false, enty, entx };
-	zomb->faction = &factions.list[FACTION_ZOMBIE];
+	Entity* zomb = new Entity
+	(	35,
+		"Zombie",
+		ID_ZOMBIE,
+		Aggressive,
+		true, 10, 8, 
+		{enty, entx},
+		factions.GetFaction(FACTION_ZOMBIE));
 	chunk->AddEntity(zomb);
 }
 
@@ -1573,7 +1621,7 @@ void Map::ClearEntities(std::shared_ptr<Chunk> chunk)
 	//go to the player and all entities and replace the original tile
 	for (int i = 0; i < chunk->entities.size(); i++)
 	{
-		Vector2_I coord = chunk->entities[i]->coords;
+		Vector2_I coord = chunk->entities[i]->localCoords;
 		if (coord.x >= 0 && coord.x < 30 && coord.y >= 0 && coord.y < 30) {
 			chunk->localCoords[coord.x][coord.y].entity = nullptr;
 		}
@@ -1600,15 +1648,15 @@ void Map::PlaceEntities(std::shared_ptr<Chunk> chunk)
 	for (int i = 0; i < chunk->entities.size(); i++)
 	{
 		if (chunk->entities[i] == nullptr) { continue; }
-		if (chunk->entities[i]->coords.x >= 30 ||
-			chunk->entities[i]->coords.x < 0   ||
-			chunk->entities[i]->coords.y >= 30 ||
-			chunk->entities[i]->coords.y < 0) { continue; }
+		if (chunk->entities[i]->localCoords.x >= 30 ||
+			chunk->entities[i]->localCoords.x < 0   ||
+			chunk->entities[i]->localCoords.y >= 30 ||
+			chunk->entities[i]->localCoords.y < 0) { continue; }
 
 
 		chunk->localCoords
-			[chunk->entities[i]->coords.x]
-			[chunk->entities[i]->coords.y].entity = chunk->entities[i];
+			[chunk->entities[i]->localCoords.x]
+			[chunk->entities[i]->localCoords.y].entity = chunk->entities[i];
 	}
 
 }

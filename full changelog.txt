@@ -82,6 +82,8 @@
 	- Factions added more in depth (factionmanager)
 		- Factions generate at the start of the world
 		- Faction leaders are created and saved immediately
+	- Saving entities by unique id now
+
 
   --Engine Changes--
 	- The sprites now scale properly with window resizing

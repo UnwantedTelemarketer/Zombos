@@ -152,18 +152,19 @@ public:
 				OpenedData tempEnt;
 				ItemReader::GetDataFromFile(entFilePath, nameList[i], &tempEnt, false);
 
-				Entity* loadedEntity = new Entity{
+				Entity* loadedEntity = new Entity(
 					tempEnt.getFloat("health"),
-					nameList[i].c_str(),
-					tempEnt.getInt("entID"),
+					tempEnt.getString("entDisplayName"),
+					0,
 					(Behaviour)tempEnt.getInt("behaviour"),
 					false,				 //aggressive
 					10,					 //view distance
 					tempEnt.getInt("damage"),
-					true,				 //can talk
-					Math::RandInt(2,29), //x coord
-					Math::RandInt(2,29), //y coord
-					true };
+					{Math::RandInt(2,29), //x coord
+					Math::RandInt(2,29)}, //y coord
+					factions.GetFaction("Human_W"));
+
+				loadedEntity->uID = stoi(nameList[i]);
 
 				if (!factions.DoesExist(tempEnt.getString("faction"))) {
 					factions.Create(tempEnt.getString("faction"));

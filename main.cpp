@@ -328,6 +328,8 @@ public:
 				else if (CreateNewDirectory("dat/saves/" + map.currentSaveName)) {
 					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/map");
 					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/entities");
+					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/entities/unique");
+					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/entities/leaders");
 					Console::Log("New save created successfully!", SUCCESS, __LINE__);
 
 					game.Setup(10, 10, 0.5f);
@@ -1319,7 +1321,7 @@ public:
 
 				if (selectedTile->entity->name == "Human") {
 					//give them a new name when we chat
-					selectedTile->entity->name = NameGenerator::generateFirstName();
+					selectedTile->entity->name = NameGenerator::generateHumanName();
 				}
 
 				//show their name
@@ -1402,7 +1404,7 @@ public:
 						}
 					}
 					else {
-						if (selectedTile->entity->canTalk) {
+						if (selectedTile->entity->smart) {
 							ImGui::TextWrapped(("\"" + selectedTile->entity->message + "\"").c_str());
 							ImGui::Text(std::to_string(selectedTile->entity->taskList.size()).c_str());
 						}
@@ -1650,8 +1652,8 @@ public:
 			for (size_t i = 0; i < map.CurrentChunk()->entities.size(); i++)
 			{
 				ImGui::Text(("--" + map.CurrentChunk()->entities[i]->name).c_str()); ImGui::SameLine();
-				ImGui::Text(CHAR_ARRAY(map.CurrentChunk()->entities[i]->coords.x)); ImGui::SameLine();
-				ImGui::Text(CHAR_ARRAY(map.CurrentChunk()->entities[i]->coords.y));
+				ImGui::Text(CHAR_ARRAY(map.CurrentChunk()->entities[i]->localCoords.x)); ImGui::SameLine();
+				ImGui::Text(CHAR_ARRAY(map.CurrentChunk()->entities[i]->localCoords.y));
 			}
 
 			ImGui::End();

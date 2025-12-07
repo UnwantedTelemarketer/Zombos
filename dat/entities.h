@@ -275,16 +275,17 @@ struct Task {
 
 //Health, Name, ID, Behaviour, Aggressive, Faction, View Distance, Damage, Can Talk
 struct Entity {
-	float health;
+	float health = 0;
 	std::string name;
-	int entityID;
+	int entityID = -1;
 	Behaviour b;
-	bool aggressive;
+	bool aggressive = false;
 	int viewDistance;
 	int damage;
 	bool canTalk;
 
-	Vector2_I coords;
+	Vector2_I localCoords;
+	Vector2_I globalCoords;
 	bool lootAlive = false;
 	int index; //in entity list
 	Liquid coveredIn = nothing;
@@ -292,7 +293,7 @@ struct Entity {
 	int tempViewDistance;
 	Feeling feelingTowardsPlayer = { 0,0,0 };
 	std::unordered_map<int, Feeling> feelingTowardsOthers;
-	Faction* faction;
+	Faction* faction = nullptr;
 	bool factionLeader = false;
 
 	int uID;
@@ -315,6 +316,33 @@ struct Entity {
 	const float MOOD_STRONG = 2.f;
 
 	bool targeting() { return target != nullptr || targetingPlayer; }
+
+	Entity()
+		: uID(Math::RandInt(0, 2147483647)) {}
+
+	Entity(int startingHealth,
+		std::string startingName,
+		int entityTypeID,
+		Behaviour startingBehaviour, 
+		bool isAggressive, 
+		int startingViewDistance, 
+		int startingDamage,
+		Vector2_I spawnCoords,
+		Faction* startingFaction){
+
+		uID = Math::RandInt(0, 2147483647);
+		health = startingHealth;
+		name = startingName;
+		entityID = entityTypeID;
+		b = startingBehaviour;
+		aggressive = isAggressive;
+		viewDistance = startingViewDistance;
+		damage = startingDamage;
+		localCoords = spawnCoords;
+		faction = startingFaction;
+
+		message = "...";
+	}
 
 	std::vector<std::string> getItemNames() {
 		std::vector<std::string> names;
@@ -414,7 +442,7 @@ struct Entity {
 	}
 
 	void SelectQuest() {
-		Vector2_I QuestCoords = { coords.x + Math::RandInt(-15,15), coords.y + Math::RandInt(-15,15) };
+		Vector2_I QuestCoords = zero;//{ coords.x + Math::RandInt(-15,15), coords.y + Math::RandInt(-15,15) };
 		currentQuest = { (QuestType)Math::RandInt(0,1), "nthng" ,QuestCoords};
 
 		OpenedData c;
@@ -460,10 +488,10 @@ struct Entity {
 		float strongest = std::max({ std::abs(t), std::abs(f), std::abs(h) });
 
 		if (strongest < 2.f) {
-			if (faction->name == "Faction_Human_W") {
+			if (faction->name == "Human_W") {
 				message = npcMessages.at("CALM_WANDERER")[Math::RandInt(0, 7)];
 			}
-			else if (faction->name == "Faction_Farmer") {
+			else if (faction->name == "Farmer") {
 				message = npcMessages.at("CALM_FARMER")[Math::RandInt(0, 3)];
 			}
 		}
@@ -481,6 +509,10 @@ struct Entity {
 			message = (f > 0)
 				? npcMessages.at("AFRAID_WANDERER")[Math::RandInt(0, 3)]
 				: npcMessages.at("BRAVE_WANDERER")[Math::RandInt(0, 3)];
+		}
+
+		if (message.size() == 0) {
+			message = "...";
 		}
 	}
 
@@ -528,16 +560,17 @@ struct Entity {
 
 	void SaveToFile(std::string specialEntFilePath) {
 		SaveData specEntDat;
-		specEntDat.sections.insert({ name, {} });
+		std::string sectionName = std::to_string(uID);
+		specEntDat.sections.insert({ sectionName, {} });
 
-		specEntDat.addFloat(name, "health", health);
-		specEntDat.addInt(name, "behaviour", b);
-		specEntDat.addString(name, "faction", faction->name);
-		specEntDat.addInt(name, "damage", damage);
-		specEntDat.addInt(name, "isLeader", factionLeader);
-		specEntDat.addFloat(name, "happy", feelingTowardsPlayer.happy);
-		specEntDat.addFloat(name, "fear", feelingTowardsPlayer.fear);
-		specEntDat.addFloat(name, "trust", feelingTowardsPlayer.trust);
+		specEntDat.addFloat(sectionName, "health", health);
+		specEntDat.addInt(sectionName, "behaviour", b);
+		specEntDat.addString(sectionName, "faction", faction->name);
+		specEntDat.addInt(sectionName, "damage", damage);
+		specEntDat.addInt(sectionName, "isLeader", factionLeader);
+		specEntDat.addFloat(sectionName, "happy", feelingTowardsPlayer.happy);
+		specEntDat.addFloat(sectionName, "fear", feelingTowardsPlayer.fear);
+		specEntDat.addFloat(sectionName, "trust", feelingTowardsPlayer.trust);
 
 		std::vector<std::string> memsToSave;
 		for (size_t i = 0; i < memories.size(); i++)
@@ -546,11 +579,15 @@ struct Entity {
 			memsToSave.push_back(std::to_string((int)(memories[i].type)));
 			memsToSave.push_back(memories[i].event);
 		}
-		specEntDat.sections[name].lists.insert({ "memories", memsToSave });
+		specEntDat.sections[sectionName].lists.insert({ "memories", memsToSave });
 
-		specEntDat.addInt(name, "entID", entityID);
-		std::string fileName = specialEntFilePath + name + ".eid";
-		ItemReader::SaveDataToFile(fileName, specEntDat, true);
+		std::string entNameFinal = "\"";
+		entNameFinal += name;
+		entNameFinal += "\"";
+
+		specEntDat.addString(sectionName, "entName", entNameFinal);
+		std::string filesectionName = specialEntFilePath + sectionName + ".eid";
+		ItemReader::SaveDataToFile(filesectionName, specEntDat, true);
 	}
 
 	// If theyre status to the player changes, they will be saved on unloading.

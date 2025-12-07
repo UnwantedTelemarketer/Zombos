@@ -39,7 +39,7 @@ struct FactionManager {
 	bool AreEnemies(const std::string& factionA, const std::string& factionB);
 	bool AreAllied(const std::string& factionA, const std::string& factionB);
 
-
+	Faction* GetFaction(const std::string& factionName);
 };
 
 
@@ -56,6 +56,13 @@ void FactionManager::Destroy(const std::string& factionName) {
 
 bool FactionManager::DoesExist(const std::string& factionName) {
 	return list.contains(factionName);
+}
+
+Faction* FactionManager::GetFaction(const std::string& factionName) {
+	if (DoesExist(factionName)) {
+		return &list[factionName];
+	}
+	return nullptr;
 }
 
 bool FactionManager::AreEnemies(const std::string& factionA, const std::string& factionB) {

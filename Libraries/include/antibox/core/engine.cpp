@@ -167,7 +167,7 @@ namespace antibox
 
 				float normalizedTime = std::min(pack->elapsedTime / pack->endTime, 1.0f);
 
-				if(pack->valToChange){
+				if(pack->valToChange && pack != nullptr){
 					*pack->valToChange = Math::Lerp(normalizedTime, pack->startingVal, pack->endVal);
 				}
 				else{
