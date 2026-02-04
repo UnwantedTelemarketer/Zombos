@@ -36,29 +36,5 @@
 [ Line 36 ]: [0;37mTILES[0m
 [ Line 36 ]: [0;37mITEMS[0m
 [ Line 59 ]: [1;32mFinished loading glyphs![0m
-[ Line 1897 ]: [1;32mDone![0m
+[ Line 1898 ]: [1;32mDone![0m
 [ Line 40 ]: [1;31m0[0m
-[ Line 346 ]: [1;32mNew save created successfully![0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/leaders/31550.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/leaders/11320.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/leaders/15922.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/leaders/14430.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/18022.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/6717.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/22466.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/2441.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/7549.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/5322.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/27386.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/30813.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/21423.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/30453.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/11176.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/533.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/22532.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/12952.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/28534.eid[0m
-[ Line -1 ]: [0;37mNow saving...[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/powel/save.eid[0m
-[ Line 276 ]: [1;31mAttempting to read from file 'dat/saves/powel/entities/names.eid', but can't find file.[0m
-[ Line 224 ]: [1;32mSave complete in 17.592564ms.[0m

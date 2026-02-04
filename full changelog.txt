@@ -1,4 +1,4 @@
-0.2.4
+0.3.0
 
 	- Items can now change when used (drinking energy drink becomes empty can)
 	- Items added
@@ -83,7 +83,8 @@
 		- Factions generate at the start of the world
 		- Faction leaders are created and saved immediately
 	- Saving entities by unique id now
-
+	- Support for custom fonts from post compilation
+	- Glyph Grabber Tool
 
   --Engine Changes--
 	- The sprites now scale properly with window resizing
@@ -91,6 +92,5 @@
 	- Tokenizer can now read commas in arrays IF theres an escape character before it (forward slash)
 	- Window now scales with resolution
 	- Random floats can now be generated
-
   --Known Bugs--
 	- Fire wont spread?

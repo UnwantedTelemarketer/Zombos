@@ -1329,6 +1329,7 @@ public:
 			ImGui::Text("F to toggle Flashlight on and off");
 			ImGui::Text("C to open the Crafting menu");
 			ImGui::Text("I to open/close the Equipment menu");
+			ImGui::Text("M to open/close the Overworld Map");
 			ImGui::Text("E to begin selecting a block then any of the directional keys to select a block");
 			ImGui::Text("P to open/close the Debug menu");
 			ImGui::Text("H to open/close the Help menu");
