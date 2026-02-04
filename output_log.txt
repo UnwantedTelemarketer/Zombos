@@ -20,8 +20,8 @@
 [ Line 79 ]: [1;32mLoaded texture from res/logo.png.[0m
 [ Line 10 ]: [1;32mSuccesfully created object Box[0m
 [ Line 131 ]: [0;33mLoading dialogue...[0m
-[ Line 177 ]: [0;37mCALM_FARMER[0m
-[ Line 177 ]: [0;37mCALM_WANDERER[0m
+[ Line 177 ]: [0;37mFARMER_CALM[0m
+[ Line 177 ]: [0;37mWANDERER_CALM[0m
 [ Line 177 ]: [0;37mHAPPY_WANDERER[0m
 [ Line 177 ]: [0;37mANGRY_WANDERER[0m
 [ Line 177 ]: [0;37mAFRAID_WANDERER[0m
@@ -36,29 +36,29 @@
 [ Line 36 ]: [0;37mTILES[0m
 [ Line 36 ]: [0;37mITEMS[0m
 [ Line 59 ]: [1;32mFinished loading glyphs![0m
-[ Line 1790 ]: [1;32mDone![0m
+[ Line 1897 ]: [1;32mDone![0m
 [ Line 40 ]: [1;31m0[0m
-[ Line 333 ]: [1;32mNew save created successfully![0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/leaders/15193.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/leaders/18469.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/leaders/3958.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/leaders/24678.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/14966.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/31925.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/26115.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/5869.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/27847.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/4858.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/16030.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/18508.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/6189.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/6231.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/8538.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/5397.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/7119.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/14211.eid[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/entities/unique/8570.eid[0m
+[ Line 346 ]: [1;32mNew save created successfully![0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/leaders/31550.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/leaders/11320.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/leaders/15922.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/leaders/14430.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/18022.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/6717.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/22466.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/2441.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/7549.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/5322.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/27386.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/30813.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/21423.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/30453.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/11176.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/533.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/22532.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/12952.eid[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/entities/unique/28534.eid[0m
 [ Line -1 ]: [0;37mNow saving...[0m
-[ Line 377 ]: [1;32mWrote to file dat/saves/teeal/save.eid[0m
-[ Line 276 ]: [1;31mAttempting to read from file 'dat/saves/teeal/entities/names.eid', but can't find file.[0m
-[ Line 217 ]: [1;32mSave complete in 27.101011ms.[0m
+[ Line 377 ]: [1;32mWrote to file dat/saves/powel/save.eid[0m
+[ Line 276 ]: [1;31mAttempting to read from file 'dat/saves/powel/entities/names.eid', but can't find file.[0m
+[ Line 224 ]: [1;32mSave complete in 17.592564ms.[0m

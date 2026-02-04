@@ -1,4 +1,4 @@
-CALM_WANDERER {
+WANDERER_CALM {
 size : 8;
 1 :	"Hello friend. Staying alive I hope?";
 2 :	"I hate those damn followers just about as much as the zombies.";
@@ -11,7 +11,7 @@ size : 8;
 };
 
 
-CALM_FARMER {
+FARMER_CALM {
 size : 4;
 1 : "Hello, are you interested in plants?"
 2 : "I've been tending this field for a long time."

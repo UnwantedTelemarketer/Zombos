@@ -19,6 +19,9 @@ struct GameUI {
 	bool equipmentScreenOpen = true;
 	bool settingsOpen = false;
 	bool tradeDialogue = false;
+	bool minimapOpen = false;
+	bool largeMapOpen = false;
+	bool glyphViewerOpen = false;
 	std::map<std::string, UIPopup> popups;
 
 	void FlipScreens() {
@@ -45,6 +48,9 @@ struct GameUI {
 		if (Input::KeyDown(KEY_ESCAPE))
 		{
 			settingsOpen = !settingsOpen;
+		}
+		if (Input::KeyDown(KEY_M)) {
+			largeMapOpen = !largeMapOpen;
 		}
 	}
 

@@ -9,6 +9,12 @@
 
 namespace antibox 
 {
+	struct FontData
+	{
+		ImFont* fontFile;
+		std::string fontPath;
+	};
+
 	struct ImguiWindowProperties
 	{
 		bool MoveTitleBarOnly = true;
@@ -24,10 +30,12 @@ namespace antibox
 	public:
 		ImguiWindow() {}
 		~ImguiWindow() {}
-		std::unordered_map<std::string, ImFont*> fonts;
+		std::unordered_map<std::string, FontData> fonts;
 
 		void Create(const ImguiWindowProperties& props);
 		void Shutdown();
+
+		void AddFont(const std::string& filepath, const std::string& fontname);
 
 		bool WantCaptureMouse();
 		bool WantCaptureKeyboard();

@@ -13,16 +13,19 @@ vfx_double_tilde :	[1,1];
 }
 
 ENTITIES {
-ent_player :  [16,1];
-ent_zombie :  [17,1];
-ent_human :	  [18,1];
-ent_chicken : [19,1];
-ent_frog :	  [20,1];
-ent_cat :	  [22,1];
-ent_cow :	  [23,1];
-ent_finder :  [16,2];
-ent_taker :	  [17,2];
-ent_bandit :  [18,2];
+ent_player_right :  [16,1];
+ent_player_up :		[21,5];
+ent_player_down :   [22,5];
+ent_player_left :   [20,5];
+ent_zombie :		[17,1];
+ent_human :			[18,1];
+ent_chicken :		[19,1];
+ent_frog :			[20,1];
+ent_cat :			[22,1];
+ent_cow :			[23,1];
+ent_finder :		[16,2];
+ent_taker :			[17,2];
+ent_bandit :		[18,2];
 }
 
 //remember, [column,row]

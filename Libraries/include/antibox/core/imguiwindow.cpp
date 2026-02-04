@@ -1,4 +1,4 @@
-#include "imguiwindow.h"
+﻿#include "imguiwindow.h"
 
 #include "engine.h"
 
@@ -36,7 +36,12 @@ namespace antibox
 		{
 			ImFont* newFont = io.Fonts->AddFontFromFileTTF(props.fontPaths[i].c_str(), props.fontSize, NULL, ranges.Data);
 			IM_ASSERT(newFont != NULL);
-			fonts.insert({ props.fontNames[i], newFont});
+
+			FontData fd;
+			fd.fontFile = newFont;
+			fd.fontPath = props.fontPaths[i];
+
+			fonts.insert({ props.fontNames[i], fd });
 		}
 
 		io.Fonts->Build();
@@ -50,6 +55,29 @@ namespace antibox
 
 		ImGui_ImplGlfw_InitForOpenGL(Engine::Instance().GetWindow()->glfwin(), true);
 		ImGui_ImplOpenGL3_Init("#version 330");
+	}
+
+	void ImguiWindow::AddFont(const std::string& filepath, const std::string& fontname) {
+		ImGuiIO& io = ImGui::GetIO();
+
+		ImFont* newFont = io.Fonts->AddFontFromFileTTF(filepath.c_str(), 16.f, nullptr);
+
+		IM_ASSERT(newFont != nullptr);
+		for (auto const& font : fonts)
+		{
+			Console::Log("Adding previously loaded font: " + font.first, text::green, __LINE__);
+			ImFont* newFont2 = io.Fonts->AddFontFromFileTTF(font.second.fontPath.c_str(), 16.f);
+			IM_ASSERT(newFont2 != nullptr);
+		}
+
+
+		FontData fd;
+		fd.fontFile = newFont;
+		fd.fontPath = filepath;
+
+		fonts.insert({ fontname, fd });
+
+		io.Fonts->Build();
 	}
 
 	void ImguiWindow::Shutdown() {

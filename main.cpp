@@ -5,7 +5,6 @@
 
 #include <chrono>
 
-#define DOSFONT  "dat/fonts/symbolic/symbolic_full_cons.ttf"
 #define VGAFONT  "dat/fonts/VGA437.ttf"
 #define SWAP_FONT(newfont) ImGui::PopFont(); ImGui::PushFont(Engine::Instance().getFont(newfont));
 //#define DEV_TOOLS
@@ -22,9 +21,15 @@ private:
 	WindowProperties GetWindowProperties() {
 		WindowProperties props;
 		vec2_i monitorRes;
+
+		OpenedData defaultFontName;
+		ItemReader::GetDataFromFile("game_settings.eid", "FONTS", &defaultFontName);
+
+		std::string fontPath = "dat/fonts/" + defaultFontName.getString("visual_font");
+
 		Rendering::GetMonitorSize(monitorRes.x, monitorRes.y);
 
-		props.imguiProps = { true, true, false, {DOSFONT, VGAFONT}, {"main", "ui"}, 16.f };
+		props.imguiProps = { true, true, false, {fontPath, VGAFONT}, {"main", "ui"}, 16.f };
 		props.w = monitorRes.x * 0.7f;
 		props.h = monitorRes.y * 0.67f;
 		props.vsync = 0;
@@ -71,6 +76,8 @@ public:
 	bool showShadows = false;
 	bool deathScreen = false;
 	char saveNameSlot[128];
+	int selectedIndex = 0;
+	std::string selectedGlyph = "";
 
 	//Game Stuff
 	std::shared_ptr<Chunk> test_chunk;
@@ -313,6 +320,12 @@ public:
 				currentState = map_gen_test;
 				map.CreateMap(map.landSeed, map.biomeSeed, -1);
 			}
+
+			std::string gViewerStatus = gameScreen.glyphViewerOpen ? "Close Glyph Viewer" : "Open Glyph Viewer";
+			if (ImGui::Button(gViewerStatus.c_str())) {
+				Audio::Play(sfxs["crunchy_click"]);
+				gameScreen.glyphViewerOpen = !gameScreen.glyphViewerOpen;
+			}
 			ImGui::End();
 		}
 
@@ -489,7 +502,7 @@ public:
 				Tile* curTile = customBuilding->GetTileAtCoords(curPos);
 
 				if (cursorPos == curPos) {
-					printIcon = 'X';
+					printIcon = glyphs.getGlyph("vfx_exclamation");
 					iconColor = { 1,0,0,1 };
 				}
 				else {
@@ -554,6 +567,8 @@ public:
 			}
 			ImGui::TreePop();
 
+
+			//expand this to eid
 			if (bgSelected != -1) {
 				ImGui::Text("~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~");
 				switch (bgSelected) {
@@ -728,7 +743,23 @@ public:
 
 					if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
 					{
-						printIcon = glyphs.getGlyph("ent_player");
+						switch (playerDir) {
+						case direction::up:
+							printIcon = glyphs.getGlyph("ent_player_up");
+							break;
+						case direction::down:
+							printIcon = glyphs.getGlyph("ent_player_down");
+							break;
+						case direction::left:
+							printIcon = glyphs.getGlyph("ent_player_left");
+							break;
+						case direction::right:
+							printIcon = glyphs.getGlyph("ent_player_right");
+							break;
+						default:
+							printIcon = glyphs.getGlyph("error");
+							break;
+						}
 						iconColor = game.GetPlayerColor();
 						//batchedString.append("#");
 						//continue;
@@ -785,19 +816,19 @@ public:
 						if (underTile->id == 11) {
 							//screen += "G";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							if (printIcon != glyphs.getGlyph("ent_player")) printIcon = glyphs.getGlyph("tile_tree_top");
+							if (underTile->coords != player.coords) printIcon = glyphs.getGlyph("tile_tree_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 						else if (underTile->id == 12) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							if (printIcon != glyphs.getGlyph("ent_player")) printIcon = glyphs.getGlyph("tile_cactus_top");
+							if (underTile->coords != player.coords) printIcon = glyphs.getGlyph("tile_cactus_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 						else if (underTile->id == 18) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							if (printIcon != glyphs.getGlyph("ent_player")) printIcon = glyphs.getGlyph("tile_cattail_top");
+							if (underTile->coords != player.coords) printIcon = glyphs.getGlyph("tile_cattail_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 					}
@@ -1659,6 +1690,40 @@ public:
 			ImGui::End();
 		}
 
+		if (gameScreen.largeMapOpen) {
+			ImGui::Begin("Overworld Map");
+
+			SWAP_FONT("main");
+			for (int i = 0; i < 30; i++)
+			{
+				for (int j = 0; j < 30; j++)
+				{
+					if (i == 15 && j == 16) {
+						ImGui::Text(glyphs.getGlyph("ent_player_right").c_str());
+					}
+					else if (game.mainMap.chunkBiomes.biomes[i][j] == taiga) {
+						ImGui::TextColored({ 0, 0.45, 0, 1 }, glyphs.getGlyph("tile_tree_top").c_str());
+					}
+					else if (game.mainMap.chunkBiomes.biomes[i][j] == desert) {
+						ImGui::TextColored({ 1, 1, 0.5, 1}, glyphs.getGlyph("tile_sand").c_str());
+					}
+					else if (game.mainMap.chunkBiomes.biomes[i][j] == grassland) {
+						ImGui::TextColored({ 0.65 ,1 ,0.1 , 1 }, glyphs.getGlyph("tile_tall_grass").c_str());
+					}
+					else if (game.mainMap.chunkBiomes.biomes[i][j] == swamp) {
+						ImGui::TextColored({ 0.8, 0.7, 0.5, 1 }, glyphs.getGlyph("tile_cattail_top").c_str());
+					}
+					else {
+						ImGui::TextColored({ 1, 0, 0, 1 }, glyphs.getGlyph("vfx_exclamation").c_str());
+					}
+
+					ImGui::SameLine();
+				}
+				ImGui::Text(" ");
+			}
+			ImGui::End();
+		}
+
 #ifdef DEV_TOOLS
 		ImGui::Begin("Brightness Map");
 		for (int i = 0; i < CHUNK_WIDTH; i++) {
@@ -1736,6 +1801,43 @@ public:
 			gameScreen.showDialogue = !gameScreen.showDialogue;
 		}
 	}
+
+	void GlyphViewer(GlyphManager& glyphs, std::string& selectedGlyph) {
+		ImGui::Begin("Glyph Viewer");
+
+		static std::vector<std::string> glyphNames;
+
+		// Populate glyph names once
+		if (glyphNames.empty()) {
+			for (const auto& pair : glyphs.getAllGlyphs()) {
+				glyphNames.push_back(pair.first);
+			}
+		}
+
+		ImGui::Text("Select a glyph to preview:");
+		if (ImGui::ListBox("Glyphs", &selectedIndex,
+			[](void* data, int idx, const char** out_text) {
+				const auto& names = *static_cast<std::vector<std::string>*>(data);
+				*out_text = names[idx].c_str();
+				return true;
+			},
+			&glyphNames, static_cast<int>(glyphNames.size()), 12))
+		{
+			selectedGlyph = glyphNames[selectedIndex];
+		}
+
+		ImGui::Separator();
+		ImGui::Text("Name: %s", selectedGlyph.c_str());
+		ImGui::Text("Glyph:");
+
+		ImGui::PushFont(Engine::Instance().getFont("main"));
+		ImGui::SameLine();
+		ImGui::Text(glyphs.getGlyph(selectedGlyph).c_str());
+		ImGui::PopFont();
+
+		ImGui::End();
+	}
+
 	//---------------------------------------------BASE FUNCTIONS---------------------------------------------
 
 	void Init() override {
@@ -1769,7 +1871,12 @@ public:
 
 		game.sfxvolume = Audio::GetVolume();
 
+		/*OpenedData defaultFontName;
+		ItemReader::GetDataFromFile("game_settings.eid", "FONTS", &defaultFontName);
 
+		std::string fontPath = "dat/fonts/" + defaultFontName.getString("visual_font");
+
+		Text::AddFont(fontPath, "main");*/
 
 		if (!DoesDirectoryExist("dat/saves")) {
 			Console::Log("Save folder does not exist. Creating new...", text::white, __LINE__);
@@ -1850,6 +1957,8 @@ public:
 		if (gameScreen.console_showing || gameScreen.craftingMenu) { return; }
 
 		game.UpdateTick();
+
+		
 
 		if (Input::KeyDown(KEY_UP) || Input::KeyDown(KEY_W)) {
 			if (interacting)
@@ -1983,6 +2092,10 @@ public:
 		gameScreen.ShowPopups();
 
 		SettingsScreen();
+
+		if (gameScreen.glyphViewerOpen) {
+			GlyphViewer(glyphs, selectedGlyph);
+		}
 
 		switch (currentState) {
 		case playing:

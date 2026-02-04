@@ -144,8 +144,8 @@ void GameManager::LoadData() {
 //Load All NPC dialogue into the game
 void GameManager::LoadMessages() {
 	std::vector<std::string> messageTypes = { 
-		"CALM_FARMER",
-		"CALM_WANDERER",
+		"FARMER_CALM",
+		"WANDERER_CALM",
 		"HAPPY_WANDERER",
 		"ANGRY_WANDERER",
 		"AFRAID_WANDERER",
@@ -326,18 +326,19 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 	bool crossChunk = false;
 
 	if (chunkInUse->globalChunkCoord == mainMap.c_glCoords) {
-		path = mainMap.GetLine(ent->localCoords, mPlayer.coords, 20);
+		path = mainMap.GetLineObscured(ent->localCoords, mPlayer.coords, 20);
 	}
 	else {
 		Vector2_I offset = mainMap.c_glCoords - chunkInUse->globalChunkCoord;
 		offset *= 30;
 		Vector2_I newPlayerCoords = mPlayer.coords + offset;
-		path = mainMap.GetLine(ent->localCoords, newPlayerCoords, 20);
+		path = mainMap.GetLineObscured(ent->localCoords, newPlayerCoords, 20);
 		crossChunk = true;
 	}
 
 	std::vector<Vector2_I> entPath;
 	Entity* tempTarget = nullptr;
+	Vector2_I invalid = { -99,-99 };
 	bool moved = false;
 	ent->tempViewDistance = isDark() ? ent->viewDistance * 2 : ent->viewDistance;
 
@@ -355,9 +356,9 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 
 		if (curEnt == ent || curEnt->health <= 0) { continue; } //check that we arent looking at the same entity twice
 
-		std::vector<Vector2_I> curPath = mainMap.GetLine(ent->localCoords, curEnt->localCoords, 10); //get line to other ent
+		std::vector<Vector2_I> curPath = mainMap.GetLineObscured(ent->localCoords, curEnt->localCoords, 10); //get line to other ent
 
-		if (curPath.size() < entPath.size() || entPath.size() == 0) { //check that its long enough and target them
+		if ((curPath.size() < entPath.size() || entPath.size() == 0) && curPath[0] != invalid) { //check that its long enough and target them
 			entPath = curPath;
 			tempTarget = chunkInUse->entities[i];
 		}
@@ -385,7 +386,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		break;
 	case Aggressive:
 		//check if player is near
-		if (path.size() < ent->viewDistance) {
+		if (path.size() < ent->viewDistance && path[0] != invalid) {
 			ent->targetingPlayer = true;
 			if (chunkInUse->globalChunkCoord == mainMap.c_glCoords) {
 				if (ent->name == "Zombie" && Math::RandInt(0, 20) == 1) {
@@ -405,7 +406,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 				isEnemies = factions.AreEnemies(tempTarget->faction->name, ent->faction->name);
 			}
 			//if the player is targeted
-			else if (ent->targetingPlayer) {
+			else if (ent->targetingPlayer && path[0] != invalid) {
 				if (mPlayer.coveredIn == guts && ent->name == "Zombie") { ent->targetingPlayer = false; }
 				std::vector<Vector2_I> pathToPlayer;
 				if (crossChunk) {
@@ -428,7 +429,9 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 				else {
 					if(pathToPlayer.size() == 1)
 					{
-						if (mainMap.GetTileFromThisOrNeighbor(pathToPlayer[0], chunkInUse->globalChunkCoord)->walkable) {
+						Tile* curTileTest = mainMap.GetTileFromThisOrNeighbor(pathToPlayer[0], chunkInUse->globalChunkCoord);
+
+						if (curTileTest != nullptr && curTileTest->walkable) {
 							ent->localCoords = pathToPlayer[0];
 							moved = true;
 						}
@@ -859,6 +862,9 @@ void GameManager::MovePlayer(int dir) {
 }
 
 
+#define VFX_RAIN 2
+#define VFX_SMOKE 1
+
 void GameManager::UpdateEffects() {
 
 	//1 is smoke, 2 is rain, 20 is lightning
@@ -873,24 +879,31 @@ void GameManager::UpdateEffects() {
 	{
 		for (int j = 0; j < CHUNK_WIDTH; j++)
 		{
-			if (mainMap.effectLayer.localCoords[i][j] == 1) {
+			if (mainMap.effectLayer.localCoords[i][j] == VFX_SMOKE) {
 				if (Math::RandInt(0, 3) == 1) {
 					int newJ = j + Math::RandInt(0, 2);
 					int newI = i - Math::RandInt(0, 2);
 					if ((newI >= CHUNK_WIDTH || newI < 0) || (newJ >= CHUNK_WIDTH || newJ < 0)) { continue; }
-					tempMap[newI][newJ] = 1;
+					tempMap[newI][newJ] = VFX_SMOKE;
 				}
 				else {
-					tempMap[i][j] = 1;
+					tempMap[i][j] = VFX_SMOKE;
 				}
 			}
-			if (mainMap.effectLayer.localCoords[i][j] == 2) {
+
+
+			if (mainMap.effectLayer.localCoords[i][j] == VFX_RAIN) {
+				/*int leftMovement = 0;
+				if (Math::RandInt(0, 3) == 1) {
+					leftMovement = -1;
+				}*/
+
 				if (i + 2 >= CHUNK_WIDTH || i < 0) { tempMap[i][j] = 0; }
 
 				else if (Math::RandInt(0, 30) == 1 && mainMap.TileAtPos({ i,j })->id != 13 && mainMap.TileAtPos({ i,j })->liquid == nothing)
 				{ tempMap[i][j] = 0; mainMap.TileAtPos({ i,j })->SetLiquid(water); }
 
-				else { tempMap[(int)std::floor((i + 1) * 1.1)][j] = 2; }
+				else { tempMap[(int)std::floor((i + 1) * 1.1)][j] = VFX_RAIN; }
 			}
 			if (mainMap.effectLayer.localCoords[i][j] >= 20) {
 				tempMap[i][j] = mainMap.effectLayer.localCoords[i][j] + 1;

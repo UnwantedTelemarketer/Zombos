@@ -65,12 +65,16 @@ namespace antibox {
 		double deltaTime() { return ms; }
 
 		//Returns the custom font uploaded via WindowProperties.
-		ImFont* getFont(std::string fontName) { return window->imwin().fonts[fontName]; }
+		ImFont* getFont(std::string fontName) { return window->imwin().fonts[fontName].fontFile; }
 
 		bool AddScene(Scene* sc);
 		inline void ChangeScene(int index) { currentSceneID = index; }
 		//Scene* GetScene(std::string name);
 		void SetAppList(std::vector<App*> apps);
+
+		void AddFont(const std::string& filepath, const std::string& fontname) {
+			window->imwin().AddFont(filepath, fontname);
+		}
 
 		void SetApp(int appID) {
 			if (appID < mAppList.size()) { appToChangeTo = appID; }

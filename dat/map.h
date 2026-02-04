@@ -34,6 +34,10 @@ struct World
 	std::map<Vector2_I, std::shared_ptr<Chunk>> chunks;
 };
 
+struct ChunkBiomes {
+	std::vector<std::vector<biome>> biomes;
+};
+
 
 enum weather {clear, rainy, thunder};
 class Map {
@@ -44,6 +48,7 @@ public:
 	World world; //keeps the original generated map so that tiles walked over wont be erased
 	World underground; //map but underground, different map entirely
 	World upstairs; //map but upstairs, different map entirely
+	ChunkBiomes chunkBiomes;
 	int playerLevel = 0; //0 is ground, 1 is upstairs, -1 is underground
 	std::vector<Vector2_I> line;
 	weather currentWeather;
@@ -90,6 +95,7 @@ public:
 	void PlaceStructure(Vector2_I startingChunk, std::string structure, Vector2_I dimensions, Vector2_I corner);
 	void GenerateTomb(std::shared_ptr<Chunk> chunk);
 	std::vector<Vector2_I> GetLine(Vector2_I startTile, Vector2_I endTile, int limit);
+	std::vector<Vector2_I> GetLineObscured(Vector2_I startTile, Vector2_I endTile, int limit);
 	std::vector<Vector2_I> GetSquare(Vector2_I centerTile, int size);
 	std::vector<Vector2_I> GetSquareEdge(Vector2_I centerTile, int size);
 	std::vector<Vector2_I> GetCircle(Vector2_I centerPoint, int size);
@@ -179,17 +185,21 @@ void Map::SetupNoise(int l_seed, int b_seed, int m_seed) {
 
 void Map::CreateMap(int l_seed, int b_seed, int moisture)
 {
-	SetupNoise(l_seed, b_seed, moisture);
-	
-	UpdateMemoryZone(c_glCoords);
+	chunkBiomes.biomes.resize(30);
 
 	for (int i = 0; i < 30; i++)
 	{
 		for (int j = 0; j < 30; j++)
 		{
+			chunkBiomes.biomes[i].resize(30);
 			effectLayer.localCoords[i][j] = 0;
 		}
 	}
+
+	SetupNoise(l_seed, b_seed, moisture);
+	
+	UpdateMemoryZone(c_glCoords);
+
 }
 
 static void T_SaveChunks(std::shared_ptr<Chunk> chunk, std::string currentSaveName) {
@@ -251,6 +261,36 @@ void Map::UpdateMemoryZone(Vector2_I coords) {
 	}
 
 	UnloadChunks(chunksToDelete);
+
+	int firstX = 0;
+	int firstY = 0;
+
+	for (int i = -15; i < 15; i++)
+	{
+		for (int b = -15; b < 15; b++)
+		{
+			int bonusX = (coords.x + i) * CHUNK_WIDTH;
+			int bonusY = (coords.y + b) * CHUNK_HEIGHT;
+			float curTemp = biomeTempNoise.GetNoise((bonusX) * 0.1, (bonusY) * 0.1);
+			float curMois = biomeMoistureNoise.GetNoise((bonusX) * 0.1, (bonusY) * 0.1);
+			curTemp = (curTemp + 1) / 2;
+			curMois = (curMois + 1) / 2;
+			biome currentBiome = urban;
+
+			if (curTemp < tempMin) {
+				if (curMois < moistureMin) { currentBiome = grassland; }
+				else { currentBiome = taiga; }
+			}
+			else {
+				if (curMois < moistureMin) { currentBiome = desert; }
+				else { currentBiome = swamp; }
+			}
+			chunkBiomes.biomes[firstX][firstY] = currentBiome;
+			firstY++;
+		}
+		firstX++;
+		firstY = 0;
+	}
 	
 }
 
@@ -1577,6 +1617,53 @@ std::vector<Vector2_I> Map::GetLine(Vector2_I startTile, Vector2_I endTile, int 
 	for (int i = 0; i <= limited; i++)
 	{
 		//if (GetTileAtPos(new Vector2(x, y)) == null) return tilesLine;
+
+		lineList.push_back({ x, y });
+
+		numerator += shortest;
+		if (!(numerator < longest))
+		{
+			numerator -= longest;
+			x += dx1;
+			y += dy1;
+		}
+		else
+		{
+			x += dx2;
+			y += dy2;
+		}
+	}
+	return lineList;
+}
+
+std::vector<Vector2_I> Map::GetLineObscured(Vector2_I startTile, Vector2_I endTile, int limit) {
+	std::vector<Vector2_I> lineList;
+	int x = startTile.x;
+	int y = startTile.y;
+	int w = endTile.x - x;
+	int h = endTile.y - y;
+	int dx1 = 0, dy1 = 0, dx2 = 0, dy2 = 0;
+	if (w < 0) dx1 = -1; else if (w > 0) dx1 = 1;
+	if (h < 0) dy1 = -1; else if (h > 0) dy1 = 1;
+	if (w < 0) dx2 = -1; else if (w > 0) dx2 = 1;
+	int longest = abs(w);
+	int shortest = abs(h);
+	if (!(longest > shortest))
+	{
+		longest = abs(h);
+		shortest = abs(w);
+		if (h < 0) dy2 = -1; else if (h > 0) dy2 = 1;
+		dx2 = 0;
+	}
+	int numerator = longest >> 1;
+	int limited = std::min(longest, limit);
+	for (int i = 0; i <= limited; i++)
+	{
+		if (!GetTileFromThisOrNeighbor({ x, y })->walkable) {
+			lineList.clear();
+			lineList.push_back({ -99,-99 });
+			return lineList;
+		}
 
 		lineList.push_back({ x, y });
 

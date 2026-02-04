@@ -52,6 +52,12 @@ namespace antibox {
 		}
 	}
 
+	namespace Text {
+		void AddFont(const std::string& filepath, const std::string& fontname) {
+			antibox::Engine::Instance().AddFont(filepath, fontname);
+		}
+	}
+
 	namespace Audio {
 		//Between 0f and 1f.
 		void SetVolume(float vol) { antibox::Engine::Instance().SetVolume(vol); }

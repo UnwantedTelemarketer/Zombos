@@ -489,10 +489,10 @@ struct Entity {
 
 		if (strongest < 2.f) {
 			if (faction->name == "Human_W") {
-				message = npcMessages.at("CALM_WANDERER")[Math::RandInt(0, 7)];
+				message = npcMessages.at("WANDERER_CALM")[Math::RandInt(0, 7)];
 			}
 			else if (faction->name == "Farmer") {
-				message = npcMessages.at("CALM_FARMER")[Math::RandInt(0, 3)];
+				message = npcMessages.at("FARMER_CALM")[Math::RandInt(0, 3)];
 			}
 		}
 		else if (std::abs(h) == strongest) {

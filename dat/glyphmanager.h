@@ -14,7 +14,7 @@ public:
 	void LoadGlyphs();
 	const std::string& getGlyph(const std::string& id);
 	std::string convert(char32_t codepoint);
-
+	const std::map<std::string, std::string>& getAllGlyphs();
 };
 
 void GlyphManager::LoadGlyphs() {
@@ -94,4 +94,8 @@ std::string GlyphManager::convert(char32_t codepoint) {
 	}
 
 	return out;
+}
+
+const const std::map<std::string, std::string>& GlyphManager::getAllGlyphs() {
+	return glyphs;
 }
