@@ -12,32 +12,35 @@ namespace antibox {
 	struct Vector3;
 }
 
+#define ConsoleLog(message, type) Console::Log(message, type, __FILE__, __LINE__)
+
 namespace Console {
 
 	extern std::vector<std::string> allLogs;
 
 	//Logs a message to the command prompt. ERROR is red, WARNING is yellow, SUCCESS is green, LOG is white.
 	void Log(std::string message, textColor type, int lineNum);
+	void Log(std::string message, textColor type, const char* file, int lineNum);
 	//void Log(unsigned char* message, textColor type, int lineNum);
 
-	void Log(const char* message, textColor type, int lineNum);
+	void Log(const char* message, textColor type, const char* file, int lineNum);
 
-	void Log(uint32_t message, textColor type, int lineNum);
-	void Log(int number, textColor type, int lineNum);
-	void Log(double number, textColor type, int lineNum);
-	void Log(bool tf, textColor type, int lineNum);
+	void Log(uint32_t message, textColor type, const char* file, int lineNum);
+	void Log(int number, textColor type, const char* file, int lineNum);
+	void Log(double number, textColor type, const char* file, int lineNum);
+	void Log(bool tf, textColor type, const char* file, int lineNum);
 
-	void Log(void* pointer, textColor type, int lineNum);
+	void Log(void* pointer, textColor type, const char* file, int lineNum);
 
-	void Log(std::vector<std::string> list, textColor type, int lineNum);
-	void Log(antibox::Vector2 vec, textColor type, int lineNum);
-	void Log(antibox::Vector2_I vec, textColor type, int lineNum);
-	void Log(antibox::Vector3 vec3, textColor type, int lineNum);
+	void Log(std::vector<std::string> list, textColor type, const char* file, int lineNum);
+	void Log(antibox::Vector2 vec, textColor type, const char* file, int lineNum);
+	void Log(antibox::Vector2_I vec, textColor type, const char* file, int lineNum);
+	void Log(antibox::Vector3 vec3, textColor type, const char* file, int lineNum);
 
 	//template <typename T, typename T2>
 	//void Log(std::pair<T, T2> pair, textColor type, int lineNum);
 
-	void Log(std::pair<std::string, std::string> pair, textColor type, int lineNum);
+	void Log(std::pair<std::string, std::string> pair, textColor type, const char* file, int lineNum);
 }
 
 #ifndef GEN_CONS_OUT

@@ -41,7 +41,7 @@ void GlyphManager::LoadGlyphs() {
 	//read each section
 	for (auto const& sect : glyphSections)
 	{
-		Console::Log(sect, LOG, __LINE__);
+		ConsoleLog(sect, LOG);
 		OpenedData spriteData;
 		ItemReader::GetDataFromFile("glyphs.eid", sect, &spriteData);
 
@@ -64,7 +64,7 @@ void GlyphManager::LoadGlyphs() {
 		}
 	}
 
-	Console::Log("Finished loading glyphs!", SUCCESS, __LINE__);
+	ConsoleLog("Finished loading glyphs!", SUCCESS);
 }
 
 const std::string& GlyphManager::getGlyph(const std::string& id) {

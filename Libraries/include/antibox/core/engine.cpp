@@ -37,9 +37,8 @@ namespace antibox
 		window->init(props);
 		mRenderManager.Init();
 		mApp->Init();
-		Console::Log(mAudio->init(), text::red, __LINE__);
+		ConsoleLog(mAudio->init(), text::red);
 		prevtime = glfwGetTime();
-
 	}
 
 	void Engine::InitializeApp(App* app) {
@@ -83,7 +82,7 @@ namespace antibox
 		std::ofstream myfile("output_log.txt");
 		for (size_t i = 0; i < Console::allLogs.size(); i++)
 		{
-			myfile << Console::allLogs[i];
+			myfile << Console::allLogs[i] << "\n";
 		}
 		myfile.close();
 	}
@@ -171,7 +170,7 @@ namespace antibox
 					*pack->valToChange = Math::Lerp(normalizedTime, pack->startingVal, pack->endVal);
 				}
 				else{
-					Console::Log(currentPack->first + " is nullptr. Removing from lerp stack...", ERROR, __LINE__);
+					ConsoleLog(currentPack->first + " is nullptr. Removing from lerp stack...", ERROR);
 					currentPack = floatsToLerp.erase(currentPack);
 					++currentPack;
 					continue;
@@ -195,7 +194,7 @@ namespace antibox
 						*currentBool->second.valToChange = !*currentBool->second.valToChange;
 					}
 					else {
-						Console::Log(currentBool->first + " is nullptr. Removing from bool stack...", ERROR, __LINE__);
+						ConsoleLog(currentBool->first + " is nullptr. Removing from bool stack...", ERROR);
 					}
 					currentBool = boolsToChange.erase(currentBool);
 				}
@@ -210,11 +209,6 @@ namespace antibox
 
 		mApp->Update(); //users update function
 
-		//Update all scenes added to the game
-		/*for (int i = 0; i < mScenes.size(); i++)
-		{
-			mScenes[i]->UpdateObjs();
-		}*/
 		if (mScenes.size() != 0) {
 			mScenes[currentSceneID]->UpdateObjs();
 		}
@@ -235,6 +229,7 @@ namespace antibox
 		}
 
 		window->EndRender(); //Window end render.
+		
 	}
 
 	void Engine::End() {
@@ -249,12 +244,12 @@ namespace antibox
 	bool Engine::AddScene(Scene* sc) {
 		try {
 			mScenes.push_back(sc);
-			Console::Log("Succesfully added scene named '" + sc->GetSceneName() + "' to engine.", "\033[1;32m", __LINE__);
+			ConsoleLog("Succesfully added scene named '" + sc->GetSceneName() + "' to engine.", "\033[1;32m");
 			return true;
 		}
 		catch (std::exception e) {
-			Console::Log("ERROR: Failed to add scene '" + sc->GetSceneName() + "'. Details below.", text::red, __LINE__);
-			Console::Log(e.what(), text::red, __LINE__);
+			ConsoleLog("ERROR: Failed to add scene '" + sc->GetSceneName() + "'. Details below.", text::red);
+			ConsoleLog(e.what(), text::red, __LINE__);
 			return false;
 		}
 	}

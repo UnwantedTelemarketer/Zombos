@@ -1,66 +1,43 @@
-[ Line 185 ]: [0;33mLoading Items from files...[0m
-[ Line 200 ]: [0;37mitems/clothing.eid[0m
-[ Line 200 ]: [0;37mitems/cosmetic_tools.eid[0m
-[ Line 200 ]: [0;37mitems/crafted_materials.eid[0m
-[ Line 200 ]: [0;37mitems/custom/custom_items.eid[0m
-[ Line 200 ]: [0;37mitems/decoration.eid[0m
-[ Line 200 ]: [0;37mitems/droppable.eid[0m
-[ Line 200 ]: [0;37mitems/food.eid[0m
-[ Line 131 ]: [1;31mERROR: attributes for item 'Bottled Alcohol' need to be in groups of 4 (name, active, amount, extraInfo).[0m
-[ Line 200 ]: [0;37mitems/materials.eid[0m
-[ Line 200 ]: [0;37mitems/misc.eid[0m
-[ Line 200 ]: [0;37mitems/nature_items.eid[0m
-[ Line 200 ]: [0;37mitems/survival_items.eid[0m
-[ Line 200 ]: [0;37mitems/trade_valuables.eid[0m
-[ Line 200 ]: [0;37mitems/weapons.eid[0m
-[ Line 209 ]: [1;32mLoaded Items![0m
-[ Line 87 ]: [0;33mLoading Tiles from files...[0m
-[ Line 96 ]: [0;37mtiles.eid[0m
-[ Line 106 ]: [1;32mLoaded Tiles![0m
-[ Line 252 ]: [1;32mSuccesfully added scene named 'TEST' to engine.[0m
-[ Line 79 ]: [1;32mLoaded texture from res/logo.png.[0m
-[ Line 10 ]: [1;32mSuccesfully created object Box[0m
-[ Line 131 ]: [0;33mLoading dialogue...[0m
-[ Line 177 ]: [0;37mFARMER_CALM[0m
-[ Line 177 ]: [0;37mWANDERER_CALM[0m
-[ Line 177 ]: [0;37mHAPPY_WANDERER[0m
-[ Line 177 ]: [0;37mANGRY_WANDERER[0m
-[ Line 177 ]: [0;37mAFRAID_WANDERER[0m
-[ Line 177 ]: [0;37mBRAVE_WANDERER[0m
-[ Line 177 ]: [0;37mTRUST_WANDERER[0m
-[ Line 177 ]: [0;37mUNTRUST_WANDERER[0m
-[ Line 196 ]: [1;32mFinished loading dialogue![0m
-[ Line 134 ]: [0;33mLoading glyphs...[0m
-[ Line 44 ]: [0;37mGENERAL[0m
-[ Line 44 ]: [0;37mEFFECTS[0m
-[ Line 44 ]: [0;37mENTITIES[0m
-[ Line 44 ]: [0;37mTILES[0m
-[ Line 44 ]: [0;37mITEMS[0m
-[ Line 67 ]: [1;32mFinished loading glyphs![0m
-[ Line 1990 ]: [1;32mDone![0m
-[ Line 40 ]: [1;31m0[0m
-[ Line 354 ]: [1;32mNew save created successfully![0m
-[ Line 278 ]: [1;31mAttempting to read from file 'dat/saves/attr test 3/entities/names.eid', but can't find file.[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/leaders/11861.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/leaders/29376.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/leaders/28079.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/leaders/11885.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/26074.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/30545.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/31461.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/16767.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/7204.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/10358.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/18046.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/7080.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/18191.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/11003.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/28584.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/9034.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/6989.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/31457.eid[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/694.eid[0m
-[ Line -1 ]: [0;37mNow saving...[0m
-[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/save.eid[0m
-[ Line 278 ]: [1;31mAttempting to read from file 'dat/saves/attr test 3/entities/names.eid', but can't find file.[0m
-[ Line 226 ]: [1;32mSave complete in 18.925564ms.[0m
+[ C:\dev\C++\antibox_cmake\dat\items.h:185 ] Loading Items from files...
+[ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/clothing.eid
+[ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/cosmetic_tools.eid
+[ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/crafted_materials.eid
+[ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/custom/custom_items.eid
+[ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/decoration.eid
+[ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/droppable.eid
+[ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/food.eid
+[ C:\dev\C++\antibox_cmake\dat\entities.h:131 ] ERROR: attributes for item 'Bottled Alcohol' need to be in groups of 4 (name, active, amount, extraInfo).
+[ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/materials.eid
+[ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/misc.eid
+[ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/nature_items.eid
+[ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/survival_items.eid
+[ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/trade_valuables.eid
+[ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/weapons.eid
+[ C:\dev\C++\antibox_cmake\dat\items.h:208 ] Loaded Items!
+[ C:\dev\C++\antibox_cmake\dat\items.h:87 ] Loading Tiles from files...
+[ C:\dev\C++\antibox_cmake\dat\items.h:96 ] tiles.eid
+[ C:\dev\C++\antibox_cmake\dat\items.h:106 ] Loaded Tiles!
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox\core\engine.cpp:247 ] Succesfully added scene named 'TEST' to engine.
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox\graphics\texture.cpp:79 ] Loaded texture from res/logo.png.
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox\objects\scene.cpp:10 ] Succesfully created object Box
+[ C:\dev\C++\antibox_cmake\dat/Game.h:139 ] Loading sounds...
+[ C:\dev\C++\antibox_cmake\dat/Game.h:145 ] Sounds Loaded!
+[ C:\dev\C++\antibox_cmake\dat/Game.h:147 ] Loading dialogue...
+[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] FARMER_CALM
+[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] WANDERER_CALM
+[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] HAPPY_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] ANGRY_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] AFRAID_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] BRAVE_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] TRUST_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] UNTRUST_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:212 ] Finished loading dialogue!
+[ C:\dev\C++\antibox_cmake\dat/Game.h:150 ] Loading glyphs...
+[ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] GENERAL
+[ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] EFFECTS
+[ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] ENTITIES
+[ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] TILES
+[ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] ITEMS
+[ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:67 ] Finished loading glyphs!
+[ C:\dev\C++\antibox_cmake\main.cpp:1991 ] Done!
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox\core\engine.cpp:40 ] 0

@@ -50,6 +50,11 @@ namespace antibox {
 		void RemoveLerp(std::string id) {
 			antibox::Engine::Instance().RemoveLerp(id);
 		}
+
+		//Enable or disable the visibility of the engine's console.
+		void ToggleConsoleVisible() {
+			antibox::Engine::Instance().window->ToggleConsoleVisible();
+		}
 	}
 
 	namespace Text {
@@ -90,57 +95,55 @@ namespace antibox {
 	namespace Editor {
 		//Adds a scene full of gameobjects to the editor. (Think of it as a base node)
 		void AddScene(Scene* scene) { Engine::Instance().AddScene(scene); }
-
-
 	}
+}
 
 #ifndef INPUT_FUNCS
 
 #define INPUT_FUNCS 
-	namespace Input {
+namespace Input {
 
-		//Returns true if the key is held, false if not.
-		bool KeyHeldDown(int keycode) { return glfwGetKey(antibox::Engine::Instance().GetWindow()->glfwin(), keycode); }
+	//Returns true if the key is held, false if not.
+	bool KeyHeldDown(int keycode) { return glfwGetKey(antibox::Engine::Instance().GetWindow()->glfwin(), keycode); }
 
 
-		//Returns true if the mouse button is held, false if not.
-		bool MouseButtonHeld(int mouseButton) { return glfwGetMouseButton(antibox::Engine::Instance().GetWindow()->glfwin(), mouseButton); }
+	//Returns true if the mouse button is held, false if not.
+	bool MouseButtonHeld(int mouseButton) { return glfwGetMouseButton(antibox::Engine::Instance().GetWindow()->glfwin(), mouseButton); }
 
-		//Returns true if the key is pressed once, false if not.
-		bool KeyDown(int keycode) {
-			int state = glfwGetKey(antibox::Engine::Instance().GetWindow()->glfwin(), keycode); //glfw getting mouse down
-			if (state == GLFW_PRESS && !KD_FLAG) { //if we pressed a key and we dont have one held down
-				KD_CODE = keycode; //save this specific key
-				KD_FLAG = true; //flag that we're holding one down
-				return true; 
-			}
-			else if (state == GLFW_RELEASE && KD_FLAG) { //otherwise if they let go of a key AND we are previously holding one
-				if (KD_CODE != keycode) { return false; } //if the key we let up isnt the one we're holding down
-				KD_FLAG = false; //let go
-				return false;
-			}
+	//Returns true if the key is pressed once, false if not.
+	bool KeyDown(int keycode) {
+		int state = glfwGetKey(antibox::Engine::Instance().GetWindow()->glfwin(), keycode); //glfw getting mouse down
+		if (state == GLFW_PRESS && !KD_FLAG) { //if we pressed a key and we dont have one held down
+			KD_CODE = keycode; //save this specific key
+			KD_FLAG = true; //flag that we're holding one down
+			return true;
+		}
+		else if (state == GLFW_RELEASE && KD_FLAG) { //otherwise if they let go of a key AND we are previously holding one
+			if (KD_CODE != keycode) { return false; } //if the key we let up isnt the one we're holding down
+			KD_FLAG = false; //let go
 			return false;
 		}
-
-		//Returns true if the mouse button is pressed once, false if not.
-		bool MouseButtonDown(int mouseButton) {
-			int state = glfwGetMouseButton(antibox::Engine::Instance().GetWindow()->glfwin(), mouseButton); //glfw getting mouse down
-			if (state == GLFW_PRESS && !MD_FLAG) {
-				MD_FLAG = true;
-				return true;
-			}
-			else if (state == GLFW_RELEASE && MD_FLAG) {
-				MD_FLAG = false;
-				return false;
-			}
-			return false;
-		}
-
+		return false;
 	}
+
+	//Returns true if the mouse button is pressed once, false if not.
+	bool MouseButtonDown(int mouseButton) {
+		int state = glfwGetMouseButton(antibox::Engine::Instance().GetWindow()->glfwin(), mouseButton); //glfw getting mouse down
+		if (state == GLFW_PRESS && !MD_FLAG) {
+			MD_FLAG = true;
+			return true;
+		}
+		else if (state == GLFW_RELEASE && MD_FLAG) {
+			MD_FLAG = false;
+			return false;
+		}
+		return false;
+	}
+
+}
 
 #endif
 
-}
 
 
 class VisualEditor : public antibox::App {

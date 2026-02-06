@@ -128,7 +128,7 @@ struct Item {
 		auto attributesList = item.getArray("attributes");
 
 		if (attributeListSize % 4 != 0) {
-			Console::Log("ERROR: attributes for item '" + name + "' need to be in groups of 4 (name, active, amount, extraInfo).", text::red, __LINE__);
+			ConsoleLog("ERROR: attributes for item '" + name + "' need to be in groups of 4 (name, active, amount, extraInfo).", text::red);
 		}
 		else {
 			for (int i = 0; i < attributeListSize; i += 4)
@@ -180,7 +180,7 @@ struct Item {
 
 		try {
 			if (item.getArray("spriteColor").size() <= 0) {
-				Console::Log("ERROR: spriteColor for item '" + name + "' needs 3 values.", text::red, __LINE__);
+				ConsoleLog("ERROR: spriteColor for item '" + name + "' needs 3 values.", text::red);
 				spriteColor = { 1,0,1 };
 			}
 			else {
@@ -190,7 +190,7 @@ struct Item {
 			}
 		}
 		catch (std::exception e) {
-			Console::Log("ERROR: Couldn't find spriteColor parameter for item '" + name + "'.", text::red, __LINE__);
+			ConsoleLog("ERROR: Couldn't find spriteColor parameter for item '" + name + "'.", text::red);
 			spriteColor = { 1,0,1 };
 		}
 

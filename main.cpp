@@ -146,7 +146,7 @@ public:
 
 	void SaveCurrentGame() {
 		float curTime = glfwGetTime();
-		LAZY_LOG("Now saving...");
+		ConsoleLog("Now saving...", SUCCESS);
 		SaveData dat;
 
 		//save settings and basic player data
@@ -223,7 +223,7 @@ public:
 
 		float endTime = glfwGetTime() - curTime;
 
-		Console::Log("Save complete in " + std::to_string(endTime * 1000) + "ms.", text::green, __LINE__);
+		ConsoleLog("Save complete in " + std::to_string(endTime * 1000) + "ms.", text::green);
 	}
 
 	void SettingsScreen() {
@@ -351,7 +351,7 @@ public:
 					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/entities");
 					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/entities/unique");
 					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/entities/leaders");
-					Console::Log("New save created successfully!", SUCCESS, __LINE__);
+					ConsoleLog("New save created successfully!", SUCCESS);
 
 					game.Setup(10, 10, 0.5f);
 					game.CreateWorldFactions();
@@ -359,7 +359,7 @@ public:
 					gameScreen.createChar = true;
 				}
 				else {
-					Console::Log("Failed to create save or save exists!", ERROR, __LINE__);
+					ConsoleLog("Failed to create save or save exists!", ERROR);
 				}
 			}
 			ImGui::End();
@@ -1927,8 +1927,9 @@ public:
 				ImGui::Text(item->getAttribute(selectedAttribute)->extraInfo.c_str());
 			}
 		}
-
 		ImGui::End();
+
+		
 	}
 
 	//---------------------------------------------BASE FUNCTIONS---------------------------------------------
@@ -1972,7 +1973,7 @@ public:
 		Text::AddFont(fontPath, "main");*/
 
 		if (!DoesDirectoryExist("dat/saves")) {
-			Console::Log("Save folder does not exist. Creating new...", text::white, __LINE__);
+			ConsoleLog("Save folder does not exist. Creating new...", text::white);
 			CreateNewDirectory("dat/saves/");
 		}
 
@@ -1987,13 +1988,17 @@ public:
 
 		//itemLoading.join();
 		//tileLoading.join();
-		Console::Log("Done!", text::green, __LINE__);
+		ConsoleLog("Done!", text::green);
 		//Audio::PlayLoop("dat/sounds/music/night_zombos.wav", "menu");
 
 	}
 
 	void Update() override
 	{
+		if (Input::KeyDown(KEY_END)) {
+			Utilities::ToggleConsoleVisible();
+		}
+
 		bool moved = false;
 		colChangeTime += Utilities::deltaTime() / 1000;
 		if (colChangeTime >= 1.f) {
@@ -2027,7 +2032,7 @@ public:
 
 		if (gameScreen.console_showing) {
 			if (Input::KeyDown(KEY_ENTER)) {
-				Console::Log(console_commands, text::green, __LINE__);
+				ConsoleLog(console_commands, text::green);
 				cmd.RunCommand(console_commands, &game);
 				console_commands[0] = '\0';
 				prevCommandIndex = -1;

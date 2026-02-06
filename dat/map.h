@@ -3,11 +3,11 @@
 #include "fastnoiselite/FastNoiseLite.h"
 #include "antibox/core/antibox.h"
 #include "antibox/managers/factory.h"
+#include "antibox/objects/tokenizer.h"
 
 #include "items.h"
 #include "nameGenerate.cpp"
 #include "inventory.h"
-#include "antibox/objects/tokenizer.h"
 #include <algorithm>
 #include <cmath>
 #include <thread>
@@ -352,7 +352,7 @@ void Map::SetWeather(weather we) {
 }
 
 void Map::ReadChunk(Vector2_I curChunk, std::string path) {
-	Console::Log("Reading Chunk from " + path, text::green, __LINE__);
+	ConsoleLog("Reading Chunk from " + path, text::green);
 	std::shared_ptr<Chunk> tempChunk = std::make_shared<Chunk>();
 	tempChunk->globalChunkCoord = curChunk;
 	tempChunk->LoadChunk(curChunk, currentSaveName);

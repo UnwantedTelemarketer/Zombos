@@ -8,8 +8,6 @@
 #include <filesystem>
 //#include <boost/algorithm/string.hpp>
 
-#define LAZY_LOG(thing) Console::Log(thing, text::white, -1);
-
 using namespace antibox;
 
 static bool fileExists(const char* filePath) {
@@ -275,7 +273,7 @@ public:
 		new_filepath.append(filepath);
 
 		if (!std::filesystem::exists(new_filepath)) {
-			Console::Log("Attempting to read from file '" + new_filepath + "', but can't find file.", ERROR, __LINE__);
+			ConsoleLog("Attempting to read from file '" + new_filepath + "', but can't find file.", ERROR);
 			return false;
 		}
 
@@ -286,7 +284,7 @@ public:
 		bool shouldWrite = false;
 
 		if (!file.is_open()) {
-			Console::Log("Failed to open file.", ERROR, __LINE__);
+			ConsoleLog("Failed to open file.", ERROR);
 			return false;
 		}
 
@@ -376,7 +374,7 @@ public:
 		myfile << dat;
 		myfile.close();
 
-		if(logSuccess) Console::Log("Wrote to file " + filename, text::green, __LINE__);
+		if(logSuccess) ConsoleLog("Wrote to file " + filename, text::green);
 	}
 };
 

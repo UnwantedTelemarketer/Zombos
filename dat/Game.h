@@ -17,6 +17,11 @@ struct classes {
 	std::vector<int> itemCounts;
 };
 
+struct GameSettings {
+	std::string dayMusic;
+	std::string nightMusic;
+};
+
 enum timeOfDay {day, night};
 
 class GameManager {
@@ -36,6 +41,7 @@ public:
 	bool freeView = false;
 	bool dormantMoon = false;
 	CraftingSystem Crafter;
+	GameSettings gSettings;
 	Map mainMap;
 	Player mPlayer;
 	Inventory pInv;
@@ -54,6 +60,7 @@ public:
 	float testTime;
 	bool startedMusicNight = false;
 	float reg_font_size = 16.f;
+
 
 	std::vector<std::string> sandWalk, grassWalk, rockWalk;
 
@@ -127,11 +134,20 @@ static void T_UpdateChunk(GameManager* gm, Vector2_I coords)
 
 void GameManager::LoadData() {
 	lerpingTo = urban;
+	
 
-	Console::Log("Loading dialogue...", WARNING, __LINE__);
+	ConsoleLog("Loading sounds...", WARNING);
+	OpenedData gameSetting;
+	ItemReader::GetDataFromFile("game_settings.eid", "SOUNDS", &gameSetting);
+	gSettings.dayMusic = "dat/sounds/" + gameSetting.getString("music_daytime");
+	gSettings.nightMusic = "dat/sounds/" + gameSetting.getString("music_nighttime");
+
+	ConsoleLog("Sounds Loaded!", SUCCESS);
+
+	ConsoleLog("Loading dialogue...", WARNING);
 	LoadMessages();
 
-	Console::Log("Loading glyphs...", WARNING, __LINE__);
+	ConsoleLog("Loading glyphs...", WARNING);
 	glyphs.LoadGlyphs();
 
 	factions.Create(FACTION_HUMAN);
@@ -174,17 +190,17 @@ void GameManager::LoadMessages() {
 			ItemReader::GetDataFromFile("dialogue/dialogue_trust.eid", messageTypes[i], &data);
 			break;
 		}
-		Console::Log(messageTypes[i], LOG, __LINE__);
+		ConsoleLog(messageTypes[i], LOG);
 		npcMessages.insert({ messageTypes[i], {} });
 		const int messagesSize = data.getInt("size");
 
 
 		if (messagesSize <= 0 || messageTypes.size() <= 0) {
-			Console::Log("'" + messageTypes[i] + "' size is invalid. (" + std::to_string(messagesSize) + ")", ERROR, __LINE__);
+			ConsoleLog("'" + messageTypes[i] + "' size is invalid. (" + std::to_string(messagesSize) + ")", ERROR);
 			continue;
 		}
 		else if (messagesSize >= 50 || messageTypes.size() >= 50) {
-			Console::Log("'" + messageTypes[i] + "' size is too large. (" + std::to_string(messagesSize) + ")", ERROR, __LINE__);
+			ConsoleLog("'" + messageTypes[i] + "' size is too large. (" + std::to_string(messagesSize) + ")", ERROR);
 			continue;
 		}
 
@@ -193,7 +209,7 @@ void GameManager::LoadMessages() {
 			npcMessages[messageTypes[i]].push_back(data.getString(std::to_string(x)));
 		}
 	}
-	Console::Log("Finished loading dialogue!", SUCCESS, __LINE__);
+	ConsoleLog("Finished loading dialogue!", SUCCESS);
 }
 
 void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1, int moisture = -1) {
@@ -786,7 +802,7 @@ void GameManager::MovePlayer(int dir) {
 	}
 	//moving down stairs
 	else if (mainMap.TileAtPos(mPlayer.coords)->id == 33) {
-		Audio::PlayLoop("dat/sounds/music/ambient12.wav", "ambient_day");
+		Audio::PlayLoop(gSettings.dayMusic, "ambient_day");
 		Audio::SetVolumeLoop(musicvolume, "ambient_day");
 		mainMap.playerLevel -= 1;
 	}
@@ -1073,7 +1089,7 @@ void GameManager::UpdateTick() {
 				if (!startedMusicNight) {
 					Audio::StopLoop("ambient_day");
 					Audio::PlayLoop("dat/sounds/crickets.mp3", "crickets");
-					Audio::PlayLoop("dat/sounds/music/night_zombos.wav", "night_music");
+					Audio::PlayLoop(gSettings.nightMusic, "night_music");
 					Audio::SetVolumeLoop(musicvolume, "night_music");
 					Audio::SetVolumeLoop(sfxvolume, "crickets");
 					startedMusicNight = true;
@@ -1090,7 +1106,7 @@ void GameManager::UpdateTick() {
 				mainMap.ResetLightValues();
 				Audio::StopLoop("night_music");
 				Audio::StopLoop("crickets");
-				Audio::PlayLoop("dat/sounds/music/ambient12.wav", "ambient_day");
+				Audio::PlayLoop(gSettings.dayMusic, "ambient_day");
 				Audio::SetVolumeLoop(musicvolume, "ambient_day");
 			}
 			else {
@@ -1235,7 +1251,7 @@ std::string GameManager::GetTileChar(Tile* tile) {
 		case ID_CHICKEN:
 			return glyphs.getGlyph("ent_chicken");
 		case ID_HUMAN:
-			if (tile->entity->faction->name == FACTION_BANDIT) {
+			if (tile->entity->faction != nullptr && tile->entity->faction->name == FACTION_BANDIT) {
 				return glyphs.getGlyph("ent_bandit");
 			}
 			return glyphs.getGlyph("ent_human");

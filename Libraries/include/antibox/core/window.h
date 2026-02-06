@@ -42,9 +42,11 @@ namespace antibox {
 		inline Framebuffer* GetFramebuffer() { return mFramebuffer.get(); }
 		inline void UseFramebuffer(bool tf) { showFramebuffer = tf; }
 		void GetScreenSize(int& w, int& h);
+		void ToggleConsoleVisible() { engineConsoleVisible = !engineConsoleVisible; }
 
 	private:
 		bool showFramebuffer = false;
+		bool engineConsoleVisible = false;
 		GLFWwindow* win;
 		unsigned int width;
 		unsigned int height;
