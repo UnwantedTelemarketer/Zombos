@@ -59,8 +59,6 @@ weight : 0.1;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
-cookable : true;
-cooksInto : "COOKED_FLAT_MUSHROOM";
 amount : 1;
 consumeTxt : "You eat a glowing mushroom.";
 useTxt : "you cannot use this.";
@@ -68,7 +66,11 @@ effects : [3,1,0,0];
 equipType : 0;
 sprite : "item_mushroom";
 spriteColor : [0.2, 0.37, 0.2];
-emissionDistance : 3;
+
+attributes : [
+	emmissive, true, 3, nthng,
+	cookable, true, 16, COOKED_FLAT_MUSHROOM
+	]
 }
 
 BASIC_FLOWER {
@@ -101,7 +103,10 @@ effects : [0,0,0,0];
 equipType : 0;
 sprite : "item_crystal";
 spriteColor : [0.85, 0.85, 0.0];
-emissionDistance : 3;
+
+attributes : [
+	emmissive, true, 3, nthng
+	]
 }
 
 SNOW {

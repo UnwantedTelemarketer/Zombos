@@ -47,10 +47,28 @@ struct ActionEffect {
 	EffectAmount onBodyUse;
 };
 
+struct itemAttribute 
+{
+	std::string attributeName;
+	bool active = true;
+	int amount = 0;
+	std::string extraInfo = "nthng";
+};
+
+static itemAttribute canBurnThings = { "canBurnThings" };
+static itemAttribute canMarkTiles = { "canMarkTiles" };
+static itemAttribute canTillTiles = { "canTillTiles" };
+static itemAttribute isWaterproof = { "isWaterproof"};
+static itemAttribute spoils = { "spoils" };
+static itemAttribute givesItemOnConsume = { "givesItemOnConsume" };
+static itemAttribute makesSoundOnUse = { "makesSoundOnUse" };
+static itemAttribute cookable = { "cookable" };
+static itemAttribute emmissive = { "emmissive" };
+
 //Name, ID, Stackable, Holds Liquid, Consumable, Count, Consume Text, Use Text
 struct Item {
-	std::string name, section, description, cooks_into;
-	bool stackable, holdsLiquid, consumable, cookable;
+	std::string name, section, description;
+	bool stackable, holdsLiquid, consumable;
 	int count = 1;
 	std::string consumeTxt, useTxt;
 
@@ -66,17 +84,16 @@ struct Item {
 	equipType eType = notEquip;
 	int mod = 0;
 	std::string sprite = "#";
-	int emissionDist = 0;
 	Vector3 spriteColor = {1,1,1};
 	float maxDurability = -1.f;
 	float durability = 0.f;
-	std::map<std::string, int> attributes;
-	std::string giveItemOnConsume = "nthng";
-	std::string customSound = "nthng";
+	std::unordered_map < std::string, itemAttribute > attributes;
 
-	bool waterproof = false;
-	bool marker = false;
-	bool canBurnThings = false;
+
+	itemAttribute* getAttribute(std::string attribute) {
+		if (attributes.count(attribute) == 0) { return nullptr; }
+		return &attributes[attribute];
+	}
 
 	void CoverIn(Liquid l, int ticks) {
 		coveredIn = l;
@@ -107,7 +124,25 @@ struct Item {
 		}
 		catch (std::exception e) { maxDurability = -1.f; }
 
-		try {
+		int attributeListSize = item.getArray("attributes").size();
+		auto attributesList = item.getArray("attributes");
+
+		if (attributeListSize % 4 != 0) {
+			Console::Log("ERROR: attributes for item '" + name + "' need to be in groups of 4 (name, active, amount, extraInfo).", text::red, __LINE__);
+		}
+		else {
+			for (int i = 0; i < attributeListSize; i += 4)
+			{
+				itemAttribute attr;
+				attr.attributeName = attributesList[i];
+				attr.active = to_bool(attributesList[i + 1]);
+				attr.amount = stoi(attributesList[i + 2]);
+				attr.extraInfo = attributesList[i + 3];
+				attributes.insert({ attr.attributeName, attr });
+			}
+		}
+
+		/*try {
 			 waterproof = item.getBool("waterproof");
 		}
 		catch (std::exception e) { waterproof = false; }
@@ -136,16 +171,17 @@ struct Item {
 			cookable = item.getBool("cookable");
 			cooks_into = item.getString("cooksInto");
 		}
-		catch (std::exception e) { cookable = false; }
+		catch (std::exception e) { cookable = false; }*/
 
-		try {
+		/*try {
 			emissionDist = item.getInt("emissionDistance");
 		}
-		catch (std::exception e) { emissionDist = 0; }
+		catch (std::exception e) { emissionDist = 0; }*/
 
 		try {
 			if (item.getArray("spriteColor").size() <= 0) {
-				spriteColor = { 1,0,0 };
+				Console::Log("ERROR: spriteColor for item '" + name + "' needs 3 values.", text::red, __LINE__);
+				spriteColor = { 1,0,1 };
 			}
 			else {
 				spriteColor.x = stof(item.getArray("spriteColor")[0]);
@@ -155,7 +191,7 @@ struct Item {
 		}
 		catch (std::exception e) {
 			Console::Log("ERROR: Couldn't find spriteColor parameter for item '" + name + "'.", text::red, __LINE__);
-			spriteColor = { 1,0,0 };
+			spriteColor = { 1,0,1 };
 		}
 
 		std::vector<std::string> effects = item.getArray("effects");
@@ -652,8 +688,9 @@ struct Player {
 		if (damageMode == 1 && health <= 0) { health = 1; }
 	}
 
-	void CheckStatus() {
+	bool CheckStatus() {
 		int prevHealth = health;
+		bool bled = false;
 		//hunger and thirst
 		//get more thirsty if the player is extra hot / sick
 		if (bodyTemp >= 99.5f) { thirstTick+=2; }
@@ -696,14 +733,17 @@ struct Player {
 			if (bleedingLevel == 1 && bleedTicks >= 40) {
 				bleedTicks = 0;
 				health -= 1;
+				bled = true;
 			}
 			else if (bleedingLevel == 2 && bleedTicks >= 20) {
 				bleedTicks = 0;
 				health -= 1;
+				bled = true;
 			}
 			else if (bleedingLevel == 3 && bleedTicks >= 2) {
 				bleedTicks = 0;
 				health -= 1;
+				bled = true;
 			}
 		}
 		healTick++;
@@ -733,6 +773,7 @@ struct Player {
 
 		if (damageMode == 2) { health = prevHealth; }
 		else if (damageMode == 1 && health <= 0) { health = 1; }
+		return bled;
 	}
 
 	//Covers them in but does some minor checks to clean you off and stuff

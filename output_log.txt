@@ -6,6 +6,7 @@
 [ Line 200 ]: [0;37mitems/decoration.eid[0m
 [ Line 200 ]: [0;37mitems/droppable.eid[0m
 [ Line 200 ]: [0;37mitems/food.eid[0m
+[ Line 131 ]: [1;31mERROR: attributes for item 'Bottled Alcohol' need to be in groups of 4 (name, active, amount, extraInfo).[0m
 [ Line 200 ]: [0;37mitems/materials.eid[0m
 [ Line 200 ]: [0;37mitems/misc.eid[0m
 [ Line 200 ]: [0;37mitems/nature_items.eid[0m
@@ -30,11 +31,36 @@
 [ Line 177 ]: [0;37mUNTRUST_WANDERER[0m
 [ Line 196 ]: [1;32mFinished loading dialogue![0m
 [ Line 134 ]: [0;33mLoading glyphs...[0m
-[ Line 36 ]: [0;37mGENERAL[0m
-[ Line 36 ]: [0;37mEFFECTS[0m
-[ Line 36 ]: [0;37mENTITIES[0m
-[ Line 36 ]: [0;37mTILES[0m
-[ Line 36 ]: [0;37mITEMS[0m
-[ Line 59 ]: [1;32mFinished loading glyphs![0m
-[ Line 1898 ]: [1;32mDone![0m
+[ Line 44 ]: [0;37mGENERAL[0m
+[ Line 44 ]: [0;37mEFFECTS[0m
+[ Line 44 ]: [0;37mENTITIES[0m
+[ Line 44 ]: [0;37mTILES[0m
+[ Line 44 ]: [0;37mITEMS[0m
+[ Line 67 ]: [1;32mFinished loading glyphs![0m
+[ Line 1990 ]: [1;32mDone![0m
 [ Line 40 ]: [1;31m0[0m
+[ Line 354 ]: [1;32mNew save created successfully![0m
+[ Line 278 ]: [1;31mAttempting to read from file 'dat/saves/attr test 3/entities/names.eid', but can't find file.[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/leaders/11861.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/leaders/29376.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/leaders/28079.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/leaders/11885.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/26074.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/30545.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/31461.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/16767.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/7204.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/10358.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/18046.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/7080.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/18191.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/11003.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/28584.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/9034.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/6989.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/31457.eid[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/entities/unique/694.eid[0m
+[ Line -1 ]: [0;37mNow saving...[0m
+[ Line 379 ]: [1;32mWrote to file dat/saves/attr test 3/save.eid[0m
+[ Line 278 ]: [1;31mAttempting to read from file 'dat/saves/attr test 3/entities/names.eid', but can't find file.[0m
+[ Line 226 ]: [1;32mSave complete in 18.925564ms.[0m

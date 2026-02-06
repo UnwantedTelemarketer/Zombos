@@ -15,10 +15,13 @@ amount : 1;
 consumeTxt : "You eat a bandage.";
 useTxt : "You wrap a bandage around your wound.";
 effects : [0,0,7,1];
-soundOnUse : "dat/sounds/bandage.mp3";
 equipType : 0;
 sprite : "item_bandage";
 spriteColor : [0.95, 0.95, 0.85];
+
+attributes : [
+	makesSoundOnUse, true, 0, dat/sounds/bandage.mp3
+	]
 }
 
 STERILE_CLOTH {
@@ -32,10 +35,13 @@ amount : 1;
 consumeTxt : "You eat a bandage.";
 useTxt : "You wrap a cloth around your wound.";
 effects : [0,0,7,1];
-soundOnUse : "dat/sounds/bandage.mp3";
 equipType : 0;
 sprite : "item_cloth";
 spriteColor : [0.95, 0.95, 0.85];
+
+attributes : [
+	makesSoundOnUse, true, 0, dat/sounds/bandage.mp3
+	]
 }
 
 LIGHTER {
@@ -53,9 +59,12 @@ effects : [0,0,4,35];
 equipType : 1;
 equipModifier : 2;
 durability : 30;
-canBurnThings : true;
 sprite : "item_lighter";
 spriteColor : [0.35, 0.35, 0.35];
+
+attributes : [
+	canBurnThings, true, 0, nthng
+	]
 }
 
 LIGHTER_EMPTY {
@@ -88,9 +97,12 @@ useTxt : "You light yourself on fire.";
 effects : [0,0,4,35];
 equipType : 1;
 equipModifier : 2;
-canBurnThings : true;
 sprite : "item_stick";
 spriteColor : [0.35, 0.35, 0.35];
+
+attributes : [
+	canBurnThings, true, 0, nthng
+	]
 }
 
 CANTEEN {
@@ -120,10 +132,13 @@ amount : 1;
 consumeTxt : "You feel awfully sick after eating the guts.";
 useTxt : "You smear the guts on yourself.";
 effects : [4,10,6,4];
-soundOnUse : "dat/sounds/squelch.mp3"
 equipType : 0;
 sprite : "item_guts";
 spriteColor : [0.65, 0.0, 0.0];
+
+attributes : [
+	makesSoundOnUse, true, 0, dat/sounds/squelch.mp3
+	]
 }
 
 GLASS_JAR {
@@ -158,7 +173,10 @@ equipType : 1;
 equipModifier : 1;
 sprite : "item_lantern";
 spriteColor : [0.65, 0.55, 0.5];
-emissionDistance : 5;
+
+attributes : [
+	emmissive, true, 5, nthng
+	]
 }
 
 GLOWING_MUSHROOM_JAR {
@@ -176,7 +194,10 @@ equipType : 1;
 equipModifier : 1;
 sprite : "item_lantern";
 spriteColor : [0.0, 0.50, 0.0];
-emissionDistance : 4;
+
+attributes : [
+	emmissive, true, 4, nthng
+	]
 }
 
 BEAR_TRAP {
@@ -223,11 +244,14 @@ amount : 1;
 consumeTxt : "You eat a bandage.";
 useTxt : "You wrap a bandage around your wound.";
 effects : [0,0,0,0];
-emissionDistance : 4;
 equipType : 1;
 equipModifier : 1;
 sprite : "item_stick";
 spriteColor : [0.95, 0.95, 0.85];
+
+attributes : [
+	emmissive, true, 4, nthng
+	]
 }
 
 MAKESHIFT_HOE {
@@ -245,6 +269,10 @@ equipType : 1;
 equipModifier : 1;
 sprite : "item_stick";
 spriteColor : [0.95, 0.95, 0.85];
+
+attributes : [
+	canTillTiles, true, 0, nthng
+	]
 }
 
 WATERING_CAN {

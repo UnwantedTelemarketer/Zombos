@@ -62,8 +62,6 @@ weight : 0.2;
 stackable : true;
 holdsLiquid : false;
 consumable : false;
-cookable : true;
-cooksInto : "MOLTEN_GLASS";
 amount : 1;
 consumeTxt : "Glass.";
 useTxt : "You cut yourself with a piece of glass.";
@@ -72,6 +70,10 @@ equipType : 1;
 equipModifier : 5;
 sprite : "item_scrap";
 spriteColor : [0.7, 0.7, 0.9];
+
+attributes : [
+	cookable, true, 32, MOLTEN_GLASS,
+	]
 }
 
 EMPTY_CAN {
@@ -152,10 +154,13 @@ amount : 1;
 consumeTxt : ".";
 useTxt : ".";
 effects : [0,0,7,0];
-soundOnUse : "dat/sounds/bandage.mp3";
 equipType : 0;
 sprite : "item_cloth"
 spriteColor : [1.0, 0.85, 0.80];
+
+attributes : [
+	makesSoundOnUse, true, 0, dat/sounds/bandage.mp3,
+	]
 }
 
 RESIN {

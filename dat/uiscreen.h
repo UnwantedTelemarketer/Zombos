@@ -22,6 +22,7 @@ struct GameUI {
 	bool minimapOpen = false;
 	bool largeMapOpen = false;
 	bool glyphViewerOpen = false;
+	bool itemViewerOpen = false;
 	std::map<std::string, UIPopup> popups;
 
 	void FlipScreens() {

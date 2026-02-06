@@ -942,9 +942,12 @@ void GameManager::UpdateTick() {
 
 
 	if (pInv.CurrentEquipExists(weapon)) {
-		int dist = pInv.equippedItems[weapon].emissionDist;
-		if (dist > 0) {
-			mainMap.floodFill(mPlayer.coords, dist, false);
+		itemAttribute* attr = pInv.equippedItems[weapon].getAttribute("emmissive");
+		if (attr != nullptr){
+			int dist = attr->amount;
+			if (dist > 0) {
+				mainMap.floodFill(mPlayer.coords, dist, false);
+			}
 		}
 	}
 
@@ -971,12 +974,19 @@ void GameManager::UpdateTick() {
 			}
 		}
 
+		Tile& playerTile = *mainMap.CurrentChunk()->GetTileAtCoords(mPlayer.coords);
+
 
 		//PlayerStatus (bleeding, sickness, hunger, thirst, drying off)
-		mPlayer.CheckStatus();
+		bool bled = mPlayer.CheckStatus();
+
+		if (bled) {
+			Math::PushBackLog(&actionLog, "You are bleeding.");
+			playerTile.SetLiquid(blood);
+		}
 
 		//if player stands in liquid, soak em.
-		Liquid tileLiquid = mainMap.CurrentChunk()->GetTileAtCoords(mPlayer.coords)->liquid;
+		Liquid tileLiquid = playerTile.liquid;
 		if (tileLiquid != nothing && tileLiquid != fire) {
 			if (!pInv.Waterproof(boots)) {
 				mPlayer.CoverIn(tileLiquid, Math::RandInt(10, 30));
@@ -985,7 +995,7 @@ void GameManager::UpdateTick() {
 
 		if (mainMap.currentWeather == rainy || mainMap.currentWeather == thunder) {
 			if (Math::RandInt(1, 7) == 2)  //random check
-			{									//									id 13 is indoors
+			{
 				if (!pInv.Waterproof(shirt) && !mainMap.TileAtPos(mPlayer.coords)->hasRoof) {
 					mPlayer.CoverIn(water, 15); //cover the player in it
 				}

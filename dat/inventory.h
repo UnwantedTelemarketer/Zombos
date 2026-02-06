@@ -121,7 +121,9 @@ public:
 			return false;
 		}
 		else {
-			return equippedItems[t].waterproof;
+			//we can assume if an item has the isWaterproof attribute, it is waterproof, because its not worth putting in if it was false
+			if (equippedItems[t].getAttribute("isWaterproof") == nullptr) { return false; }
+			return true;
 		}
 	}
 

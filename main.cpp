@@ -25,7 +25,7 @@ private:
 		OpenedData defaultFontName;
 		ItemReader::GetDataFromFile("game_settings.eid", "FONTS", &defaultFontName);
 
-		std::string fontPath = "dat/fonts/" + defaultFontName.getString("visual_font");
+		std::string fontPath = "dat/fonts/" + defaultFontName.getString("glyph_font");
 
 		Rendering::GetMonitorSize(monitorRes.x, monitorRes.y);
 
@@ -77,6 +77,8 @@ public:
 	bool deathScreen = false;
 	char saveNameSlot[128];
 	int selectedIndex = 0;
+	int selectedAttributeIndex = 0;
+	std::string selectedAttribute = "";
 	std::string selectedGlyph = "";
 
 	//Game Stuff
@@ -325,6 +327,12 @@ public:
 			if (ImGui::Button(gViewerStatus.c_str())) {
 				Audio::Play(sfxs["crunchy_click"]);
 				gameScreen.glyphViewerOpen = !gameScreen.glyphViewerOpen;
+			}
+
+			std::string iViewerStatus = gameScreen.itemViewerOpen ? "Close Item Viewer" : "Open Item Viewer";
+			if (ImGui::Button(iViewerStatus.c_str())) {
+				Audio::Play(sfxs["crunchy_click"]);
+				gameScreen.itemViewerOpen = !gameScreen.itemViewerOpen;
 			}
 			ImGui::End();
 		}
@@ -1183,8 +1191,9 @@ public:
 
 						//if its consumable, remove one. 
 						if (curItem.consumable) {
-							if (curItem.giveItemOnConsume != "nthng") {
-								pInv.AddItemByID(curItem.giveItemOnConsume);
+							itemAttribute* attr = curItem.getAttribute("giveItemOnConsume");
+							if (attr != nullptr) {
+								pInv.AddItemByID(attr->extraInfo);
 							}
 							//If its the last one, move the cursor so we dont get out of vector range
 							if (pInv.RemoveItem(curItem.section)) {
@@ -1205,7 +1214,8 @@ public:
 				{
 					if (pInv.AttemptAction(use, &curItem, &player))
 					{
-						if (curItem.customSound != "nthng") { Audio::Play(curItem.customSound); }
+						itemAttribute* attr = curItem.getAttribute("makesSoundOnUse");
+						if (attr != nullptr) { Audio::Play(attr->extraInfo); }
 						if (curItem.consumable) {
 							if (pInv.RemoveItem(curItem.section)) {
 								currentItemIndex--;
@@ -1588,50 +1598,61 @@ public:
 			}
 
 			if (ImGui::CollapsingHeader("Additional Options")) {
-				//only light fires if we are holding a lighter or match
-				if (pInv.CurrentEquipExists(weapon) && pInv.equippedItems[weapon].canBurnThings) {
-					if (ImGui::Button("Burn Tile")) {
-						selectedTile->liquid = fire;
-						Audio::Play("dat/sounds/start_fire.mp3");
-						map.floodFill(selectedTile->coords, 5, false);
+				if (pInv.CurrentEquipExists(weapon)) {
 
-						std::string itemName = pInv.equippedItems[weapon].section;
-						if (pInv.equippedItems[weapon].consumable) {
-							pInv.Unequip(weapon);
-							pInv.RemoveItem(itemName);
-						}
+					//only light fires if we are holding a lighter or match
+					itemAttribute* burnAttr = pInv.equippedItems[weapon].getAttribute("canBurnThings");
+					if (burnAttr != nullptr) {
+						if (ImGui::Button("Burn Tile")) {
+							selectedTile->liquid = fire;
+							Audio::Play("dat/sounds/start_fire.mp3");
+							map.floodFill(selectedTile->coords, 5, false);
 
-						else if (pInv.equippedItems[weapon].maxDurability != -1.f) {
-							pInv.equippedItems[weapon].durability -= 1;
-							if (pInv.equippedItems[weapon].durability <= 0) {
+							std::string itemName = pInv.equippedItems[weapon].section;
+							if (pInv.equippedItems[weapon].consumable) {
 								pInv.Unequip(weapon);
-								pInv.RemoveItem("LIGHTER");
-								pInv.AddItemByID("LIGHTER_EMPTY");
+								pInv.RemoveItem(itemName);
+							}
+
+							else if (pInv.equippedItems[weapon].maxDurability != -1.f) {
+								pInv.equippedItems[weapon].durability -= 1;
+								if (pInv.equippedItems[weapon].durability <= 0) {
+									pInv.Unequip(weapon);
+									pInv.RemoveItem("LIGHTER");
+									pInv.AddItemByID("LIGHTER_EMPTY");
+								}
 							}
 						}
 					}
 				}
 
-				//only mark tile if we are holding something that marks
-				if (pInv.CurrentEquipExists(weapon) && pInv.equippedItems[weapon].marker) {
-					if (ImGui::Button("Mark Tile")) {
-						Audio::Play("dat/sounds/chalk.mp3");
-						selectedTile->tileColor = pInv.equippedItems[weapon].spriteColor;
-						pInv.equippedItems[weapon].durability -= 1;
-						if (pInv.equippedItems[weapon].durability <= 0) {
-							std::string name = pInv.equippedItems[weapon].name;
-							pInv.Unequip(weapon);
-							pInv.RemoveItem(name);
+				if (pInv.CurrentEquipExists(weapon)) {
+
+					//only mark tile if we are holding something that marks
+					itemAttribute* markAttr = pInv.equippedItems[weapon].getAttribute("canMarkTiles");
+					if (markAttr != nullptr) {
+						if (ImGui::Button("Mark Tile")) {
+							Audio::Play("dat/sounds/chalk.mp3");
+							selectedTile->tileColor = pInv.equippedItems[weapon].spriteColor;
+							pInv.equippedItems[weapon].durability -= 1;
+							if (pInv.equippedItems[weapon].durability <= 0) {
+								std::string name = pInv.equippedItems[weapon].name;
+								pInv.Unequip(weapon);
+								pInv.RemoveItem(name);
+							}
 						}
 					}
 				}
 
-				if (pInv.CurrentEquipExists(weapon) && pInv.equippedItems[weapon].section == "MAKESHIFT_HOE") {
+				if (pInv.CurrentEquipExists(weapon)) {
 
 					//we can only till grass
-					if (ImGui::Button("Till Tile") && selectedTile->tileSprite == "tile_grass") {
-						*selectedTile = Tiles::GetTileByID(35);
-						selectedTile->ticksNeeded = 120;
+					itemAttribute* tillAttr = pInv.equippedItems[weapon].getAttribute("canTillTiles");
+					if (tillAttr != nullptr) {
+						if (ImGui::Button("Till Tile") && selectedTile->tileSprite == "tile_grass") {
+							*selectedTile = Tiles::GetTileByID(35);
+							selectedTile->ticksNeeded = 120;
+						}
 					}
 				}
 
@@ -1835,6 +1856,77 @@ public:
 		ImGui::SameLine();
 		ImGui::Text(glyphs.getGlyph(selectedGlyph).c_str());
 		ImGui::PopFont();
+
+		ImGui::End();
+	}
+
+	void ItemViewer() {
+		ImGui::Begin("Item Data Viewer");
+
+		static std::vector<std::string> itemNames;
+		std::vector<std::string> attributeNames;
+
+		// Populate glyph names once
+		if (itemNames.empty()) {
+			for (const auto& pair : Items::list) {
+				itemNames.push_back(pair.first);
+			}
+		}
+
+		ImGui::Text("Select an item to view:");
+		if (ImGui::ListBox("Items", &selectedIndex,
+			[](void* data, int idx, const char** out_text) {
+				const auto& names = *static_cast<std::vector<std::string>*>(data);
+				*out_text = names[idx].c_str();
+				return true;
+			},
+			&itemNames, static_cast<int>(itemNames.size()), 12))
+		{
+			selectedGlyph = itemNames[selectedIndex];
+		}
+
+		Item* item = Items::GetItem_NoCopy(selectedGlyph);
+
+		attributeNames.clear();
+		for (const auto& pair : item->attributes) {
+			attributeNames.push_back(pair.first);
+		}
+
+		ImGui::Separator();
+		ImGui::Text("Display Name: %s", item->name.c_str());
+		ImGui::Text("ID: %s", item->section.c_str());
+		ImGui::Text("Description: %s", item->description.c_str());
+		ImGui::Text("Stackable: %s", item->stackable ? "Yes" : "No");
+		ImGui::Text("Holds Liquid: %s", item->holdsLiquid ? "Yes" : "No");
+		ImGui::Text("Consumable: %s", item->consumable ? "Yes" : "No");
+		ImGui::Text("Consume Text: %s", item->consumeTxt.c_str());
+		ImGui::Text("Use Text: %s", item->useTxt.c_str());
+		ImGui::Text("Weight: %.2f", item->weight);
+		ImGui::Text("Max Durability: %.2f", item->maxDurability);
+		ImGui::Text("Durability: %.2f", item->durability);
+		ImGui::Text("Initial Tick Time: %d", item->initialTickTime);
+
+		if (attributeNames.size() > 0) {
+			if (ImGui::ListBox("Attributes", &selectedAttributeIndex,
+				[](void* data, int idx, const char** out_text) {
+					const auto& names = *static_cast<std::vector<std::string>*>(data);
+					*out_text = names[idx].c_str();
+					return true;
+				},
+				&attributeNames, static_cast<int>(attributeNames.size()), 3))
+			{
+				selectedAttribute = attributeNames[selectedAttributeIndex];
+			}
+
+			if (item->getAttribute(selectedAttribute) != nullptr) {
+				ImGui::Text("Attribute Tag: %s", item->getAttribute(selectedAttribute)->attributeName);
+				ImGui::Text("Active: %s", item->getAttribute(selectedAttribute)->active ? "Yes" : "No");
+				ImGui::Text("Amount: %d", item->getAttribute(selectedAttribute)->amount);
+				ImGui::Text("Extra Info: ");
+				ImGui::SameLine();
+				ImGui::Text(item->getAttribute(selectedAttribute)->extraInfo.c_str());
+			}
+		}
 
 		ImGui::End();
 	}
@@ -2095,7 +2187,12 @@ public:
 		SettingsScreen();
 
 		if (gameScreen.glyphViewerOpen) {
+			gameScreen.itemViewerOpen = false;
 			GlyphViewer(glyphs, selectedGlyph);
+		}
+		if (gameScreen.itemViewerOpen) {
+			gameScreen.glyphViewerOpen = false;
+			ItemViewer();
 		}
 
 		switch (currentState) {

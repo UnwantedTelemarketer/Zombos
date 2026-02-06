@@ -1,3 +1,9 @@
 FONTS {
-	visual_font : "symbolic/symbolic_con_all.ttf";
+	glyph_font : "symbolic/symbolic_con_all.ttf";
+	glyph_data_file : "glyphs.eid";
+}
+
+SOUNDS {
+	music_daytime : "music/daytime.wav";
+	music_nighttime : "music/nighttime.wav";
 }

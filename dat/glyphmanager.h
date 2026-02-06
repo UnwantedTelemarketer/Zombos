@@ -19,8 +19,16 @@ public:
 
 void GlyphManager::LoadGlyphs() {
 
+
+	//reading glyph data file (for custom glyphs)
+	OpenedData defaultFontName;
+	ItemReader::GetDataFromFile("game_settings.eid", "FONTS", &defaultFontName);
+
+	std::string dataFile = defaultFontName.getString("glyph_data_file");
+
+	//using custom glyph data file if it exists, otherwise using the default one
 	OpenedData glyphSectReader;
-	ItemReader::GetDataFromFile("glyphs.eid", "SECTIONS", &glyphSectReader);
+	ItemReader::GetDataFromFile(dataFile, "SECTIONS", &glyphSectReader);
 
 
 	std::vector<std::string> glyphSections;

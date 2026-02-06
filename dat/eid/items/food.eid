@@ -10,8 +10,6 @@ id : "meat";
 stackable : true;
 holdsLiquid : false;
 consumable : true;
-cookable : true;
-cooksInto : "COOKED_MEAT";
 amount : 1;
 consumeTxt : "You eat the uncooked meat. You feel a bit sick.";
 useTxt : "Does Nothig.";
@@ -19,6 +17,11 @@ effects : [3,1,0,0];
 equipType : 0;
 sprite : "item_raw_meat";
 spriteColor : [1.0, 0.1, 0.2];
+
+
+attributes : [
+	cookable, true, 16, COOKED_MEAT,
+	]
 }
 
 COOKED_MEAT {
@@ -29,8 +32,6 @@ id : "cookedmeat";
 stackable : true;
 holdsLiquid : false;
 consumable : true;
-cookable : true;
-cooksInto : "OVERCOOKED_MEAT";
 amount : 1;
 consumeTxt : "You eat the meat. You feel much less hungry.";
 useTxt : "Does Nothig.";
@@ -38,6 +39,11 @@ effects : [3,5,0,0];
 equipType : 0;
 sprite : "item_cooked_meat";
 spriteColor : [0.6, 0.1, 0.2];
+
+
+attributes : [
+	cookable, true, 20, OVERCOOKED_MEAT,
+	]
 }
 
 OVERCOOKED_MEAT {
@@ -48,8 +54,6 @@ id : "overcookedmeat";
 stackable : true;
 holdsLiquid : false;
 consumable : true;
-cookable : true;
-cooksInto : "BURNT_MEAT";
 amount : 1;
 consumeTxt : "You eat the meat. You feel much less hungry.";
 useTxt : "Does Nothig.";
@@ -57,6 +61,10 @@ effects : [3,4,0,0];
 equipType : 0;
 sprite : "item_cooked_meat";
 spriteColor : [0.6, 0.1, 0.2];
+
+attributes : [
+	cookable, true, 20, BURNT_MEAT,
+	]
 }
 
 BURNT_MEAT {
@@ -100,7 +108,6 @@ weight : 0.2;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
-giveItemOnConsume : "EMPTY_CAN";
 amount : 1;
 consumeTxt : "You drink the energy drink. You feel wired.";
 useTxt : "Does Nothig.";
@@ -108,6 +115,10 @@ effects : [2,3,0,0];
 equipType : 0;
 sprite : "item_can";
 spriteColor : [1.0, 0.1, 0.2];
+
+attributes : [
+	givesItemOnConsume, true, 0, EMPTY_CAN,
+	]
 }
 
 BOTTLED_WATER {
@@ -117,7 +128,6 @@ weight : 0.2;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
-giveItemOnConsume : "EMPTY_BOTTLE";
 amount : 1;
 consumeTxt : "You drink the water bottle. You feel refreshed.";
 useTxt : "Does Nothig.";
@@ -125,6 +135,10 @@ effects : [2,3,0,0];
 equipType : 0;
 sprite : "item_canteen";
 spriteColor : [0.3, 0.3, 0.55];
+
+attributes : [
+	givesItemOnConsume, true, 0, EMPTY_BOTTLE,
+	]
 }
 
 BOTTLED_ALCOHOL {
@@ -134,7 +148,6 @@ weight : 0.2;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
-giveItemOnConsume : "EMPTY_GLASS_BOTTLE";
 amount : 1;
 consumeTxt : "You drink the alcohol. You feel tipsy.";
 useTxt : "Does Nothig.";
@@ -142,6 +155,8 @@ effects : [2,2,0,0];
 equipType : 0;
 sprite : "item_can";
 spriteColor : [0.3, 0.3, 0.3];
+
+attributes : [givesItemOnConsume, true, 0, EMPTY_GLASS_BOTTLE, 5]
 }
 
 
@@ -152,7 +167,6 @@ weight : 0.5;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
-giveItemOnConsume : "EMPTY_CAN";
 amount : 1;
 consumeTxt : "You eat the beans. You feel refreshed";
 useTxt : "Does Nothig.";
@@ -160,6 +174,10 @@ effects : [1,3,0,0];
 equipType : 0;
 sprite : "item_can";
 spriteColor : [1.0, 0.1, 0.2];
+
+attributes : [
+	givesItemOnConsume, true, 0, EMPTY_CAN,
+	]
 }
 
 TOMATO {

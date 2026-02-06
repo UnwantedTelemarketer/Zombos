@@ -21,7 +21,10 @@ LEATHER_BOOTS {
 	durability : 100;
 	sprite : "item_raw_meat";
 	spriteColor : [1.0, 0.1, 0.2];
-	waterproof : true;
+
+	attributes : [
+		isWaterproof, true, 0, nthng,
+	];
 }
 
 RAINCOAT{
@@ -40,7 +43,10 @@ equipModifier : 15;
 durability : 25;
 sprite : "item_cloth";
 spriteColor : [1.0, 1.0, 0.2];
-waterproof : true;
+
+attributes : [
+	isWaterproof, true, 0, nthng,
+];
 }
 
 LEATHER_JACKET{
@@ -59,7 +65,10 @@ equipModifier : 15;
 durability : 40;
 sprite : "item_cloth";
 spriteColor : [0.3, 0.3, 0.2];
-waterproof : true;
+
+attributes : [
+	isWaterproof, true, 0, nthng,
+]
 }
 
 TOOTH_NECKLACE{
@@ -78,7 +87,10 @@ equipModifier : 1;
 durability : -1;
 sprite : "item_necklace";
 spriteColor : [0.8, 0.8, 0.7];
-waterproof : true;
+
+attributes : [
+	isWaterproof, true, 0, nthng,
+	]
 }
 
 CANVAS_BACKPACK{

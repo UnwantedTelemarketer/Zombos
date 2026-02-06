@@ -1831,7 +1831,11 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 			if (curTile->id == 14 ) { floodFill({x, y}, 3, true); }
 
 			//glowing items glow
-			int dist = Items::GetItem_NoCopy(curTile->itemName)->emissionDist;
+			int dist = -1;
+
+			itemAttribute* attr = Items::GetItem_NoCopy(curTile->itemName)->getAttribute("emmissive");
+			if (attr != nullptr) { dist = attr->amount; }
+
 			if (dist > 0) {
 				floodFill({ x, y }, dist, true);
 			}
@@ -1846,12 +1850,12 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 					if (curCont != nullptr) {
 						for (size_t i = 0; i < curCont->items.size(); i++)
 						{
-							if (!curCont->items[i].cookable) { continue; }
+							if (!curCont->items[i].getAttribute("cookable")) { continue; }
 							//cook an item, then if its done, add the cooked item
 							curCont->items[i].ticksUntilCooked -= 1;
 							if (curCont->items[i].ticksUntilCooked <= 0) {
 								int amount = curCont->items[i].count;
-								curCont->AddItem(Items::GetItem(curCont->items[i].cooks_into), amount);
+								curCont->AddItem(Items::GetItem(curCont->items[i].getAttribute("cookable")->extraInfo), amount);
 								curCont->items.erase(curCont->items.begin() + i);
 								Audio::Play("dat/sounds/cooked.mp3");
 								i--;

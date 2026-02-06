@@ -16,9 +16,12 @@ effects : [0,0,0,0];
 equipType : 1;
 equipModifier : 1;
 durability : 40;
-marker : true;
 sprite : "item_stick";
 spriteColor : [0.95, 0.95, 0.85];
+
+attributes : [
+	canMarkTiles, true, 0, nthng,
+	]
 }
 
 CHALK_B {
@@ -35,9 +38,12 @@ effects : [0,0,0,0];
 equipType : 1;
 equipModifier : 1;
 durability : 40;
-marker : true;
 sprite : "item_stick";
 spriteColor : [0.65, 0.65, 0.95];
+
+attributes : [
+	canMarkTiles, true, 0, nthng,
+	]
 }
 
 CHALK_R {
@@ -54,9 +60,12 @@ effects : [0,0,0,0];
 equipType : 1;
 equipModifier : 1;
 durability : 40;
-marker : true;
 sprite : "item_stick";
 spriteColor : [0.95, 0.65, 0.65];
+
+attributes : [
+	canMarkTiles, true, 0, nthng,
+	]
 }
 
 CHALK_G {
@@ -73,7 +82,10 @@ effects : [0,0,0,0];
 equipType : 1;
 equipModifier : 1;
 durability : 40;
-marker : true;
 sprite : "item_stick";
 spriteColor : [0.65, 0.95, 0.65];
+
+attributes : [
+	canMarkTiles, true, 0, nthng,
+	]
 }

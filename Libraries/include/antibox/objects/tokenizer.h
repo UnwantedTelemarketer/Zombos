@@ -21,7 +21,9 @@ bool to_bool(std::string str) {
 	try {
 		//boost::algorithm::to_lower(str);
 		if (str == "true") { return true; }
-		if (str == "false") { return false; }
+		else if (str == "false") { return false; }
+		else if (str == "1") { return true; }
+		else if (str == "0") { return false; }
 		else { throw std::invalid_argument("Error: to_bool requires the string input to be either 'true' or 'false'."); }
 	}
 	catch (std::invalid_argument& e) {
@@ -120,7 +122,7 @@ struct OpenedData {
 		for (size_t i = 0; i < array.length(); i++)
 		{
 			//if theres no escape character
-			if (i > 0 && array[i - 1] != '\\') {
+			if (i > 0 && array[i - 1] != '\\' && array[i] != '\r') {
 				//if we have a comma, end the element there
 				if (array[i] == ',' && current_array != "") {
 					actual_array.push_back(current_array);
