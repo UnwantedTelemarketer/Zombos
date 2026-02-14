@@ -10,6 +10,7 @@ void Console::Log(std::string message, textColor type, int lineNum)
 { 
 	std::string msg = "[ Line " + std::to_string(lineNum) + " ]: " + message;
 	//std::cout << msg << std::endl;
+
 	allLogs.push_back(msg);
 
 }

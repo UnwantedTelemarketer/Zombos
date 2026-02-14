@@ -43,13 +43,13 @@ public:
 			}
 		}
 
-		items.push_back(it);
-		totalWeight += it.weight;
-		itemNames.push_back(it.name);
-		for (int i = 0; i < count - 1; i++)
+		for (int i = 0; i < count; i++)
 		{
-			AddItem(it);
+			items.push_back(it);
+			totalWeight += it.weight;
+			itemNames.push_back(it.name);
 		}
+
 		ResetItemNames();
 	}
 

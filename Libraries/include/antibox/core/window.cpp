@@ -61,14 +61,11 @@ namespace antibox {
 		}
 
 		if (engineConsoleVisible) {
-			std::string logString = "";
 			ImGui::Begin("Engine Console");
 			for (size_t i = 0; i < Console::allLogs.size(); i++)
 			{
-				logString += "-" + Console::allLogs[i] + "\n";
+				ImGui::Text(Console::allLogs[i].c_str());
 			}
-
-			ImGui::Text(logString.c_str());
 			ImGui::End();
 		}
 

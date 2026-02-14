@@ -117,7 +117,7 @@ sprite : "item_can";
 spriteColor : [1.0, 0.1, 0.2];
 
 attributes : [
-	givesItemOnConsume, true, 0, EMPTY_CAN,
+	giveItemOnConsume, true, 1, EMPTY_CAN,
 	]
 }
 
@@ -137,7 +137,7 @@ sprite : "item_canteen";
 spriteColor : [0.3, 0.3, 0.55];
 
 attributes : [
-	givesItemOnConsume, true, 0, EMPTY_BOTTLE,
+	giveItemOnConsume, true, 1, EMPTY_BOTTLE,
 	]
 }
 
@@ -156,7 +156,7 @@ equipType : 0;
 sprite : "item_can";
 spriteColor : [0.3, 0.3, 0.3];
 
-attributes : [givesItemOnConsume, true, 0, EMPTY_GLASS_BOTTLE, 5]
+attributes : [giveItemOnConsume, true, 1, EMPTY_GLASS_BOTTLE]
 }
 
 
@@ -176,7 +176,7 @@ sprite : "item_can";
 spriteColor : [1.0, 0.1, 0.2];
 
 attributes : [
-	givesItemOnConsume, true, 0, EMPTY_CAN,
+	giveItemOnConsume, true, 1, EMPTY_CAN,
 	]
 }
 

@@ -1167,6 +1167,15 @@ public:
 			ImGui::Text("Weight : "); ImGui::SameLine();
 			ImGui::Text(std::to_string(curItem.weight).c_str());
 
+
+			if (gameScreen.debugOpen) {
+				ImGui::TextColored({0.7,0.7,0.7,1}, "==DEBUG INFO==");
+				ImGui::TextColored({ 0.7,0.7,0.7,1 }, ("Amount: " + std::to_string(curItem.count)).c_str());
+				ImGui::TextColored({ 0.7,0.7,0.7,1 }, ("Consumable: " + std::to_string(curItem.consumable)).c_str());
+				ImGui::TextColored({ 0.7,0.7,0.7,1 }, ("Consume Text: " + curItem.consumeTxt).c_str());
+				ImGui::TextColored({ 0.7,0.7,0.7,1 }, ("Use Text: " + curItem.useTxt).c_str());
+			}
+
 			if (ImGui::Button("Use"))
 			{
 				gameScreen.useBool = !gameScreen.useBool;
@@ -1184,24 +1193,26 @@ public:
 				ImGui::Text("On what?");
 				if (ImGui::Button("Consume"))
 				{
-					if (pInv.AttemptAction(consume, &pInv.items[currentItemIndex], &player))
+					if (pInv.AttemptAction(consume, &curItem, &player))
 					{
-						if (pInv.items[currentItemIndex].use.onConsume.effect == saturate) Audio::Play(sfxs["crunch"]);
-						else if (pInv.items[currentItemIndex].use.onConsume.effect == quench) Audio::Play(sfxs["drink"]);
-
+						if (curItem.use.onConsume.effect == saturate) Audio::Play(sfxs["crunch"]);
+						else if (curItem.use.onConsume.effect == quench) Audio::Play(sfxs["drink"]);
+						std::string consumeText = curItem.consumeTxt;
+						
 						//if its consumable, remove one. 
 						if (curItem.consumable) {
-							itemAttribute* attr = curItem.getAttribute("giveItemOnConsume");
-							if (attr != nullptr) {
-								pInv.AddItemByID(attr->extraInfo);
-							}
+							itemAttribute attr = *curItem.getAttribute("giveItemOnConsume");
+
 							//If its the last one, move the cursor so we dont get out of vector range
 							if (pInv.RemoveItem(curItem.section)) {
 								currentItemIndex--;
 							}
 
+							if (attr.attributeName != "nthng") {
+								pInv.AddItemByID(attr.extraInfo, attr.amount);
+							}
 						}
-						Math::PushBackLog(&game.actionLog, curItem.consumeTxt);
+						Math::PushBackLog(&game.actionLog, consumeText);
 					}
 					else
 					{
@@ -1341,9 +1352,9 @@ public:
 			ImGui::Text("I to open/close the Equipment menu");
 			ImGui::Text("M to open/close the Overworld Map");
 			ImGui::Text("E to begin selecting a block then any of the directional keys to select a block");
-			ImGui::Text("P to open/close the Debug menu");
 			ImGui::Text("H to open/close the Help menu");
 			ImGui::Text("ESC to open/close the Settings menu");
+			ImGui::Text("P to open/close the Debug menu");
 			ImGui::Text("` to open/close the console");
 			ImGui::Text("\nTo attack an entity, walk into it with something equipped.");
 			ImGui::End();
@@ -1919,10 +1930,12 @@ public:
 			}
 
 			if (item->getAttribute(selectedAttribute) != nullptr) {
-				ImGui::Text("Attribute Tag: %s", item->getAttribute(selectedAttribute)->attributeName);
+				ImGui::Text("Attribute Tag:"); 
+				ImGui::SameLine();
+				ImGui::Text(item->getAttribute(selectedAttribute)->attributeName.c_str());
 				ImGui::Text("Active: %s", item->getAttribute(selectedAttribute)->active ? "Yes" : "No");
 				ImGui::Text("Amount: %d", item->getAttribute(selectedAttribute)->amount);
-				ImGui::Text("Extra Info: ");
+				ImGui::Text("Extra Info:");
 				ImGui::SameLine();
 				ImGui::Text(item->getAttribute(selectedAttribute)->extraInfo.c_str());
 			}

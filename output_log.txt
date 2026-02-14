@@ -6,7 +6,6 @@
 [ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/decoration.eid
 [ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/droppable.eid
 [ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/food.eid
-[ C:\dev\C++\antibox_cmake\dat\entities.h:131 ] ERROR: attributes for item 'Bottled Alcohol' need to be in groups of 4 (name, active, amount, extraInfo).
 [ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/materials.eid
 [ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/misc.eid
 [ C:\dev\C++\antibox_cmake\dat\items.h:199 ] items/nature_items.eid
@@ -39,5 +38,5 @@
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] TILES
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] ITEMS
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:67 ] Finished loading glyphs!
-[ C:\dev\C++\antibox_cmake\main.cpp:1991 ] Done!
+[ C:\dev\C++\antibox_cmake\main.cpp:2003 ] Done!
 [ C:\dev\C++\antibox_cmake\Libraries\include\antibox\core\engine.cpp:40 ] 0

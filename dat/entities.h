@@ -49,7 +49,7 @@ struct ActionEffect {
 
 struct itemAttribute 
 {
-	std::string attributeName;
+	std::string attributeName = "nthng";
 	bool active = true;
 	int amount = 0;
 	std::string extraInfo = "nthng";
