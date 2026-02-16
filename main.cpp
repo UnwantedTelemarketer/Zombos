@@ -1169,7 +1169,7 @@ public:
 
 
 			if (gameScreen.debugOpen) {
-				ImGui::TextColored({0.7,0.7,0.7,1}, "==DEBUG INFO==");
+				ImGui::TextColored({ 0.7,0.7,0.7,1 }, "==DEBUG INFO==");
 				ImGui::TextColored({ 0.7,0.7,0.7,1 }, ("Amount: " + std::to_string(curItem.count)).c_str());
 				ImGui::TextColored({ 0.7,0.7,0.7,1 }, ("Consumable: " + std::to_string(curItem.consumable)).c_str());
 				ImGui::TextColored({ 0.7,0.7,0.7,1 }, ("Consume Text: " + curItem.consumeTxt).c_str());
@@ -1687,8 +1687,9 @@ public:
 			ImGui::Begin("Debug Window");
 
 			ImGui::Text(("Current World Time: " + std::to_string(map.worldTimeTicks)).c_str());
-			//FPS
+			ImGui::Text("Days Passed: %d", game.daysPassed);
 
+			//FPS
 			lastFPS = Utilities::getFPS();
 			frame.Update(Utilities::getFPS());
 			ImGui::Text(("High: " + std::to_string(frame.highest)).c_str());

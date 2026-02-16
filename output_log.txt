@@ -19,24 +19,53 @@
 [ C:\dev\C++\antibox_cmake\Libraries\include\antibox\core\engine.cpp:247 ] Succesfully added scene named 'TEST' to engine.
 [ C:\dev\C++\antibox_cmake\Libraries\include\antibox\graphics\texture.cpp:79 ] Loaded texture from res/logo.png.
 [ C:\dev\C++\antibox_cmake\Libraries\include\antibox\objects\scene.cpp:10 ] Succesfully created object Box
-[ C:\dev\C++\antibox_cmake\dat/Game.h:139 ] Loading sounds...
-[ C:\dev\C++\antibox_cmake\dat/Game.h:145 ] Sounds Loaded!
-[ C:\dev\C++\antibox_cmake\dat/Game.h:147 ] Loading dialogue...
-[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] FARMER_CALM
-[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] WANDERER_CALM
-[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] HAPPY_WANDERER
-[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] ANGRY_WANDERER
-[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] AFRAID_WANDERER
-[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] BRAVE_WANDERER
-[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] TRUST_WANDERER
-[ C:\dev\C++\antibox_cmake\dat/Game.h:193 ] UNTRUST_WANDERER
-[ C:\dev\C++\antibox_cmake\dat/Game.h:212 ] Finished loading dialogue!
-[ C:\dev\C++\antibox_cmake\dat/Game.h:150 ] Loading glyphs...
+[ C:\dev\C++\antibox_cmake\dat/Game.h:142 ] Loading sounds...
+[ C:\dev\C++\antibox_cmake\dat/Game.h:148 ] Sounds Loaded!
+[ C:\dev\C++\antibox_cmake\dat/Game.h:150 ] Loading dialogue...
+[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] FARMER_CALM
+[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] WANDERER_CALM
+[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] HAPPY_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] ANGRY_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] AFRAID_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] BRAVE_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] TRUST_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] UNTRUST_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:215 ] Finished loading dialogue!
+[ C:\dev\C++\antibox_cmake\dat/Game.h:153 ] Loading glyphs...
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] GENERAL
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] EFFECTS
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] ENTITIES
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] TILES
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] ITEMS
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:67 ] Finished loading glyphs!
-[ C:\dev\C++\antibox_cmake\main.cpp:2003 ] Done!
+[ C:\dev\C++\antibox_cmake\main.cpp:2005 ] Done!
 [ C:\dev\C++\antibox_cmake\Libraries\include\antibox\core\engine.cpp:40 ] 0
+[ C:\dev\C++\antibox_cmake\main.cpp:354 ] New save created successfully!
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/leaders/7058.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/leaders/11443.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/leaders/31306.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/leaders/1754.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/28909.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/16506.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/14750.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/1412.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/7038.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/16468.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/4060.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/17610.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/13002.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/9932.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/8607.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/8386.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/26999.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/2584.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/1454.eid
+[ C:\dev\C++\antibox_cmake\main.cpp:2049 ] god mode
+[ C:\dev\C++\antibox_cmake\main.cpp:2049 ] set time 710
+[ C:\dev\C++\antibox_cmake\main.cpp:2049 ] set day 6
+[ C:\dev\C++\antibox_cmake\main.cpp:2049 ] set tickrate 0.1
+[ C:\dev\C++\antibox_cmake\main.cpp:2049 ] set tickrate 0.5
+[ C:\dev\C++\antibox_cmake\main.cpp:149 ] Now saving...
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/save.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:276 ] Attempting to read from file 'dat/saves/weather test final/entities/names.eid', but can't find file.
+[ C:\dev\C++\antibox_cmake\main.cpp:226 ] Save complete in 19.676098ms.

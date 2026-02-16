@@ -27,6 +27,8 @@
 #define FACTION_BANDIT "Bandit"
 #define FACTION_WILDLIFE "Wildlife"
 
+enum WorldEvent { Storm, DormantMoon };
+
 using namespace antibox;
 
 struct World

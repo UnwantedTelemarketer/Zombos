@@ -85,6 +85,8 @@
 	- Saving entities by unique id now
 	- Support for custom fonts from post compilation
 	- Glyph Grabber Tool
+	- Item Viewer Tool
+	- Item Attribute System Added (items now have attributes instead of boolean tags.)
 
   --Engine Changes--
 	- The sprites now scale properly with window resizing
@@ -92,5 +94,8 @@
 	- Tokenizer can now read commas in arrays IF theres an escape character before it (forward slash)
 	- Window now scales with resolution
 	- Random floats can now be generated
+	- Console Logging no longer shows up in the command line, and is now a toggleable window.
+
   --Known Bugs--
 	- Fire wont spread?
+	- Crashes on astar pathfinding

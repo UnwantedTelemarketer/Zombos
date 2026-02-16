@@ -393,5 +393,6 @@ std::vector<Vector2_I> AStar(
 
 	}
 
-	return {}; // No path found
+	std::vector<Vector2_I> emptyvec;
+	return emptyvec; // No path found
 }

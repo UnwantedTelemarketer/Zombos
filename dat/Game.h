@@ -39,7 +39,8 @@ public:
 	float sfxvolume = 1.f;
 	float musicvolume = 1.f;
 	bool freeView = false;
-	bool dormantMoon = false;
+	std::unordered_set<int> currentWorldEvents;
+	int daysPassed = 0;
 	CraftingSystem Crafter;
 	GameSettings gSettings;
 	Map mainMap;
@@ -110,6 +111,8 @@ public:
 
 	void Restart();
 	void CreateWorldFactions();
+
+	float GetDarknessFromTime();
 
 	std::string GetItemChar(Tile* tile);
 	ImVec4 GetItemColor(Tile* tile, float intensity);
@@ -832,7 +835,7 @@ void GameManager::MovePlayer(int dir) {
 	}
 
 	biome curBiome = mainMap.GetBiome(mPlayer.coords);
-	if (!isDark()) {
+	if (!isDark() && !currentWorldEvents.contains(WorldEvent::Storm)) {
 		if (curBiome == desert) {
 			if (lerpingTo != desert) {
 				Utilities::Lerp("bgColor", &bgColor, BG_DESERT, 0.5f);
@@ -976,17 +979,20 @@ void GameManager::UpdateTick() {
 		float curTime = glfwGetTime();
 		mainMap.worldTimeTicks++;
 
-		if (mainMap.UpdateWeather()) {
-			switch (mainMap.currentWeather) {
-			case rainy:
-				Math::PushBackLog(&actionLog, "It begins to rain.");
-				break;
-			case clear:
-				Math::PushBackLog(&actionLog, "The weather clears up.");
-				break;
-			case thunder:
-				Math::PushBackLog(&actionLog, "Thunder booms in the distance.");
-				break;
+
+		if (!currentWorldEvents.contains(WorldEvent::Storm)) {
+			if (mainMap.UpdateWeather()) {
+				switch (mainMap.currentWeather) {
+				case rainy:
+					Math::PushBackLog(&actionLog, "It begins to rain.");
+					break;
+				case clear:
+					Math::PushBackLog(&actionLog, "The weather clears up.");
+					break;
+				case thunder:
+					Math::PushBackLog(&actionLog, "Thunder booms in the distance.");
+					break;
+				}
 			}
 		}
 
@@ -1084,7 +1090,7 @@ void GameManager::UpdateTick() {
 
 		if (mainMap.playerLevel == 0) {
 			//
-			if (mainMap.worldTimeTicks >= 2850 || mainMap.worldTimeTicks <= 900) {
+			if (mainMap.worldTimeTicks >= 2850 || mainMap.worldTimeTicks < 900) {
 				time = night;
 				if (!startedMusicNight) {
 					Audio::StopLoop("ambient_day");
@@ -1096,9 +1102,7 @@ void GameManager::UpdateTick() {
 					Utilities::Lerp("background", &bgColor, {0,0,0}, 2.f);
 				}
 
-				if (forwardTime) { darkTime = std::min(10.f, darkTime + 0.05f); }
-				else { darkTime = std::max(1.f, darkTime - 0.05f); }
-				if (mainMap.worldTimeTicks > 600 && mainMap.worldTimeTicks <= 750) { forwardTime = false; }
+				darkTime = GetDarknessFromTime();
 			}
 			else if (mainMap.worldTimeTicks == 900) {
 				time = day;
@@ -1108,10 +1112,22 @@ void GameManager::UpdateTick() {
 				Audio::StopLoop("crickets");
 				Audio::PlayLoop(gSettings.dayMusic, "ambient_day");
 				Audio::SetVolumeLoop(musicvolume, "ambient_day");
+				daysPassed++;
+
+				//The Storm
+				if (daysPassed == 7) {
+					currentWorldEvents.insert(WorldEvent::Storm);
+					mainMap.SetWeather(thunder);
+					Math::PushBackLog(&actionLog, "The Storm begins.");
+				}
 			}
 			else {
-				forwardTime = true;
-				darkTime = 1.f;
+				if (currentWorldEvents.contains(WorldEvent::Storm)) {
+					darkTime = 3.f;
+				}
+				else {
+					darkTime = 1.f;
+				}
 			}
 		}
 		else {
@@ -1144,6 +1160,26 @@ void GameManager::UpdateTick() {
 	}
 
 
+}
+
+float GameManager::GetDarknessFromTime() {
+	// Evening transition (2850-2970): fade from 1 to 10
+	if (mainMap.worldTimeTicks >= 2850 && mainMap.worldTimeTicks < 2970) {
+		float t = (mainMap.worldTimeTicks - 2850) / 120.f; // 0 to 1
+		return 1.f + t * 9.f;
+	}
+
+	// Night (2970-3600 and 0-720): full darkness = 10.0
+	if ((mainMap.worldTimeTicks >= 2970 && mainMap.worldTimeTicks <= 3600) ||
+		(mainMap.worldTimeTicks >= 0 && mainMap.worldTimeTicks < 720)) {
+		return 10.f;
+	}
+
+	// Morning transition (720-840): fade from 10 to 1
+	if (mainMap.worldTimeTicks >= 720 && mainMap.worldTimeTicks < 900) {
+		float t = (mainMap.worldTimeTicks - 720) / 180.f;
+		return 10.f - t * 9.f;
+	}
 }
 
 void GameManager::RedrawEntities(Vector2_I chunkCoords) {
@@ -1393,9 +1429,8 @@ ImVec4 GameManager::GetTileColor(Tile* tile, float intensity, bool shadows) {
 	color = { tile->tileColor.x, tile->tileColor.y, tile->tileColor.z, 1 };
 dimming:
 	//if its night time
-	if (isDark()) {
 		if ((darkTime >= 10.f && intensity >= 1.f) || (mainMap.playerLevel == -1 && intensity >= 1.f)) {
-			if(dormantMoon) color = { 0.1f,0.1f,0.1f,1 };
+			if(currentWorldEvents.contains(WorldEvent::DormantMoon)) color = { 0.1f,0.1f,0.1f,1 };
 			else color = { 0.05f,0.05f,0.05f,1 };
 		}
 		else {
@@ -1403,14 +1438,14 @@ dimming:
 			color.y /= (darkTime * intensity);
 			color.z /= (darkTime * intensity);
 		}
-	}
-	else if (shadows && mainMap.GetChunkAtCoords(tile->g_coords) != nullptr) {
-		if (mainMap.GetChunkAtCoords(tile->g_coords)->shadows.contains(tile->coords) && !tile->double_size) {
-			color.x *= 0.45f;
-			color.y *= 0.45f;
-			color.z *= 0.45f;
+
+		if (shadows && mainMap.GetChunkAtCoords(tile->g_coords) != nullptr) {
+			if (mainMap.GetChunkAtCoords(tile->g_coords)->shadows.contains(tile->coords) && !tile->double_size) {
+				color.x *= 0.45f;
+				color.y *= 0.45f;
+				color.z *= 0.45f;
+			}
 		}
-	}
 
 	return color;
 }
@@ -1583,6 +1618,10 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 		else if (tokens[1] == "time") {
 			game->mainMap.worldTimeTicks = stoi(tokens[2]);
 			Math::PushFrontLog(&game->consoleLog, "- Time changed");
+		}
+		else if (tokens[1] == "day") {
+			game->daysPassed = stoi(tokens[2]);
+			Math::PushFrontLog(&game->consoleLog, "- Day Changed");
 		}
 		else if (tokens[1] == "playerLevel") {
 			game->mainMap.playerLevel = stoi(tokens[2]);
