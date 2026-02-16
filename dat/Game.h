@@ -919,7 +919,7 @@ void GameManager::UpdateEffects() {
 
 				if (i + 2 >= CHUNK_WIDTH || i < 0) { tempMap[i][j] = 0; }
 
-				else if (Math::RandInt(0, 30) == 1 && mainMap.TileAtPos({ i,j })->id != 13 && mainMap.TileAtPos({ i,j })->liquid == nothing)
+				else if (Math::RandInt(0, 30) == 1 && !mainMap.TileAtPos({ i,j })->hasRoof && mainMap.TileAtPos({ i,j })->liquid == nothing)
 				{ tempMap[i][j] = 0; mainMap.TileAtPos({ i,j })->SetLiquid(water); }
 
 				else { tempMap[(int)std::floor((i + 1) * 1.1)][j] = VFX_RAIN; }

@@ -41,31 +41,27 @@
 [ C:\dev\C++\antibox_cmake\main.cpp:2005 ] Done!
 [ C:\dev\C++\antibox_cmake\Libraries\include\antibox\core\engine.cpp:40 ] 0
 [ C:\dev\C++\antibox_cmake\main.cpp:354 ] New save created successfully!
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/leaders/7058.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/leaders/11443.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/leaders/31306.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/leaders/1754.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/28909.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/16506.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/14750.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/1412.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/7038.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/16468.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/4060.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/17610.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/13002.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/9932.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/8607.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/8386.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/26999.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/2584.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/entities/unique/1454.eid
-[ C:\dev\C++\antibox_cmake\main.cpp:2049 ] god mode
-[ C:\dev\C++\antibox_cmake\main.cpp:2049 ] set time 710
-[ C:\dev\C++\antibox_cmake\main.cpp:2049 ] set day 6
-[ C:\dev\C++\antibox_cmake\main.cpp:2049 ] set tickrate 0.1
-[ C:\dev\C++\antibox_cmake\main.cpp:2049 ] set tickrate 0.5
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/leaders/14211.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/leaders/18335.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/leaders/2863.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/leaders/3192.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/8336.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/26142.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/9596.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/5963.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/20235.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/13289.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/31703.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/23778.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/26816.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/18089.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/16233.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/20402.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/13494.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/9973.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/14164.eid
+[ C:\dev\C++\antibox_cmake\main.cpp:2049 ] set weather rain
 [ C:\dev\C++\antibox_cmake\main.cpp:149 ] Now saving...
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/weather test final/save.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:276 ] Attempting to read from file 'dat/saves/weather test final/entities/names.eid', but can't find file.
-[ C:\dev\C++\antibox_cmake\main.cpp:226 ] Save complete in 19.676098ms.
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/save.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:276 ] Attempting to read from file 'dat/saves/rain test/entities/names.eid', but can't find file.
+[ C:\dev\C++\antibox_cmake\main.cpp:226 ] Save complete in 96.156830ms.
