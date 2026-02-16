@@ -38,30 +38,31 @@
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] TILES
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] ITEMS
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:67 ] Finished loading glyphs!
-[ C:\dev\C++\antibox_cmake\main.cpp:2005 ] Done!
+[ C:\dev\C++\antibox_cmake\main.cpp:2021 ] Done!
 [ C:\dev\C++\antibox_cmake\Libraries\include\antibox\core\engine.cpp:40 ] 0
-[ C:\dev\C++\antibox_cmake\main.cpp:354 ] New save created successfully!
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/leaders/14211.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/leaders/18335.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/leaders/2863.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/leaders/3192.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/8336.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/26142.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/9596.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/5963.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/20235.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/13289.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/31703.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/23778.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/26816.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/18089.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/16233.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/20402.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/13494.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/9973.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/entities/unique/14164.eid
-[ C:\dev\C++\antibox_cmake\main.cpp:2049 ] set weather rain
-[ C:\dev\C++\antibox_cmake\main.cpp:149 ] Now saving...
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/rain test/save.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:276 ] Attempting to read from file 'dat/saves/rain test/entities/names.eid', but can't find file.
-[ C:\dev\C++\antibox_cmake\main.cpp:226 ] Save complete in 96.156830ms.
+[ C:\dev\C++\antibox_cmake\main.cpp:356 ] New save created successfully!
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/leaders/25287.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/leaders/241.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/leaders/19727.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/leaders/14906.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/2601.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/25705.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/17593.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/26128.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/2017.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/6301.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/27002.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/20339.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/21903.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/25703.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/738.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/5188.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/14183.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/11079.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/23749.eid
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:276 ] Attempting to read from file 'dat/saves/vingkesm/entities/names.eid', but can't find file.
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:276 ] Attempting to read from file 'dat/saves/vingkesm/entities/names.eid', but can't find file.
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:276 ] Attempting to read from file 'dat/saves/vingkesm/entities/names.eid', but can't find file.
+[ C:\dev\C++\antibox_cmake\main.cpp:150 ] Now saving...
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/save.eid
+[ C:\dev\C++\antibox_cmake\main.cpp:227 ] Save complete in 59.556133ms.

@@ -75,6 +75,7 @@ public:
 	bool wrongDir = false;
 	bool showShadows = false;
 	bool deathScreen = false;
+	float vignetteStrength = 1.5f;
 	char saveNameSlot[128];
 	int selectedIndex = 0;
 	int selectedAttributeIndex = 0;
@@ -265,6 +266,7 @@ public:
 			if (ImGui::RadioButton("Show Shadows", showShadows)) {
 				showShadows = !showShadows;
 			}
+			ImGui::DragFloat("Vignette Strength", &vignetteStrength, 0.1f, 0.f, 2.f);
 
 			//ImGui::ColorPicker3("Tab Color", &customTabColor.x);
 
@@ -686,6 +688,10 @@ public:
 			std::string batchedString = "";
 			char lastTile = ' ';
 
+			int vignetteX, vignetteY;
+			vignetteX = -15;
+			vignetteY = -15;
+
 			for (int i = xMin; i < xMax; i++) {
 				for (int j = yMin; j < yMax; j++) {
 					vec2_i curCoords = { i, j };
@@ -861,12 +867,22 @@ public:
 						//batchColor = iconColor;
 					//}
 					//lastTile = printIcon[0];
+					int distanceFromCenter = abs(vignetteX) + abs(vignetteY);
+					float newDist = ((float)distanceFromCenter - 15.f) / (30.f - 15.f);
+					newDist = std::clamp(newDist, 0.f, 1.f);
+					float opacity = pow(1.f - newDist, vignetteStrength);
+
+					iconColor.w = opacity;
+
 					ImGui::TextColored(iconColor, printIcon.c_str());
 					ImGui::SameLine();
+					vignetteY++;
 				}
 				//ImGui::TextColored(batchColor, batchedString.c_str());
 				//batchedString.clear();
 				ImGui::Text("");
+				vignetteX++;
+				vignetteY = -15;
 			}
 
 			ImGui::SetFontSize(16.f);
