@@ -37,6 +37,7 @@
 		-Stairs Up
 		-Stairs Down
 		-Tilled Dirt
+	- New Sickness and Bleeding system
 	- Can bandage with tattered cloth, adds sickness
 	- New Item Tags
 		- marker - for chalk, allows drawing on walls and ground
@@ -53,7 +54,7 @@
 	- NPC Quests started
 	- Tiles now save their modified color
 	- Amnesiac role now spawns with 1-4 random items
-	- Shadows now can be cast by double height objects, and change angle based on time of day
+	- Shadows now can be cast by double height objects, and change angle based on time of day (toggleable)
 	- Added encumberance, player can only move once per tick while slowed
 	- Added upper and downstairs chunks (for houses/sewers/bunkers etc)
 	- Fixed loading equipped items
@@ -76,17 +77,20 @@
 	- Items say the liquid they are covered in
 	- Lowest body temperature locked to 94f degrees
 	- Strange Liquid (for debugging)
-	- Debug Command added (pathfind)
+	- Debug Commands added (pathfind, set day)
+	- Time of day now affects the lighting correctly (i.e. jumping forward in time sets the lighting to the correct time)
 	- Footstep sounds change based on tile
 	- Tiles now have custom footstep sound files
 	- Factions added more in depth (factionmanager)
 		- Factions generate at the start of the world
 		- Faction leaders are created and saved immediately
 	- Saving entities by unique id now
-	- Support for custom fonts from post compilation
+	- Support for custom fonts and music from post compilation
 	- Glyph Grabber Tool
 	- Item Viewer Tool
 	- Item Attribute System Added (items now have attributes instead of boolean tags.)
+	- Vignette added, changes based on weather and events.
+	- More debug info
 
   --Engine Changes--
 	- The sprites now scale properly with window resizing
