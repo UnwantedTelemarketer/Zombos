@@ -19,50 +19,24 @@
 [ C:\dev\C++\antibox_cmake\Libraries\include\antibox\core\engine.cpp:247 ] Succesfully added scene named 'TEST' to engine.
 [ C:\dev\C++\antibox_cmake\Libraries\include\antibox\graphics\texture.cpp:79 ] Loaded texture from res/logo.png.
 [ C:\dev\C++\antibox_cmake\Libraries\include\antibox\objects\scene.cpp:10 ] Succesfully created object Box
-[ C:\dev\C++\antibox_cmake\dat/Game.h:142 ] Loading sounds...
-[ C:\dev\C++\antibox_cmake\dat/Game.h:148 ] Sounds Loaded!
-[ C:\dev\C++\antibox_cmake\dat/Game.h:150 ] Loading dialogue...
-[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] FARMER_CALM
-[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] WANDERER_CALM
-[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] HAPPY_WANDERER
-[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] ANGRY_WANDERER
-[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] AFRAID_WANDERER
-[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] BRAVE_WANDERER
-[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] TRUST_WANDERER
-[ C:\dev\C++\antibox_cmake\dat/Game.h:196 ] UNTRUST_WANDERER
-[ C:\dev\C++\antibox_cmake\dat/Game.h:215 ] Finished loading dialogue!
-[ C:\dev\C++\antibox_cmake\dat/Game.h:153 ] Loading glyphs...
+[ C:\dev\C++\antibox_cmake\dat/Game.h:148 ] Loading sounds...
+[ C:\dev\C++\antibox_cmake\dat/Game.h:154 ] Sounds Loaded!
+[ C:\dev\C++\antibox_cmake\dat/Game.h:156 ] Loading dialogue...
+[ C:\dev\C++\antibox_cmake\dat/Game.h:202 ] FARMER_CALM
+[ C:\dev\C++\antibox_cmake\dat/Game.h:202 ] WANDERER_CALM
+[ C:\dev\C++\antibox_cmake\dat/Game.h:202 ] HAPPY_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:202 ] ANGRY_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:202 ] AFRAID_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:202 ] BRAVE_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:202 ] TRUST_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:202 ] UNTRUST_WANDERER
+[ C:\dev\C++\antibox_cmake\dat/Game.h:221 ] Finished loading dialogue!
+[ C:\dev\C++\antibox_cmake\dat/Game.h:159 ] Loading glyphs...
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] GENERAL
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] EFFECTS
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] ENTITIES
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] TILES
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] ITEMS
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:67 ] Finished loading glyphs!
-[ C:\dev\C++\antibox_cmake\main.cpp:2021 ] Done!
+[ C:\dev\C++\antibox_cmake\main.cpp:2023 ] Done!
 [ C:\dev\C++\antibox_cmake\Libraries\include\antibox\core\engine.cpp:40 ] 0
-[ C:\dev\C++\antibox_cmake\main.cpp:356 ] New save created successfully!
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/leaders/25287.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/leaders/241.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/leaders/19727.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/leaders/14906.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/2601.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/25705.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/17593.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/26128.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/2017.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/6301.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/27002.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/20339.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/21903.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/25703.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/738.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/5188.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/14183.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/11079.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/entities/unique/23749.eid
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:276 ] Attempting to read from file 'dat/saves/vingkesm/entities/names.eid', but can't find file.
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:276 ] Attempting to read from file 'dat/saves/vingkesm/entities/names.eid', but can't find file.
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:276 ] Attempting to read from file 'dat/saves/vingkesm/entities/names.eid', but can't find file.
-[ C:\dev\C++\antibox_cmake\main.cpp:150 ] Now saving...
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox/objects/tokenizer.h:377 ] Wrote to file dat/saves/vingkesm/save.eid
-[ C:\dev\C++\antibox_cmake\main.cpp:227 ] Save complete in 59.556133ms.

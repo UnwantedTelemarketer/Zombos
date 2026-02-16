@@ -249,7 +249,7 @@ namespace antibox
 		}
 		catch (std::exception e) {
 			ConsoleLog("ERROR: Failed to add scene '" + sc->GetSceneName() + "'. Details below.", text::red);
-			ConsoleLog(e.what(), text::red, __LINE__);
+			ConsoleLog(e.what(), text::red);
 			return false;
 		}
 	}

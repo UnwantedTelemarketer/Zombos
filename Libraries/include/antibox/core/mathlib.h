@@ -12,7 +12,7 @@ namespace antibox {
 	namespace Math {
 
 		//Input the max number, and this will return an int between 1 and your max (inclusive).
-		inline float RandNum(int max) { return (rand() % max + 1); }
+		inline float RandNum(int max) { return (rand() % max + 1.f); }
 
 		//Input the max number, and this will return an int between min and max (inclusive).
 		inline int RandInt(int min, int max) { return min + rand() % (max - min + 1); }
@@ -231,10 +231,11 @@ namespace antibox {
 			return true;
 		}
 
-		void operator+=(Vector3 vec3) {
-			x += vec3.x;
-			y += vec3.y;
-			z += vec3.z;
+		void operator+=(Vector4_I vec4) {
+			x += vec4.x;
+			y += vec4.y;
+			z += vec4.z;
+			w += vec4.w;
 		}
 
 		void operator/=(int num) {

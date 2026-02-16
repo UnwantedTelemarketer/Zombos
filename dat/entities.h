@@ -68,7 +68,7 @@ static itemAttribute emmissive = { "emmissive" };
 //Name, ID, Stackable, Holds Liquid, Consumable, Count, Consume Text, Use Text
 struct Item {
 	std::string name, section, description;
-	bool stackable, holdsLiquid, consumable;
+	bool stackable = false, holdsLiquid = false, consumable = false;
 	int count = 1;
 	std::string consumeTxt, useTxt;
 
@@ -124,7 +124,7 @@ struct Item {
 		}
 		catch (std::exception e) { maxDurability = -1.f; }
 
-		int attributeListSize = item.getArray("attributes").size();
+		size_t attributeListSize = item.getArray("attributes").size();
 		auto attributesList = item.getArray("attributes");
 
 		if (attributeListSize % 4 != 0) {
@@ -291,9 +291,9 @@ struct Memory {
 	MemoryType type;
 	Feeling emotion;
 	std::string event;
-	int who;
-	int ticksPassed;
-	bool persistent;
+	int who = -1;
+	int ticksPassed = -1;
+	bool persistent = false;
 };
 
 enum TaskType {collectItem, dropItem, smoke};
@@ -301,12 +301,12 @@ enum TaskType {collectItem, dropItem, smoke};
 struct Task {
 	TaskType task;
 	std::vector<Vector2_I> taskArea;
-	int taskModifierID;
+	int taskModifierID = -1;
 	std::string taskModifierString;
-	int priority;
+	int priority = -1;
 	bool currentlyFulfilling = false;
 	Vector2_I currentObjective;
-	int taskTimer;
+	int taskTimer = -1;
 };
 
 //Health, Name, ID, Behaviour, Aggressive, Faction, View Distance, Damage, Can Talk
@@ -316,26 +316,26 @@ struct Entity {
 	int entityID = -1;
 	Behaviour b;
 	bool aggressive = false;
-	int viewDistance;
-	int damage;
-	bool canTalk;
+	int viewDistance = -1;
+	int damage = -1;
+	bool canTalk = false;
 
 	Vector2_I localCoords;
 	Vector2_I globalCoords;
 	bool lootAlive = false;
-	int index; //in entity list
+	int index = -1; //in entity list
 	Liquid coveredIn = nothing;
 	int ticksUntilDry = 0;
-	int tempViewDistance;
+	int tempViewDistance = -1;
 	Feeling feelingTowardsPlayer = { 0,0,0 };
 	std::unordered_map<int, Feeling> feelingTowardsOthers;
 	Faction* faction = nullptr;
 	bool factionLeader = false;
 
-	int uID;
-	bool targetingPlayer;
+	int uID = -1;
+	bool targetingPlayer = false;
 	bool shouting = false;
-	bool talking;
+	bool talking = false;
 	bool smart = false;
 	std::string message = "empty";
 	std::string itemWant = "nthng";
@@ -367,7 +367,7 @@ struct Entity {
 		Faction* startingFaction){
 
 		uID = Math::RandInt(0, 2147483647);
-		health = startingHealth;
+		health = (float)startingHealth;
 		name = startingName;
 		entityID = entityTypeID;
 		b = startingBehaviour;
@@ -676,7 +676,7 @@ struct Player {
 		coveredIn = nothing;
 	}
 
-	void TakeDamage(ConsumeEffect type, int dmg) {
+	void TakeDamage(ConsumeEffect type, float dmg) {
 		if (damageMode != 2) { health -= dmg; }
 		if (type == pierceDamage) {
 			CoverIn(blood, 20);
@@ -689,7 +689,7 @@ struct Player {
 	}
 
 	bool CheckStatus() {
-		int prevHealth = health;
+		float prevHealth = health;
 		bool bled = false;
 		//hunger and thirst
 		//get more thirsty if the player is extra hot / sick
@@ -965,11 +965,11 @@ struct Tile {
 			else {
 				tileColor = mainTileColor;
 				tileColor += { 0, 0.75, 1.5 };
-				tileColor /= 2.5;
+				tileColor /= 2.5f;
 			}
 			break;
 		case guts:
-			tileColor = { 0.45, 0, 0 };
+			tileColor = { 0.45f, 0, 0 };
 			break;
 		case blood:
 			tileColor = { 1, 0, 0 };

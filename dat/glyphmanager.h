@@ -104,6 +104,6 @@ std::string GlyphManager::convert(char32_t codepoint) {
 	return out;
 }
 
-const const std::map<std::string, std::string>& GlyphManager::getAllGlyphs() {
+const std::map<std::string, std::string>& GlyphManager::getAllGlyphs() {
 	return glyphs;
 }

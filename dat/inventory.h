@@ -1,7 +1,7 @@
 #pragma once
 #include "antibox/core/mathlib.h"
 #include <fstream>
-#include "cosmetic.h";
+#include "cosmetic.h"
 
 
 class Inventory

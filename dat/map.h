@@ -911,7 +911,7 @@ void Map::CheckBounds(Player* p) {
 
 	//if the player would go offscreen, reset them
 	//Evil goto statement >:)
-offscreen:
+//offscreen:
 	if (p->coords.x >= CHUNK_WIDTH) { p->coords.x = CHUNK_WIDTH - 1; }
 	else if (p->coords.y >= CHUNK_HEIGHT) { p->coords.y = CHUNK_HEIGHT - 1; }
 	else if (p->coords.x < 0) { p->coords.x = 0; }
@@ -1007,7 +1007,7 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 	float current = 0.f;
 	biome currentBiome = ocean;
 	int event = Math::RandInt(0, 15);
-	float taiga_pond_height = Math::RandInt(80,99);
+	float taiga_pond_height = (float)Math::RandInt(80,99);
 	for (int i = 0; i < CHUNK_WIDTH; i++) {
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
 
@@ -1062,7 +1062,7 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				if (curTemp > 0.495) {
 					if (Math::RandInt(0, 10) > 6) {
 						chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
-						chunk->localCoords[i][j].mainTileColor = { 0.5, 0.55, 0.35 };
+						chunk->localCoords[i][j].mainTileColor = { 0.5f, 0.55f, 0.35f };
 						chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
 						chunk->localCoords[i][j].ResetColor();
 					}
@@ -1110,7 +1110,7 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 				break;
 			case swamp:
 				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
-				chunk->localCoords[i][j].mainTileColor = { 0.5, 0.55, 0.35 };
+				chunk->localCoords[i][j].mainTileColor = { 0.5f, 0.55f, 0.35f };
 				chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
 				chunk->localCoords[i][j].ResetColor();
 				if (curTemp < 0.505) {
@@ -1563,7 +1563,7 @@ std::vector<Vector2_I> Map::GetSquare(Vector2_I centerTile, int size) {
 std::vector<Vector2_I> Map::GetCircleEdge(Vector2_I centerTile, int size) {
 	std::vector<Vector2_I> circleList;
 	for (int r = 0; r <= floor(size * sqrt(0.5)); r++) {
-		int d = floor(sqrt(size * size - r * r));
+		int d = (int)floor(sqrt(size * size - r * r));
 		circleList.push_back({ centerTile.x + d, centerTile.y + r });
 		circleList.push_back({ centerTile.x - d, centerTile.y - r });
 		circleList.push_back({ centerTile.x + d, centerTile.y - r });
@@ -1579,8 +1579,8 @@ std::vector<Vector2_I> Map::GetCircleEdge(Vector2_I centerTile, int size) {
 std::vector<Vector2_I> Map::GetCircle(Vector2_I centerTile, int size) {
 	std::vector<Vector2_I> circleList;
 
-	int top = ceil(centerTile.x - centerTile.y),
-		bottom = floor(centerTile.x + size);
+	int top = (int)ceil(centerTile.x - centerTile.y),
+		bottom = (int)floor(centerTile.x + size);
 
 	for (int x = top; x <= bottom; x++) {
 		int   dy = x - centerTile.x;

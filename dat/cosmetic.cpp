@@ -7,17 +7,17 @@ using namespace antibox;
 ImVec4 Cosmetic::FireColor() {
 	switch (Math::RandInt(1, 5)) {
 	case 1:
-		return { 1, 0.65, 0, 1 };
+		return { 1, 0.65f, 0, 1 };
 		break;
 	case 2:
-		return { 1, 0.15, 0, 1 };
+		return { 1, 0.15f, 0, 1 };
 		break;
 	case 3:
 		return { 1, 1, 0, 1 };
 		break;
 	case 4:
 	default:
-		return { 1, 0.35, 0, 1 };
+		return { 1, 0.35f, 0, 1 };
 		break;
 	}
 }
@@ -43,17 +43,17 @@ ImVec4 Cosmetic::RandomColor() {
 ImVec4 Cosmetic::SmokeColor() {
 	switch (Math::RandInt(1, 4)) {
 	case 1:
-		return { 0.5, 0.5, 0.5, 1 };
+		return { 0.5f, 0.5f, 0.5f, 1 };
 		break;
 	case 2:
-		return { 0.55, 0.55, 0.55, 1 };
+		return { 0.55f, 0.55f, 0.55f, 1 };
 		break;
 	case 3:
-		return { 0.6, 0.6, 0.6, 1 };
+		return { 0.6f, 0.6f, 0.6f, 1 };
 		break;
 	case 4:
 	default:
-		return { 0.35, 0.35, 0.35, 1 };
+		return { 0.35f, 0.35f, 0.35f, 1 };
 		break;
 	}
 }
@@ -132,22 +132,22 @@ ImVec4 Cosmetic::CoveredColor(int liquid)
 		return RandomColor(); //rgby
 		break;
 	case 1:
-		return { 0, 0.6, 1, 1 }; //blue
+		return { 0, 0.6f, 1, 1 }; //blue
 		break;
 	case 2:
-		return { 1, 0.15, 0, 1 }; // red
+		return { 1, 0.15f, 0, 1 }; // red
 		break;
 	case 3:
 		return FireColor();
 		break;
 	case 4:
-		return { 0.65, 0.1, 0, 1 }; // dark red (steve lacy reference??)
+		return { 0.65f, 0.1f, 0, 1 }; // dark red (steve lacy reference??)
 		break;
 	case 5:
-		return { 0.6, 0.4, 0.3, 1 };
+		return { 0.6f, 0.4f, 0.3f, 1 };
 		break;
 	case 6:
-		return { 0.85, 0.85, 0.85, 1 };
+		return { 0.85f, 0.85f, 0.85f, 1 };
 		break;
 	default:
 		return { 1, 1, 1, 1 }; //white

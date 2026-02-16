@@ -32,7 +32,7 @@ private:
 		props.imguiProps = { true, true, false, {fontPath, VGAFONT}, {"main", "ui"}, 16.f };
 		props.w = monitorRes.x * 0.7f;
 		props.h = monitorRes.y * 0.67f;
-		props.vsync = 0;
+		props.vsync = 1;
 		props.cc = { 0.5, 0.5, 0.5, 1 };
 		props.title = "By The Fire";
 		props.framebuffer_display = false;
@@ -75,7 +75,6 @@ public:
 	bool wrongDir = false;
 	bool showShadows = false;
 	bool deathScreen = false;
-	float vignetteStrength = 1.5f;
 	char saveNameSlot[128];
 	int selectedIndex = 0;
 	int selectedAttributeIndex = 0;
@@ -266,7 +265,10 @@ public:
 			if (ImGui::RadioButton("Show Shadows", showShadows)) {
 				showShadows = !showShadows;
 			}
-			ImGui::DragFloat("Vignette Strength", &vignetteStrength, 0.1f, 0.f, 2.f);
+
+			if (gameScreen.debugOpen) {
+				ImGui::DragFloat("Vignette Strength", &game.vignetteStrength, 0.1f, 0.f, 2.f);
+			}
 
 			//ImGui::ColorPicker3("Tab Color", &customTabColor.x);
 
@@ -590,7 +592,7 @@ public:
 				case 1:
 					ImGui::TextWrapped("You've always been prepared for everything, so when you went off on your own, you took what you knew would keep you alive.");
 					ImGui::Text("--Starting Inventory--");
-					ImGui::Text("5x Matches\n1x Raincoat\n2x Sterile Bandages");
+					ImGui::Text("5x Matches\n1x Raincoat\n2x Sterile Bandages\n1x Bottled Water");
 					break;
 				case 2:
 					ImGui::TextWrapped("You were taught how to hunt growing up, so when you went off on your own, you took your hunting supplies to survive in the wild.");
@@ -868,9 +870,9 @@ public:
 					//}
 					//lastTile = printIcon[0];
 					int distanceFromCenter = abs(vignetteX) + abs(vignetteY);
-					float newDist = ((float)distanceFromCenter - 15.f) / (30.f - 15.f);
+					float newDist = ((float)distanceFromCenter - game.vignetteMinDist) / (30.f - game.vignetteMinDist);
 					newDist = std::clamp(newDist, 0.f, 1.f);
-					float opacity = pow(1.f - newDist, vignetteStrength);
+					float opacity = pow(1.f - newDist, game.vignetteStrength);
 
 					iconColor.w = opacity;
 
@@ -937,16 +939,16 @@ public:
 		//------Stats------
 		if (gameScreen.statsOpen) {
 			ImGui::Begin("Stats");
-			ImGui::TextColored(ImVec4{ 0.85, 0.15, 0.15, 1 }, "Health");
-			ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4{ 0.85,0,0,1 });
-			ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.5,0,0,1 });
+			ImGui::TextColored(ImVec4{ 0.85f, 0.15f, 0.15f, 1 }, "Health");
+			ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4{ 0.85f,0,0,1 });
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.5f,0,0,1 });
 			ImGui::ProgressBar(game.mPlayer.health / 100, ImVec2(0.0f, 0.0f));
 			ImGui::PopStyleColor(2);
 
 
-			ImGui::TextColored(ImVec4{ 0.15, 0.65, 1, 1 }, "Thirst");
-			ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4{ 0,0.5,1,1 });
-			ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0,0.25,0.5,1 });
+			ImGui::TextColored(ImVec4{ 0.15f, 0.65f, 1, 1 }, "Thirst");
+			ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4{ 0,0.5f,1,1 });
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0,0.25f,0.5f,1 });
 			ImGui::ProgressBar(game.mPlayer.thirst / 100, ImVec2(0.0f, 0.0f));
 			if (game.mPlayer.thirst <= 10) {
 				ImGui::SameLine();
@@ -954,7 +956,7 @@ public:
 			}
 			else if (game.mPlayer.thirst <= 40) {
 				ImGui::SameLine();
-				ImGui::TextColored(ImVec4{ 1, 0.5, 0, 1 }, "!!");
+				ImGui::TextColored(ImVec4{ 1, 0.5f, 0, 1 }, "!!");
 			}
 			else if (game.mPlayer.thirst <= 60) {
 				ImGui::SameLine();
@@ -963,9 +965,9 @@ public:
 			ImGui::PopStyleColor(2);
 
 
-			ImGui::TextColored(ImVec4{ 1, 0.6, 0.15, 1 }, "Hunger");
-			ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4{ 0.8,0.5,0,1 });
-			ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.4,0.25,0,1 });
+			ImGui::TextColored(ImVec4{ 1, 0.6f, 0.15f, 1 }, "Hunger");
+			ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4{ 0.8f,0.5f,0,1 });
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4{ 0.4f,0.25f,0,1 });
 			ImGui::ProgressBar(game.mPlayer.hunger / 100, ImVec2(0.0f, 0.0f));
 			if (game.mPlayer.hunger <= 10) {
 				ImGui::SameLine();
@@ -973,7 +975,7 @@ public:
 			}
 			else if (game.mPlayer.hunger <= 40) {
 				ImGui::SameLine();
-				ImGui::TextColored(ImVec4{ 1, 0.5, 0, 1 }, "!!");
+				ImGui::TextColored(ImVec4{ 1, 0.5f, 0, 1 }, "!!");
 			}
 			else if (game.mPlayer.hunger <= 60) {
 				ImGui::SameLine();
@@ -1072,7 +1074,7 @@ public:
 
 		//------Inventory------
 		ImGui::Begin("Inventory");
-		ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.15, 0.15, 0.15, 1 });
+		ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.15f, 0.15f, 0.15f, 1 });
 		if (ImGui::BeginListBox("Inventory"))
 		{
 			for (int n = 0; n < pInv.items.size(); n++)
@@ -1130,20 +1132,20 @@ public:
 			std::string liquid = pInv.GetLiquidName(currentItemIndex);
 			ImVec4 color, colorBG;
 			if (liquid == "Water") {
-				color = { 0, 0.5, 1, 1 };
-				colorBG = { 0, 0, 0.45, 1 };
+				color = { 0, 0.5f, 1, 1 };
+				colorBG = { 0, 0, 0.45f, 1 };
 			}
 			else if (liquid == "Blood") {
-				colorBG = { 0.25, 0, 0, 1 };
-				color = { 0.75, 0, 0, 1 };
+				colorBG = { 0.25f, 0, 0, 1 };
+				color = { 0.75f, 0, 0, 1 };
 			}
 			else if (liquid == "Fire") {
-				colorBG = { 0.35, 0.25, 0, 1 };
+				colorBG = { 0.35f, 0.25f, 0, 1 };
 				color = Cosmetic::FireColor();
 			}
 			else {
-				colorBG = { 0.2, 0.2, 0.2, 1 };
-				color = { 0.6, 0.6, 0.6, 1 };
+				colorBG = { 0.2f, 0.2f, 0.2f, 1 };
+				color = { 0.6f, 0.6f, 0.6f, 1 };
 			}
 
 
@@ -1185,11 +1187,11 @@ public:
 
 
 			if (gameScreen.debugOpen) {
-				ImGui::TextColored({ 0.7,0.7,0.7,1 }, "==DEBUG INFO==");
-				ImGui::TextColored({ 0.7,0.7,0.7,1 }, ("Amount: " + std::to_string(curItem.count)).c_str());
-				ImGui::TextColored({ 0.7,0.7,0.7,1 }, ("Consumable: " + std::to_string(curItem.consumable)).c_str());
-				ImGui::TextColored({ 0.7,0.7,0.7,1 }, ("Consume Text: " + curItem.consumeTxt).c_str());
-				ImGui::TextColored({ 0.7,0.7,0.7,1 }, ("Use Text: " + curItem.useTxt).c_str());
+				ImGui::TextColored({ 0.7f,0.7f,0.7f,1 }, "==DEBUG INFO==");
+				ImGui::TextColored({ 0.7f,0.7f,0.7f,1 }, ("Amount: " + std::to_string(curItem.count)).c_str());
+				ImGui::TextColored({ 0.7f,0.7f,0.7f,1 }, ("Consumable: " + std::to_string(curItem.consumable)).c_str());
+				ImGui::TextColored({ 0.7f,0.7f,0.7f,1 }, ("Consume Text: " + curItem.consumeTxt).c_str());
+				ImGui::TextColored({ 0.7f,0.7f,0.7f,1 }, ("Use Text: " + curItem.useTxt).c_str());
 			}
 
 			if (ImGui::Button("Use"))
@@ -1752,16 +1754,16 @@ public:
 						ImGui::Text(glyphs.getGlyph("ent_player_right").c_str());
 					}
 					else if (game.mainMap.chunkBiomes.biomes[i][j] == taiga) {
-						ImGui::TextColored({ 0, 0.45, 0, 1 }, glyphs.getGlyph("tile_tree_top").c_str());
+						ImGui::TextColored({ 0, 0.45f, 0, 1 }, glyphs.getGlyph("tile_tree_top").c_str());
 					}
 					else if (game.mainMap.chunkBiomes.biomes[i][j] == desert) {
-						ImGui::TextColored({ 1, 1, 0.5, 1}, glyphs.getGlyph("tile_sand").c_str());
+						ImGui::TextColored({ 1, 1, 0.5f, 1}, glyphs.getGlyph("tile_sand").c_str());
 					}
 					else if (game.mainMap.chunkBiomes.biomes[i][j] == grassland) {
-						ImGui::TextColored({ 0.65 ,1 ,0.1 , 1 }, glyphs.getGlyph("tile_tall_grass").c_str());
+						ImGui::TextColored({ 0.65f ,1 ,0.1 , 1 }, glyphs.getGlyph("tile_tall_grass").c_str());
 					}
 					else if (game.mainMap.chunkBiomes.biomes[i][j] == swamp) {
-						ImGui::TextColored({ 0.8, 0.7, 0.5, 1 }, glyphs.getGlyph("tile_cattail_top").c_str());
+						ImGui::TextColored({ 0.8f, 0.7f, 0.5f, 1 }, glyphs.getGlyph("tile_cattail_top").c_str());
 					}
 					else {
 						ImGui::TextColored({ 1, 0, 0, 1 }, glyphs.getGlyph("vfx_exclamation").c_str());

@@ -107,7 +107,7 @@ public:
 				{
 					switch (localCoords[i][j].biomeID) {
 					case (short)swamp:
-						localCoords[i][j].mainTileColor = { 0.5, 0.55, 0.35 };
+						localCoords[i][j].mainTileColor = { 0.5f, 0.55f, 0.35f };
 						localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
 						break;
 					case (short)taiga:

@@ -34,8 +34,8 @@ int main() {
 namespace antibox {
 
 	namespace Utilities {
-		float deltaTime() { return antibox::Engine::Instance().deltaTime(); }
-		float getFPS() { return antibox::Engine::Instance().getFPS(); }
+		double deltaTime() { return antibox::Engine::Instance().deltaTime(); }
+		double getFPS() { return antibox::Engine::Instance().getFPS(); }
 
 		//Flips a bool after (time) seconds
 		void SetVarInSeconds(std::string lerpID, bool* value, float time) { antibox::Engine::Instance().SetBoolAfterTime(lerpID, value, time); }

@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-class ImVec4;
+struct ImVec4;
 
 class Cosmetic {
 public:

@@ -61,11 +61,17 @@ public:
 	float testTime;
 	bool startedMusicNight = false;
 	float reg_font_size = 16.f;
+	float vignetteStrength = 0.5f;
+	float vignetteMinDist = 15.f;
 
 
 	std::vector<std::string> sandWalk, grassWalk, rockWalk;
 
-	vec3 BG_DESERT, BG_WATER, BG_FOREST, BG_TAIGA, BG_SWAMP;
+	vec3 BG_DESERT = {0.f,0.f,0.f},
+		BG_WATER = { 0.f,0.f,0.f },
+		BG_FOREST = { 0.f,0.f,0.f },
+		BG_TAIGA = { 0.f,0.f,0.f },
+		BG_SWAMP = { 0.f,0.f,0.f };
 
 
 	float darkTime = 1.f;
@@ -101,9 +107,9 @@ public:
 
 	void SetTile(Vector2_I tile, int newTile);
 	
-	Entity* NearEnt();
+	//Entity* NearEnt();
 
-	bool EnterCave();
+	//bool EnterCave();
 	void LoadData();
 	std::string GetWalkSound();
 
@@ -207,7 +213,7 @@ void GameManager::LoadMessages() {
 			continue;
 		}
 
-		for (uint32_t x = 1; x <= messagesSize; x++)
+		for (int x = 1; x <= messagesSize; x++)
 		{
 			npcMessages[messageTypes[i]].push_back(data.getString(std::to_string(x)));
 		}
@@ -216,11 +222,11 @@ void GameManager::LoadMessages() {
 }
 
 void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1, int moisture = -1) {
-	BG_DESERT = { 0.15, 0.15, 0 };
-	BG_WATER = { 0, 0.1, 0.15 };
-	BG_FOREST = { 0, 0.15, 0 };
-	BG_TAIGA = { 0, 0.2, 0.15 };
-	BG_SWAMP = { 0.1, 0.15, 0.05 };
+	BG_DESERT = { 0.15f, 0.15f, 0 };
+	BG_WATER = { 0, 0.1f, 0.15f };
+	BG_FOREST = { 0, 0.15f, 0 };
+	BG_TAIGA = { 0, 0.2f, 0.15f };
+	BG_SWAMP = { 0.1f, 0.15f, 0.05f };
 	sandWalk = { "dat/sounds/movement/sand1.wav","dat/sounds/movement/sand2.wav", "dat/sounds/movement/sand3.wav" };
 	grassWalk = { "dat/sounds/movement/grass1.wav","dat/sounds/movement/grass2.wav", "dat/sounds/movement/grass3.wav" };
 	rockWalk = { "dat/sounds/movement/rock_walk1.wav","dat/sounds/movement/rock_walk2.wav", "dat/sounds/movement/rock_walk3.wav" };
@@ -274,7 +280,7 @@ void GameManager::CreateWorldFactions()
 		Entity* leaderEnt = new Entity();
 
 		leaderEnt->faction = &factions.list[factName];
-		leaderEnt->health = Math::RandInt(20,100);
+		leaderEnt->health = (float)Math::RandInt(20,100);
 		leaderEnt->factionLeader = true;
 		leaderEnt->damage = Math::RandInt(5, 15);
 		leaderEnt->name = leaderName;
@@ -298,7 +304,7 @@ void GameManager::CreateWorldFactions()
 
 		Entity* leaderEnt = new Entity();
 
-		leaderEnt->health = Math::RandInt(20, 100);
+		leaderEnt->health = (float)Math::RandInt(20, 100);
 		leaderEnt->damage = Math::RandInt(5, 15);
 		leaderEnt->name = specialPerson;
 		leaderEnt->faction = &factions.list[FACTION_HUMAN];
@@ -416,6 +422,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		else {
 			ent->targetingPlayer = false;
 		}
+		break;
 	case Protective:
 		//make sure theyre above health and nearby
 		if (ent->health > 5 && (tempTarget != nullptr || ent->targetingPlayer)) {
@@ -493,6 +500,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 			ent->target = nullptr;
 			ent->aggressive = false;
 		}
+		break;
 	case Wander:
 		//wander around, unless they can talk
 		if (PlayerNearby(oldCoords)) {
@@ -545,6 +553,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 				}
 			}
 		}
+		break;
 	}
 
 	
@@ -1119,6 +1128,8 @@ void GameManager::UpdateTick() {
 					currentWorldEvents.insert(WorldEvent::Storm);
 					mainMap.SetWeather(thunder);
 					Math::PushBackLog(&actionLog, "The Storm begins.");
+					Utilities::Lerp("vignette", &vignetteStrength, 2.f, 2.f);
+					Utilities::Lerp("vignetteDist", &vignetteMinDist, 8.f, 2.f);
 				}
 			}
 			else {
@@ -1441,9 +1452,7 @@ dimming:
 
 		if (shadows && mainMap.GetChunkAtCoords(tile->g_coords) != nullptr) {
 			if (mainMap.GetChunkAtCoords(tile->g_coords)->shadows.contains(tile->coords) && !tile->double_size) {
-				color.x *= 0.45f;
-				color.y *= 0.45f;
-				color.z *= 0.45f;
+				color.w -= 0.2f;
 			}
 		}
 
