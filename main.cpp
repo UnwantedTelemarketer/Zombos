@@ -2,8 +2,7 @@
 #include "dat/uiscreen.h"
 #include <algorithm>
 #include <thread>
-#include <DbgHelp.h>
-
+#include <filesystem>
 #include <chrono>
 
 #define VGAFONT  "dat/fonts/VGA437.ttf"
@@ -22,12 +21,10 @@ private:
 	WindowProperties GetWindowProperties() {
 		WindowProperties props;
 		vec2_i monitorRes;
-
+		
 		OpenedData defaultFontName;
-		ItemReader::GetDataFromFile("game_settings.eid", "FONTS", &defaultFontName);
-
-		std::string fontPath = "dat/fonts/" + defaultFontName.getString("glyph_font");
-
+		ItemReader::GetDataFromFile("dat/eid/game_settings.eid", "FONTS", &defaultFontName, false);
+		std::string fontPath = std::string("dat/fonts/") + defaultFontName.getString("glyph_font");
 		Rendering::GetMonitorSize(monitorRes.x, monitorRes.y);
 
 		props.imguiProps = { true, true, false, {fontPath, VGAFONT}, {"main", "ui"}, 16.f };
@@ -833,19 +830,19 @@ public:
 						if (underTile->id == 11) {
 							//screen += "G";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							printIcon = glyphs.getGlyph("tile_tree_top");
+							if (underTile->coords != player.coords) printIcon = glyphs.getGlyph("tile_tree_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 						else if (underTile->id == 12) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							printIcon = glyphs.getGlyph("tile_cactus_top");
+							if (underTile->coords != player.coords) printIcon = glyphs.getGlyph("tile_cactus_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 						else if (underTile->id == 18) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							printIcon = glyphs.getGlyph("tile_cattail_top");
+							if (underTile->coords != player.coords) printIcon = glyphs.getGlyph("tile_cattail_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 					}
@@ -2028,8 +2025,6 @@ public:
 
 	void Update() override
 	{
-		int* yarr = nullptr;
-
 		if (Input::KeyDown(KEY_END)) {
 			Utilities::ToggleConsoleVisible();
 		}
@@ -2039,8 +2034,6 @@ public:
 		if (colChangeTime >= 1.f) {
 			colChangeTime = 0;
 		}
-		MiniDumpWriteDump();
-		std::cout << *yarr << std::endl;
 
 		//the rest of the update is game logic so we stop here in the menu
 		if (currentState == map_gen_test) {
@@ -2179,10 +2172,7 @@ public:
 				playerDir = direction::right;
 			}
 		}
-		else if (Input::KeyDown(KEY_B)) {
-			Utilities::Lerp("vignette", &game.vignetteStrength, 3.f, 2.f);
-			Utilities::Lerp("vignetteDist", &game.vignetteMinDist, 0.f, 2.f);
-		}
+
 
 
 		else if (Input::KeyDown(KEY_E))

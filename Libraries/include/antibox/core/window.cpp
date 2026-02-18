@@ -29,6 +29,8 @@ namespace antibox {
 		glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11); 
 #elif __unix__
 		glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
+#elif __APPLE__
+		glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_COCOA);
 #endif
 		if (!glfwInit()) {
 			std::cout << "Error initializing GLFW." << std::endl;
@@ -90,6 +92,15 @@ namespace antibox {
 
 	bool Window::init(const WindowProperties& props) { // Window Properties
 		// Create a glfw window object of width by height pixels, naming it whatever the window name is
+		//
+		#ifdef __APPLE__
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+			glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+			glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_TRUE);
+		#endif
+
 		Window::win = glfwCreateWindow(props.w, props.h, props.title.c_str(), NULL, NULL);
 		// Error check if the window fails to create
 		if (win == NULL)
@@ -101,7 +112,6 @@ namespace antibox {
 		// Introduce the window into the current context
 		glfwMakeContextCurrent(Window::win); 
 
-
 		glfwSwapInterval(props.vsync); 
 
 
@@ -109,6 +119,7 @@ namespace antibox {
 			std::cout << "Failed to initialize GLAD" << std::endl;
 			return false;
 		}
+
 		// Specify the viewport of OpenGL in the Window
 		// In this case the viewport goes from x = 0, y = 0, to x = 800, y = 800
 		glViewport(0, 0, width, height); ANTIBOX_CHECK_GL_ERROR;
@@ -123,6 +134,7 @@ namespace antibox {
 
 		//set the callback to change the projection of the camera on the screen resizing
 		glfwSetFramebufferSizeCallback(win, framebuffer_size_callback);
+
 
 		return true;
 		//glEnable(GL_STENCIL_TEST);
