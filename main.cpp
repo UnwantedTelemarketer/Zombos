@@ -2,7 +2,7 @@
 #include "dat/uiscreen.h"
 #include <algorithm>
 #include <thread>
-
+#include <filesystem>
 #include <chrono>
 
 #define VGAFONT  "dat/fonts/VGA437.ttf"
@@ -21,12 +21,10 @@ private:
 	WindowProperties GetWindowProperties() {
 		WindowProperties props;
 		vec2_i monitorRes;
-
+		
 		OpenedData defaultFontName;
-		ItemReader::GetDataFromFile("game_settings.eid", "FONTS", &defaultFontName);
-
-		std::string fontPath = "dat/fonts/" + defaultFontName.getString("glyph_font");
-
+		ItemReader::GetDataFromFile("dat/eid/game_settings.eid", "FONTS", &defaultFontName, false);
+		std::string fontPath = std::string("dat/fonts/") + defaultFontName.getString("glyph_font");
 		Rendering::GetMonitorSize(monitorRes.x, monitorRes.y);
 
 		props.imguiProps = { true, true, false, {fontPath, VGAFONT}, {"main", "ui"}, 16.f };
