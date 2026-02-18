@@ -1829,7 +1829,7 @@ public:
 			ImGui::Begin("Dialogue");
 			ImGui::Text(ent->message.c_str());
 
-			ImGui::Text("\ITEMS:");
+			ImGui::Text("ITEMS:");
 			if (ent->inv.size() > 0 && ent->lootAlive || ent->health <= 0) {
 				for (int i = 0; i < ent->inv.size(); i++)
 				{

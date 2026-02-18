@@ -1191,6 +1191,8 @@ float GameManager::GetDarknessFromTime() {
 		float t = (mainMap.worldTimeTicks - 720) / 180.f;
 		return 10.f - t * 9.f;
 	}
+
+	return -1.f;
 }
 
 void GameManager::RedrawEntities(Vector2_I chunkCoords) {

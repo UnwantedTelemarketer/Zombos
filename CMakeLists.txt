@@ -63,6 +63,16 @@ add_custom_command(
             ${ASSET_DEST_DIR}
 )
 
+set(RESOURCE_SOURCE_DIR ${CMAKE_SOURCE_DIR}/res)
+set(RESOURCE_DEST_DIR   ${CMAKE_BINARY_DIR}/bin/res)
+
+add_custom_command(
+    TARGET Zombos POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${RESOURCE_SOURCE_DIR}
+            ${RESOURCE_DEST_DIR}
+)
+
 add_custom_command(
     TARGET Zombos POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy 

@@ -599,6 +599,7 @@ std::shared_ptr<Chunk> Map::CurrentChunk() {
 		case 1:
 			return upstairs.chunks[c_glCoords];
 	};
+	return world.chunks[c_glCoords];
 }
 
 
@@ -612,6 +613,7 @@ std::shared_ptr<Chunk> Map::GetProperChunk(Vector2_I coords) {
 		case 1:
 			return upstairs.chunks[coords];
 	};
+	return world.chunks[coords];
 }
 
 //std::vector<Tile> GetTileInRadius(vec2_i center) {
