@@ -19,7 +19,17 @@ endif()
 # ------------------------------------------------------------
 # Find dependencies
 # ------------------------------------------------------------
-find_package(glfw3 3.3 REQUIRED)
+if(APPLE)
+	find_package(glfw3 3.3 REQUIRED)
+endif()
+
+if(WIN32)
+	add_library(glfw STATIC IMPORTED)
+	set_target_properties(glfw PROPERTIES
+	  IMPORTED_LOCATION "${CMAKE_SOURCE_DIR}/Libraries/lib/glfw3.lib"
+	  INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_SOURCE_DIR}/Libraries/include/GLFW"
+	)
+endif()
 find_package(OpenGL REQUIRED)
 
 # ------------------------------------------------------------
