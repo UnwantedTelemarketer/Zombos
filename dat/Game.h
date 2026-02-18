@@ -1128,8 +1128,8 @@ void GameManager::UpdateTick() {
 					currentWorldEvents.insert(WorldEvent::Storm);
 					mainMap.SetWeather(thunder);
 					Math::PushBackLog(&actionLog, "The Storm begins.");
-					Utilities::Lerp("vignette", &vignetteStrength, 2.f, 2.f);
-					Utilities::Lerp("vignetteDist", &vignetteMinDist, 8.f, 2.f);
+					Utilities::Lerp("vignette", &vignetteStrength, 3.f, 2.f);
+					Utilities::Lerp("vignetteDist", &vignetteMinDist, 0.f, 2.f);
 				}
 			}
 			else {

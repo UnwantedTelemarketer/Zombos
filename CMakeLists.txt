@@ -107,7 +107,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 
 set(PROJECT_NAME antibox_cmake)
-#set_target_properties(antibox_cmake OUTPUT_NAME "btf_game")
 
 ################################################################################
 # Source groups
@@ -651,13 +650,19 @@ set(ALL_FILES
 ################################################################################
 # Target
 ################################################################################
-add_executable(${PROJECT_NAME} ${ALL_FILES} "Libraries/include/antibox/server/client.cpp" "Libraries/include/antibox/server/server.cpp"  "Libraries/include/antibox/tools/pathfinding.h" "dat/FactionManager.h")
+add_executable(${PROJECT_NAME} ${ALL_FILES} 
+    "app.rc"
+    "Libraries/include/antibox/server/client.cpp"
+    "Libraries/include/antibox/server/server.cpp"
+    "Libraries/include/antibox/tools/pathfinding.h"
+    "dat/FactionManager.h")
 
 use_props(${PROJECT_NAME} "${CMAKE_CONFIGURATION_TYPES}" "${DEFAULT_CXX_PROPS}")
 set(ROOT_NAMESPACE runicdepths)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
     VS_GLOBAL_KEYWORD "Win32Proj"
+    OUTPUT_NAME "btf_game"
 )
 ################################################################################
 # Output directory

@@ -4,9 +4,23 @@
 #include <iostream>
 #include <fstream>  
 #include <chrono>
+#include <exception>
+
+
 
 namespace antibox
 {
+
+	void CrashHandler() {
+		std::ofstream myfile("output_log.txt");
+		for (size_t i = 0; i < Console::allLogs.size(); i++)
+		{
+			myfile << Console::allLogs[i] << "\n";
+		}
+		myfile.close();
+		abort();
+	}
+
 	Engine& Engine::Instance()
 	{
 		if (!mInstance) {
@@ -25,6 +39,7 @@ namespace antibox
 		window = new Window(window_w, window_h, "name");
 		mAudio = new AudioEngine();
 		mainCamera = new Camera(window_w, window_h, glm::vec3(0.f, 0.f, 2.f));
+		std::set_terminate(CrashHandler);
 	}
 
 	void Engine::SetAppList(std::vector<App*> apps) {

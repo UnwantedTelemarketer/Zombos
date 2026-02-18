@@ -2,6 +2,7 @@
 #include "dat/uiscreen.h"
 #include <algorithm>
 #include <thread>
+#include <DbgHelp.h>
 
 #include <chrono>
 
@@ -832,19 +833,19 @@ public:
 						if (underTile->id == 11) {
 							//screen += "G";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							if (underTile->coords != player.coords) printIcon = glyphs.getGlyph("tile_tree_top");
+							printIcon = glyphs.getGlyph("tile_tree_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 						else if (underTile->id == 12) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							if (underTile->coords != player.coords) printIcon = glyphs.getGlyph("tile_cactus_top");
+							printIcon = glyphs.getGlyph("tile_cactus_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 						else if (underTile->id == 18) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							if (underTile->coords != player.coords) printIcon = glyphs.getGlyph("tile_cattail_top");
+							printIcon = glyphs.getGlyph("tile_cattail_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 					}
@@ -2027,6 +2028,8 @@ public:
 
 	void Update() override
 	{
+		int* yarr = nullptr;
+
 		if (Input::KeyDown(KEY_END)) {
 			Utilities::ToggleConsoleVisible();
 		}
@@ -2036,6 +2039,8 @@ public:
 		if (colChangeTime >= 1.f) {
 			colChangeTime = 0;
 		}
+		MiniDumpWriteDump();
+		std::cout << *yarr << std::endl;
 
 		//the rest of the update is game logic so we stop here in the menu
 		if (currentState == map_gen_test) {
@@ -2174,7 +2179,10 @@ public:
 				playerDir = direction::right;
 			}
 		}
-
+		else if (Input::KeyDown(KEY_B)) {
+			Utilities::Lerp("vignette", &game.vignetteStrength, 3.f, 2.f);
+			Utilities::Lerp("vignetteDist", &game.vignetteMinDist, 0.f, 2.f);
+		}
 
 
 		else if (Input::KeyDown(KEY_E))

@@ -16,7 +16,7 @@
 [ C:\dev\C++\antibox_cmake\dat\items.h:87 ] Loading Tiles from files...
 [ C:\dev\C++\antibox_cmake\dat\items.h:96 ] tiles.eid
 [ C:\dev\C++\antibox_cmake\dat\items.h:106 ] Loaded Tiles!
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox\core\engine.cpp:247 ] Succesfully added scene named 'TEST' to engine.
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox\core\engine.cpp:262 ] Succesfully added scene named 'TEST' to engine.
 [ C:\dev\C++\antibox_cmake\Libraries\include\antibox\graphics\texture.cpp:79 ] Loaded texture from res/logo.png.
 [ C:\dev\C++\antibox_cmake\Libraries\include\antibox\objects\scene.cpp:10 ] Succesfully created object Box
 [ C:\dev\C++\antibox_cmake\dat/Game.h:148 ] Loading sounds...
@@ -39,4 +39,4 @@
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:44 ] ITEMS
 [ C:\dev\C++\antibox_cmake\dat\glyphmanager.h:67 ] Finished loading glyphs!
 [ C:\dev\C++\antibox_cmake\main.cpp:2023 ] Done!
-[ C:\dev\C++\antibox_cmake\Libraries\include\antibox\core\engine.cpp:40 ] 0
+[ C:\dev\C++\antibox_cmake\Libraries\include\antibox\core\engine.cpp:55 ] 0

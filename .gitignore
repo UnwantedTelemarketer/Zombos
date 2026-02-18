@@ -228,9 +228,9 @@ _pkginfo.txt
 *.chunk
 save.eid
 output_log.txt
-/out/
+./out/
 dat/saves/
-/build/
+./build/
 output_log.txt
 
 # Visual Studio cache files

@@ -66,6 +66,8 @@ Faction* FactionManager::GetFaction(const std::string& factionName) {
 }
 
 bool FactionManager::AreEnemies(const std::string& factionA, const std::string& factionB) {
+	if (list.empty()) { return false; }
+
 	if (!list.contains(factionA)) {
 		std::cout << "Faction '" << factionA << "' does not exist." << std::endl;
 		return false;

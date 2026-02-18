@@ -34,7 +34,9 @@ namespace antibox
 
 		for (size_t i = 0; i < props.fontPaths.size(); i++)
 		{
-			ImFont* newFont = io.Fonts->AddFontFromFileTTF(props.fontPaths[i].c_str(), props.fontSize, NULL, ranges.Data);
+			ImFontConfig fontCfg;
+			fontCfg.RasterizerDensity = 2.f;
+			ImFont* newFont = io.Fonts->AddFontFromFileTTF(props.fontPaths[i].c_str(), props.fontSize, &fontCfg, ranges.Data);
 			IM_ASSERT(newFont != NULL);
 
 			FontData fd;
