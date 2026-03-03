@@ -43,6 +43,8 @@ file(GLOB_RECURSE ANTIBOX_FILES "${CMAKE_SOURCE_DIR}/Libraries/include/antibox/*
 # ------------------------------------------------------------
 
 add_executable(Zombos main.cpp)
+set_target_properties(Zombos PROPERTIES OUTPUT_NAME "btf_game")
+
 target_sources(Zombos PRIVATE ${GAME_FILES})
 target_include_directories(Zombos PRIVATE
 	# ${CMAKE_SOURCE_DIR}/Libraries/include

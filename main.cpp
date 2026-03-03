@@ -1761,7 +1761,7 @@ public:
 						ImGui::TextColored({ 0.65f ,1 ,0.1 , 1 }, glyphs.getGlyph("tile_tall_grass").c_str());
 					}
 					else if (game.mainMap.chunkBiomes.biomes[i][j] == swamp) {
-						ImGui::TextColored({ 0.8f, 0.7f, 0.5f, 1 }, glyphs.getGlyph("tile_cattail_top").c_str());
+						ImGui::TextColored(Cosmetic::CoveredColor((int)mud), glyphs.getGlyph("tile_water").c_str());
 					}
 					else {
 						ImGui::TextColored({ 1, 0, 0, 1 }, glyphs.getGlyph("vfx_exclamation").c_str());
