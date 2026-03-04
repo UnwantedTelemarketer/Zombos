@@ -1801,7 +1801,7 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 
 	for (int x = 0; x < CHUNK_HEIGHT; x++) {
 		for (int y = 0; y < CHUNK_WIDTH; y++) {
-			Tile *curTile = &chunk->localCoords[x][y];
+			Tile* curTile = &chunk->localCoords[x][y];
 
 			DoTechnical(curTile, chunk, x, y);
 
@@ -1845,20 +1845,20 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 			}
 			//change grass color
 			//if (curTile->id == 1) { curTile->tileColor = { 0, 0.65f + ((Math::RandNum(2) - 1) / 10), 0}; }
-			
-			//spread fire to a list so we dont spread more than one tile per update
-			if (curTile->liquid == fire) {
 
-				if (Math::RandInt(0, 2) == 1) effectLayer.localCoords[x - 1][y] = 1;
-				//If its a campfire, then let it burn but dont spread
+			// spread fire
+			if (curTile->liquid == fire) {
+				// smoke effect above, with bounds check
+				if (x > 0 && Math::RandInt(0, 2) == 1)
+					effectLayer.localCoords[x - 1][y] = 1;
+
+				// campfire logic — cooks items but doesnt spread
 				if (curTile->hasItem && curTile->itemName == "CAMPFIRE") {
 					Container* curCont = curTile->tileContainer;
 					if (curCont != nullptr) {
-						for (size_t i = 0; i < curCont->items.size(); i++)
-						{
-							if (!curCont->items[i].getAttribute("cookable")) { continue; }
-							//cook an item, then if its done, add the cooked item
-							curCont->items[i].ticksUntilCooked -= 1;
+						for (size_t i = 0; i < curCont->items.size(); i++) {
+							if (!curCont->items[i].getAttribute("cookable")) continue;
+							curCont->items[i].ticksUntilCooked--;
 							if (curCont->items[i].ticksUntilCooked <= 0) {
 								int amount = curCont->items[i].count;
 								curCont->AddItem(Items::GetItem(curCont->items[i].getAttribute("cookable")->extraInfo), amount);
@@ -1868,72 +1868,54 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 							}
 						}
 					}
-					TempCheck(p, { x,y });
+					TempCheck(p, { x, y });
 					continue;
 				}
+
+				// spread to a random neighbor
 				curTile->burningFor++;
 				switch (Math::RandInt(1, 10)) {
-				case 1:
-					tilesToBurn.push_back({ x + 1, y });
-					break;
-				case 2:
-					tilesToBurn.push_back({ x, y + 1 });
-					break;
-				case 3:
-					tilesToBurn.push_back({ x - 1, y });
-					break;
-				case 4:
-					tilesToBurn.push_back({ x, y - 1 });
-					break;
-				default:
-					break;
+				case 1: tilesToBurn.push_back({ x + 1, y }); break;
+				case 2: tilesToBurn.push_back({ x, y + 1 }); break;
+				case 3: tilesToBurn.push_back({ x - 1, y }); break;
+				case 4: tilesToBurn.push_back({ x, y - 1 }); break;
 				}
-
-				TempCheck(p, {x,y});
+				TempCheck(p, { x, y });
 			}
 
-			//if its been burned recently, dont let it catch again
+			// tile has burned long enough — transition it
 			if (curTile->burningFor >= BURN_TIMER) {
-				curTile->burningFor++;
-				if (curTile->burningFor >= 100) { curTile->burningFor = 0; }
-
-				//If it burns into another tile, change it
-				if (curTile->burningFor == 5 && curTile->burnsInto != -1) {
+				// burn into another tile if set
+				if (curTile->burnsInto != UNABLE_TO_BURN) {
 					int burnVal = curTile->burningFor;
 					*curTile = Tiles::GetTileByID(curTile->burnsInto);
 					curTile->burningFor = burnVal;
 				}
-
 				curTile->SetLiquid(nothing);
+				curTile->burningFor++;
+				if (curTile->burningFor >= 100) curTile->burningFor = 0;
 			}
 
-			//if its wet, slowly dry off 
+			// dry off wet tiles
 			if (curTile->liquid != nothing && curTile->liquidTime != -1) {
-				curTile->liquidTime++;
-				if (curTile->liquidTime >= 100) {
+				if (++curTile->liquidTime >= 100)
 					curTile->SetLiquid(nothing);
-				}
 			}
 
-
-			//logic for upwards facing flashlight pyramid
 			curTile->technical_update = false;
 		}
 	}
+
 	//set fire to tiles
-	for (int i = 0; i < tilesToBurn.size(); i++)
-	{
-		Tile* tileBurning = GetTileFromThisOrNeighbor(tilesToBurn[i], chunk->globalChunkCoord);
-
-		if (tileBurning->burningFor > BURN_TIMER) { continue; }
-		else if (tileBurning->burningFor == UNABLE_TO_BURN) { continue; }
-
-		if (tileBurning->liquid != nothing) {
+	for (auto& coords : tilesToBurn) {
+		Tile* tileBurning = GetTileFromThisOrNeighbor(coords, chunk->globalChunkCoord);
+		if (tileBurning == nullptr) continue;
+		if (tileBurning->burningFor > BURN_TIMER) continue;
+		if (tileBurning->burningFor == UNABLE_TO_BURN) continue;
+		// spread to any tile that can burn, not just ones with liquid
+		if(tileBurning->liquid == nothing)
 			tileBurning->SetLiquid(fire);
-		}
 	}
-
-
 }
 
 void Map::CalculateLights() {

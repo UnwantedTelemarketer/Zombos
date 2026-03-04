@@ -112,6 +112,10 @@ namespace antibox {
 
 		w = mode->width;
 		h = mode->height;
+		ConsoleLog("Monitor Resolution: " + 
+			std::to_string(mode->width) 
+			+ "x" + 
+			std::to_string(mode->height), LOG);
 #else
 		if (eglDisplay != EGL_NO_DISPLAY && eglSurface != EGL_NO_SURFACE) {
 			eglQuerySurface(eglDisplay, eglSurface, EGL_WIDTH,  &w);
@@ -120,8 +124,15 @@ namespace antibox {
 			w = (int)width;
 			h = (int)height;
 		}
+
+		ConsoleLog("Screen Resolution: " +
+			std::to_string(w)
+			+ "x" +
+			std::to_string(h), LOG);
 #endif
 		// !! [ANDROID] end GetScreenSize
+
+		
 	}
 
 	bool Window::init(const WindowProperties& props) { // Window Properties

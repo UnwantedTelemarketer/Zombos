@@ -100,10 +100,9 @@
 	- The sprites now scale properly with window resizing
 	- Added function to change boolean after set time
 	- Tokenizer can now read commas in arrays IF theres an escape character before it (forward slash)
-	- Window now scales with resolution
+	- Window and font now scales with resolution
 	- Random floats can now be generated
 	- Console Logging no longer shows up in the command line, and is now a toggleable window.
 
   --Known Bugs--
-	- Fire wont spread?
 	- Crashes on astar pathfinding

@@ -20,14 +20,17 @@ int prevCommandIndex = 0;
 class Caves : public App {
 
 private:
+	vec2_i monitorRes;
 	WindowProperties GetWindowProperties() {
-		vec2_i monitorRes;
 		OpenedData defaultFontName;
 		ItemReader::GetDataFromFile("dat/eid/game_settings.eid", "FONTS", &defaultFontName, false);
 		Rendering::GetMonitorSize(monitorRes.x, monitorRes.y);
 
+		float mainFontSize = (monitorRes.y / 1080.f) * 16.f;
+		mainFontSize = std::floor(mainFontSize);
+
 		WindowProperties props;
-		props.imguiProps = { true, true, false, {std::string("dat/fonts/") + defaultFontName.getString("glyph_font"), VGAFONT}, {"main", "ui"}, 16.f };
+		props.imguiProps = { true, true, false, {std::string("dat/fonts/") + defaultFontName.getString("glyph_font"), VGAFONT}, {"main", "ui"}, mainFontSize };
 		props.w = monitorRes.x * 0.7f;
 		props.h = monitorRes.y * 0.67f;
 		props.vsync = 0;
@@ -1965,6 +1968,11 @@ public:
 		Items::LoadItems(&game.item_icons);
 		Tiles::LoadTiles(&game.tile_colors);
 
+		//set the main game font size based on the monitor resolution, so that it looks good on all sizes
+		game.reg_font_size =
+			monitorRes.y == 1080 ? 16.f :
+			monitorRes.y == 1440 ? 30.f :
+			monitorRes.y == 2160 ? 40.f : 16.f;
 
 		map.EmptyChunk(customBuilding);
 		//std::thread itemLoading = Items::LoadItemsFromFiles(&game.item_icons);
@@ -2012,13 +2020,6 @@ public:
 		yViewDist = 15;
 
 		game.sfxvolume = Audio::GetVolume();
-
-		/*OpenedData defaultFontName;
-		ItemReader::GetDataFromFile("game_settings.eid", "FONTS", &defaultFontName);
-
-		std::string fontPath = "dat/fonts/" + defaultFontName.getString("visual_font");
-
-		Text::AddFont(fontPath, "main");*/
 
 		if (!DoesDirectoryExist("dat/saves")) {
 			ConsoleLog("Save folder does not exist. Creating new...", text::white);
