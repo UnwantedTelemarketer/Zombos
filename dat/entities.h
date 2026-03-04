@@ -34,6 +34,7 @@ enum equipType { notEquip = 0, weapon = 1, hat = 2, shirt = 3, pants = 4, boots 
 #define ID_TAKER 8
 
 
+enum direction { up, down, left, right, still };
 
 //What the effect is and how much it does.
 struct EffectAmount {
@@ -641,7 +642,9 @@ struct Player {
 	int ticksCovered = 0;
 	int liquidLast = 50;
 	bool aiming = false;
-	std::string name = "Blank";
+	bool flashlightActive = false;
+	direction playerDir = direction::down;
+	std::string name = "Blank"; 
 	Vector2_I coords;
 	Vector2_I crosshair;
 	Liquid coveredIn = nothing;
@@ -895,7 +898,6 @@ struct Saved_Tile {
 		stream.read(&itemName[0], size);
 	}
 };
-enum direction{up, down, left, right, still};
 
 struct Tile {
 	int id = -1;

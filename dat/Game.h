@@ -970,6 +970,10 @@ void GameManager::CalculateLighting() {
 			}
 		}
 	}
+
+	if (mPlayer.flashlightActive) {
+		mainMap.floodFillCone(mainMap.CurrentChunk(), mPlayer.coords, mPlayer.playerDir, 10);
+	}
 }
 
 void GameManager::UpdateTick() {

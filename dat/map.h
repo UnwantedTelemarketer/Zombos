@@ -113,6 +113,7 @@ public:
 	void DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y);
 	void FixEntityIndex(std::shared_ptr<Chunk> chunk);
 	void floodFill(std::shared_ptr<Chunk> chunkToUse, Vector2_I centerTile, int distance, bool twinkle);
+	void floodFillCone(std::shared_ptr<Chunk> chunk, Vector2_I center, direction dir, int distance);
 	void ResetLightValues();
 	bool UpdateWeather();
 	void SetWeather(weather we);
@@ -2102,6 +2103,35 @@ void Map::floodFill(std::shared_ptr<Chunk> chunkToUse, Vector2_I centerTile, int
 	}
 }
 
+void Map::floodFillCone(std::shared_ptr<Chunk> chunk, Vector2_I center, direction dir, int distance) {
+	for (int i = 0; i < CHUNK_WIDTH; i++) {
+		for (int j = 0; j < CHUNK_HEIGHT; j++) {
+			int dx = i - center.x;
+			int dy = j - center.y;
+
+			// check if tile is within the cone based on direction
+			bool inCone = false;
+			switch (dir) {
+			case direction::up:    inCone = dx <= 0 && abs(dy) <= abs(dx); break;
+			case direction::down:  inCone = dx >= 0 && abs(dy) <= abs(dx); break;
+			case direction::left:  inCone = dy <= 0 && abs(dx) <= abs(dy); break;
+			case direction::right: inCone = dy >= 0 && abs(dx) <= abs(dy); break;
+			}
+
+			if (!inCone) continue;
+
+			float realDist = sqrt((float)(dx * dx + dy * dy));
+			if (realDist > distance) continue;
+
+			float brightness = (realDist / (float)distance) * (realDist / (float)distance);
+			brightness = std::clamp(brightness, 0.f, 1.f);
+
+			Tile& tile = chunk->localCoords[i][j];
+			if (tile.brightness <= brightness) continue;
+			tile.brightness = brightness;
+		}
+	}
+}
 
 Map::~Map()
 {

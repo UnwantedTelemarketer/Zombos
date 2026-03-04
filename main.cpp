@@ -60,7 +60,7 @@ public:
 	antibox::framerate frame;
 	std::vector<float> frametimes = {};
 	float colChangeTime = 0.f;
-	bool interacting = false, flashlightActive = false;
+	bool interacting = false;
 	int xMin, xMax, yMin, yMax;
 	int xViewDist, yViewDist;
 	char recipe_search[128] = "";
@@ -89,7 +89,6 @@ public:
 	Inventory& pInv = game.pInv;
 	Player& player = game.mPlayer;
 	GlyphManager& glyphs = game.glyphs;
-	direction playerDir = direction::down;
 	float& health = game.mPlayer.health;
 	Map& map = game.mainMap;
 	std::vector<Vector2_I> item_positions;
@@ -751,67 +750,7 @@ public:
 					intensity = curTile->brightness;
 
 
-					//Flashlight pyramid logic, idk weird math stuff. pack it away please
-					{//===================================================================
-						float newBrightness = 1.0f;
-						if ((i <= player.coords.x && i >= player.coords.x - 10)
-							&& (j >= player.coords.y - ((player.coords.x) - i)
-								&& j <= player.coords.y + ((player.coords.x) - i))
-							&& flashlightActive
-							&& playerDir == direction::up) {
-							newBrightness = 0.1f * (player.coords.x - i);
-						}
-						else if ((i >= player.coords.x && i <= player.coords.x + 10)
-							&& (j >= player.coords.y - ((i - player.coords.x))
-								&& j <= player.coords.y + (i - (player.coords.x)))
-							&& flashlightActive
-							&& playerDir == direction::down) {
-							newBrightness = 0.1f * (i - player.coords.x);
-						}
-						else if ((j <= player.coords.y && j >= player.coords.y - 10)
-							&& (i >= player.coords.x - ((player.coords.y) - j)
-								&& i <= player.coords.x + ((player.coords.y) - j))
-							&& flashlightActive
-							&& playerDir == direction::left) {
-							newBrightness = 0.1f * (player.coords.y - j);
-						}
-						else if ((j >= player.coords.y && j <= player.coords.y + 10)
-							&& (i >= player.coords.x - ((j - player.coords.y))
-								&& i <= player.coords.x + (j - (player.coords.y)))
-							&& flashlightActive
-							&& playerDir == direction::right) {
-							newBrightness = 0.1f * (j - player.coords.y);
-						}
-						intensity = newBrightness < intensity ? newBrightness : intensity;
-						if (intensity < 0.f) intensity = 0.f;
-						if (intensity > 1.f) { intensity = 1.f; }
-					}//===================================================================
-
-					if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
-					{
-						switch (playerDir) {
-						case direction::up:
-							printIcon = glyphs.getGlyph("ent_player_up");
-							break;
-						case direction::down:
-							printIcon = glyphs.getGlyph("ent_player_down");
-							break;
-						case direction::left:
-							printIcon = glyphs.getGlyph("ent_player_left");
-							break;
-						case direction::right:
-							printIcon = glyphs.getGlyph("ent_player_right");
-							break;
-						default:
-							printIcon = glyphs.getGlyph("error");
-							break;
-						}
-						iconColor = game.GetPlayerColor();
-						//batchedString.append("#");
-						//continue;
-					}
-
-					else if (map.GetEffectFromThisOrNeighbor(curCoords) == 1)
+					if (map.GetEffectFromThisOrNeighbor(curCoords) == 1)
 					{
 						effectShowing = true;
 						printIcon = glyphs.getGlyph("vfx_double_tilde");
@@ -862,19 +801,22 @@ public:
 						if (underTile->id == 11) {
 							//screen += "G";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							if (underTile->coords != player.coords) printIcon = glyphs.getGlyph("tile_tree_top");
+							//if (curCoords != player.coords) 
+							printIcon = glyphs.getGlyph("tile_tree_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 						else if (underTile->id == 12) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							if (underTile->coords != player.coords) printIcon = glyphs.getGlyph("tile_cactus_top");
+							//if (curCoords != player.coords) 
+							printIcon = glyphs.getGlyph("tile_cactus_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 						else if (underTile->id == 18) {
 							//screen += "J";
 							//colors.push_back(game.GetTileColor(underTile, intensity));
-							if (underTile->coords != player.coords) printIcon = glyphs.getGlyph("tile_cattail_top");
+							//if (curCoords != player.coords) 
+							printIcon = glyphs.getGlyph("tile_cattail_top");
 							iconColor = game.GetTileColor(underTile, intensity, showShadows);
 						}
 					}
@@ -884,6 +826,31 @@ public:
 						printIcon = game.GetItemChar(curTile);
 						iconColor = game.GetItemColor(curTile, intensity);
 					}
+
+					if (Vector2_I{ player.coords.x,player.coords.y } == Vector2_I{ i,j })
+					{
+						switch (player.playerDir) {
+						case direction::up:
+							printIcon = glyphs.getGlyph("ent_player_up");
+							break;
+						case direction::down:
+							printIcon = glyphs.getGlyph("ent_player_down");
+							break;
+						case direction::left:
+							printIcon = glyphs.getGlyph("ent_player_left");
+							break;
+						case direction::right:
+							printIcon = glyphs.getGlyph("ent_player_right");
+							break;
+						default:
+							printIcon = glyphs.getGlyph("error");
+							break;
+						}
+						iconColor = game.GetPlayerColor();
+						//batchedString.append("#");
+						//continue;
+					}
+
 				printing:
 
 					//screen += game.GetTileChar(curTile);
@@ -2162,7 +2129,7 @@ public:
 				selectedTileItem = nullptr;
 				gameScreen.tradeDialogue = false;
 				game.MovePlayer(MAP_UP);
-				playerDir = direction::up;
+				player.playerDir = direction::up;
 			}
 		}
 		else if (Input::KeyDown(KEY_DOWN) || Input::KeyDown(KEY_S)) {
@@ -2183,7 +2150,7 @@ public:
 				selectedTileItem = nullptr;
 				gameScreen.tradeDialogue = false;
 				game.MovePlayer(MAP_DOWN);
-				playerDir = direction::down;
+				player.playerDir = direction::down;
 			}
 		}
 		else if (Input::KeyDown(KEY_LEFT) || Input::KeyDown(KEY_A)) {
@@ -2204,7 +2171,7 @@ public:
 				selectedTileItem = nullptr;
 				gameScreen.tradeDialogue = false;
 				game.MovePlayer(MAP_LEFT);
-				playerDir = direction::left;
+				player.playerDir = direction::left;
 			}
 		}
 		else if (Input::KeyDown(KEY_RIGHT) || Input::KeyDown(KEY_D)) {
@@ -2225,7 +2192,7 @@ public:
 				selectedTileItem = nullptr;
 				gameScreen.tradeDialogue = false;
 				game.MovePlayer(MAP_RIGHT);
-				playerDir = direction::right;
+				player.playerDir = direction::right;
 			}
 		}
 
@@ -2241,7 +2208,7 @@ public:
 		}
 
 		else if (Input::KeyDown(KEY_F)) {
-			flashlightActive = !flashlightActive;
+			player.flashlightActive = !player.flashlightActive;
 			Audio::Play(sfxs["click"]);
 		}
 
