@@ -136,6 +136,9 @@ else()
   endif()
   find_package(OpenGL REQUIRED)
 
+  # I NEED MY INTELLISENSE
+  set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
   # ------------------------------------------------------------
   # Build the executable
   # ------------------------------------------------------------

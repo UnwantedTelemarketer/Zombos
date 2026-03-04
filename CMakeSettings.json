@@ -1,0 +1,10 @@
+{
+  "configurations": [
+    {
+      "name": "x64-Debug",
+      "configurationType": "Debug",
+      "buildRoot": "${projectDir}/out/build/${name}",
+      "intelliSenseMode": "windows-msvc-x64"
+    }
+  ]
+}

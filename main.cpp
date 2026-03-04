@@ -21,15 +21,13 @@ class Caves : public App {
 
 private:
 	WindowProperties GetWindowProperties() {
-		WindowProperties props;
 		vec2_i monitorRes;
-		
 		OpenedData defaultFontName;
 		ItemReader::GetDataFromFile("dat/eid/game_settings.eid", "FONTS", &defaultFontName, false);
-		std::string fontPath = std::string("dat/fonts/") + defaultFontName.getString("glyph_font");
 		Rendering::GetMonitorSize(monitorRes.x, monitorRes.y);
 
-		props.imguiProps = { true, true, false, {fontPath, VGAFONT}, {"main", "ui"}, 16.f };
+		WindowProperties props;
+		props.imguiProps = { true, true, false, {std::string("dat/fonts/") + defaultFontName.getString("glyph_font"), VGAFONT}, {"main", "ui"}, 16.f };
 		props.w = monitorRes.x * 0.7f;
 		props.h = monitorRes.y * 0.67f;
 		props.vsync = 0;
@@ -39,26 +37,27 @@ private:
 		return props;
 	}
 
+	// --- state ---
 	float tickRateVisual = 0.f, lastFPS = 0.f;
 	int counter = 0;
 	GameState currentState;
-	vec3 clothes = { 1,0,0 };
+	vec3 clothes = { 1, 0, 0 };
 	std::string printIcon = "";
-	ImVec4 iconColor = { 1,0,0,0 };
+	ImVec4 iconColor = { 1, 0, 0, 0 };
 	std::vector<Tile*> itemTiles;
-	vec2_i view_distance = { 15,15 };
-
+	vec2_i view_distance = { 15, 15 };
 	std::shared_ptr<Chunk> customBuilding;
+
 public:
-	//UI stuff
+	// --- ui ---
 	GameUI gameScreen;
 	Tile* selectedTile = nullptr;
 	Item* selectedTileItem = nullptr;
 	int currentItemIndex = 0;
-	int ySeparator = 2;
+	int ySeparator = 4;
 	std::string openClose = "";
 	antibox::framerate frame;
-	std::vector<float> frametimes = {};
+	std::vector<float> frametimes;
 	float colChangeTime = 0.f;
 	bool interacting = false;
 	int xMin, xMax, yMin, yMax;
@@ -68,7 +67,7 @@ public:
 	int customStructHeight = 1;
 	int customStructWidth = 1;
 	float uiFontSize = 16.f;
-	Vector4 customTabColor = {1,1,1,1};
+	Vector4 customTabColor = { 1, 1, 1, 1 };
 	bool savedGamesScreen = false;
 	bool newGameScreen = false;
 	bool debugMenuScreen = false;
@@ -82,7 +81,7 @@ public:
 	std::string selectedAttribute = "";
 	std::string selectedGlyph = "";
 
-	//Game Stuff
+	// --- game ---
 	std::shared_ptr<Chunk> test_chunk;
 	Commands cmd;
 	GameManager game;
@@ -97,32 +96,30 @@ public:
 	FastNoiseLite mapGenNoise, mapGenNoise2;
 	float noiseFreq = 0.4f;
 	int noiseType = 0;
-
 	char customMapBuffer[512] = "";
 
-	//Crafting Stuff
-	int recipeSelected, itemSelected = 0;
-	std::string recipeSelectedName, itemSelectedName, invSelectedName = "";
+	// --- crafting ---
+	int recipeSelected = 0, itemSelected = 0;
+	std::string recipeSelectedName = "", itemSelectedName = "", invSelectedName = "";
 
-	//Sounds
+	// --- sounds ---
 	std::map<std::string, const char*> sfxs = {
-		{"craft", "dat/sounds/craft.wav"},
-		{"fail", "dat/sounds/fail.wav"},
-		{"collect", "dat/sounds/bckp.wav"},
-		{"ui_select", "dat/sounds/ui_confirm.wav"},
-		{"splash", "dat/sounds/enter_water.wav"},
-		{"click", "dat/sounds/click.wav"},
-		{"crunch", "dat/sounds/eat.wav"},
-		{"drink", "dat/sounds/drink.wav"},
-		{"crunchy_click", "dat/sounds/crunchy_click.mp3"}
+		{ "craft",        "dat/sounds/craft.wav"           },
+		{ "fail",         "dat/sounds/fail.wav"            },
+		{ "collect",      "dat/sounds/bckp.wav"            },
+		{ "ui_select",    "dat/sounds/ui_confirm.wav"      },
+		{ "splash",       "dat/sounds/enter_water.wav"     },
+		{ "click",        "dat/sounds/click.wav"           },
+		{ "crunch",       "dat/sounds/eat.wav"             },
+		{ "drink",        "dat/sounds/drink.wav"           },
+		{ "crunchy_click","dat/sounds/crunchy_click.mp3"   }
 	};
 
-
-	//Sprites
+	// --- scene ---
 	Scene main = { "TEST" };
 	std::shared_ptr<GameObject> p;
 
-	//Character Creation
+	// --- character creation ---
 	int bgSelected = -1;
 	std::vector<classes> backgrounds;
 
@@ -240,7 +237,6 @@ public:
 			}
 
 			ImGui::Text("\n--UI Settings--");
-			//ImGui::SliderInt("Y Separator Value", &ySeparator, 0, 20);
 			ImGui::SliderInt("View Distance (Width)", &yViewDist, 5, 40);
 			ImGui::SliderInt("View Distance (Height)", &xViewDist, 5, 40);
 			ImGui::SliderFloat("Font Size ", &game.reg_font_size, 8.f, 64.f);
@@ -269,7 +265,9 @@ public:
 			}
 
 			if (gameScreen.debugOpen) {
+				ImGui::Text("\n--Debug Settings--");
 				ImGui::DragFloat("Vignette Strength", &game.vignetteStrength, 0.1f, 0.f, 2.f);
+				ImGui::SliderInt("Y Separator Value", &ySeparator, 0, 20);
 			}
 
 			//ImGui::ColorPicker3("Tab Color", &customTabColor.x);
@@ -711,8 +709,6 @@ public:
 				SWAP_FONT("main");
 			}
 
-			ImGui::SetFontSize(game.reg_font_size);
-
 			bool item = false;
 			ImVec2 playerPos;
 			ImVec4 batchColor;
@@ -722,6 +718,11 @@ public:
 			int vignetteX, vignetteY;
 			vignetteX = -15;
 			vignetteY = -15;
+
+			ImDrawList* drawList = ImGui::GetWindowDrawList();
+			ImVec2 origin = ImGui::GetCursorScreenPos();
+			float charW = game.reg_font_size + ySeparator; // adjust to match your font width
+			float charH = game.reg_font_size + 0.5f;
 
 			for (int i = xMin; i < xMax; i++) {
 				for (int j = yMin; j < yMax; j++) {
@@ -852,40 +853,33 @@ public:
 					}
 
 				printing:
-
-					//screen += game.GetTileChar(curTile);
-					//colors.push_back(game.GetTileColor(curTile, intensity));
-					//if (lastTile != printIcon[0]) {
-						//ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 0.05);
-						//ImGui::TextColored(batchColor, batchedString.c_str());
-						//batchedString.clear();
-					//}
-					//if it IS the same as the last tile, group them
-					//else {
-						//batchedString.append(printIcon);
-						//batchColor = iconColor;
-					//}
-					//lastTile = printIcon[0];
-					int distanceFromCenter = abs(vignetteX) + abs(vignetteY);
+					// vignette
+					int centerI = (xMin + xMax) / 2;
+					int centerJ = (yMin + yMax) / 2;
+					int distanceFromCenter = abs(i - centerI) + abs(j - centerJ);
 					float newDist = ((float)distanceFromCenter - game.vignetteMinDist) / (30.f - game.vignetteMinDist);
 					newDist = std::clamp(newDist, 0.f, 1.f);
-					float opacity = pow(1.f - newDist, game.vignetteStrength);
+					iconColor.w = pow(1.f - newDist, game.vignetteStrength);
 
-					iconColor.w = opacity;
+					ImVec2 pos = {
+						origin.x + (j - yMin) * charW,
+						origin.y + (i - xMin) * charH
+					};
 
-					ImGui::TextColored(iconColor, printIcon.c_str());
-					ImGui::SameLine();
-					vignetteY++;
+					drawList->AddText(
+						ImGui::GetFont(),
+						game.reg_font_size,
+						pos,
+						ImGui::ColorConvertFloat4ToU32(iconColor),
+						printIcon.c_str()
+					);
 				}
-				//ImGui::TextColored(batchColor, batchedString.c_str());
-				//batchedString.clear();
-				ImGui::Text("");
-				vignetteX++;
-				vignetteY = -15;
 			}
 
-			ImGui::SetFontSize(16.f);
+			// reserve space so imgui knows the window content size
+			ImGui::Dummy({ (float)(xMax - xMin) * charW, (float)(xMax - xMin) * charH });
 
+			ImGui::SetFontSize(16.f);
 			ImGui::End();
 		}
 
@@ -1961,6 +1955,7 @@ public:
 		
 	}
 
+
 	//---------------------------------------------BASE FUNCTIONS---------------------------------------------
 
 	void Init() override {
@@ -2052,26 +2047,15 @@ public:
 			Utilities::ToggleConsoleVisible();
 		}
 
-		bool moved = false;
 		colChangeTime += Utilities::deltaTime() / 1000;
-		if (colChangeTime >= 1.f) {
-			colChangeTime = 0;
-		}
+		if (colChangeTime >= 1.f) colChangeTime = 0;
 
-		//the rest of the update is game logic so we stop here in the menu
+		// map gen test state
 		if (currentState == map_gen_test) {
-			if (Input::KeyDown(KEY_UP)) {
-				cursorPos.x -= 1;
-			}
-			if (Input::KeyDown(KEY_DOWN)) {
-				cursorPos.x += 1;
-			}
-			if (Input::KeyDown(KEY_LEFT)) {
-				cursorPos.y -= 1;
-			}
-			if (Input::KeyDown(KEY_RIGHT)) {
-				cursorPos.y += 1;
-			}
+			if (Input::KeyDown(KEY_UP))    cursorPos.x -= 1;
+			if (Input::KeyDown(KEY_DOWN))  cursorPos.x += 1;
+			if (Input::KeyDown(KEY_LEFT))  cursorPos.y -= 1;
+			if (Input::KeyDown(KEY_RIGHT)) cursorPos.y += 1;
 			if (Input::KeyHeldDown(KEY_SPACE)) {
 				*customBuilding->GetTileAtCoords(cursorPos) = Tiles::GetTile(customTileSelect);
 			}
@@ -2079,10 +2063,9 @@ public:
 		}
 		else if (currentState != playing) { return; }
 
-		//-=================================================================
-
 		if (player.health <= 0) { deathScreen = true; return; }
 
+		// console input
 		if (gameScreen.console_showing) {
 			if (Input::KeyDown(KEY_ENTER)) {
 				ConsoleLog(console_commands, text::green);
@@ -2090,136 +2073,68 @@ public:
 				console_commands[0] = '\0';
 				prevCommandIndex = -1;
 			}
-			if (Input::KeyDown(KEY_UP)) {
-				if (cmd.prevCommandSize() > 0) {
-					std::string prevCom = cmd.GetOldCommand(&prevCommandIndex);
-					//LAZY_LOG(prevCommandIndex);
-					memset(console_commands, '\0', sizeof(console_commands));
-
-					for (int i = 0; i < prevCom.size(); i++) {
-						console_commands[i] = prevCom[i];
-					}
-				}
+			if (Input::KeyDown(KEY_UP) && cmd.prevCommandSize() > 0) {
+				std::string prevCom = cmd.GetOldCommand(&prevCommandIndex);
+				memset(console_commands, '\0', sizeof(console_commands));
+				for (int i = 0; i < prevCom.size(); i++) console_commands[i] = prevCom[i];
 			}
 		}
 
 		gameScreen.FlipScreens();
-
 		if (gameScreen.console_showing || gameScreen.craftingMenu) { return; }
 
 		game.UpdateTick();
 
-		
+		// movement and interaction
+		auto clearSelection = [&]() {
+			selectedTile = nullptr;
+			selectedTileItem = nullptr;
+			gameScreen.tradeDialogue = false;
+			};
+
+		auto interact = [&](Vector2_I coords) {
+			selectedTile = game.SelectTile(coords);
+			selectedTileItem = Items::GetItem_NoCopy(selectedTile->itemName);
+			interacting = false;
+			};
+
+		bool moved = false;
 
 		if (Input::KeyDown(KEY_UP) || Input::KeyDown(KEY_W)) {
-			if (interacting)
-			{
-				selectedTile = game.SelectTile({ player.coords.x - 1, player.coords.y });
-				selectedTileItem = Items::GetItem_NoCopy(selectedTile->itemName);
-				interacting = false;
-				return;
-			}
-			else if (player.aiming) {
-				player.crosshair.x -= 1;
-				return;
-			}
-			else {
-				moved = true;
-				selectedTile = nullptr;
-				selectedTileItem = nullptr;
-				gameScreen.tradeDialogue = false;
-				game.MovePlayer(MAP_UP);
-				player.playerDir = direction::up;
-			}
+			if (interacting) { interact({ player.coords.x - 1, player.coords.y }); return; }
+			else if (player.aiming) { player.crosshair.x -= 1; return; }
+			else { clearSelection(); game.MovePlayer(MAP_UP); player.playerDir = direction::up; moved = true; }
 		}
 		else if (Input::KeyDown(KEY_DOWN) || Input::KeyDown(KEY_S)) {
-			if (interacting)
-			{
-				selectedTile = game.SelectTile({ player.coords.x + 1, player.coords.y });
-				selectedTileItem = Items::GetItem_NoCopy(selectedTile->itemName);
-				interacting = false;
-				return;
-			}
-			else if (player.aiming) {
-				player.crosshair.x += 1;
-				return;
-			}
-			else {
-				moved = true;
-				selectedTile = nullptr;
-				selectedTileItem = nullptr;
-				gameScreen.tradeDialogue = false;
-				game.MovePlayer(MAP_DOWN);
-				player.playerDir = direction::down;
-			}
+			if (interacting) { interact({ player.coords.x + 1, player.coords.y }); return; }
+			else if (player.aiming) { player.crosshair.x += 1; return; }
+			else { clearSelection(); game.MovePlayer(MAP_DOWN); player.playerDir = direction::down; moved = true; }
 		}
 		else if (Input::KeyDown(KEY_LEFT) || Input::KeyDown(KEY_A)) {
-			if (interacting)
-			{
-				selectedTile = { game.SelectTile({ player.coords.x, player.coords.y - 1}) };
-				selectedTileItem = Items::GetItem_NoCopy(selectedTile->itemName);
-				interacting = false;
-				return;
-			}
-			else if (player.aiming) {
-				player.crosshair.y -= 1;
-				return;
-			}
-			else {
-				moved = true;
-				selectedTile = nullptr;
-				selectedTileItem = nullptr;
-				gameScreen.tradeDialogue = false;
-				game.MovePlayer(MAP_LEFT);
-				player.playerDir = direction::left;
-			}
+			if (interacting) { interact({ player.coords.x, player.coords.y - 1 }); return; }
+			else if (player.aiming) { player.crosshair.y -= 1; return; }
+			else { clearSelection(); game.MovePlayer(MAP_LEFT); player.playerDir = direction::left; moved = true; }
 		}
 		else if (Input::KeyDown(KEY_RIGHT) || Input::KeyDown(KEY_D)) {
-			if (interacting)
-			{
-				selectedTile = { game.SelectTile({ player.coords.x, player.coords.y + 1}) };
-				selectedTileItem = Items::GetItem_NoCopy(selectedTile->itemName);
-				interacting = false;
-				return;
-			}
-			else if (player.aiming) {
-				player.crosshair.y += 1;
-				return;
-			}
-			else {
-				moved = true;
-				selectedTile = nullptr;
-				selectedTileItem = nullptr;
-				gameScreen.tradeDialogue = false;
-				game.MovePlayer(MAP_RIGHT);
-				player.playerDir = direction::right;
-			}
+			if (interacting) { interact({ player.coords.x, player.coords.y + 1 }); return; }
+			else if (player.aiming) { player.crosshair.y += 1; return; }
+			else { clearSelection(); game.MovePlayer(MAP_RIGHT); player.playerDir = direction::right; moved = true; }
 		}
-
-
-
-		else if (Input::KeyDown(KEY_E))
-		{
-			if (!gameScreen.navInv)
-			{
-				Math::PushBackLog(&game.actionLog, "Which direction will you interact with?");
-				interacting = true;
-			}
+		else if (Input::KeyDown(KEY_E) && !gameScreen.navInv) {
+			Math::PushBackLog(&game.actionLog, "Which direction will you interact with?");
+			interacting = true;
 		}
-
 		else if (Input::KeyDown(KEY_F)) {
 			player.flashlightActive = !player.flashlightActive;
 			Audio::Play(sfxs["click"]);
 		}
 
-		if (moved) {
-			game.PlayWalkSound();
-		}
+		if (moved) game.PlayWalkSound();
 
 		if (player.aiming) {
 			map.ClearLine();
 			map.DrawLine(map.GetLine(player.coords, player.crosshair, 25));
-		};
+		}
 
 		if (game.freeView) {
 			xMin = player.coords.x - xViewDist;
@@ -2228,10 +2143,8 @@ public:
 			yMax = player.coords.y + yViewDist;
 		}
 		else {
-			xMin = 0;
-			xMax = CHUNK_HEIGHT;
-			yMin = 0;
-			yMax = CHUNK_WIDTH;
+			xMin = 0; xMax = CHUNK_HEIGHT;
+			yMin = 0; yMax = CHUNK_WIDTH;
 		}
 	}
 
