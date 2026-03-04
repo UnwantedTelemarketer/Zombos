@@ -13,6 +13,8 @@ using namespace antibox;
 
 enum GameState { playing, menu, map_gen_test };
 static char console_commands[128] = "";
+static std::vector<std::string> availableSaves;
+static int selectedSaveIndex = -1;
 int prevCommandIndex = 0;
 
 class Caves : public App {
@@ -30,7 +32,7 @@ private:
 		props.imguiProps = { true, true, false, {fontPath, VGAFONT}, {"main", "ui"}, 16.f };
 		props.w = monitorRes.x * 0.7f;
 		props.h = monitorRes.y * 0.67f;
-		props.vsync = 1;
+		props.vsync = 0;
 		props.cc = { 0.5, 0.5, 0.5, 1 };
 		props.title = "By The Fire";
 		props.framebuffer_display = false;
@@ -73,6 +75,7 @@ public:
 	bool wrongDir = false;
 	bool showShadows = false;
 	bool deathScreen = false;
+	bool areYouSure = false;
 	char saveNameSlot[128] = "";
 	int selectedIndex = 0;
 	int selectedAttributeIndex = 0;
@@ -129,7 +132,6 @@ public:
 	void ResetMenu() {
 		gameScreen.MainMenu();
 		bgSelected = -1;
-
 	}
 
 	void SaveCurrentGame() {
@@ -153,6 +155,7 @@ public:
 		dat.addFloat("STATS", "health", player.health);
 		dat.addFloat("STATS", "thirst", player.thirst);
 		dat.addFloat("STATS", "hunger", player.hunger);
+		dat.addFloat("STATS", "time", map.worldTimeTicks);
 		dat.addInt("STATS", "x_pos", player.coords.x);
 		dat.addInt("STATS", "y_pos", player.coords.y);
 		dat.addInt("STATS", "biomes", map.biomeSeed);
@@ -160,14 +163,13 @@ public:
 		dat.addInt("STATS", "moisture", map.moistureSeed);
 		dat.addInt("STATS", "global_x", map.CurrentChunk()->globalChunkCoord.x);
 		dat.addInt("STATS", "global_y", map.CurrentChunk()->globalChunkCoord.y);
-		dat.addFloat("STATS", "time", map.worldTimeTicks);
 		dat.addInt("STATS", "weather", map.currentWeather);
-		dat.addInt("SETTINGS", "ySep", ySeparator);
-		dat.addInt("SETTINGS", "xDist", xViewDist);
-		dat.addInt("SETTINGS", "yDist", yViewDist);
 		dat.addFloat("SETTINGS", "uiFontSize", game.reg_font_size);
 		dat.addFloat("SETTINGS", "sfxSound", game.sfxvolume);
 		dat.addFloat("SETTINGS", "musicSound", game.musicvolume);
+		dat.addInt("SETTINGS", "ySep", ySeparator);
+		dat.addInt("SETTINGS", "xDist", xViewDist);
+		dat.addInt("SETTINGS", "yDist", yViewDist);
 
 		std::vector<std::string> listString;
 		std::vector<std::string> itemList;
@@ -371,8 +373,35 @@ public:
 		}
 
 		if (savedGamesScreen) {
+			if (availableSaves.empty()) {
+				availableSaves.clear();
+				selectedSaveIndex = -1;
+				for (const auto& entry : std::filesystem::directory_iterator("dat/saves")) {
+					if (entry.is_directory()) {
+						availableSaves.push_back(entry.path().filename().string());
+					}
+				}
+			}
 			ImGui::Begin("Load Game Menu");
-			ImGui::InputText("Save Name", &saveNameSlot[0], sizeof(char) * 128);
+			//ImGui::InputText("Save Name", &saveNameSlot[0], sizeof(char) * 128);
+
+			// Show selectable list of saves
+			if (ImGui::ListBox("Saves", &selectedSaveIndex,
+				[](void* data, int idx, const char** out_text) {
+					const auto& names = *static_cast<std::vector<std::string>*>(data);
+					*out_text = names[idx].c_str();
+					return true;
+				},
+				&availableSaves, static_cast<int>(availableSaves.size()), 8))
+			{
+				if (selectedSaveIndex >= 0 && selectedSaveIndex < availableSaves.size()) {
+					strncpy(saveNameSlot, availableSaves[selectedSaveIndex].c_str(), sizeof(saveNameSlot));
+					saveNameSlot[sizeof(saveNameSlot) - 1] = '\0';
+				}
+			}
+
+			ImGui::Text(&saveNameSlot[0]);
+
 			if (ImGui::Button("Load Save")) {
 				Audio::Play(sfxs["crunchy_click"]);
 				map.currentSaveName = std::string(saveNameSlot);
@@ -391,6 +420,7 @@ public:
 					player.thirst = data.getFloat("thirst");
 					player.hunger = data.getFloat("hunger");
 					map.c_glCoords = { data.getInt("global_x"), data.getInt("global_y") };
+					player.coords = { data.getInt("x_pos"), data.getInt("y_pos") };
 
 					pInv.clothes = { data.getFloat("color_r"), data.getFloat("color_g"), data.getFloat("color_b") };
 
@@ -449,6 +479,34 @@ public:
 					saveNameSlot[0] = '\0';
 				}
 			}
+
+			ImGui::PushStyleColor(ImGuiCol_Button, { 0.6f,0.1f,0.1f,1.f });
+			if (ImGui::Button("Delete Save")) {
+				areYouSure = true;
+			}
+			if (areYouSure) {
+				ImGui::TextWrapped("Are you sure you want to delete this save? This action cannot be undone.");
+				if (ImGui::Button("CONFIRM")) {
+					Audio::Play(sfxs["crunchy_click"]);
+					if (selectedSaveIndex >= 0 && selectedSaveIndex < availableSaves.size()) {
+						std::string saveToDelete = "dat/saves/" + availableSaves[selectedSaveIndex];
+						if (std::filesystem::remove_all(saveToDelete)) {
+							ConsoleLog("Save deleted successfully!", SUCCESS);
+							availableSaves.erase(availableSaves.begin() + selectedSaveIndex);
+							selectedSaveIndex = -1;
+							saveNameSlot[0] = '\0';
+						}
+						else {
+							ConsoleLog("Failed to delete save!", ERROR);
+						}
+					}
+					else {
+						ConsoleLog("No save selected!", ERROR);
+					}
+					areYouSure = false;
+				}
+			}
+			ImGui::PopStyleColor();
 			ImGui::End();
 		}
 
@@ -1607,7 +1665,6 @@ public:
 						if (ImGui::Button("Burn Tile")) {
 							selectedTile->liquid = fire;
 							Audio::Play("dat/sounds/start_fire.mp3");
-							map.floodFill(selectedTile->coords, 5, false);
 
 							std::string itemName = pInv.equippedItems[weapon].section;
 							if (pInv.equippedItems[weapon].consumable) {
@@ -1691,6 +1748,7 @@ public:
 			//Display a bar until next tick
 			ImGui::ProgressBar(game.GetTick() / game.TickRate(), ImVec2(0.0f, 0.0f));
 
+			ImGui::TextWrapped(("Light Calculation Time:\n" + std::to_string(game.lightCalcTime)).c_str());
 			ImGui::Text("Weather : "); ImGui::SameLine();
 			ImGui::Text(Cosmetic::WeatherName(game.mainMap.currentWeather));
 

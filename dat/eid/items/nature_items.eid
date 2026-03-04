@@ -25,8 +25,6 @@ weight : 0.1;
 stackable : true;
 holdsLiquid : false;
 consumable : true;
-cookable : true;
-cooksInto : "COOKED_FLAT_MUSHROOM";
 amount : 1;
 consumeTxt : "You eat a flat top mushroom.";
 useTxt : "you cannot use this.";
@@ -34,6 +32,10 @@ effects : [3,1,0,0];
 equipType : 0;
 sprite : "item_mushroom";
 spriteColor : [0.65, 0.35, 0.0];
+
+attributes : [
+	cookable, true, 16, COOKED_FLAT_MUSHROOM,
+	]
 }
 
 COOKED_FLAT_MUSHROOM {
@@ -50,6 +52,10 @@ effects : [3,2,0,0];
 equipType : 0;
 sprite : "item_mushroom";
 spriteColor : [0.65, 0.35, 0.0];
+
+attributes : [
+	cookable, true, 32, ASH,
+	]
 }
 
 GLOWING_MUSHROOM {

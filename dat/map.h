@@ -12,6 +12,7 @@
 #include <cmath>
 #include <thread>
 #include "Chunk.h"
+#include <queue>
 
 #define MAP_UP 1
 #define MAP_DOWN 2
@@ -111,8 +112,7 @@ public:
 	void UpdateTiles(vec2_i coords, Player* p);
 	void DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y);
 	void FixEntityIndex(std::shared_ptr<Chunk> chunk);
-	void floodFillUtil(int x, int y, float prevBrightness, float newBrightness, int max, bool twinkle, bool firstTile);
-	void floodFill(Vector2_I centerTile, int distance, bool twinkle);
+	void floodFill(std::shared_ptr<Chunk> chunkToUse, Vector2_I centerTile, int distance, bool twinkle);
 	void ResetLightValues();
 	bool UpdateWeather();
 	void SetWeather(weather we);
@@ -125,6 +125,8 @@ public:
 	void SpawnHumanInCurrent(Vector2_I spawnCoords, Behaviour b, std::string f);
 
 	Vector2_I GetShadowMod();
+
+	void CalculateLights();
 
 	void Restart();
 
@@ -1843,19 +1845,6 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 			//change grass color
 			//if (curTile->id == 1) { curTile->tileColor = { 0, 0.65f + ((Math::RandNum(2) - 1) / 10), 0}; }
 			
-			//Crystals glows
-			if (curTile->id == 14 ) { floodFill({x, y}, 3, true); }
-
-			//glowing items glow
-			int dist = -1;
-
-			itemAttribute* attr = Items::GetItem_NoCopy(curTile->itemName)->getAttribute("emmissive");
-			if (attr != nullptr) { dist = attr->amount; }
-
-			if (dist > 0) {
-				floodFill({ x, y }, dist, true);
-			}
-
 			//spread fire to a list so we dont spread more than one tile per update
 			if (curTile->liquid == fire) {
 
@@ -1878,12 +1867,9 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 							}
 						}
 					}
-					floodFill({ x, y }, 5, false);
 					TempCheck(p, { x,y });
 					continue;
 				}
-
-				floodFill({ x, y }, 5, false);
 				curTile->burningFor++;
 				switch (Math::RandInt(1, 10)) {
 				case 1:
@@ -1944,10 +1930,42 @@ void Map::UpdateTiles(vec2_i coords, Player* p) {
 		if (tileBurning->liquid != nothing) {
 			tileBurning->SetLiquid(fire);
 		}
-		floodFill(tilesToBurn[i], 5, false);
 	}
 
 
+}
+
+void Map::CalculateLights() {
+	struct LightSource { Vector2_I coords; int dist; bool twinkle; };
+	std::vector<LightSource> lights;
+
+	for (int i = 0; i < CHUNK_WIDTH; i++) {
+		for (int j = 0; j < CHUNK_HEIGHT; j++) {
+			Tile* curTile = &CurrentChunk()->localCoords[i][j];
+
+			// reset
+			curTile->brightness = 1.f;
+			curTile->visited = false;
+
+			// collect light sources
+			if (curTile->id == 14) {
+				lights.push_back({ {i, j}, 3, true });
+			}
+			if (curTile->hasItem) {
+				itemAttribute* attr = Items::GetItem_NoCopy(curTile->itemName)->getAttribute("emmissive");
+				if (attr != nullptr && attr->amount > 0) {
+					lights.push_back({ {i, j}, attr->amount, true });
+				}
+			}
+			if (curTile->liquid == fire) {
+				lights.push_back({ {i, j}, 5, false });
+			}
+		}
+	}
+
+	for (auto& l : lights) {
+		floodFill(CurrentChunk(), l.coords, l.dist, l.twinkle);
+	}
 }
 
 //============ Conveyor Belts ============
@@ -2031,80 +2049,55 @@ void Map::FixEntityIndex(std::shared_ptr<Chunk> chunk) {
 	}
 }
 
-/*void Map::CreateContainer(Vector2_I coordsLocal) {
-	containers[{ c_glCoords.x, c_glCoords.y, coordsLocal.x, coordsLocal.y }] =
-	{ { c_glCoords.x, c_glCoords.y}, {coordsLocal.x, coordsLocal.y }, {} };
-}
-
-void Map::RemoveContainer(Vector2_I coordsLocal) {
-	containers.erase({ c_glCoords.x, c_glCoords.y, coordsLocal.x, coordsLocal.y });
-}
-
-void Map::CreateContainer(Vector4_I coords) {
-	containers[{ coords.x, coords.y, coords.z, coords.w }] =
-	{ { coords.x, coords.y}, {coords.z, coords.w }, {}};
-}
-
-Container* Map::ContainerAtCoord(Vector2_I localCoords) {
-	if (containers.count({ c_glCoords.x, c_glCoords.y, localCoords.x, localCoords.y }) != 0) {
-		return &containers[{ c_glCoords.x, c_glCoords.y, localCoords.x, localCoords.y }];
-	}
-	return nullptr;
-}*/
-
-// Recursive helper function for flood fill algorithm
-void Map::floodFillUtil(int x, int y, float prevBrightness, float newBrightness, int max, bool twinkle, bool firstTile)
+void Map::floodFill(std::shared_ptr<Chunk> chunkToUse, Vector2_I centerTile, int distance, bool twinkle)
 {
-	// Check if current tile is within the image boundaries
-	if (x < 0 || x >= CHUNK_WIDTH || y < 0 || y >= CHUNK_HEIGHT) {
-		return;
-	}
+	if (distance <= 0) return;
 
-	// Check if current tile has already been visited
-	if (CurrentChunk()->localCoords[x][y].visited) {
-		return;
-	}
+	struct Node { int x, y, dist; };
+	std::queue<Node> queue;
+	queue.push({ centerTile.x, centerTile.y, distance });
 
-	// Calculate new brightness value for the current tile
-	float currentBrightness = std::max(prevBrightness + newBrightness, 0.1f);
-
-	if (!CurrentChunk()->localCoords[x][y].walkable && !firstTile) {
-		CurrentChunk()->localCoords[x][y].brightness = std::min(currentBrightness, 1.f);
-		return;
-	}
-
-	if (max <= 0) {
-		return;
-	}
-
-	float extraFlare = 0;
-	// Update the current tile's brightness and visited flag
-	if (twinkle) { extraFlare = -((float)Math::RandInt(3, 5) / 100); }
-	CurrentChunk()->localCoords[x][y].brightness = (std::min(currentBrightness, 1.f) + extraFlare);
-	CurrentChunk()->localCoords[x][y].visited = true;
-
-	// Recursively call floodFillUtil for the four adjacent tiles
-	floodFillUtil(x, y + 1, currentBrightness, newBrightness, max - 1, twinkle, false);
-	floodFillUtil(x, y - 1, currentBrightness, newBrightness, max - 1, twinkle, false);
-	floodFillUtil(x + 1, y, currentBrightness, newBrightness, max - 1, twinkle, false);
-	floodFillUtil(x - 1, y, currentBrightness, newBrightness, max - 1, twinkle, false);
-}
-
-// Flood fill algorithm for 2D array of tiles with brightness value
-void Map::floodFill(Vector2_I centerTile, int distance, bool twinkle)
-{
-	int prevBrightness = 0.1f;
-	floodFillUtil(centerTile.x, centerTile.y, prevBrightness, 0.1f, distance, twinkle, true);
-}
-
-void Map::ResetLightValues() {
-	//go to the player and all entities and replace the original tile
-	for (int x = 0; x < CHUNK_WIDTH; x++)
+	while (!queue.empty())
 	{
-		for (int y = 0; y < CHUNK_HEIGHT; y++)
-		{
-			CurrentChunk()->localCoords[x][y].brightness = 1.f;
-			CurrentChunk()->localCoords[x][y].visited = false;
+		auto [x, y, dist] = queue.front();
+		queue.pop();
+
+		if (x < 0 || x >= CHUNK_WIDTH || y < 0 || y >= CHUNK_HEIGHT)
+			continue;
+
+		Tile& tile = chunkToUse->localCoords[x][y];
+
+		// 0.0 = fully lit, 1.0 = dark — inverted so division works correctly
+		 // use real euclidean distance for circular falloff
+        float dx = x - centerTile.x;
+        float dy = y - centerTile.y;
+        float realDist = sqrt(dx*dx + dy*dy);
+		float brightness = (realDist / (float)distance);
+
+		if (twinkle)
+			brightness += (float)Math::RandInt(0, 5) / 100.f;
+
+		brightness = std::clamp(brightness, 0.f, 1.f);
+
+		// only update if this path is brighter (lower value) than what's there
+		if (tile.visited && tile.brightness <= brightness)
+			continue;
+
+		tile.brightness = brightness;
+		tile.visited = true;
+
+		if (!tile.walkable || tile.double_size || dist <= 1)
+			continue;
+
+		queue.push({ x + 1, y,     dist - 1 });
+		queue.push({ x - 1, y,     dist - 1 });
+		queue.push({ x,     y + 1, dist - 1 });
+		queue.push({ x,     y - 1, dist - 1 });
+		if (dist > 2) {
+			queue.push({ x + 1, y + 1, dist - 2 });
+			queue.push({ x - 1, y + 1, dist - 2 });
+			queue.push({ x + 1, y - 1, dist - 2 });
+			queue.push({ x - 1, y - 1, dist - 2 });
 		}
 	}
 }

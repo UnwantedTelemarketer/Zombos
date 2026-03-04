@@ -1,7 +1,7 @@
 SECTIONS {
 sections : [BANDAGE,CLOTH_TORCH,LIGHTER,CANTEEN,GUTS,GLASS_JAR,
 			GLOWING_MUSHROOM_JAR,LANTERN,MATCH,BEAR_TRAP,
-			BEAR_TRAP_C,LIGHTER_EMPTY,STERILE_CLOTH,MAKESHIFT_HOE,WATERING_CAN];
+			BEAR_TRAP_C,LIGHTER_EMPTY,STERILE_CLOTH,MAKESHIFT_HOE,WATERING_CAN,THEGLOW];
 }
 
 BANDAGE {
@@ -176,6 +176,27 @@ spriteColor : [0.65, 0.55, 0.5];
 
 attributes : [
 	emmissive, true, 5, nthng
+	]
+}
+
+THEGLOW {
+name : "The Glow";
+description : "Lights up the area around it.";
+weight : 2.0;
+stackable : false;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : ".";
+useTxt : ".";
+effects : [0,0,0,0];
+equipType : 1;
+equipModifier : 1;
+sprite : "item_lantern";
+spriteColor : [0.65, 0.55, 0.5];
+
+attributes : [
+	emmissive, true, 10, nthng
 	]
 }
 

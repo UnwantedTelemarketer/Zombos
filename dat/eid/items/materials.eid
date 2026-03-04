@@ -1,5 +1,5 @@
 SECTIONS {
-sections : [GRASS,ROCK,SCRAP,STICK,OLD_CLOTH,RESIN,GLASS_SHARDS,LEATHER,EMPTY_CAN,EMPTY_BOTTLE,EMPTY_GLASS_BOTTLE]
+sections : [GRASS,ROCK,SCRAP,STICK,OLD_CLOTH,RESIN,GLASS_SHARDS,LEATHER,EMPTY_CAN,EMPTY_BOTTLE,EMPTY_GLASS_BOTTLE,ASH]
 }
 
 GRASS {
@@ -194,4 +194,21 @@ effects : [0,0,0,0];
 equipType : 0;
 sprite : "item_cloth"
 spriteColor : [0.60, 0.35, 0.0];
+}
+
+
+ASH {
+name : "Ash";
+description : "Pile of burnt... something.";
+weight : 0.1;
+stackable : true;
+holdsLiquid : false;
+consumable : false;
+amount : 1;
+consumeTxt : ".";
+useTxt : ".";
+effects : [0,0,0,0];
+equipType : 0;
+sprite : "item_cloth"
+spriteColor : [0.6, 0.5, 0.5];
 }

@@ -39,6 +39,7 @@ public:
 	timeOfDay time;
 	float sfxvolume = 1.f;
 	float musicvolume = 1.f;
+	float lightCalcTime = 0.f;
 	bool freeView = false;
 	std::unordered_set<int> currentWorldEvents;
 	int daysPassed = 0;
@@ -90,6 +91,7 @@ public:
 	void UpdateEntities(Vector2_I chunkCoords);
 	void UpdateTick();
 	void UpdateEffects();
+	void CalculateLighting();
 
 	void RedrawEntities(Vector2_I chunkCoords);
 
@@ -951,6 +953,26 @@ void GameManager::UpdateEffects() {
 	}
 }
 
+void GameManager::CalculateLighting() {
+	if (!isNight() && mainMap.playerLevel == 0) {
+		return;
+	}
+	float beforeTime = glfwGetTime();
+	mainMap.CalculateLights();
+	float afterTime = glfwGetTime();
+	lightCalcTime = afterTime - beforeTime;
+
+	if (pInv.CurrentEquipExists(weapon)) {
+		itemAttribute* attr = pInv.equippedItems[weapon].getAttribute("emmissive");
+		if (attr != nullptr) {
+			int dist = attr->amount;
+			if (dist > 0) {
+				mainMap.floodFill(mainMap.CurrentChunk(), mPlayer.coords, dist, false);
+			}
+		}
+	}
+}
+
 void GameManager::UpdateTick() {
 
 	if (paused) { return; }
@@ -968,18 +990,6 @@ void GameManager::UpdateTick() {
 		effectTickCount = 0;
 	}
 
-
-
-	if (pInv.CurrentEquipExists(weapon)) {
-		itemAttribute* attr = pInv.equippedItems[weapon].getAttribute("emmissive");
-		if (attr != nullptr){
-			int dist = attr->amount;
-			if (dist > 0) {
-				mainMap.floodFill(mPlayer.coords, dist, false);
-			}
-		}
-	}
-
 	pInv.ResetItemNames();
 
 	//Each tick
@@ -989,6 +999,7 @@ void GameManager::UpdateTick() {
 		float curTime = glfwGetTime();
 		mainMap.worldTimeTicks++;
 
+		
 
 		if (!currentWorldEvents.contains(WorldEvent::Storm)) {
 			if (mainMap.UpdateWeather()) {
@@ -1117,7 +1128,6 @@ void GameManager::UpdateTick() {
 			else if (mainMap.worldTimeTicks == 900) {
 				time = day;
 				startedMusicNight = false;
-				mainMap.ResetLightValues();
 				Audio::StopLoop("night_music");
 				Audio::StopLoop("crickets");
 				Audio::PlayLoop(gSettings.dayMusic, "ambient_day");
@@ -1171,7 +1181,8 @@ void GameManager::UpdateTick() {
 		//Utilities::Lerp("playertemp", &mPlayer.visualTemp, mPlayer.bodyTemp, 0.5f);
 	}
 
-
+	//Calculate lighting AFTER everything updates
+	CalculateLighting();
 }
 
 float GameManager::GetDarknessFromTime() {
@@ -1276,20 +1287,6 @@ std::string GameManager::GetItemChar(Tile* tile) {
 	return glyphs.getGlyph(item_icons[tile->itemName]);
 }
 
-ImVec4 GameManager::GetItemColor(Tile* tile, float intensity = -1.f) {
-	if (!tile->hasItem) {
-		return {1, 0, 0, 1};
-	}
-	if (intensity == -1.f) { intensity = tile->brightness; }
-	if (tile->liquid == fire) { return Cosmetic::FireColor(); }
-	vec3 color = Items::GetItemColor(tile->itemName);
-	color.x /= (darkTime * intensity);
-	color.y /= (darkTime * intensity);
-	color.z /= (darkTime * intensity);
-	return {color.x, color.y, color.z, 1};
-
-}
-
 std::string GameManager::GetTileChar(Tile* tile) {
 
 	if (tile->entity != nullptr)
@@ -1325,21 +1322,6 @@ std::string GameManager::GetTileChar(Tile* tile) {
 
 std::string GameManager::GetTileChar(Vector2_I tile) {
 	return GameManager::GetTileChar(&mainMap.CurrentChunk()->localCoords[tile.x][tile.y]);
-}
-
-ImVec4 GameManager::GetTileCharColor(Tile* tile, float intensity = -1.f) {
-	if (tile->entity != nullptr) {
-		return { 1, 0, 0, 1 };
-	}
-	if (intensity == -1.f) { intensity = tile->brightness; }
-	if (tile->liquid == fire) { return Cosmetic::FireColor(); }
-	vec3 color = Items::GetItemColor(tile->itemName);
-	color.x /= (darkTime * intensity);
-	color.y /= (darkTime * intensity);
-	color.z /= (darkTime * intensity);
-
-	return { color.x, color.y, color.z, 1 };
-
 }
 
 std::string GameManager::GetWalkSound(){
@@ -1392,79 +1374,100 @@ ImVec4 GameManager::GetPlayerColor() {
 	return ImVec4{ end_color.x, end_color.y, end_color.z, 1};
 }
 
-ImVec4 GameManager::GetTileColor(Tile* tile, float intensity, bool shadows) {
+
+// brightness 0.0-1.0. darkTime 1.0=day, 10.0=full night
+static ImVec4 ApplyLighting(vec3 baseColor, float darkTime, float brightness) {
 	ImVec4 color;
-	//check for entitites
-	if (tile->entity != nullptr)
-	{
-		if (tile->entity->health <= 0) {
-			color = { 1,0,0,1 };
-			goto dimming;
-		}
-		switch (tile->entity->entityID)
-		{
-		case ID_ZOMBIE:
-			color = { 0,1,0,1 };
-			goto dimming;
-			break;
-		case ID_CHICKEN:
-			color = { 1,1,1,1 };
-			goto dimming;
-			break;
-		case ID_HUMAN:
-			color = { 1,1,1,1 };
-			goto dimming;
-			break;
-		case ID_FROG:
-			color = { 0,0.7,0,1 };
-			goto dimming;
-			break;
-		case ID_CAT:
-			color = { 1,1,1,1 };
-			goto dimming;
-			break;
-		case ID_COW:
-			color = { 0.57,0.3,0,1 };
-			goto dimming;
-			break;
-		}
-	}
-	if (tile->liquid != nothing) {
-		color = Cosmetic::CoveredColor(tile->liquid);
-		goto dimming;
-	}
 
-	//check if its burnt
-	if (tile->burningFor > 0) {
-		color = { 0.45, 0.45, 0.45, 1 };
-		goto dimming;
+	if (darkTime <= 1.f) {
+		// pure daytime — brightness is irrelevant, just show full color
+		color = {
+			std::min(baseColor.x, baseColor.x + 0.15f),
+			std::min(baseColor.y, baseColor.y + 0.15f),
+			std::min(baseColor.z, baseColor.z + 0.15f),
+			1.f
+		};
 	}
-
-	color = { tile->tileColor.x, tile->tileColor.y, tile->tileColor.z, 1 };
-dimming:
-	//if its night time
-		if ((darkTime >= 10.f && intensity >= 1.f) || (mainMap.playerLevel == -1 && intensity >= 1.f)) {
-			if(currentWorldEvents.contains(WorldEvent::DormantMoon)) color = { 0.1f,0.1f,0.1f,1 };
-			else color = { 0.05f,0.05f,0.05f,1 };
-		}
-		else {
-			color.x /= (darkTime * intensity);
-			color.y /= (darkTime * intensity);
-			color.z /= (darkTime * intensity);
-		}
-
-		if (shadows && mainMap.GetChunkAtCoords(tile->g_coords) != nullptr) {
-			if (mainMap.GetChunkAtCoords(tile->g_coords)->shadows.contains(tile->coords) && !tile->double_size) {
-				color.w -= 0.2f;
-			}
-		}
+	else {
+		brightness = std::clamp(brightness, 0.f, 1.f);
+		//float lightModifier = std::max(darkTime - (darkTime * brightness), 0.01f);
+		baseColor.x /= darkTime * brightness;
+		baseColor.y /= darkTime * brightness;
+		baseColor.z /= darkTime * brightness;
+		color = {
+			baseColor.x,
+			baseColor.y,
+			baseColor.z,
+			1.f
+		};
+	}
 
 	return color;
 }
 
+ImVec4 GameManager::GetTileColor(Tile* tile, float intensity, bool shadows) {
+	// fire always glows
+	if (tile->liquid == fire) return Cosmetic::FireColor();
+
+	vec3 baseColor;
+
+	if (tile->entity != nullptr) {
+		if (tile->entity->health <= 0)          baseColor = { 1, 0, 0 };
+		else switch (tile->entity->entityID) {
+		case ID_ZOMBIE:  baseColor = { 0, 1, 0 };          break;
+		case ID_CHICKEN: baseColor = { 1, 1, 1 };          break;
+		case ID_HUMAN:   baseColor = { 1, 1, 1 };          break;
+		case ID_FROG:    baseColor = { 0, 0.7f, 0 };       break;
+		case ID_CAT:     baseColor = { 1, 1, 1 };          break;
+		case ID_COW:     baseColor = { 0.57f, 0.3f, 0 };   break;
+		default:         baseColor = { 1, 1, 1 };          break;
+		}
+	}
+	else if (tile->liquid != nothing) {
+		ImVec4 lc = Cosmetic::CoveredColor(tile->liquid);
+		baseColor = { lc.x, lc.y, lc.z };
+	}
+	else if (tile->burningFor > 0) {
+		baseColor = { 0.45f, 0.45f, 0.45f };
+	}
+	else {
+		baseColor = { tile->tileColor.x, tile->tileColor.y, tile->tileColor.z };
+	}
+
+	// DormantMoon squashes the ambient floor to near-black
+	float brightness = tile->brightness;
+	if (currentWorldEvents.contains(WorldEvent::DormantMoon))
+		brightness = std::min(brightness, 0.1f);
+
+	ImVec4 color = ApplyLighting(baseColor, darkTime, brightness);
+
+	if (shadows && mainMap.GetChunkAtCoords(tile->g_coords) != nullptr) {
+		if (mainMap.GetChunkAtCoords(tile->g_coords)->shadows.contains(tile->coords) && !tile->double_size) {
+			color.w -= 0.2f;
+		}
+	}
+
+	return color;
+}
 
 ImVec4 GameManager::GetTileColor(Vector2_I tile, float intensity, bool shadows) {
 	return GameManager::GetTileColor(&mainMap.CurrentChunk()->localCoords[tile.x][tile.y], intensity, shadows);
+}
+
+ImVec4 GameManager::GetItemColor(Tile* tile, float intensity) {
+	if (!tile->hasItem) return { 1, 0, 0, 1 };
+	if (tile->liquid == fire) return Cosmetic::FireColor();
+
+	vec3 base = Items::GetItemColor(tile->itemName);
+	return ApplyLighting(base, darkTime, tile->brightness);
+}
+
+ImVec4 GameManager::GetTileCharColor(Tile* tile, float intensity) {
+	if (tile->entity != nullptr) return { 1, 0, 0, 1 };
+	if (tile->liquid == fire) return Cosmetic::FireColor();
+
+	vec3 base = Items::GetItemColor(tile->itemName);
+	return ApplyLighting(base, darkTime, tile->brightness);
 }
 
 class Commands {
@@ -1629,6 +1632,15 @@ void Commands::RunCommand(std::string input, GameManager* game) {
 		}
 		else if (tokens[1] == "time") {
 			game->mainMap.worldTimeTicks = stoi(tokens[2]);
+
+			if (game->isNight() || game->mainMap.playerLevel != 0) {
+				game->darkTime = game->GetDarknessFromTime();
+				game->startedMusicNight = true;
+			}
+			else {
+				game->darkTime = 1.f;
+				game->startedMusicNight = false;
+			}
 			Math::PushFrontLog(&game->consoleLog, "- Time changed");
 		}
 		else if (tokens[1] == "day") {

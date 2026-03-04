@@ -18,7 +18,6 @@ equipType : 0;
 sprite : "item_raw_meat";
 spriteColor : [1.0, 0.1, 0.2];
 
-
 attributes : [
 	cookable, true, 16, COOKED_MEAT,
 	]
