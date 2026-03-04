@@ -91,6 +91,9 @@
 	- Item Attribute System Added (items now have attributes instead of boolean tags.)
 	- Vignette added, changes based on weather and events.
 	- More debug info
+	- Lighting is now realtime, and looks a bit better
+	- Fixed npcs not doing their behaviour
+	- Starting inventories are now in an EID file.
 
   --Engine Changes--
 	- The sprites now scale properly with window resizing

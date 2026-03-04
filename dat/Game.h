@@ -366,7 +366,6 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 
 	std::vector<Vector2_I> entPath;
 	Entity* tempTarget = nullptr;
-	Vector2_I invalid = { -99,-99 };
 	bool moved = false;
 	ent->tempViewDistance = isDark() ? ent->viewDistance * 2 : ent->viewDistance;
 
@@ -386,7 +385,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 
 		std::vector<Vector2_I> curPath = mainMap.GetLineObscured(ent->localCoords, curEnt->localCoords, 10); //get line to other ent
 
-		if ((curPath.size() < entPath.size() || entPath.size() == 0) && curPath[0] != invalid) { //check that its long enough and target them
+		if ((curPath.size() < entPath.size() || entPath.size() == 0) && curPath[0].x != -99) { //check that its long enough and target them
 			entPath = curPath;
 			tempTarget = chunkInUse->entities[i];
 		}
@@ -414,7 +413,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		break;
 	case Aggressive:
 		//check if player is near
-		if (path.size() < ent->viewDistance && path[0] != invalid) {
+		if (path.size() < ent->viewDistance && path[0].x != -99) {
 			ent->targetingPlayer = true;
 			if (chunkInUse->globalChunkCoord == mainMap.c_glCoords) {
 				if (ent->name == "Zombie" && Math::RandInt(0, 20) == 1) {
@@ -425,7 +424,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 		else {
 			ent->targetingPlayer = false;
 		}
-		break;
+
 	case Protective:
 		//make sure theyre above health and nearby
 		if (ent->health > 5 && (tempTarget != nullptr || ent->targetingPlayer)) {
@@ -434,8 +433,9 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 			if (!ent->targetingPlayer) {
 				isEnemies = factions.AreEnemies(tempTarget->faction->name, ent->faction->name);
 			}
+
 			//if the player is targeted
-			else if (ent->targetingPlayer && path[0] != invalid) {
+			else if (ent->targetingPlayer && path[0].x != -99) {
 				if (mPlayer.coveredIn == guts && ent->name == "Zombie") { ent->targetingPlayer = false; }
 				std::vector<Vector2_I> pathToPlayer;
 				if (crossChunk) {
@@ -503,7 +503,6 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 			ent->target = nullptr;
 			ent->aggressive = false;
 		}
-		break;
 	case Wander:
 		//wander around, unless they can talk
 		if (PlayerNearby(oldCoords)) {
@@ -1413,6 +1412,10 @@ ImVec4 GameManager::GetTileColor(Tile* tile, float intensity, bool shadows) {
 
 	if (tile->entity != nullptr) {
 		if (tile->entity->health <= 0)          baseColor = { 1, 0, 0 };
+		else if (tile->entity->coveredIn != nothing) {
+			ImVec4 lc = Cosmetic::CoveredColor(tile->entity->coveredIn);
+			baseColor = { lc.x, lc.y, lc.z };
+		}
 		else switch (tile->entity->entityID) {
 		case ID_ZOMBIE:  baseColor = { 0, 1, 0 };          break;
 		case ID_CHICKEN: baseColor = { 1, 1, 1 };          break;
