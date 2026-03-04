@@ -94,6 +94,7 @@
 	- Lighting is now realtime, and looks a bit better
 	- Fixed npcs not doing their behaviour
 	- Starting inventories are now in an EID file.
+ - Load Save menu now lists available saves and allows you to delete them
 
   --Engine Changes--
 	- The sprites now scale properly with window resizing
