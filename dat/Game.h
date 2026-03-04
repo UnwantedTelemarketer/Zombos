@@ -27,10 +27,10 @@ enum timeOfDay {day, night};
 
 class GameManager {
 private:
-	float tickRate;
-	float effectTickRate;
-	double tickCount;
-	double effectTickCount;
+	float tickRate = 0.f;
+	float effectTickRate = 0.f;
+	double tickCount = 0.0;
+	double effectTickCount = 0.0;
 	bool forwardTime = true;
 	std::vector<std::string> missMessages = { "blank", "You swing at nothing and almost fall over.", "You miss.", "You don't hit anything." };
 	
@@ -59,7 +59,7 @@ public:
 	vec3 mainBGcolor;
 	vec3 bgColor;
 	biome currentBiome, lerpingTo;
-	float testTime;
+	float testTime = 0.f;
 	bool startedMusicNight = false;
 	float reg_font_size = 16.f;
 	float vignetteStrength = 0.5f;

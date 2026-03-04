@@ -25,11 +25,11 @@ namespace antibox {
 		Window* window; //Reference to the window
 		Camera* mainCamera;
 
-		bool mouseDownFlag; //Flag used to see if a mouse button is held down, used in the antibox.h input section
-		bool keyDownFlag; //Flag used to see if a key is held down
-		bool firstClick, movingCam;
-		int keyDownCode; //Variable holding the last pressed key
-		int currentSceneID;
+		bool mouseDownFlag = false; //Flag used to see if a mouse button is held down, used in the antibox.h input section
+		bool keyDownFlag = false; //Flag used to see if a key is held down
+		bool firstClick = false, movingCam = false;
+		int keyDownCode = -1; //Variable holding the last pressed key
+		int currentSceneID = 0;
 		std::map<std::string, lerp_pack> floatsToLerp;
 		std::map<std::string, timed_bool> boolsToChange;
 

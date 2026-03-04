@@ -7,6 +7,14 @@
 #include <string>
 #include "antibox/core/imguiwindow.h"
 
+// !! [ANDROID] EGL/GLES replace desktop OpenGL + GLFW on Android
+#ifdef __ANDROID__
+#include <EGL/egl.h>
+#include <GLES3/gl3.h>
+#include <android/native_window.h>
+#endif
+// !! [ANDROID] end Android GL includes
+
 
 namespace antibox {
 
@@ -37,7 +45,11 @@ namespace antibox {
 		void GetEvents();
 		glm::ivec2 GetSize();
 
+		// !! [ANDROID] GLFWwindow type doesn't exist on Android -- guard desktop-only accessor
+#ifndef __ANDROID__
 		inline GLFWwindow* glfwin() { return Window::win; }
+#endif
+		// !! [ANDROID] end glfwin guard
 		inline ImguiWindow imwin() { return Window::mImguiWindow; }
 		inline Framebuffer* GetFramebuffer() { return mFramebuffer.get(); }
 		inline void UseFramebuffer(bool tf) { showFramebuffer = tf; }
@@ -47,7 +59,23 @@ namespace antibox {
 	private:
 		bool showFramebuffer = false;
 		bool engineConsoleVisible = false;
+		// !! [ANDROID] GLFWwindow* only exists on desktop; Android uses EGL handles instead
+#ifndef __ANDROID__
 		GLFWwindow* win;
+#else
+		// !! [ANDROID] EGL display/surface/context replace the GLFW window
+		EGLDisplay eglDisplay = EGL_NO_DISPLAY;
+		EGLSurface eglSurface = EGL_NO_SURFACE;
+		EGLContext eglContext = EGL_NO_CONTEXT;
+#endif
+		// !! [ANDROID] end window handle block
+		// !! [ANDROID] ANativeWindow* passed in from android_main before init() is called
+#ifdef __ANDROID__
+	public:
+		ANativeWindow* androidNativeWindow = nullptr;
+	private:
+#endif
+		// !! [ANDROID] end ANativeWindow block
 		unsigned int width;
 		unsigned int height;
 		const char* windowName;

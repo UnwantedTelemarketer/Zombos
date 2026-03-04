@@ -34,8 +34,8 @@ namespace antibox
 
 	struct framerate {
 		limited_array<float> frames;
-		float lowest = 9999;
-		float highest;
+		float lowest = 0.f;
+		float highest = 0.f;
 
 		void Update(float current_frame) {
 			if (current_frame > highest) { highest = current_frame; }

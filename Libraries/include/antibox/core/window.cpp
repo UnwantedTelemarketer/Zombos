@@ -2,8 +2,20 @@
 #include "app.h"
 #include "../graphics/framebuffer.h"
 #include "log.h"
+// !! [ANDROID] glad + GLFW don't exist on Android; EGL/GLES3 are used instead
+#ifndef __ANDROID__
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#else
+// !! [ANDROID] NDK-provided EGL and OpenGL ES 3.0 headers
+#include <EGL/egl.h>
+#include <GLES3/gl3.h>
+#include <android/log.h>
+#define ANTIBOX_ANDROID_TAG "antibox"
+#define ANTIBOX_ALOGI(...) __android_log_print(ANDROID_LOG_INFO,  ANTIBOX_ANDROID_TAG, __VA_ARGS__)
+#define ANTIBOX_ALOGE(...) __android_log_print(ANDROID_LOG_ERROR, ANTIBOX_ANDROID_TAG, __VA_ARGS__)
+#endif
+// !! [ANDROID] end platform GL includes
 
 #define ANTIBOX_SUBMIT_RC(type, ...) std::move(std::make_unique<antibox::render::type>(__VA_ARGS__));
 
@@ -21,12 +33,13 @@ namespace antibox {
 
 	Window::Window(const unsigned int width, const unsigned int height, const char* windowName)
 	{
-	
+		// !! [ANDROID] GLFW init only runs on desktop -- Android lifecycle handled by NativeActivity
+#ifndef __ANDROID__
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 		glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_WIN32);
 #elif __linux__
 		// Default to X11 if not running Wayland
-		glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11); 
+		glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
 #elif __unix__
 		glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11);
 #elif __APPLE__
@@ -35,6 +48,8 @@ namespace antibox {
 		if (!glfwInit()) {
 			std::cout << "Error initializing GLFW." << std::endl;
 		}
+#endif
+		// !! [ANDROID] end GLFW init guard
 		Window::width = width;
 		Window::height = height;
 		Window::windowName = windowName;
@@ -71,10 +86,17 @@ namespace antibox {
 			ImGui::End();
 		}
 
-		mImguiWindow.EndRender(); 
+		mImguiWindow.EndRender();
 
-
+		// !! [ANDROID] eglSwapBuffers replaces glfwSwapBuffers on Android
+#ifndef __ANDROID__
 		glfwSwapBuffers(win);
+#else
+		if (eglDisplay != EGL_NO_DISPLAY && eglSurface != EGL_NO_SURFACE) {
+			eglSwapBuffers(eglDisplay, eglSurface);
+		}
+#endif
+		// !! [ANDROID] end swap buffers
 	}
 
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -84,13 +106,27 @@ namespace antibox {
 	}
 
 	void Window::GetScreenSize(int& w, int& h) {
+		// !! [ANDROID] EGL surface size replaces GLFW monitor query on Android
+#ifndef __ANDROID__
 		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
 		w = mode->width;
 		h = mode->height;
+#else
+		if (eglDisplay != EGL_NO_DISPLAY && eglSurface != EGL_NO_SURFACE) {
+			eglQuerySurface(eglDisplay, eglSurface, EGL_WIDTH,  &w);
+			eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &h);
+		} else {
+			w = (int)width;
+			h = (int)height;
+		}
+#endif
+		// !! [ANDROID] end GetScreenSize
 	}
 
 	bool Window::init(const WindowProperties& props) { // Window Properties
+		// !! [ANDROID] desktop GLFW init path -- skipped entirely on Android
+#ifndef __ANDROID__
 		// Create a glfw window object of width by height pixels, naming it whatever the window name is
 		//
 		#ifdef __APPLE__
@@ -110,12 +146,12 @@ namespace antibox {
 		}
 
 		// Introduce the window into the current context
-		glfwMakeContextCurrent(Window::win); 
+		glfwMakeContextCurrent(Window::win);
 
-		glfwSwapInterval(props.vsync); 
+		glfwSwapInterval(props.vsync);
 
 
-		if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){ 
+		if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
 			std::cout << "Failed to initialize GLAD" << std::endl;
 			return false;
 		}
@@ -138,6 +174,60 @@ namespace antibox {
 
 		return true;
 		//glEnable(GL_STENCIL_TEST);
+
+#else
+		// !! [ANDROID] EGL surface + context creation
+		// !!           androidNativeWindow must be set before calling init()
+		if (androidNativeWindow == nullptr) {
+			ANTIBOX_ALOGE("Window::init -- androidNativeWindow is null! Set it before calling init().");
+			return false;
+		}
+		eglDisplay = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+		if (eglDisplay == EGL_NO_DISPLAY) { ANTIBOX_ALOGE("eglGetDisplay failed"); return false; }
+
+		EGLint major, minor;
+		if (!eglInitialize(eglDisplay, &major, &minor)) { ANTIBOX_ALOGE("eglInitialize failed"); return false; }
+
+		// !! [ANDROID] request OpenGL ES 3.0 config
+		const EGLint attribs[] = {
+			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
+			EGL_SURFACE_TYPE,    EGL_WINDOW_BIT,
+			EGL_BLUE_SIZE,  8,
+			EGL_GREEN_SIZE, 8,
+			EGL_RED_SIZE,   8,
+			EGL_DEPTH_SIZE, 16,
+			EGL_NONE
+		};
+		EGLConfig config;
+		EGLint numConfigs;
+		if (!eglChooseConfig(eglDisplay, attribs, &config, 1, &numConfigs) || numConfigs == 0) {
+			ANTIBOX_ALOGE("eglChooseConfig failed"); return false;
+		}
+		eglSurface = eglCreateWindowSurface(eglDisplay, config, androidNativeWindow, nullptr);
+		if (eglSurface == EGL_NO_SURFACE) { ANTIBOX_ALOGE("eglCreateWindowSurface failed"); return false; }
+
+		const EGLint ctxAttribs[] = { EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE };
+		eglContext = eglCreateContext(eglDisplay, config, EGL_NO_CONTEXT, ctxAttribs);
+		if (eglContext == EGL_NO_CONTEXT) { ANTIBOX_ALOGE("eglCreateContext failed"); return false; }
+
+		if (!eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext)) {
+			ANTIBOX_ALOGE("eglMakeCurrent failed"); return false;
+		}
+		EGLint surfW = 0, surfH = 0;
+		eglQuerySurface(eglDisplay, eglSurface, EGL_WIDTH,  &surfW);
+		eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &surfH);
+		width  = (unsigned int)surfW;
+		height = (unsigned int)surfH;
+		glViewport(0, 0, width, height);
+		Engine::Instance().GetRenderManager().SetClearColor(props.cc);
+		mFramebuffer = std::make_shared<Framebuffer>(props.w, props.h);
+		mFramebuffer->SetClearColor(props.cc);
+		mImguiWindow.Create(props.imguiProps);
+		showFramebuffer = props.framebuffer_display;
+		ANTIBOX_ALOGI("EGL ready: %dx%d ES %d.%d", surfW, surfH, major, minor);
+		return true;
+#endif
+		// !! [ANDROID] end init() platform split
 	}
 
 	void Window::UpdateCC(glm::vec4 props)
@@ -145,10 +235,21 @@ namespace antibox {
 		Engine::Instance().GetRenderManager().SetClearColor(props);
 		mFramebuffer->SetClearColor(props); // props.cc
 	}
-	
+
 	glm::ivec2 Window::GetSize() {
+		// !! [ANDROID] EGL surface dimensions replace GLFW window size query
+#ifndef __ANDROID__
 		int w, h;
 		glfwGetWindowSize(win, &w, &h);
 		return glm::ivec2(w, h);
+#else
+		EGLint w = 0, h = 0;
+		if (eglDisplay != EGL_NO_DISPLAY && eglSurface != EGL_NO_SURFACE) {
+			eglQuerySurface(eglDisplay, eglSurface, EGL_WIDTH,  &w);
+			eglQuerySurface(eglDisplay, eglSurface, EGL_HEIGHT, &h);
+		}
+		return glm::ivec2(w, h);
+#endif
+		// !! [ANDROID] end GetSize
 	}
 }

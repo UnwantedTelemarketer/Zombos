@@ -279,8 +279,8 @@ public:
 
 		std::ifstream file(new_filepath);
 
-		std::string contents;
-		std::string line; //read from file
+		std::string contents = "";
+		std::string line = ""; //read from file
 		bool shouldWrite = false;
 
 		if (!file.is_open()) {
@@ -292,7 +292,13 @@ public:
 		while (std::getline(file, line)) {
 			//when we find the section, start writing
 			std::string lineNoSpace = line;
-			lineNoSpace.erase(remove_if(lineNoSpace.begin(), lineNoSpace.end(), isspace), lineNoSpace.end());
+
+            lineNoSpace.erase(
+                std::remove_if(lineNoSpace.begin(), lineNoSpace.end(),
+                    [](unsigned char c) { return std::isspace(c); }),
+                lineNoSpace.end()
+            );
+			//lineNoSpace.erase(remove_if(lineNoSpace.begin(), lineNoSpace.end(), isspace), lineNoSpace.end());
 			if (lineNoSpace == section + "{") { shouldWrite = true; continue; }
 			else if (!shouldWrite) { continue; }
 
@@ -302,7 +308,9 @@ public:
 			std::string fixedLine = line;
 
 			//erase those damn things
-			if (fixedLine[fixedLine.size() - 1] == '\r') { fixedLine.erase(fixedLine.begin() + fixedLine.size() - 1); }
+			if (!fixedLine.empty() && fixedLine.back() == '\r') {
+				fixedLine.pop_back();
+			}
 
 			//write if we should
 			if (shouldWrite) { contents.append(fixedLine); }

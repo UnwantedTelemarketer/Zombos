@@ -2,9 +2,15 @@
 #include "app.h"
 #include "../graphics/shader.h"
 #include <iostream>
-#include <fstream>  
+#include <fstream>
 #include <chrono>
 #include <exception>
+
+// !! [ANDROID] close flag polled in Engine::Run() instead of glfwWindowShouldClose
+#ifdef __ANDROID__
+namespace antibox { bool g_androidShouldClose = false; }
+#endif
+// !! [ANDROID] end close flag
 
 
 
@@ -53,7 +59,13 @@ namespace antibox
 		mRenderManager.Init();
 		mApp->Init();
 		ConsoleLog(mAudio->init(), text::red);
+		// !! [ANDROID] glfwGetTime doesn't exist on Android; use std::chrono instead
+#ifndef __ANDROID__
 		prevtime = glfwGetTime();
+#else
+		prevtime = 0.0;
+#endif
+		// !! [ANDROID] end prevtime init
 	}
 
 	void Engine::InitializeApp(App* app) {
@@ -91,7 +103,13 @@ namespace antibox
 			}
 			Update(); //Run the Update function
 			Render(); //Run the Render Function
-			closeScene = glfwWindowShouldClose(window->glfwin());
+			// !! [ANDROID] no GLFW window on Android; g_androidShouldClose is set by android_main event loop
+#ifndef __ANDROID__
+		closeScene = glfwWindowShouldClose(window->glfwin());
+#else
+		closeScene = antibox::g_androidShouldClose;
+#endif
+		// !! [ANDROID] end close check
 		}
 		End(); //Once the user closes the window, run End
 		std::ofstream myfile("output_log.txt");
@@ -109,6 +127,9 @@ namespace antibox
 	}
 
 	void Engine::RotateCam() {
+		// !! [ANDROID] RotateCam uses GLFW cursor APIs which don't exist on Android
+		// !!           Touch input would replace this on Android (TODO)
+#ifndef __ANDROID__
 		if (movingCam)
 		{
 			// Hides mouse cursor
@@ -154,12 +175,22 @@ namespace antibox
 			// Makes sure the next time the camera looks around it doesn't jump
 			firstClick = true;
 		}
+#endif
+		// !! [ANDROID] end RotateCam guard
 	}
 
 	void Engine::Update() {
 		window->BeginRender(); //Start the rendering from window
 
+		// !! [ANDROID] steady_clock replaces glfwGetTime on Android
+#ifndef __ANDROID__
 		auto crntTime = glfwGetTime();
+#else
+		static auto g_androidClockStart = std::chrono::steady_clock::now();
+		double crntTime = std::chrono::duration<double>(
+			std::chrono::steady_clock::now() - g_androidClockStart).count();
+#endif
+		// !! [ANDROID] end crntTime
 		double elapsed = crntTime - prevtime;
 		ms = elapsed * 1000.f;
 		prevtime = crntTime;
@@ -224,13 +255,17 @@ namespace antibox
 
 		mApp->Update(); //users update function
 
-		if (mScenes.size() != 0) {
-			mScenes[currentSceneID]->UpdateObjs();
-		}
+		//if (currentSceneID >= 0 && currentSceneID < mScenes.size()) {
+            mScenes[0]->UpdateObjs();
+		//}
 	}
 
 	void Engine::Render() {
+		// !! [ANDROID] glfwPollEvents doesn't exist on Android; events are pumped by android_native_app_glue in android_main
+#ifndef __ANDROID__
 		glfwPollEvents(); //Take in mouse and keyboard inputs
+#endif
+		// !! [ANDROID] end poll events
 
 		mApp->Render(); //Users render function.
 
@@ -239,9 +274,9 @@ namespace antibox
 		{
 			mScenes[i]->RenderObjs();
 		}*/
-		if (mScenes.size() != 0) {
-			mScenes[currentSceneID]->RenderObjs();
-		}
+		//if (currentSceneID >= 0 && currentSceneID < mScenes.size()) {
+			mScenes[0]->RenderObjs();
+		//}
 
 		window->EndRender(); //Window end render.
 		
@@ -252,8 +287,12 @@ namespace antibox
 		mApp->Shutdown(); //Users shutdown function
 		mApp = nullptr;
 		mRenderManager.Shutdown();
+		// !! [ANDROID] GLFW cleanup is desktop-only; EGL teardown happens in android_main
+#ifndef __ANDROID__
 		glfwDestroyWindow(window->glfwin());
 		glfwTerminate();
+#endif
+		// !! [ANDROID] end GLFW teardown
 	}
 
 	bool Engine::AddScene(Scene* sc) {

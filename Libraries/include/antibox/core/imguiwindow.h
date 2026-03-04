@@ -1,8 +1,15 @@
 #pragma once
 
 #include "imgui/imgui.h"
+// !! [ANDROID] imgui_impl_glfw does not exist on Android -- swap backends per platform
+#ifndef __ANDROID__
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#else
+#include "imgui/imgui_impl_android.h"
+#include "imgui/imgui_impl_opengl3.h"
+#endif
+// !! [ANDROID] end backend swap
 #include <vector>
 #include <string>
 #include <unordered_map>

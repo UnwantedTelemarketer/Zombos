@@ -856,9 +856,21 @@ void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLo
 			return;
 		}
 
+	vec2_i newCoords = { x, y };
+
 	Liquid l = GetTileFromThisOrNeighbor({ x,y })->liquid; //check if the tile has a liquid
 	if (l == water && GetTileFromThisOrNeighbor({ x,y })->liquidTime == -1) {
-		Audio::Play("dat/sounds/movement/enter_water.wav");
+		if (GetTileFromThisOrNeighbor(p->coords)->liquid != water || GetTileFromThisOrNeighbor(p->coords)->liquidTime == -1) {
+			Audio::Play("dat/sounds/movement/enter_water.wav");
+		}
+		else {
+			Audio::Play("dat/sounds/movement/water_wade.mp3");
+		}
+	}
+	else {
+		if (GetTileFromThisOrNeighbor(p->coords)->liquid == water || GetTileFromThisOrNeighbor(p->coords)->liquidTime == -1) {
+			Audio::Play("dat/sounds/movement/exit_water.mp3");
+		}
 	}
 
 	//if the player is covered in liquid, spread it
@@ -1422,7 +1434,7 @@ void Map::PlaceBuilding(Vector2_I startingChunk) {
 	{
 		
 		Tile* curTile = GetTileFromThisOrNeighbor({ buildingBlocks[i].x,buildingBlocks[i].y }, startingChunk);
-		if (Math::RandInt(0, 5) == 3) {
+		if (curTile != nullptr && Math::RandInt(0, 5) == 3) {
 			if (Math::RandInt(0, 10) == 5 && curTile->biomeID == forest) {
 				*curTile = Tiles::GetTile("TILE_TREE_BASE");
 			}

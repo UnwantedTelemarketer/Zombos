@@ -50,6 +50,8 @@ namespace antibox
 
 		ImGui::StyleColorsDark();
 
+			// !! [ANDROID] ImGui_ImplGlfw does not exist on Android; use ImGui_ImplAndroid instead
+#ifndef __ANDROID__
 		if (Engine::Instance().GetWindow()->glfwin() == nullptr) {
 			std::cout << "GLFW window is not valid!" << std::endl;
 			return;
@@ -57,6 +59,13 @@ namespace antibox
 
 		ImGui_ImplGlfw_InitForOpenGL(Engine::Instance().GetWindow()->glfwin(), true);
 		ImGui_ImplOpenGL3_Init("#version 330");
+#else
+		// !! [ANDROID] OpenGL ES 3.0 uses glsl version 300 es
+		// !!           ANativeWindow* is passed via Engine::Instance().GetWindow()->androidNativeWindow
+		ImGui_ImplAndroid_Init(Engine::Instance().GetWindow()->androidNativeWindow);
+		ImGui_ImplOpenGL3_Init("#version 300 es");
+#endif
+		// !! [ANDROID] end ImGui init
 	}
 
 	void ImguiWindow::AddFont(const std::string& filepath, const std::string& fontname) {
@@ -84,7 +93,13 @@ namespace antibox
 
 	void ImguiWindow::Shutdown() {
 		ImGui_ImplOpenGL3_Shutdown();
+		// !! [ANDROID] shutdown matching backend
+#ifndef __ANDROID__
 		ImGui_ImplGlfw_Shutdown();
+#else
+		ImGui_ImplAndroid_Shutdown();
+#endif
+		// !! [ANDROID] end backend shutdown
 		ImGui::DestroyContext();
 	}
 
@@ -107,7 +122,13 @@ namespace antibox
 
 	void ImguiWindow::BeginRender() {
 		ImGui_ImplOpenGL3_NewFrame();
+		// !! [ANDROID] new frame pump uses matching backend
+#ifndef __ANDROID__
 		ImGui_ImplGlfw_NewFrame();
+#else
+		ImGui_ImplAndroid_NewFrame();
+#endif
+		// !! [ANDROID] end NewFrame
 		ImGui::NewFrame();
 	}
 	void ImguiWindow::EndRender() {
@@ -115,6 +136,8 @@ namespace antibox
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		ImGuiIO& io = ImGui::GetIO();
+		// !! [ANDROID] multi-viewport uses GLFW context switching -- desktop only
+#ifndef __ANDROID__
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			auto& window = *Engine::Instance().GetWindow();
@@ -122,5 +145,7 @@ namespace antibox
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(window.glfwin());
 		}
+#endif
+		// !! [ANDROID] end multi-viewport block
 	}
 }

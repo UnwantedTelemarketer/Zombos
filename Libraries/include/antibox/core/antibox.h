@@ -21,6 +21,8 @@
 std::vector<antibox::App*> CreateGame();
 
 
+// !! [ANDROID] desktop entry point -- not compiled on Android
+#ifndef __ANDROID__
 int main() {
 	bool menu = true;
 	antibox::Engine& engine = antibox::Engine::Instance();
@@ -30,6 +32,34 @@ int main() {
 
 	return 0;
 }
+#else
+// !! [ANDROID] Android entry point -- called by android_native_app_glue instead of main()
+// !!           android_app* carries the ANativeWindow and event queue from NativeActivity
+#include <android_native_app_glue.h>
+extern bool antibox::g_androidShouldClose;
+void android_main(struct android_app* app) {
+	// !! [ANDROID] pump events so the window surface is ready before init()
+	app->onAppCmd = [](struct android_app* a, int32_t cmd) {
+		if (cmd == APP_CMD_TERM_WINDOW) { antibox::g_androidShouldClose = true; }
+	};
+
+	// !! [ANDROID] wait for the native window to be created before starting the engine
+	while (app->window == nullptr) {
+		int events;
+		android_poll_source* source = nullptr;
+		ALooper_pollOnce(0, nullptr, &events, (void**)&source);
+		if (source) source->process(app, source);
+	}
+
+	// !! [ANDROID] hand the ANativeWindow to the engine's Window before init() runs
+	antibox::Engine& engine = antibox::Engine::Instance();
+	engine.GetWindow()->androidNativeWindow = app->window;
+
+	engine.SetAppList(CreateGame());
+	engine.Run();
+}
+#endif
+// !! [ANDROID] end entry point
 
 namespace antibox {
 
@@ -98,9 +128,12 @@ namespace antibox {
 	}
 }
 
+// !! [ANDROID] entire Input namespace uses GLFW key/mouse APIs -- desktop only
+// !!           Touch input on Android would go in a separate Input_Android namespace
+#ifndef __ANDROID__
 #ifndef INPUT_FUNCS
 
-#define INPUT_FUNCS 
+#define INPUT_FUNCS
 namespace Input {
 
 	//Returns true if the key is held, false if not.
@@ -143,6 +176,8 @@ namespace Input {
 }
 
 #endif
+#endif
+// !! [ANDROID] end Input namespace guard
 
 
 

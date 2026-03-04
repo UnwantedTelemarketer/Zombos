@@ -56,7 +56,7 @@ public:
 	int ySeparator = 2;
 	std::string openClose = "";
 	antibox::framerate frame;
-	std::vector<float> frametimes;
+	std::vector<float> frametimes = {};
 	float colChangeTime = 0.f;
 	bool interacting = false, flashlightActive = false;
 	int xMin, xMax, yMin, yMax;
@@ -73,7 +73,7 @@ public:
 	bool wrongDir = false;
 	bool showShadows = false;
 	bool deathScreen = false;
-	char saveNameSlot[128] = { 0 };
+	char saveNameSlot[128] = "";
 	int selectedIndex = 0;
 	int selectedAttributeIndex = 0;
 	std::string selectedAttribute = "";
@@ -133,7 +133,14 @@ public:
 	}
 
 	void SaveCurrentGame() {
+		// !! [ANDROID] glfwGetTime doesn't exist on Android; use chrono
+#ifndef __ANDROID__
 		float curTime = glfwGetTime();
+#else
+		auto _saveStart = std::chrono::steady_clock::now();
+		float curTime = 0.f;
+#endif
+		// !! [ANDROID] end curTime
 		ConsoleLog("Now saving...", SUCCESS);
 		SaveData dat;
 
@@ -209,7 +216,13 @@ public:
 			chunk.second->SaveChunk(map.currentSaveName);
 		}
 
+		// !! [ANDROID] matching chrono alternative for save timer
+#ifndef __ANDROID__
 		float endTime = glfwGetTime() - curTime;
+#else
+		float endTime = std::chrono::duration<float>(std::chrono::steady_clock::now() - _saveStart).count();
+#endif
+		// !! [ANDROID] end endTime
 
 		ConsoleLog("Save complete in " + std::to_string(endTime * 1000) + "ms.", text::green);
 	}
@@ -226,7 +239,7 @@ public:
 			}
 
 			ImGui::Text("\n--UI Settings--");
-			ImGui::SliderInt("Y Separator Value", &ySeparator, 0, 20);
+			//ImGui::SliderInt("Y Separator Value", &ySeparator, 0, 20);
 			ImGui::SliderInt("View Distance (Width)", &yViewDist, 5, 40);
 			ImGui::SliderInt("View Distance (Height)", &xViewDist, 5, 40);
 			ImGui::SliderFloat("Font Size ", &game.reg_font_size, 8.f, 64.f);
