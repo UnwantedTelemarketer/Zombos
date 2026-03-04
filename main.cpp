@@ -66,14 +66,14 @@ public:
 	int customStructHeight = 1;
 	int customStructWidth = 1;
 	float uiFontSize = 16.f;
-	Vector4 customTabColor;
+	Vector4 customTabColor = {1,1,1,1};
 	bool savedGamesScreen = false;
 	bool newGameScreen = false;
 	bool debugMenuScreen = false;
 	bool wrongDir = false;
 	bool showShadows = false;
 	bool deathScreen = false;
-	char saveNameSlot[128];
+	char saveNameSlot[128] = { 0 };
 	int selectedIndex = 0;
 	int selectedAttributeIndex = 0;
 	std::string selectedAttribute = "";
@@ -122,17 +122,7 @@ public:
 
 	//Character Creation
 	int bgSelected = -1;
-	std::vector<classes> backgrounds =
-	{ {"Fighter",		{"MACHETE", "LEATHER_JACKET", "ROCK"}, {1, 1, 10}},
-		{"Survivalist", {"MATCH", "RAINCOAT", "BANDAGE", "BOTTLED_WATER"}, {5, 1, 2, 1}},
-		{"Hunter",		{"BEAR_TRAP", "LEATHER_BOOTS", "CAMPFIRE"}, {2, 1, 1}},
-		{"Explorer",	{"RATION", "LEATHER_BOOTS", "BITS"}, {5, 1, 10}},
-		{"Vagrant",		{"ROCK", "STICK", "ROPE"}, {5, 5, 3}},
-		{"Botanist",	{"TOMATO_SEEDS", "WATERING_CAN", "MAKESHIFT_HOE"}, {5, 1, 1}},
-		{"Amnesiac",	{}, {}},
-
-		//{"CLOTHIER",	{"LEATHER_BOOTS", "LEATHER_JACKET", "TOOTH_NECKLACE", "JEANS", "DRIVING_GLOVES", "HAT", "CANVAS_BACKPACK"}, {1, 1, 1, 1, 1, 1, 1}},
-	};
+	std::vector<classes> backgrounds;
 
 	//Yelling Text above NPCs
 
@@ -566,63 +556,34 @@ public:
 
 		//ImGui::ColorPicker3("Clothes Color", &clothes.x);
 		//ImGui::RadioButton("")
-		if (ImGui::TreeNode("-:Choose your Background:-"))
+		ImGui::TextWrapped("Choose a background story for your character. This will determine your starting inventory.");
+		ImGui::Text("-----------------------------------------------");
+		for (int n = 0; n < backgrounds.size(); n++)
 		{
-			for (int n = 0; n < backgrounds.size(); n++)
+			if (ImGui::Selectable(&backgrounds[n].name[0], bgSelected == n)) {
+				Audio::Play(sfxs["crunchy_click"]);
+				bgSelected = n;
+			}
+		}
+
+
+		//expand this to eid
+		if (bgSelected != -1) {
+			ImGui::Text("~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~");
+			ImGui::TextWrapped(backgrounds[bgSelected].description.c_str());
+			ImGui::Text("--Starting Inventory--");
+			std::string itemsText = "";
+			for (int i = 0; i < backgrounds[bgSelected].items.size(); i++)
 			{
-				if (ImGui::Selectable(&backgrounds[n].name[0], bgSelected == n)) {
-					Audio::Play(sfxs["crunchy_click"]);
-					bgSelected = n;
-				}
+				std::string itemName = Items::GetItem_NoCopy(backgrounds[bgSelected].items[i])->name;
+				itemsText += std::to_string(backgrounds[bgSelected].itemCounts[i]) + "x " + itemName + "\n";
 			}
-			ImGui::TreePop();
 
-
-			//expand this to eid
-			if (bgSelected != -1) {
-				ImGui::Text("~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~");
-				switch (bgSelected) {
-				case 0:
-					ImGui::TextWrapped("You've always been one to get into tuffles, so when you went off on your own, you took what you needed.");
-					ImGui::Text("--Starting Inventory--");
-					ImGui::Text("1x Machete\n1x Leather Jacket\n10x Rock");
-					break;
-				case 1:
-					ImGui::TextWrapped("You've always been prepared for everything, so when you went off on your own, you took what you knew would keep you alive.");
-					ImGui::Text("--Starting Inventory--");
-					ImGui::Text("5x Matches\n1x Raincoat\n2x Sterile Bandages\n1x Bottled Water");
-					break;
-				case 2:
-					ImGui::TextWrapped("You were taught how to hunt growing up, so when you went off on your own, you took your hunting supplies to survive in the wild.");
-					ImGui::Text("--Starting Inventory--");
-					ImGui::Text("2x Bear Trap\n1x Leather Boots\n1x Campfire");
-					break;
-				case 3:
-					ImGui::TextWrapped("You've always been curious about exploring every part of the world, so when you went off on your own, you took whatever could help you journey as far as possible.");
-					ImGui::Text("--Starting Inventory--");
-					ImGui::Text("5x Rations\n1x Leather Boots\n10x Scrap Bits (Money)");
-					break;
-				case 4:
-					ImGui::TextWrapped("You've never really been one for staying around. You don't keep many things with you, and so you didn't bring much.");
-					ImGui::Text("5x Rocks\n5x Sticks\n3x Ropes");
-					break;
-				case 5:
-					ImGui::TextWrapped("You're a botanist. You brough with you the things you needed to farm.");
-					ImGui::Text("5x Tomato Seeds\n5x Wheat Seeds\n1x Makeshift Hoe");
-					break;
-				case 6:
-					ImGui::TextWrapped("You don't remember who you are after waking up in the middle of the forest. What is this stuff in your pockets?");
-					ImGui::Text("--Starting Inventory--");
-					ImGui::Text("???");
-					break;
-				case 7:
-					ImGui::TextWrapped("Test Class");
-					ImGui::Text("--Starting Inventory--");
-					ImGui::Text("Clothes");
-					break;
-				}
-				ImGui::Text("~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~");
+			if (backgrounds[bgSelected].name == "Amnesiac") {
+				itemsText = "?x ???";
 			}
+			ImGui::TextWrapped(itemsText.c_str());
+			ImGui::Text("~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~");
 		}
 
 		if (bgSelected != -1) {
@@ -1979,6 +1940,30 @@ public:
 		Engine::Instance().AddScene(&main);
 		main.CreateObject("Box", { -0.5,-0.25 }, { 1,1 }, "res/logo.png");
 		p = main.FindObject("Box");
+
+
+		//Load in classes from file
+		OpenedData bgsFromFile;
+		ItemReader::GetDataFromFile("backgrounds/bgs.eid", "SECTIONS", &bgsFromFile, true);
+		std::vector<std::string> bgNames = bgsFromFile.getArray("sections");
+
+		for (int i = 0; i < bgNames.size(); i++)
+		{
+			OpenedData currentBG;
+			ItemReader::GetDataFromFile("backgrounds/bgs.eid", bgNames[i], &currentBG, true);
+
+			classes currentClass;
+			currentClass.name = currentBG.getString("name");
+			currentClass.description = currentBG.getString("description");
+			currentClass.items = currentBG.getArray("items");
+			std::vector<std::string> countStrs = currentBG.getArray("itemAmounts");
+			for (int i = 0; i < countStrs.size(); i++)
+			{
+				currentClass.itemCounts.push_back(stoi(countStrs[i]));
+			}
+
+			backgrounds.push_back(currentClass);
+		}
 
 		gameScreen.fancyGraphics = true;
 		frame.frames.length = 360;

@@ -1,0 +1,52 @@
+SECTIONS {
+    sections : [Fighter, Survivalist, Hunter, Explorer, Vagrant, Botanist, Amnesiac];
+}
+
+Fighter {
+    name : "Fighter";
+    description : "A seasoned warrior, strong and ready for combat.";
+    items : [MACHETE, LEATHER_JACKET, ROCK];
+    itemAmounts : [1, 1, 10];
+}
+
+Survivalist {
+    name : "Survivalist";
+    description : "You've always been prepared for everything, so when you went off on your own, you took what you knew would keep you alive.";
+    items : [MATCH, RAINCOAT, BANDAGE, BOTTLED_WATER];
+    itemAmounts : [5, 1, 2, 1];
+}
+
+Hunter {
+    name : "Hunter";
+    description : "You were taught how to hunt growing up, so when you went off on your own, you took your hunting supplies to survive in the wild.";
+    items : [BEAR_TRAP, LEATHER_BOOTS, CAMPFIRE];
+    itemAmounts : [2, 1, 1];
+}
+
+Explorer {
+    name : "Explorer";
+    description : "You've always been curious about exploring every part of the world, so when you went off on your own, you took whatever could help you journey as far as possible.";
+    items : [RATION, LEATHER_BOOTS, BITS];
+    itemAmounts : [5, 1, 10];
+}
+
+Vagrant {
+    name : "Vagrant";
+    description : "You've never really been one for staying around. You don't keep many things with you, and so you didn't bring much.";
+    items : [ROCK, STICK, ROPE];
+    itemAmounts : [5, 5, 3];
+}
+
+Botanist {
+    name : "Botanist";
+    description : "You're a botanist. You brough with you the things you needed to farm.";
+    items : [TOMATO_SEEDS, WATERING_CAN, MAKESHIFT_HOE];
+    itemAmounts : [5, 1, 1];
+}
+
+Amnesiac {
+    name : "Amnesiac";
+    description : "You don't remember who you are after waking up in the middle of the forest. What is this stuff in your pockets?";
+    items : [];
+    itemAmounts : [];
+}

@@ -13,6 +13,7 @@ using namespace antibox;
 
 struct classes {
 	std::string name;
+	std::string description;
 	std::vector<std::string> items; 
 	std::vector<int> itemCounts;
 };
