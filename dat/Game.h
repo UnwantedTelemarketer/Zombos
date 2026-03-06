@@ -86,7 +86,7 @@ public:
 	void SetTick(float secs) { tickRate = secs * 1000; effectTickRate = tickRate / 10; }
 
 	void AddRecipes();
-	void Setup(int x, int y, float tick, int seed, int biome, int moisture);
+	void Setup(int x, int y, float tick, WorldGenType worldGen, int seed, int biome, int moisture);
 
 	void UpdateEntities(Vector2_I chunkCoords);
 	void UpdateTick();
@@ -224,7 +224,7 @@ void GameManager::LoadMessages() {
 	ConsoleLog("Finished loading dialogue!", SUCCESS);
 }
 
-void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1, int moisture = -1) {
+void GameManager::Setup(int x, int y, float tick, WorldGenType worldGen, int seed = -1, int biome = -1, int moisture = -1) {
 	BG_DESERT = { 0.15f, 0.15f, 0 };
 	BG_WATER = { 0, 0.1f, 0.15f };
 	BG_FOREST = { 0, 0.15f, 0 };
@@ -240,7 +240,7 @@ void GameManager::Setup(int x, int y, float tick, int seed = -1, int biome = -1,
 	//if(seed == -1) deleteAllFilesInDirectory();
 	SetTick(tick);
 	AddRecipes();
-	mainMap.CreateMap(seed, biome, moisture);
+	mainMap.CreateMap(seed, biome, moisture, worldGen);
 
 	//Faction, Enemies
 	factions.list[FACTION_HUMAN].AddEnemy(FACTION_ZOMBIE);

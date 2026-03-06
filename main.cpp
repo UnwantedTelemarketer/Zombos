@@ -28,9 +28,10 @@ private:
 
 		float mainFontSize = (monitorRes.y / 1080.f) * 16.f;
 		mainFontSize = std::floor(mainFontSize);
+		std::string loadedFont = "dat/fonts/" + defaultFontName.getString("glyph_font");
 
 		WindowProperties props;
-		props.imguiProps = { true, true, false, {std::string("dat/fonts/") + defaultFontName.getString("glyph_font"), VGAFONT}, {"main", "ui"}, mainFontSize };
+		props.imguiProps = { true, true, false, {loadedFont, VGAFONT}, {"main", "ui"}, mainFontSize };
 		props.w = monitorRes.x * 0.7f;
 		props.h = monitorRes.y * 0.67f;
 		props.vsync = 0;
@@ -69,15 +70,18 @@ public:
 	char customStructName[128] = "";
 	int customStructHeight = 1;
 	int customStructWidth = 1;
+	int mapViewMult = 1;
 	float uiFontSize = 16.f;
 	Vector4 customTabColor = { 1, 1, 1, 1 };
 	bool savedGamesScreen = false;
 	bool newGameScreen = false;
 	bool debugMenuScreen = false;
 	bool wrongDir = false;
+	bool newWorldGen = false;
 	bool showShadows = false;
 	bool deathScreen = false;
 	bool areYouSure = false;
+	bool playerMapIndicator = false;
 	char saveNameSlot[128] = "";
 	int selectedIndex = 0;
 	int selectedAttributeIndex = 0;
@@ -100,6 +104,8 @@ public:
 	float noiseFreq = 0.4f;
 	int noiseType = 0;
 	char customMapBuffer[512] = "";
+	Vector2_I mapPanOffset = { 0, 0 };
+	float mapPanSpeed = 1.f;
 
 	// --- crafting ---
 	int recipeSelected = 0, itemSelected = 0;
@@ -163,6 +169,7 @@ public:
 		dat.addInt("STATS", "global_x", map.CurrentChunk()->globalChunkCoord.x);
 		dat.addInt("STATS", "global_y", map.CurrentChunk()->globalChunkCoord.y);
 		dat.addInt("STATS", "weather", map.currentWeather);
+		dat.addInt("STATS", "worldGenType", (int)map.curWorldGenType);
 		dat.addFloat("SETTINGS", "uiFontSize", game.reg_font_size);
 		dat.addFloat("SETTINGS", "sfxSound", game.sfxvolume);
 		dat.addFloat("SETTINGS", "musicSound", game.musicvolume);
@@ -327,7 +334,7 @@ public:
 			ImGui::Begin("Debug Menu");
 			if (ImGui::Button("Open Custom Structure Editor")) {
 				currentState = map_gen_test;
-				map.CreateMap(map.landSeed, map.biomeSeed, -1);
+				map.CreateMap(map.landSeed, map.biomeSeed, -1, old);
 			}
 
 			std::string gViewerStatus = gameScreen.glyphViewerOpen ? "Close Glyph Viewer" : "Open Glyph Viewer";
@@ -347,6 +354,7 @@ public:
 		if (newGameScreen) {
 			ImGui::Begin("New Game Menu");
 			ImGui::InputText("Save Name", &saveNameSlot[0], sizeof(char) * 128);
+			if (ImGui::RadioButton("New World Gen", newWorldGen)) { newWorldGen = !newWorldGen; }
 			if (ImGui::Button("Create New Save")) {
 				Audio::Play(sfxs["crunchy_click"]);
 				map.currentSaveName = std::string(saveNameSlot);
@@ -360,7 +368,8 @@ public:
 					CreateNewDirectory("dat/saves/" + map.currentSaveName + "/entities/leaders");
 					ConsoleLog("New save created successfully!", SUCCESS);
 
-					game.Setup(10, 10, 0.5f);
+					WorldGenType genType = newWorldGen ? zones : old;
+					game.Setup(10, 10, 0.5f, genType);
 					game.CreateWorldFactions();
 					game.mPlayer.coords = game.mainMap.PlaceStartingBuilding();
 					gameScreen.createChar = true;
@@ -430,7 +439,16 @@ public:
 					{
 						game.Crafter.SaveRecipe(data.getArray("savedRecipes")[i]); //retrieve saved recipes
 					}
-					game.Setup(data.getInt("x_pos"), data.getInt("y_pos"), 0.5f, data.getInt("seed"), data.getInt("biomes"), data.getInt("moisture"));
+					game.Setup(
+						data.getInt("x_pos"),
+						data.getInt("y_pos"),
+						0.5f,
+						(WorldGenType)data.getInt("worldGenType"),
+						data.getInt("seed"),
+						data.getInt("biomes"),
+						data.getInt("moisture")
+					);
+
 					currentState = playing;
 
 					if (game.isNight()) {
@@ -617,7 +635,7 @@ public:
 		ImGui::InputFloat("Temperature Minimum", &map.tempMin, 0.1f);
 		ImGui::InputFloat("Moisture Minimum", &map.moistureMin, 0.1f);
 		if (ImGui::Button("Generate")) {
-			map.CreateMap(map.landSeed, map.biomeSeed, -1);
+			map.CreateMap(map.landSeed, map.biomeSeed, -1, old);
 		}
 		ImGui::End();
 	}
@@ -683,6 +701,70 @@ public:
 			}
 		}
 		ImGui::End();
+	}
+
+	void DrawMap() {
+		if (gameScreen.largeMapOpen) {
+			ImGui::Begin("World Map", &gameScreen.largeMapOpen);
+			SWAP_FONT("ui");
+			const int mapDisplaySize = 50;
+			ImVec2 origin = ImGui::GetCursorScreenPos();
+			ImDrawList* drawList = ImGui::GetWindowDrawList();
+			float cellSize = 15.f;
+			if (map.mapCacheDirty ||
+				map.lastPanOffset.x != mapPanOffset.x ||
+				map.lastPanOffset.y != mapPanOffset.y ||
+				map.lastMapViewMult != mapViewMult) {
+				map.lastMapViewMult = mapViewMult;
+				map.RebuildMapCacheAsync(mapDisplaySize, mapPanOffset, mapViewMult);
+			}
+
+			std::lock_guard<std::mutex> lock(map.mapCacheMutex);
+			if (!map.mapCache.empty()) {
+				for (int mx = 0; mx < mapDisplaySize; mx++) {
+					for (int my = 0; my < mapDisplaySize; my++) {
+						biome b = map.mapCache[mx][my];
+
+						ImVec4 col;
+						switch (b) {
+						case taiga:     col = { 0.1f, 0.45f, 0.1f, 1 }; break;
+						case desert:    col = { 0.85f, 0.75f, 0.3f, 1 }; break;
+						case grassland: col = { 0.4f, 0.85f, 0.2f, 1 }; break;
+						case swamp:     col = { 0.36f, 0.33f, 0.06f, 1 }; break;
+						case ocean:     col = { 0.3f, 0.3f, 0.3f, 1 }; break;
+						default:        col = { 0.2f, 0.2f, 0.2f, 1 }; break;
+						}
+
+
+						ImVec2 cellMin = { origin.x + mx * cellSize, origin.y + my * cellSize };
+						ImVec2 cellMax = { cellMin.x + cellSize - 1, cellMin.y + cellSize - 1 };
+						drawList->AddRectFilled(cellMin, cellMax, ImGui::ColorConvertFloat4ToU32(col));
+
+						bool isPlayerChunk =
+							(mx == mapDisplaySize / 2 - mapPanOffset.y) &&
+							(my == mapDisplaySize / 2 - mapPanOffset.x);
+
+						if (isPlayerChunk) {
+							if (playerMapIndicator) {
+								drawList->AddRectFilled(cellMin, cellMax, IM_COL32(255, 255, 255, 255));
+							}
+						}
+					}
+				}
+			}
+			ImGui::Dummy({ mapDisplaySize * cellSize, mapDisplaySize * cellSize });
+			ImGui::SetFontSize(uiFontSize);
+			ImGui::TextColored({ 0.1f, 0.45f, 0.1f, 1 }, "[] Forest/Taiga");
+			ImGui::TextColored({ 0.85f, 0.75f, 0.3f, 1 }, "[] Desert");
+			ImGui::TextColored({ 0.4f, 0.85f, 0.2f, 1 }, "[] Grassland");
+			ImGui::TextColored({ 0.36f, 0.33f, 0.06f, 1 }, "[] Swamp");
+			ImGui::TextColored({ 0.3f, 0.3f, 0.3f, 1 }, "[] The Smoke");
+			ImGui::TextColored({ 1, 1, 1, 1 }, "[] You are here");
+			ImGui::Text("Zoom In"); ImGui::SameLine();
+			ImGui::SliderInt("Zoom Out", &mapViewMult, 1, 3);
+			SWAP_FONT("main");
+			ImGui::End();
+		}
 	}
 
 	void GameScene() {
@@ -1736,39 +1818,7 @@ public:
 			ImGui::End();
 		}
 
-		if (gameScreen.largeMapOpen) {
-			ImGui::Begin("Overworld Map");
-
-			SWAP_FONT("main");
-			for (int i = 0; i < 30; i++)
-			{
-				for (int j = 0; j < 30; j++)
-				{
-					if (i == 15 && j == 16) {
-						ImGui::Text(glyphs.getGlyph("ent_player_right").c_str());
-					}
-					else if (game.mainMap.chunkBiomes.biomes[i][j] == taiga) {
-						ImGui::TextColored({ 0, 0.45f, 0, 1 }, glyphs.getGlyph("tile_tree_top").c_str());
-					}
-					else if (game.mainMap.chunkBiomes.biomes[i][j] == desert) {
-						ImGui::TextColored({ 1, 1, 0.5f, 1}, glyphs.getGlyph("tile_sand").c_str());
-					}
-					else if (game.mainMap.chunkBiomes.biomes[i][j] == grassland) {
-						ImGui::TextColored({ 0.65f ,1 ,0.1 , 1 }, glyphs.getGlyph("tile_tall_grass").c_str());
-					}
-					else if (game.mainMap.chunkBiomes.biomes[i][j] == swamp) {
-						ImGui::TextColored(Cosmetic::CoveredColor((int)mud), glyphs.getGlyph("tile_water").c_str());
-					}
-					else {
-						ImGui::TextColored({ 1, 0, 0, 1 }, glyphs.getGlyph("vfx_exclamation").c_str());
-					}
-
-					ImGui::SameLine();
-				}
-				ImGui::Text(" ");
-			}
-			ImGui::End();
-		}
+		DrawMap();
 
 #ifdef DEV_TOOLS
 		ImGui::Begin("Brightness Map");
@@ -2049,7 +2099,10 @@ public:
 		}
 
 		colChangeTime += Utilities::deltaTime() / 1000;
-		if (colChangeTime >= 1.f) colChangeTime = 0;
+		if (colChangeTime >= 1.f) { 
+			playerMapIndicator = !playerMapIndicator;
+			colChangeTime = 0; 
+		}
 
 		// map gen test state
 		if (currentState == map_gen_test) {
@@ -2082,7 +2135,23 @@ public:
 		}
 
 		gameScreen.FlipScreens();
-		if (gameScreen.console_showing || gameScreen.craftingMenu) { return; }
+
+		if (Input::KeyDown(KEY_M)) {
+			gameScreen.largeMapOpen = !gameScreen.largeMapOpen;
+			if (!gameScreen.largeMapOpen) mapPanOffset = { 0, 0 };
+			Audio::Play(sfxs["ui_select"]);
+			map.mapCacheDirty = true;
+		}
+
+		// only pan when map is open, before movement is processed
+		if (gameScreen.largeMapOpen) {
+			if (Input::KeyHeldDown(KEY_UP) || Input::KeyDown(KEY_W)) { mapPanOffset.x -= 1; return; }
+			if (Input::KeyHeldDown(KEY_DOWN) || Input::KeyDown(KEY_S)) { mapPanOffset.x += 1; return; }
+			if (Input::KeyHeldDown(KEY_LEFT) || Input::KeyDown(KEY_A)) { mapPanOffset.y -= 1; return; }
+			if (Input::KeyHeldDown(KEY_RIGHT) || Input::KeyDown(KEY_D)) { mapPanOffset.y += 1; return; }
+		}
+
+		if (gameScreen.console_showing || gameScreen.craftingMenu || gameScreen.largeMapOpen) { return; }
 
 		game.UpdateTick();
 

@@ -50,9 +50,6 @@ struct GameUI {
 		{
 			settingsOpen = !settingsOpen;
 		}
-		if (Input::KeyDown(KEY_M)) {
-			largeMapOpen = !largeMapOpen;
-		}
 	}
 
 	void ShowPopups() {

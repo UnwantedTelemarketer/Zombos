@@ -29,6 +29,7 @@
 #define FACTION_WILDLIFE "Wildlife"
 
 enum WorldEvent { Storm, DormantMoon };
+enum WorldGenType {zones, old};
 
 using namespace antibox;
 
@@ -40,11 +41,16 @@ struct World
 struct ChunkBiomes {
 	std::vector<std::vector<biome>> biomes;
 };
-
+struct ZonePoint {
+	Vector2_I worldCoord; // in world-tile space
+	biome zone;
+};
 
 enum weather {clear, rainy, thunder};
 class Map {
 public:
+	//For new world gen
+	std::vector<ZonePoint> zonePoints;
 	bool chunkUpdateFlag = false;
 	Vector2_I c_glCoords{ 500, 500 };
 	T_Chunk effectLayer; //is the visual effects (lines, fire, smoke, etc)
@@ -52,6 +58,7 @@ public:
 	World underground; //map but underground, different map entirely
 	World upstairs; //map but upstairs, different map entirely
 	ChunkBiomes chunkBiomes;
+	WorldGenType curWorldGenType = old;
 	int playerLevel = 0; //0 is ground, 1 is upstairs, -1 is underground
 	std::vector<Vector2_I> line;
 	weather currentWeather;
@@ -63,15 +70,30 @@ public:
 	int landSeed = 0, biomeSeed = 0, moistureSeed = 0;
 	float tempMin = 0.5f, moistureMin = 0.5f;
 	FastNoiseLite mapNoise, biomeTempNoise, biomeMoistureNoise;
-	
-	
+
+	std::vector<std::vector<biome>> mapCache;
+
+	std::unordered_map<int, int> desertRoadY;
+
+
+	Vector2_I lastMapCenter = { -9999, -9999 };
+	Vector2_I lastPanOffset = { -9999, -9999 };
+	std::atomic<bool> mapCacheDirty = true;
+	std::atomic<bool> mapCacheBuilding = false;
+	std::mutex mapCacheMutex;
+	int lastMapViewMult = 1;
+	int GetRoadYAtWorldX(int worldX);
+	bool ChunkHasRoad(int chunkX, int chunkY);
+	void PreCalculateRoadChunks();
+
 	std::shared_ptr<Chunk> GetChunkAtCoords(Vector2_I coords);
-	void CreateMap(int seed, int b_seed, int moisture);
+	void CreateMap(int seed, int b_seed, int moisture, WorldGenType worldGen);
 	bool DoesChunkExistsOrMakeNew(Vector2_I coords);
 	void UpdateMemoryZone(Vector2_I coords);
 	void UnloadChunks(std::vector<Vector2_I> chunksToDelete);
 	void ReadChunk(Vector2_I curChunk, std::string path);
 	void SpawnChunkEntities(std::shared_ptr<Chunk> chunk);
+	void GenerateZones(int worldWidth, int worldHeight);
 	std::shared_ptr<Chunk> CurrentChunk();
 	Tile* TileAtPos(Vector2_I coords);
 	Tile* GetTileFromThisOrNeighbor(Vector2_I tilecoords, Vector2_I global_coords);
@@ -82,6 +104,7 @@ public:
 	void SetEffectInThisOrNeighbor(Vector2_I tilecoords, int effect);
 	biome GetBiome(Vector2_I coords);
 	biome GetBiome(Vector2_I coords, Vector2_I global_coords);
+	biome GetZoneAtWorldPos(int wx, int wy);
 	void MakeNewChunk(Vector2_I coords);
 	void AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* actionLog, std::shared_ptr<Chunk> chunk);
 	void MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLog, Inventory& pInv);
@@ -108,6 +131,7 @@ public:
 	void ClearEntities(std::shared_ptr<Chunk> chunk);
 	void ClearChunkOfEnts(std::shared_ptr<Chunk> chunk);
 	void ClearEffects();
+	void RebuildMapCacheAsync(int displaySize, Vector2_I panOffset, int viewMult);
 	void PlaceEntities(std::shared_ptr<Chunk> chunk);
 	void UpdateTiles(vec2_i coords, Player* p);
 	void DoTechnical(Tile* curTile, std::shared_ptr<Chunk> chunk, int x, int y);
@@ -134,6 +158,31 @@ public:
 	~Map();
 
 };
+
+void Map::GenerateZones(int worldWidth, int worldHeight) {
+	std::vector<biome> zoneTypes = { taiga, desert, grassland, swamp, taiga, desert, grassland };
+	int numZones = 6;
+	int gridW = 3, gridH = 3; // 3x3 grid = 9 cells, pick 7
+
+	srand(landSeed);
+	int cellW = worldWidth / gridW;
+	int cellH = worldHeight / gridH;
+
+	int placed = 0;
+	for (int gy = 0; gy < gridH && placed < numZones; gy++) {
+		for (int gx = 0; gx < gridW && placed < numZones; gx++) {
+			ZonePoint zp;
+			// place randomly within this grid cell
+			zp.worldCoord = {
+				gx * cellW + (rand() % cellW),
+				gy * cellH + (rand() % cellH)
+			};
+			zp.zone = zoneTypes[placed];
+			zonePoints.push_back(zp);
+			placed++;
+		}
+	}
+}
 
 void Map::Restart() {
 	for (const auto& chnk : world.chunks)
@@ -188,23 +237,28 @@ void Map::SetupNoise(int l_seed, int b_seed, int m_seed) {
 	};
 }
 
-void Map::CreateMap(int l_seed, int b_seed, int moisture)
+void Map::CreateMap(int l_seed, int b_seed, int moisture, WorldGenType worldGen)
 {
-	chunkBiomes.biomes.resize(30);
+	curWorldGenType = worldGen; // make sure this is set first
 
-	for (int i = 0; i < 30; i++)
-	{
-		for (int j = 0; j < 30; j++)
-		{
+	chunkBiomes.biomes.resize(30);
+	for (int i = 0; i < 30; i++) {
+		for (int j = 0; j < 30; j++) {
 			chunkBiomes.biomes[i].resize(30);
 			effectLayer.localCoords[i][j] = 0;
 		}
 	}
 
 	SetupNoise(l_seed, b_seed, moisture);
-	
-	UpdateMemoryZone(c_glCoords);
 
+	if (curWorldGenType == zones) {
+		zonePoints.clear(); // clear in case of restart
+		GenerateZones(100 * CHUNK_WIDTH, 100 * CHUNK_HEIGHT);
+		c_glCoords = { 50, 50 };
+		PreCalculateRoadChunks();
+	}
+
+	UpdateMemoryZone(c_glCoords);
 }
 
 static void T_SaveChunks(std::shared_ptr<Chunk> chunk, std::string currentSaveName) {
@@ -240,6 +294,32 @@ std::shared_ptr<Chunk> Map::GetChunkAtCoords(Vector2_I coords) {
 		return nullptr;
 	}
 	return world.chunks[coords];
+}
+
+biome Map::GetZoneAtWorldPos(int wx, int wy) {
+	// Warp the lookup position slightly using noise — breaks up straight edges
+	float warpX = mapNoise.GetNoise(wx * 0.05f, wy * 0.05f) * 20.f;
+	float warpY = mapNoise.GetNoise(wx * 0.05f + 100, wy * 0.05f + 100) * 20.f;
+	float qx = wx + warpX;
+	float qy = wy + warpY;
+
+	// anything outside the 100x100 world is ocean
+	if (wx < 0 || wx >= 100 * CHUNK_WIDTH || wy < 0 || wy >= 100 * CHUNK_HEIGHT) {
+		return ocean;
+	}
+
+	biome closest = grassland;
+	float minDist = FLT_MAX;
+	for (auto& zp : zonePoints) {
+		float dx = qx - zp.worldCoord.x;
+		float dy = qy - zp.worldCoord.y;
+		float dist = dx * dx + dy * dy;
+		if (dist < minDist) {
+			minDist = dist;
+			closest = zp.zone;
+		}
+	}
+	return closest;
 }
 
 //Change which chunks are in memory at one time
@@ -804,6 +884,33 @@ void Map::AttackEntity(Entity* curEnt, int damage, std::vector<std::string>* act
 
 //T_Chunk& EntityLayer() { return entityLayer; }
 
+void Map::RebuildMapCacheAsync(int displaySize, Vector2_I panOffset, int viewMult) {
+	if (mapCacheBuilding) return;
+	mapCacheBuilding = true;
+	mapCacheDirty = false; 
+
+	std::thread([this, displaySize, panOffset, viewMult]() {
+		std::vector<std::vector<biome>> newCache(displaySize, std::vector<biome>(displaySize));
+		for (int my = 0; my < displaySize; my++) {
+			for (int mx = 0; mx < displaySize; mx++) {
+				// multiply by viewMult so each cell = viewMult chunks
+				int wx = (c_glCoords.x - (displaySize / 2) * viewMult + mx * viewMult + panOffset.x) * CHUNK_WIDTH;
+				int wy = (c_glCoords.y - (displaySize / 2) * viewMult + my * viewMult + panOffset.y) * CHUNK_HEIGHT;
+				if (curWorldGenType == old)
+					newCache[my][mx] = GetBiome({ wx, wy });
+				else
+					newCache[my][mx] = GetZoneAtWorldPos(wx, wy);
+			}
+		}
+		{
+			std::lock_guard<std::mutex> lock(mapCacheMutex);
+			mapCache = std::move(newCache);
+			lastPanOffset = panOffset;
+		}
+		mapCacheBuilding = false;
+		}).detach();
+}
+
 void Map::MovePlayer(int x, int y, Player* p, std::vector<std::string>* actionLog, Inventory& pInv) {
 	if (x > 0 && y > 0 && x < CHUNK_WIDTH && y < CHUNK_HEIGHT)
 		if (GetTileFromThisOrNeighbor({ x,y })->entity != nullptr) {
@@ -1018,18 +1125,46 @@ void Map::EmptyChunk(std::shared_ptr<Chunk> chunk) {
 	}
 }
 
+
+//New Build Chunk for New Gen
 void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
-	
+
 	bool entrance = false;
 	float current = 0.f;
 	biome currentBiome = ocean;
 	int event = Math::RandInt(0, 15);
-	float taiga_pond_height = (float)Math::RandInt(80,99);
+	float taiga_pond_height = (float)Math::RandInt(80, 99);
+
+	int bonusX = chunk->globalChunkCoord.x * CHUNK_WIDTH;
+	int bonusY = chunk->globalChunkCoord.y * CHUNK_HEIGHT;
+
+	// ocean bounds check — must be before the tile loop
+	int cx = chunk->globalChunkCoord.x;
+	int cy = chunk->globalChunkCoord.y;
+	if (cx < 0 || cx >= 100 || cy < 0 || cy >= 100) {
+		for (int i = 0; i < CHUNK_WIDTH; i++) {
+			for (int j = 0; j < CHUNK_HEIGHT; j++) {
+				chunk->localCoords[i][j].biomeID = (short)ocean;
+				chunk->localCoords[i][j].SetLiquid(water, true);
+				chunk->localCoords[i][j].liquidTime = -1;
+				chunk->localCoords[i][j].coords = { i, j };
+				chunk->localCoords[i][j].g_coords = chunk->globalChunkCoord;
+			}
+		}
+		chunk->beenBuilt = true;
+		return;
+	}
+
+
+	//part of desert road generation
+	bool chunkHasRoad = desertRoadY.count(chunk->globalChunkCoord.x) > 0;
+	int thisRoadY = chunkHasRoad ? desertRoadY[chunk->globalChunkCoord.x] : 0;
+	int prevRoadY = desertRoadY.count(chunk->globalChunkCoord.x - 1) ? desertRoadY[chunk->globalChunkCoord.x - 1] : thisRoadY;
+	int nextRoadY = desertRoadY.count(chunk->globalChunkCoord.x + 1) ? desertRoadY[chunk->globalChunkCoord.x + 1] : thisRoadY;
+
 	for (int i = 0; i < CHUNK_WIDTH; i++) {
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
 
-			int bonusX = chunk->globalChunkCoord.x * CHUNK_WIDTH;
-			int bonusY = chunk->globalChunkCoord.y * CHUNK_HEIGHT;
 			current = mapNoise.GetNoise((i + bonusX) * 0.1, (j + bonusY) * 0.1);
 
 			float curTemp = biomeTempNoise.GetNoise((i + bonusX) * 0.1, (j + bonusY) * 0.1);
@@ -1037,54 +1172,69 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 			curTemp = (curTemp + 1) / 2;
 			curMois = (curMois + 1) / 2;
 
-			if (curTemp < tempMin) {
-				if (curMois < moistureMin) { currentBiome = grassland; }
-				else { currentBiome = taiga; }
+			if (curWorldGenType == old) {
+				if (curTemp < tempMin) {
+					if (curMois < moistureMin) { currentBiome = grassland; }
+					else { currentBiome = taiga; }
+				}
+				else {
+					if (curMois < moistureMin) { currentBiome = desert; }
+					else { currentBiome = swamp; }
+				}
 			}
 			else {
-				if (curMois < moistureMin) { currentBiome = desert; }
-				else { currentBiome = swamp; }
+				currentBiome = GetZoneAtWorldPos(i + bonusX, j + bonusY);
 			}
 
 			float currentTile = current;
 
-			//desert biome
 			switch (currentBiome) {
+
 			case desert:
 				if (Math::RandInt(0, 500) == 25 && !entrance) {
-				chunk->localCoords[i][j] = Tiles::GetTile("TILE_CAVE_ENTRANCE");
-				entrance = true;
-				chunk->localCoords[i][j].coords = { i, j };
-				continue;
+					chunk->localCoords[i][j] = Tiles::GetTile("TILE_CAVE_ENTRANCE");
+					entrance = true;
+					chunk->localCoords[i][j].coords = { i, j };
+					continue;
 				}
 
 				if (Math::RandInt(0, 35) == 25) {
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_CACTUS_BASE");
 					chunk->localCoords[i][j].double_size = true;
 				}
-
-				else
-				{
+				else {
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_SAND");
 				}
-				if (curTemp < 0.505) {
+
+				if (chunkHasRoad) {
+					// interpolate road center across chunk width for diagonal transitions
+					float t = (float)i / (float)CHUNK_WIDTH;
+					float fromCenterJ = (prevRoadY * CHUNK_HEIGHT + CHUNK_HEIGHT / 2.f) - chunk->globalChunkCoord.y * CHUNK_HEIGHT;
+					float toCenterJ = (nextRoadY * CHUNK_HEIGHT + CHUNK_HEIGHT / 2.f) - chunk->globalChunkCoord.y * CHUNK_HEIGHT;
+					int roadCenterJ = (int)(fromCenterJ * (1.f - t) + toCenterJ * t);
+
+					int dist = abs(j - roadCenterJ);
+					if (dist <= 3) {
+						chunk->localCoords[i][j] = Tiles::GetTile("TILE_STONE_FLOOR");
+						if (dist >= 2 && Math::RandInt(0, 3) == 0) {
+							chunk->localCoords[i][j] = Tiles::GetTile("TILE_SAND");
+						}
+					}
+				}
+
+				if (curWorldGenType == old && curTemp < 0.505) {
 					if (Math::RandInt(0, 10) > 6) {
 						chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
 						chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
 					}
 				}
 				break;
+
 			case taiga:
 				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
-				if (curTemp > 0.495) {
-					if (Math::RandInt(0, 10) > 6) {
-						chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
-						chunk->localCoords[i][j].mainTileColor = { 0.5f, 0.55f, 0.35f };
-						chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
-						chunk->localCoords[i][j].ResetColor();
-					}
-				}
-				else if (currentTile < -(taiga_pond_height / 100)) {
+
+				// feature placement driven by noise
+				if (currentTile < -(taiga_pond_height / 100)) {
 					chunk->localCoords[i][j].biomeID = (short)currentBiome;
 					chunk->localCoords[i][j].SetLiquid(water, true);
 					chunk->localCoords[i][j].liquidTime = -1;
@@ -1093,11 +1243,9 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_TREE_BASE");
 					chunk->localCoords[i][j].double_size = true;
 				}
-
 				else if (currentTile < 0.f) {
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_TALLGRASS");
 				}
-
 				else {
 					chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
 					chunk->localCoords[i][j].mainTileColor.z = 0.35f;
@@ -1110,34 +1258,50 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 						chunk->localCoords[i][j].hasItem = true;
 						chunk->localCoords[i][j].itemName = "BASIC_FLOWER";
 					}
+				}
 
+				// border color blending — only in old mode
+				if (curWorldGenType == old && curTemp > 0.495 && Math::RandInt(0, 10) > 6) {
+					chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
+					chunk->localCoords[i][j].mainTileColor = { 0.5f, 0.55f, 0.35f };
+					chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+					chunk->localCoords[i][j].ResetColor();
 				}
 				break;
+
 			case grassland:
 				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
 				chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+
 				if (currentTile < -0.10f) {
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_TALLGRASS");
 				}
-				if (curTemp > 0.495) {
+
+				// scatter some rocks and flowers
+				if (currentTile > 0.3f && Math::RandInt(0, 50) == 25) {
+					chunk->localCoords[i][j].hasItem = true;
+					chunk->localCoords[i][j].itemName = "ROCK";
+				}
+				else if (Math::RandInt(0, 80) == 40) {
+					chunk->localCoords[i][j].hasItem = true;
+					chunk->localCoords[i][j].itemName = "BASIC_FLOWER";
+				}
+
+				// border blending with desert — only in old mode
+				if (curWorldGenType == old && curTemp > 0.495) {
 					if (Math::RandInt(0, 10) > 6) {
 						chunk->localCoords[i][j] = Tiles::GetTile("TILE_SAND");
 					}
 				}
 				break;
+
 			case swamp:
 				chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
 				chunk->localCoords[i][j].mainTileColor = { 0.5f, 0.55f, 0.35f };
 				chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
 				chunk->localCoords[i][j].ResetColor();
-				if (curTemp < 0.505) {
-					if (Math::RandInt(0, 10) > 6) {
-						chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
-						chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
-						chunk->localCoords[i][j].mainTileColor.z = 0.35f;
-						chunk->localCoords[i][j].ResetColor();
-					}
-				}
+
+				// deep water
 				if (current < -0.3f) {
 					chunk->localCoords[i][j].biomeID = (short)currentBiome;
 					chunk->localCoords[i][j].SetLiquid(water, true);
@@ -1147,7 +1311,7 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 						chunk->localCoords[i][j].hasItem = true;
 					}
 				}
-
+				// trees and cattails in shallow areas
 				else if (currentTile < 0.1f && Math::RandInt(0, 2) == 1) {
 					if (Math::RandInt(0, 5) == 2) {
 						chunk->localCoords[i][j] = Tiles::GetTile("TILE_TREE_BASE");
@@ -1157,12 +1321,13 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 					}
 					chunk->localCoords[i][j].double_size = true;
 				}
+				// mud on mid ground
 				else if (currentTile < 0.3f) {
 					chunk->localCoords[i][j] = Tiles::GetTile("TILE_MUD");
 					chunk->localCoords[i][j].SetLiquid(mud);
 					chunk->localCoords[i][j].liquidTime = -1;
 				}
-
+				// mushrooms on dry ground
 				else if (Math::RandInt(0, 35) == 5) {
 					if (Math::RandInt(0, 35) == 5) {
 						chunk->localCoords[i][j].itemName = "GLOWING_MUSHROOM";
@@ -1174,11 +1339,17 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 					}
 				}
 
+				// border color blending — only in old mode
+				if (curWorldGenType == old && curTemp < 0.505 && Math::RandInt(0, 10) > 6) {
+					chunk->localCoords[i][j] = Tiles::GetTile("TILE_GRASS");
+					chunk->localCoords[i][j].mainTileColor.y += ((float)(Math::RandNum(30) - 15) / 100);
+					chunk->localCoords[i][j].mainTileColor.z = 0.35f;
+					chunk->localCoords[i][j].ResetColor();
+				}
 				break;
 			}
 
-			if (Math::RandInt(1, 125) >= 124 && chunk->localCoords[i][j].liquid != water) 
-			{ 
+			if (Math::RandInt(1, 125) >= 124 && chunk->localCoords[i][j].liquid != water) {
 				chunk->localCoords[i][j].hasItem = true;
 				chunk->localCoords[i][j].itemName = "ROCK";
 			}
@@ -1190,10 +1361,9 @@ void Map::BuildChunk(std::shared_ptr<Chunk> chunk) {
 			chunk->localCoords[i][j].coords = { i, j };
 			chunk->localCoords[i][j].g_coords = chunk->globalChunkCoord;
 			chunk->localCoords[i][j].biomeID = (short)currentBiome;
-
 		}
 	}
-	//if(Math::RandInt(0, 15) == 14) {Place}
+
 	chunk->beenBuilt = true;
 }
 
@@ -1270,6 +1440,68 @@ void Map::PickStructure(Vector2_I startingChunk) {
 
 	
 	
+}
+
+void Map::PreCalculateRoadChunks() {
+	desertRoadY.clear();
+
+	Vector2_I desertCenter = { 50, 50 };
+	for (auto& zp : zonePoints) {
+		if (zp.zone == desert) {
+			desertCenter = { zp.worldCoord.x / CHUNK_WIDTH, zp.worldCoord.y / CHUNK_HEIGHT };
+			break;
+		}
+	}
+
+	srand(landSeed + 1);
+	int antY = desertCenter.y;
+
+	// walk left from desert center to 0
+	int tempAntY = antY;
+	for (int chunkX = desertCenter.x; chunkX >= 0; chunkX--) {
+		desertRoadY[chunkX] = tempAntY;
+		int drift = rand() % 5;
+		if (drift == 0 && tempAntY > desertCenter.y - 10) tempAntY--;
+		if (drift == 4 && tempAntY < desertCenter.y + 10) tempAntY++;
+	}
+
+	// walk right from desert center to 100
+	tempAntY = antY;
+	for (int chunkX = desertCenter.x; chunkX < 100; chunkX++) {
+		desertRoadY[chunkX] = tempAntY;
+		int drift = rand() % 5; // less frequent drift
+		if (drift == 0 && tempAntY > desertCenter.y - 10) tempAntY--;
+		if (drift == 4 && tempAntY < desertCenter.y + 10) tempAntY++;
+	}
+
+	c_glCoords = desertCenter;
+}
+
+int Map::GetRoadYAtWorldX(int worldX) {
+	int desertCenterY = 50 * CHUNK_HEIGHT; // fallback
+	for (auto& zp : zonePoints) {
+		if (zp.zone == desert) {
+			desertCenterY = zp.worldCoord.y;
+			break;
+		}
+	}
+	float offset = mapNoise.GetNoise((float)worldX * 0.02f, 999.f) * 50.f;
+	return (int)(desertCenterY + offset);
+}
+
+bool Map::ChunkHasRoad(int chunkX, int chunkY) {
+	int chunkWorldXStart = chunkX * CHUNK_WIDTH;
+	int chunkWorldXEnd = chunkWorldXStart + CHUNK_WIDTH;
+
+	// sample a few Y positions in this chunk to check if road passes through
+	for (int j = 0; j < CHUNK_HEIGHT; j += 4) {
+		int worldY = chunkY * CHUNK_HEIGHT + j;
+		int roadX = GetRoadYAtWorldX(worldY);
+		if (roadX >= chunkWorldXStart - 1 && roadX <= chunkWorldXEnd + 1) {
+			return true;
+		}
+	}
+	return false;
 }
 
 void Map::PlaceCampsite(Vector2_I startingChunk) {
