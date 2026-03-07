@@ -13,6 +13,7 @@
 #include <thread>
 #include "Chunk.h"
 #include <queue>
+#include <filesystem>
 
 #define MAP_UP 1
 #define MAP_DOWN 2
@@ -27,6 +28,8 @@
 #define FACTION_ZOMBIE "Zombie"
 #define FACTION_BANDIT "Bandit"
 #define FACTION_WILDLIFE "Wildlife"
+
+namespace fs = std::filesystem;
 
 enum WorldEvent { Storm, DormantMoon };
 enum WorldGenType {zones, old};
@@ -517,35 +520,42 @@ Entity* Map::SpawnHuman(Vector2_I spawnCoords, Behaviour b, std::string f, bool 
 		std::string specialEntFilePath = (
 			"dat/saves/"
 			+ currentSaveName
-			+ "/entities/");
+			+ "/entities/unique/");
 		if (fileExists(specialEntFilePath.c_str())) {
+
 			//read the list in
-			OpenedData specialEnts;
-			ItemReader::GetDataFromFile(specialEntFilePath + "names.eid", "NAMES", &specialEnts, false);
+			std::vector<std::string> allEntityPaths;
+			std::string path = "";
+			for (const auto& entry : fs::directory_iterator(specialEntFilePath)) {
+				allEntityPaths.push_back(entry.path().filename().string());
+			}
+
+			if (allEntityPaths.size() == 0) {
+				return zomb;
+			}
+
+			path = allEntityPaths[Math::RandInt(0, allEntityPaths.size() - 1)];
 
 			//if theres any
-			if (specialEnts.getArray("names").size() > 0) {
-				//choose one from the list
-				std::string nameChosen = specialEnts.getArray("names")[Math::RandInt(0, specialEnts.getArray("names").size() - 1)];
+			OpenedData specialEnts;
+			ItemReader::GetDataFromFile(specialEntFilePath + path, "NAMES", &specialEnts, false);
 
-				//load all their data
-				OpenedData entData;
-				ItemReader::GetDataFromFile(specialEntFilePath + nameChosen + ".eid", nameChosen, &entData, false);
-				if (entData.getInt("health") > 0) {
-					zomb->name = nameChosen.c_str();
-					zomb->health = entData.getInt("health");
-					zomb->b = (Behaviour)entData.getInt("behaviour");
-					zomb->faction = &factions.list[entData.getString("faction")];
-					zomb->damage = entData.getInt("damage");
-					zomb->feelingTowardsPlayer.fear = entData.getFloat("fear");
-					zomb->feelingTowardsPlayer.trust = entData.getFloat("trust");
-					zomb->feelingTowardsPlayer.happy = entData.getFloat("happy");
-					std::vector<std::string> mems = entData.getArray("memories");
-					for (size_t x = 0; x < mems.size(); x++)
-					{
-						zomb->AddMemory((MemoryType)stoi(mems[x + 1]), stoi(mems[x]), { 0.f,0.f,0.f }, mems[x + 2], true);
-						x += 2;
-					}
+			ConsoleLog("Spawning special entity from " + specialEntFilePath + path, text::yellow);
+			//load all their data
+			if (specialEnts.getInt("health") > 0) {
+				zomb->name = specialEnts.getString("entName");
+				zomb->health = specialEnts.getInt("health");
+				zomb->b = (Behaviour)specialEnts.getInt("behaviour");
+				zomb->faction = &factions.list[specialEnts.getString("faction")];
+				zomb->damage = specialEnts.getInt("damage");
+				zomb->feelingTowardsPlayer.fear = specialEnts.getFloat("fear");
+				zomb->feelingTowardsPlayer.trust = specialEnts.getFloat("trust");
+				zomb->feelingTowardsPlayer.happy = specialEnts.getFloat("happy");
+				std::vector<std::string> mems = specialEnts.getArray("memories");
+				for (size_t x = 0; x < mems.size(); x++)
+				{
+					zomb->AddMemory((MemoryType)stoi(mems[x + 1]), stoi(mems[x]), { 0.f,0.f,0.f }, mems[x + 2], true);
+					x += 2;
 				}
 			}
 		}

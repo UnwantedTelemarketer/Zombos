@@ -193,31 +193,15 @@ public:
 			+ currentSaveName
 			+ "/entities/");
 
-		OpenedData specialEnts;
-		ItemReader::GetDataFromFile(specialEntFilePath + "names.eid", "NAMES", &specialEnts, false);
-
-		std::vector<std::string> entNames = specialEnts.getArray("names");
-
 		//save entities
 		if (entities.size() != 0) {
 			for (int i = 0; i < entities.size(); i++) {
 				//if they have been interacted with, save them special to the side
 				if ((entities[i]->feelingTowardsPlayer.overall() != 0 && entities[i]->name != "Human") || entities[i]->factionLeader) {
 					entities[i]->SaveToFile(specialEntFilePath);
-
-					//if the name is already in the list, dont add it
-					if (std::find(entNames.begin(), entNames.end(), entities[i]->name) == entNames.end())
-					{
-						entNames.push_back(entities[i]->name);
-					}
 				}
 			}
 		}
-		SaveData specialSave;
-		specialSave.sections.insert({ "NAMES", {} });
-		specialSave.sections["NAMES"].lists.insert({ "names", entNames });
-		
-		ItemReader::SaveDataToFile(specialEntFilePath + "names.eid", specialSave, false);
 	}
 
 	void SaveChunk(std::string currentSaveName) {

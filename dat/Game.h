@@ -431,6 +431,7 @@ void GameManager::DoBehaviour(Entity* ent, std::shared_ptr<Chunk> chunkInUse)
 			int isEnemies = 0;
 
 			if (!ent->targetingPlayer) {
+				if(tempTarget->faction && ent->faction)
 				isEnemies = factions.AreEnemies(tempTarget->faction->name, ent->faction->name);
 			}
 
@@ -648,7 +649,9 @@ void GameManager::RunTasks(Entity* ent, std::shared_ptr<Chunk> chunkInUse) {
 		}
 	}
 
-
+	if (ent->taskQueue.size() > 0) {
+		return;
+	}
 	//Now run through the task queue and do tasks
 	for (auto& t : ent->taskQueue)
 	{
