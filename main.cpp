@@ -392,7 +392,6 @@ public:
 				}
 			}
 			ImGui::Begin("Load Game Menu");
-			//ImGui::InputText("Save Name", &saveNameSlot[0], sizeof(char) * 128);
 
 			// Show selectable list of saves
 			if (ImGui::ListBox("Saves", &selectedSaveIndex,
